@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI4ALL - Social Media Aggregator Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            min-height: 100vh;
+            color: #e2e8f0;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Header Styles */
+        header {
+            text-align: center;
+            padding: 3rem 0;
+            margin-bottom: 2rem;
+        }
+
+        header h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        header p {
+            color: #94a3b8;
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stats-bar {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .stat {
+            text-align: center;
+            padding: 1rem 2rem;
+            background: rgba(30, 41, 59, 0.8);
+            border-radius: 12px;
+            border: 1px solid rgba(148, 163, 184, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #3b82f6;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Controls Section */
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.5rem;
+            background: rgba(30, 41, 59, 0.6);
+            border-radius: 12px;
+            border: 1px solid rgba(148, 163, 184, 0.1);
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            background: rgba(30, 41, 59, 0.8);
+            color: #e2e8f0;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .filter-btn:hover {
+            background: rgba(59, 130, 246, 0.2);
+            border-color: #3b82f6;
+        }
+
+        .filter-btn.active {
+            background: #3b82f6;
+            border-color: #3b82f6;
+            color: white;
+        }
+
+        .search-box {
+            position: relative;
+            flex: 1;
+            min-width: 250px;
+            max-width: 400px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            background: rgba(15, 23, 42, 0.8);
+            color: #e2e8f0;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .search-box::before {
+            content: "🔍";
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1rem;
+        }
+
+        /* Cards Grid */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 1.5rem;
+        }
+
+        /* Card Styles */
+        .card {
+            background: rgba(30, 41, 59, 0.6);
+            border-radius: 16px;
+            border: 1px solid rgba(148, 163, 184, 0.1);
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(59, 130, 246, 0.3);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .platform-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.75rem;
+            flex-shrink: 0;
+        }
+
+        .platform-icon.github {
+            background: linear-gradient(135deg, #24292e 0%, #3b82f6 100%);
+            color: white;
+        }
+
+        .platform-icon.stackoverflow {
+            background: linear-gradient(135deg, #f48024 0%, #f97316 100%);
+            color: white;
+        }
+
+        .card-title {
+            flex: 1;
+        }
+
+        .card-title h3 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            line-height: 1.4;
+            margin-bottom: 0.25rem;
+        }
+
+        .card-title h3 a {
+            color: #e2e8f0;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .card-title h3 a:hover {
+            color: #3b82f6;
+        }
+
+        .card-type {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .card-content {
+            color: #cbd5e1;
+            font-size: 0.875rem;
+            line-height: 1.6;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .card-meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(148, 163, 184, 0.1);
+        }
+
+        .author {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex: 1;
+        }
+
+        .author img {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .author a {
+            color: #94a3b8;
+            text-decoration: none;
+            font-size: 0.875rem;
+            transition: color 0.2s;
+        }
+
+        .author a:hover {
+            color: #3b82f6;
+        }
+
+        .metrics {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.875rem;
+        }
+
+        .metric {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            color: #94a3b8;
+        }
+
+        .metric-value {
+            font-weight: 600;
+            color: #e2e8f0;
+        }
+
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .tag {
+            padding: 0.25rem 0.75rem;
+            background: rgba(59, 130, 246, 0.1);
+            color: #60a5fa;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .timestamp {
+            font-size: 0.75rem;
+            color: #64748b;
+            text-align: right;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 3rem 0;
+            margin-top: 3rem;
+            color: #64748b;
+            font-size: 0.875rem;
+            border-top: 1px solid rgba(148, 163, 184, 0.1);
+        }
+
+        /* Loading State */
+        .loading {
+            text-align: center;
+            padding: 4rem;
+            color: #94a3b8;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(59, 130, 246, 0.2);
+            border-top-color: #3b82f6;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 4rem;
+            color: #94a3b8;
+        }
+
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2rem;
+            }
+
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-box {
+                max-width: none;
+            }
+
+            .stats-bar {
+                gap: 1rem;
+            }
+
+            .stat {
+                padding: 0.75rem 1rem;
+            }
+
+            .stat-value {
+                font-size: 1.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>AI4ALL Dashboard</h1>
+            <p>Aggregated content from GitHub and Stack Overflow</p>
+            <div class="stats-bar">
+                <div class="stat">
+                    <span class="stat-value" id="total-items">-</span>
+                    <span class="stat-label">Total Items</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-value" id="github-count">-</span>
+                    <span class="stat-label">GitHub Repos</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-value" id="stackoverflow-count">-</span>
+                    <span class="stat-label">Stack Overflow</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="controls">
+            <div class="filter-group">
+                <button class="filter-btn active" data-filter="all">
+                    <span>🌐</span> All Platforms
+                </button>
+                <button class="filter-btn" data-filter="github">
+                    <span>⚡</span> GitHub
+                </button>
+                <button class="filter-btn" data-filter="stackoverflow">
+                    <span>📚</span> Stack Overflow
+                </button>
+            </div>
+            <div class="search-box">
+                <input type="text" id="search-input" placeholder="Search items...">
+            </div>
+        </div>
+
+        <main>
+            <div id="loading" class="loading">
+                <div class="loading-spinner"></div>
+                <p>Loading aggregated data...</p>
+            </div>
+            <div id="cards-container" class="cards-grid" style="display: none;"></div>
+        </main>
+
+        <footer>
+            <p>Last updated: <span id="last-updated">-</span></p>
+            <p style="margin-top: 0.5rem; font-size: 0.75rem;">Data aggregated from GitHub and Stack Overflow APIs</p>
+        </footer>
+    </div>
+
+    <script>
+        // Data will be loaded from the JSON file
+        let allItems = [];
+        let currentFilter = 'all';
+
+        // Load data from the JSON file
+        async function loadData() {
+            try {
+                const response = await fetch('data/aggregated-data.json');
+                if (!response.ok) {
+                    throw new Error('Failed to load data');
+                }
+                const data = await response.json();
+                allItems = data.items || [];
+                
+                // Update stats
+                document.getElementById('total-items').textContent = allItems.length;
+                document.getElementById('github-count').textContent = allItems.filter(i => i.platform === 'github').length;
+                document.getElementById('stackoverflow-count').textContent = allItems.filter(i => i.platform === 'stackoverflow').length;
+                document.getElementById('last-updated').textContent = new Date(data.lastUpdated).toLocaleString();
+                
+                // Render cards
+                renderCards(allItems);
+                
+                // Hide loading
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('cards-container').style.display = 'grid';
+            } catch (error) {
+                console.error('Error loading data:', error);
+                document.getElementById('loading').innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">⚠️</div>
+                        <h3>Failed to Load Data</h3>
+                        <p>Could not load aggregated data. Please try again later.</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Render cards
+        function renderCards(items) {
+            const container = document.getElementById('cards-container');
+            
+            if (items.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1 / -1;">
+                        <div class="empty-state-icon">🔍</div>
+                        <h3>No Items Found</h3>
+                        <p>No items match your current filters.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = items.map(item => createCard(item)).join('');
+        }
+
+        // Create card HTML
+        function createCard(item) {
+            const platformClass = item.platform === 'github' ? 'github' : 'stackoverflow';
+            const platformLabel = item.platform === 'github' ? 'GH' : 'SO';
+            
+            // Format metrics based on platform
+            let metricsHtml = '';
+            if (item.platform === 'github' && item.metrics) {
+                metricsHtml = `
+                    <div class="metric">
+                        <span>⭐</span>
+                        <span class="metric-value">${formatNumber(item.metrics.stars)}</span>
+                    </div>
+                    <div class="metric">
+                        <span>🍴</span>
+                        <span class="metric-value">${formatNumber(item.metrics.forks)}</span>
+                    </div>
+                `;
+            } else if (item.platform === 'stackoverflow' && item.metrics) {
+                metricsHtml = `
+                    <div class="metric">
+                        <span>👍</span>
+                        <span class="metric-value">${item.metrics.score}</span>
+                    </div>
+                    <div class="metric">
+                        <span>👁️</span>
+                        <span class="metric-value">${formatNumber(item.metrics.views)}</span>
+                    </div>
+                    <div class="metric">
+                        <span>💬</span>
+                        <span class="metric-value">${item.metrics.answers}</span>
+                    </div>
+                `;
+            }
+            
+            // Format timestamp
+            const date = new Date(item.timestamp);
+            const timeAgo = getTimeAgo(date);
+            
+            // Tags
+            const tagsHtml = item.tags && item.tags.length > 0 
+                ? `<div class="tags">${item.tags.slice(0, 3).map(tag => `<span class="tag">${tag}</span>`).join('')}</div>`
+                : '';
+            
+            return `
+                <article class="card" data-platform="${item.platform}">
+                    <div class="card-header">
+                        <div class="platform-icon ${platformClass}">${platformLabel}</div>
+                        <div class="card-title">
+                            <h3><a href="${item.url}" target="_blank" rel="noopener">${escapeHtml(item.title)}</a></h3>
+                            <span class="card-type">${item.type}</span>
+                        </div>
+                    </div>
+                    
+                    ${item.content ? `<div class="card-content">${escapeHtml(item.content)}</div>` : ''}
+                    
+                    ${tagsHtml}
+                    
+                    <div class="card-meta">
+                        <div class="author">
+                            ${item.author.avatar ? `<img src="${item.author.avatar}" alt="${escapeHtml(item.author.name)}" loading="lazy">` : ''}
+                            <a href="${item.author.url}" target="_blank" rel="noopener">${escapeHtml(item.author.name)}</a>
+                        </div>
+                        <div class="metrics">
+                            ${metricsHtml}
+                        </div>
+                        <div class="timestamp" title="${date.toLocaleString()}">${timeAgo}</div>
+                    </div>
+                </article>
+            `;
+        }
+
+        // Format number with K/M suffix
+        function formatNumber(num) {
+            if (num >= 1000000) {
+                return (num / 1000000).toFixed(1) + 'M';
+            }
+            if (num >= 1000) {
+                return (num / 1000).toFixed(1) + 'K';
+            }
+            return num;
+        }
+
+        // Get time ago string
+        function getTimeAgo(date) {
+            const seconds = Math.floor((new Date() - date) / 1000);
+            
+            if (seconds < 60) return 'just now';
+            const minutes = Math.floor(seconds / 60);
+            if (minutes < 60) return `${minutes}m ago`;
+            const hours = Math.floor(minutes / 60);
+            if (hours < 24) return `${hours}h ago`;
+            const days = Math.floor(hours / 24);
+            if (days < 30) return `${days}d ago`;
+            const months = Math.floor(days / 30);
+            if (months < 12) return `${months}mo ago`;
+            return `${Math.floor(months / 12)}y ago`;
+        }
+
+        // Escape HTML
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Filter functionality
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Update active state
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                // Apply filter
+                currentFilter = btn.dataset.filter;
+                filterAndRender();
+            });
+        });
+
+        // Search functionality
+        document.getElementById('search-input').addEventListener('input', (e) => {
+            filterAndRender();
+        });
+
+        // Filter and render items
+        function filterAndRender() {
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            
+            let filtered = allItems;
+            
+            // Apply platform filter
+            if (currentFilter !== 'all') {
+                filtered = filtered.filter(item => item.platform === currentFilter);
+            }
+            
+            // Apply search filter
+            if (searchTerm) {
+                filtered = filtered.filter(item => 
+                    item.title.toLowerCase().includes(searchTerm) ||
+                    (item.content && item.content.toLowerCase().includes(searchTerm)) ||
+                    item.author.name.toLowerCase().includes(searchTerm) ||
+                    item.tags.some(tag => tag.toLowerCase().includes(searchTerm))
+                );
+            }
+            
+            renderCards(filtered);
+        }
+
+        // Load data on page load
+        loadData();
+    </script>
+</body>
+</html>

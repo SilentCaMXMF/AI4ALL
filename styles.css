@@ -108,6 +108,51 @@ body {
     letter-spacing: 1px;
 }
 
+.hero-cta {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 40px;
+    position: relative;
+    z-index: 1;
+    flex-wrap: wrap;
+}
+
+.cta-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 28px;
+    border-radius: var(--radius);
+    font-weight: 600;
+    font-size: 1rem;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.cta-button.primary {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    color: white;
+    box-shadow: 0 4px 14px rgba(99, 102, 241, 0.4);
+}
+
+.cta-button.primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5);
+}
+
+.cta-button.secondary {
+    background: var(--surface);
+    color: var(--text);
+    border: 1px solid var(--border);
+}
+
+.cta-button.secondary:hover {
+    background: var(--surface-light);
+    border-color: var(--primary);
+}
+
 /* Timeline */
 .timeline {
     padding: 60px 0;
