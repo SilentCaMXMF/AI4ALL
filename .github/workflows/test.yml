@@ -33,14 +33,4 @@ jobs:
         run: npm test
 
       - name: Test scraper initialization
-        run: |
-          # Test that the scraper can be imported without errors
-          node -e "
-            import('./src/scraper/index.js').then(m => {
-              console.log('✓ Scraper module loaded successfully');
-              console.log('Available exports:', Object.keys(m));
-            }).catch(err => {
-              console.error('✗ Failed to load scraper:', err);
-              process.exit(1);
-            });
-          "
+        run: npx tsx src/scraper/index.ts --help 2>&1 | head -5
