@@ -1,4 +1,5 @@
-import { BasePlatformAPI, AggregatedItem, FetchOptions, FetchResult, Platform } from '../types/index';
+import { BasePlatformAPI } from '../types/index.js';
+import type { AggregatedItem, FetchOptions, FetchResult, Platform } from '../types/index.js';
 
 interface StackOverflowQuestion {
   question_id: number;

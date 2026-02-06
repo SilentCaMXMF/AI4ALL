@@ -1,4 +1,3 @@
-import { GitHubAPI } from '../api/github.js';
 import { readFile } from 'fs/promises';
 
 // Load environment variables manually

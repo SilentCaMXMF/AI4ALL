@@ -1,5 +1,6 @@
-import { BasePlatformAPI, AggregatedItem, FetchOptions, FetchResult, Platform } from '../types/index';
-import { readFile, writeFile, access } from 'fs/promises';
+import { BasePlatformAPI } from '../types/index.js';
+import type { AggregatedItem, FetchOptions, FetchResult, Platform } from '../types/index.js';
+import { readFile, writeFile } from 'fs/promises';
 import { join } from 'path';
 
 interface GitHubRepo {
@@ -38,26 +39,6 @@ interface GitHubIssue {
   };
   comments: number;
   labels: Array<{ name: string }>;
-}
-
-interface GitHubDiscussion {
-  id: number;
-  number: number;
-  title: string;
-  body: string;
-  html_url: string;
-  state: string;
-  created_at: string;
-  updated_at: string;
-  user: {
-    login: string;
-    html_url: string;
-    avatar_url: string;
-  };
-  comments: number;
-  category: {
-    name: string;
-  };
 }
 
 interface GitHubSearchItem {
@@ -167,7 +148,7 @@ export class GitHubAPI extends BasePlatformAPI {
       try {
         const discussions = await this.searchFreshDiscussions(query, timeWindow);
         items.push(...discussions.map(disc => this.normalizeDiscussion(disc)));
-      } catch (e) {
+      } catch {
         // Discussions might not be available for all repos
       }
       

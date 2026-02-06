@@ -65,7 +65,7 @@ export abstract class BasePlatformAPI {
   protected requestCount: number = 0;
   protected readonly minRequestInterval: number = 1000; // 1 second between requests
 
-  abstract fetchItems(options?: FetchOptions): Promise<FetchResult>;
+  abstract fetchItems(): Promise<FetchResult>;
   
   protected async rateLimit(): Promise<void> {
     const now = Date.now();

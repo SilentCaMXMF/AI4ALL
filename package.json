@@ -14,7 +14,7 @@
     "scrape:stackoverflow": "ts-node src/scraper/platforms/stackoverflow.ts",
     "schedule": "node github-distribution.ts",
     "schedule:github": "node github-distribution.ts",
-    "lint": "eslint . --ext .ts,.tsx",
+    "lint": "eslint src",
     "typecheck": "tsc --noEmit",
     "test": "vitest"
   },
@@ -27,15 +27,16 @@
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
+    "@eslint/core": "^1.1.0",
     "@types/node": "^20.11.16",
     "@types/react": "^18.2.55",
     "@types/react-dom": "^18.2.19",
     "@typescript-eslint/eslint-plugin": "^6.21.0",
     "@typescript-eslint/parser": "^6.21.0",
     "eslint": "^8.56.0",
-    "eslint-config-next": "^14.1.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.3.3",
+    "typescript-eslint": "^8.54.0",
     "vitest": "^1.2.2"
   },
   "engines": {

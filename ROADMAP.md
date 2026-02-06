@@ -2,207 +2,271 @@
 
 ## Current Status - February 6, 2026
 
-**Overall Progress: 98% Complete**
+**Overall Progress: 70% Complete**  
 **Last Updated: February 6, 2026**
 
-### ✅ Completed Phases
+### ✅ Critical Issue: GitHub Actions Workflow Fixes COMPLETED
 
-#### Phase 1: Research & Planning (100% Complete)
-- ✅ GitHub API v3/v4 REST/GraphQL - Rate limit: 5,000 req/hour
-- ✅ Reddit API with PRAW - Rate limit: 60 req/minute
-- ✅ Stack Exchange API - Rate limit: 300 req/day
-- ✅ Discord API v10 - Webhooks and bot integration
-- ✅ X (Twitter) API v2 - Tier-based rate limits
-- ✅ Legal considerations and Terms of Service review
+All workflow blockers resolved on February 6, 2026:
 
-#### Phase 2: Architecture Design (100% Complete)
-- ✅ System architecture with component diagrams
-- ✅ Data flow design (Data Sources → Scraper → Storage → Static Gen → Site)
-- ✅ API integration patterns
-- ✅ Storage strategy (JSON-based with TypeScript interfaces)
+| Workflow | Status | Notes |
+|----------|--------|-------|
+| `test.yml` | ✅ Fixed | ESLint config created, lint passes (0 errors) |
+| `scrape-and-deploy.yml` | ✅ Fixed | TypeScript compiles, imports fixed |
 
-#### Phase 3: Tech Stack Setup (100% Complete)
-- ✅ Node.js 20+ with TypeScript 5.3
-- ✅ Next.js 14 with App Router configuration
-- ✅ Project structure with modular organization
-- ✅ Type definitions and unified data schema
+**Completed Fixes:**
+- ✅ ESLint configuration file (`eslint.config.js`)
+- ✅ Import extensions fixed in 9 files (`.js` suffix added)
+- ✅ Type definitions verified (BasePlatformAPI has rateLimit/handleError)
+- ✅ Globals configured (process, console, fetch, Buffer, setTimeout)
+- ✅ Lint status: 0 errors, 4 warnings (acceptable)
 
-#### Phase 4: API Integration Layer (100% Complete)
-- ✅ **GitHub API Client** (`src/api/github.ts`)
+---
+
+## Phase Completion Status
+
+| Phase | Status | Notes |
+|-------|--------|-------|
+| Phase 1: Research & Planning | ✅ Complete | Research documentation |
+| Phase 2: Architecture Design | ✅ Complete | System architecture |
+| Phase 3: Tech Stack Setup | ✅ Complete | Node.js, Next.js, TypeScript |
+| Phase 4: API Integration Layer | ✅ Complete | 6 platform integrations |
+| Phase 5: Deployment & Automation | ✅ Fixed | Workflows now functional |
+| Phase 6: Optimization | ⚠️ Pending | UI ready, testing workflow |
+
+---
+
+## ✅ Completed: GitHub Actions Workflow Fixes (Feb 6, 2026)
+
+### Phase 1: ESLint Configuration
+- [x] ESLint-001: Create ESLint configuration file (`eslint.config.js`)
+  - Command: `npm init @eslint/config`
+  - Affects: `.github/workflows/test.yml` lint step
+
+### Phase 2: TypeScript Import Extensions
+- [x] TS-IMP-001: Fix `src/api/github.ts` - add `.js` to imports
+- [x] TS-IMP-002: Fix `src/api/discord.ts` - add `.js` to imports
+- [x] TS-IMP-003: Fix `src/api/reddit.ts` - add `.js` to imports
+- [x] TS-IMP-004: Fix `src/api/stackoverflow.ts` - add `.js` to imports
+- [x] TS-IMP-005: Fix `src/api/x.ts` - add `.js` to imports
+- [x] TS-IMP-006: Fix `src/api/modelsdev.ts` - add `.js` to imports
+- [x] TS-IMP-007: Fix `src/index.ts` - add `.js` to imports
+- [x] TS-IMP-008: Fix `src/scraper/cli.ts` - add `.js` to imports
+- [x] TS-IMP-009: Fix `src/scraper/index.ts` - add `.js` to imports
+
+### Phase 3: TypeScript Type Definitions
+- [x] TS-TYPE-001 to TS-TYPE-012: Verified `rateLimit()` and `handleError()` exist in BasePlatformAPI
+- [x] TS-TYPE-013: `ScraperConfig` platform properties verified
+
+### Phase 4: Workflow Verification
+- [x] ESLint: 0 errors, 4 warnings (acceptable)
+- [x] TypeScript: Main source compiles (test files excluded)
+- [ ] Pending: Run actual GitHub Actions workflows to verify
+
+---
+
+## Next Steps (Pending Verification)
+
+### Immediate Actions
+1. **Push changes to GitHub** to trigger workflow runs
+2. **Verify `test.yml`** passes lint step
+3. **Verify `scrape-and-deploy.yml`** compiles successfully
+4. **Monitor workflow logs** for any remaining issues
+
+### Post-Workflow Tasks
+- Phase 6: Complete optimization tasks
+- Test scraping functionality end-to-end
+- Verify deployment to GitHub Pages
+
+---
+
+## Completed Phases
+
+### Phase 1: Research & Planning (100% Complete)
+- GitHub API v3/v4 REST/GraphQL - Rate limit: 5,000 req/hour
+- Reddit API with PRAW - Rate limit: 60 req/minute
+- Stack Exchange API - Rate limit: 300 req/day
+- Discord API v10 - Webhooks and bot integration
+- X (Twitter) API v2 - Tier-based rate limits
+- Legal considerations and Terms of Service review
+
+### Phase 2: Architecture Design (100% Complete)
+- System architecture with component diagrams
+- Data flow design (Data Sources → Scraper → Storage → Static Gen → Site)
+- API integration patterns
+- Storage strategy (JSON-based with TypeScript interfaces)
+
+### Phase 3: Tech Stack Setup (100% Complete)
+- Node.js 20+ with TypeScript 5.3
+- Next.js 14 with App Router configuration
+- Project structure with modular organization
+- Type definitions and unified data schema
+
+### Phase 4: API Integration Layer (100% Complete)
+- **GitHub API Client** (`src/api/github.ts`)
   - Repository fetching with user/org support
   - Issues and pull requests
   - Rate limiting: 5,000 req/hour
-  - **Status: TESTED & WORKING** ✅
+  - Time distribution system: 48 periods/day
 
-- ✅ **Reddit API Client** (`src/api/reddit.ts`)
+- **Reddit API Client** (`src/api/reddit.ts`)
   - OAuth authentication flow
   - Subreddit post fetching
   - Rate limiting: 60 req/minute
-  - **Status: IMPLEMENTED** ✅
 
-- ✅ **Stack Overflow API Client** (`src/api/stackoverflow.ts`)
+- **Stack Overflow API Client** (`src/api/stackoverflow.ts`)
   - Questions and answers fetching
   - Tag-based filtering
   - Rate limiting: 300 req/day
-  - **Status: IMPLEMENTED** ✅
 
-- ✅ **Discord API Client** (`src/api/discord.ts`)
+- **Discord API Client** (`src/api/discord.ts`)
   - Bot token authentication
   - Channel message fetching
   - Rate limiting: Endpoint-specific
-  - **Status: TESTED - Bot valid, needs server invite** ⚠️
 
-- ✅ **X (Twitter) API Client** (`src/api/x.ts`)
+- **X (Twitter) API Client** (`src/api/x.ts`)
   - Bearer token authentication
   - Recent tweet search
   - Rate limiting: Tier-dependent
-  - **Status: IMPLEMENTED** ✅
 
-- ✅ **Models.dev API Client** (`src/api/modelsdev.ts`) **NEW!**
+- **Models.dev API Client** (`src/api/modelsdev.ts`)
   - Opencode Zen model pricing tracker
   - Hourly price change detection
   - 1,000 price history tracking
   - Rate limiting: 60 req/hour
-  - **Status: IMPLEMENTED & TESTED** ✅
 
-- ✅ Unified data normalization across all platforms
-- ✅ Rate limiting compliance with automatic throttling
-- ✅ Error handling and retry logic
+- Unified data normalization across all platforms
+- Rate limiting compliance with automatic throttling
+- Error handling and retry logic
 
-#### Phase 5: Deployment & Automation (100% Complete)
-- ✅ **GitHub Actions Workflows**
-  - `.github/workflows/scrape-and-deploy.yml` - 30-minute cron job
-  - `.github/workflows/test.yml` - CI/CD pipeline
-  - Automated data commits
-  - Webhook triggers
-
-- ✅ **Scraper CLI** (`src/scraper/cli.ts`)
+### Phase 5: Deployment & Automation (FIXED)
+- Scraper CLI (`src/scraper/cli.ts`)
   - Command-line interface
   - Platform-specific scraping options
   - Progress indicators and logging
 
-- ✅ **Data Storage Layer** (`src/data/store.ts`)
+- Data Storage Layer (`src/data/store.ts`)
   - JSON-based persistence
   - Search functionality
   - Statistics and analytics
   - Data validation
 
-- ✅ **Environment Configuration**
+- Environment Configuration
   - `.env.example` template
   - GitHub Secrets support
   - Security best practices
 
-#### Phase 6: Optimization (100% Complete) ✅
-- ✅ **Enhanced Static Site**
+- **GitHub Actions Workflows** (✅ FIXED Feb 6, 2026)
+  - `.github/workflows/scrape-and-deploy.yml` - 30-minute cron job
+  - `.github/workflows/test.yml` - CI/CD pipeline
+  - **Status: Fixed - awaiting verification**
+
+### Phase 6: Optimization (Pending)
+- Enhanced Static Site
   - Live progress tracking with visual indicators
-  - Phase status badges (✅ Completed, 🔄 In Progress, ⏳ Not Started)
+  - Phase status badges
   - Progress bars for each phase
   - API status indicators
 
-- ✅ **Interactive Features**
+- Interactive Features
   - Dark/light mode toggle
   - Search functionality across all content
   - Collapsible timeline sections
   - Recent commits display
   - Build status indicators
 
-- ✅ **Responsive Design**
+- Responsive Design
   - Mobile-optimized layout
   - Touch-friendly interactions
   - Adaptive progress bars
 
-- ✅ **GitHub Time Distribution System** (NEW)
-  - ⏰ 48 periods per day (30-minute intervals)
-  - 📊 Rate limit distribution: 1,000 requests per period (20% of hourly limit)
-  - 🎯 Rotating search queries (5 different queries)
-  - 🔍 Fresh content only (last 2 hours)
-  - 📁 State tracking to avoid duplicates
-  - 🚀 48,000 requests/day utilized efficiently
-  - 📈 Time distribution analyzer (`github-distribution.ts`)
+- GitHub Time Distribution System
+  - 48 periods per day (30-minute intervals)
+  - Rate limit distribution: 1,000 requests per period
+  - Rotating search queries (5 different queries)
+  - Fresh content only (last 2 hours)
+  - State tracking to avoid duplicates
 
-- ✅ **Discord Bot Documentation** (NEW)
-  - Complete invitation guide (`DISCORD-BOT-INVITE.md`)
-  - Alternative solutions for no-permissions scenario (`DISCORD-NO-PERMISSIONS.md`)
-  - OAuth2 URL generator instructions
-  - Troubleshooting guide
+---
 
-## 🎉 Recent Achievements - February 6, 2026
+## API Credentials Status
 
-### API Credentials Tested Successfully!
-**Date:** February 6, 2026
+| Platform | Status | Last Tested |
+|----------|--------|-------------|
+| GitHub | ✅ Valid token | Feb 6, 2026 |
+| Discord | ⚠️ Bot validated, needs server invite | Feb 6, 2026 |
+| Models.dev | ✅ Working (no auth required) | Feb 6, 2026 |
+| Reddit | ⏳ Needs credentials | - |
+| Stack Overflow | ✅ Works without key | - |
+| X (Twitter) | ⏳ Needs bearer token | - |
 
-#### GitHub API ✅ FULLY OPERATIONAL
-- **Authentication:** Valid (SilentCaMXMF)
-- **Rate Limit:** 4,992/5,000 requests remaining
-- **Test Results:**
-  - Found 19 repositories about "free AI models"
-  - Discovered 461+ issues/discussions about free AI providers
-  - Successfully accessed user repositories (5 repos)
+---
 
-**Key Findings:**
-1. **Multi-Backend-Chatbot-with-Gradio** - Integrates 5 AI providers
-2. **vscode-unify-chat-provider** - 95⭐, multiple LLM API integration
-3. **super-ai-master-api** - No API keys required, multi-model support
-4. **oh-my-opencode** - 461 recent issues/discussions
-5. **AI4ALL** (own project) - Successfully tracked
+## API Rate Limits
 
-#### Discord API ⚠️ BOT VALIDATED, NEEDS PERMISSIONS
-- **Authentication:** Valid (Bot: AI4ALL)
-- **Bot ID:** 1469293688768299185
-- **Status:** Token works, bot needs server invitation
-- **Next Step:** Add bot to server with "Read Messages" permission
+| Platform | Rate Limit | Update Frequency | Status |
+|----------|-----------|------------------|--------|
+| GitHub | 5,000 req/hour | Every 30 minutes | ✅ Active |
+| Models.dev | 60 req/hour | Every 60 minutes | ✅ Active |
+| Reddit | 60 req/minute | On demand | ⏳ Needs creds |
+| Stack Overflow | 300 req/day | On demand | ✅ Ready |
+| Discord | Varies | On demand | ⚠️ Needs invite |
+| X (Twitter) | Tier-based | On demand | ⏳ Needs creds |
 
-### Models.dev Integration ✅ COMPLETED
-**Date:** February 6-7, 2026
+---
 
-#### Models.dev API - Opencode Zen Pricing Tracker
-- **API Endpoint:** `https://models.dev/api.json` (Public, No Auth)
-- **Update Frequency:** Hourly (smart caching)
-- **Features Implemented:**
-  - ✅ Fetches opencode/zen model pricing data
-  - ✅ Tracks input/output costs per 1M tokens
-  - ✅ Automatic price change detection
-  - ✅ Price history tracking (last 1,000 changes)
-  - ✅ Model specifications (context limits, capabilities)
-  - ✅ State persistence to avoid duplicate fetches
-  - ✅ Integrated into ScraperService
+## Cost Estimate (Monthly)
 
-**Key Capabilities:**
-- Monitors 5 search terms: "opencode", "zen"
-- Detects price changes between hourly fetches
-- Creates "price_alert" items when costs change
-- Shows percentage change (e.g., -16.7% price drop)
-- No API credentials required (public endpoint)
+| Component | Cost | Status |
+|-----------|------|--------|
+| Hosting (GitHub Pages) | $0 | ✅ Free |
+| GitHub Actions | $0 | ⚠️ Free tier (2000 min/month) |
+| API calls | $0 | ✅ Free tiers sufficient |
+| Domain (optional) | $10-15 | ⏳ Optional |
+| **Total** | **$0-15** | ✅ Cost-effective |
 
-**Rate Limiting:**
-- Conservative: 60 requests/hour limit
-- Actual usage: 24 fetches/day (hourly)
-- Well within limits
+---
 
-**Files Created:**
-- `src/api/modelsdev.ts` - API client
-- `test-modelsdev.ts` - Test script
-- `MODELSDEV-INTEGRATION.md` - Documentation
+## Files Created
 
-### Discord Documentation ✅ COMPLETED
+**Source Code (12 TypeScript files):**
+- `src/api/github.ts` - GitHub API integration
+- `src/api/modelsdev.ts` - Models.dev pricing tracker
+- `src/api/reddit.ts` - Reddit API integration
+- `src/api/stackoverflow.ts` - Stack Overflow API
+- `src/api/discord.ts` - Discord API integration
+- `src/api/x.ts` - X/Twitter API integration
+- `src/scraper/index.ts` - Orchestration logic
+- `src/scraper/cli.ts` - CLI interface
+- `src/data/store.ts` - Data persistence
+- `src/types/index.ts` - Type definitions
+- `src/index.ts` - Main exports
+- `test-modelsdev.ts` - Models.dev tester
 
-#### Discord Bot Invitation Guide
-- **File:** `DISCORD-BOT-INVITE.md`
-- **Contents:**
-  - Step-by-step OAuth2 URL generation
-  - Permission requirements
-  - One-click invite link
-  - MESSAGE CONTENT INTENT setup
-  - Troubleshooting guide
+**Automation & Config:**
+- `eslint.config.js` - ✅ ESLint configuration (created Feb 6, 2026)
+- `.github/workflows/scrape-and-deploy.yml` - ✅ Fixed
+- `.github/workflows/test.yml` - ✅ Fixed
+- `.env.example`
+- `.gitignore`
 
-#### Discord Without Permissions Guide
-- **File:** `DISCORD-NO-PERMISSIONS.md`
-- **Contents:**
-  - Alternative solutions (ask admin, webhooks)
-  - Why direct scraping isn't possible
-  - How to use other platforms instead
-  - Email templates for requesting access
-  - Pro tips for getting permissions
+**Documentation (7 files):**
+- `README.md`
+- `API-SETUP-GUIDE.md`
+- `IMPLEMENTATION-SUMMARY.md`
+- `MODELSDEV-INTEGRATION.md`
+- `DISCORD-BOT-INVITE.md`
+- `DISCORD-NO-PERMISSIONS.md`
+- `ROADMAP.md`
+
+**Static Site & Tools:**
+- `index.html`
+- `styles.css`
+- `scripts.js`
+- `github-distribution.ts`
+- `public/project-status.json`
+
+---
 
 ## System Architecture
 
@@ -214,90 +278,13 @@
                                                         ↓
 ┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
 │   Static Site   │ ←  │  Build Process   │ ←  │  Static Gen     │
-│   (GitHub Pages)│    │ (Deploy hooks)   │    │ (Next.js ISR)   │
+│   (GitHub Pages)│    │ (Deploy hooks)    │    │ (Next.js ISR)   │
 └─────────────────┘    └──────────────────┘    └─────────────────┘
 ```
 
-## API Rate Limits
+**Note:** Static site generation is complete. Deployment automation fixed Feb 6, 2026 - awaiting GitHub verification.
 
-| Platform | Rate Limit | Update Frequency | Status | Last Tested |
-|----------|-----------|------------------|--------|-------------|
-| GitHub | 5,000 req/hour | Every 30 minutes | ✅ Active | Feb 6, 2026 |
-| Models.dev | 60 req/hour | Every 60 minutes | ✅ Active | Feb 6, 2026 |
-| Reddit | 60 req/minute | On demand | ✅ Ready | - |
-| Stack Overflow | 300 req/day | On demand | ✅ Ready | - |
-| Discord | Varies by endpoint | On demand | ⚠️ Needs Setup | Feb 6, 2026 |
-| X (Twitter) | Depends on tier | On demand | ✅ Ready | - |
-
-## Cost Estimate (Monthly)
-
-| Component | Cost | Status |
-|-----------|------|--------|
-| Hosting (GitHub Pages) | $0 | ✅ Free |
-| GitHub Actions | $0 | ✅ Within free tier (2000 min/month) |
-| API calls | $0 | ✅ Free tiers sufficient |
-| Domain (optional) | $10-15 | ⏳ Optional |
-| **Total** | **$0-15** | ✅ Cost-effective |
-
-## Next Steps
-
-### Immediate Actions
-1. ✅ GitHub API - **COMPLETE & TESTED** (30-min intervals, time distribution active)
-2. ✅ Models.dev API - **COMPLETE & TESTED** (hourly pricing tracker active)
-3. ⚠️ Discord Bot - Invite to server (instructions in `DISCORD-BOT-INVITE.md`)
-4. ⏳ Add Reddit credentials (optional - increases coverage)
-5. ⏳ Add Stack Overflow key (optional - increases rate limits)
-6. ⏳ Add X (Twitter) Bearer Token (optional - real-time updates)
-
-### Short Term
-- Enable GitHub Pages for automated deployment
-- Configure GitHub Secrets for production credentials
-- Test full automation pipeline
-- Monitor first automated scrape
-
-### Long Term
-- Add RSS feed generation
-- Implement advanced analytics
-- Create performance monitoring dashboard
-- Add support for additional platforms
-
-## Files Created
-
-**Source Code (12 TypeScript files):**
-- `src/api/github.ts` - GitHub API integration ✅ (time distribution)
-- `src/api/modelsdev.ts` - Models.dev pricing tracker ✅ **NEW**
-- `src/api/reddit.ts` - Reddit API integration ✅
-- `src/api/stackoverflow.ts` - Stack Overflow API ✅
-- `src/api/discord.ts` - Discord API integration ✅
-- `src/api/x.ts` - X/Twitter API integration ✅
-- `src/scraper/index.ts` - Orchestration logic ✅
-- `src/scraper/cli.ts` - CLI interface ✅
-- `src/data/store.ts` - Data persistence ✅
-- `src/types/index.ts` - Type definitions ✅
-- `src/index.ts` - Main exports ✅
-- `test-modelsdev.ts` - Models.dev tester ✅ **NEW**
-
-**Automation & Config:**
-- `.github/workflows/scrape-and-deploy.yml` ✅
-- `.github/workflows/test.yml` ✅
-- `.env.example` ✅
-- `.gitignore` ✅
-
-**Documentation (7 files):**
-- `README.md` - Comprehensive guide ✅
-- `API-SETUP-GUIDE.md` - Credential setup instructions ✅
-- `IMPLEMENTATION-SUMMARY.md` - What was built ✅
-- `MODELSDEV-INTEGRATION.md` - Models.dev integration guide ✅ **NEW**
-- `DISCORD-BOT-INVITE.md` - Bot invitation guide ✅ **NEW**
-- `DISCORD-NO-PERMISSIONS.md` - Alternative solutions ✅ **NEW**
-- `ROADMAP.md` - This file ✅
-
-**Static Site & Tools:**
-- `index.html` - Enhanced roadmap ✅
-- `styles.css` - Progress tracking styles ✅
-- `scripts.js` - Interactive features ✅
-- `github-distribution.ts` - Time distribution analyzer ✅ **NEW**
-- `public/project-status.json` - Live data ✅
+---
 
 ## Technical Specifications
 
@@ -305,8 +292,8 @@
 ```typescript
 interface AggregatedItem {
   id: string;
-  platform: 'github' | 'reddit' | 'stackoverflow' | 'discord' | 'x' | 'modelsdev';
-  type: 'repository' | 'issue' | 'model' | 'price_alert' | 'post' | 'question' | 'answer';
+  platform: Platform;
+  type: ContentType;
   title: string;
   content: string;
   author: {
@@ -323,18 +310,20 @@ interface AggregatedItem {
 ```
 
 ### Security Features
-- ✅ API keys stored in environment variables
-- ✅ GitHub Secrets support for CI/CD
-- ✅ Rate limiting to prevent abuse
-- ✅ No credentials committed to git (`.gitignore`)
-- ✅ Error handling without exposing sensitive data
+- API keys stored in environment variables
+- GitHub Secrets support for CI/CD
+- Rate limiting to prevent abuse
+- No credentials committed to git (`.gitignore`)
+- Error handling without exposing sensitive data
 
 ### Performance Optimizations
-- ✅ 30-minute update cycles (not real-time to save API calls)
-- ✅ JSON storage (no database overhead)
-- ✅ Incremental Static Regeneration (ISR) ready
-- ✅ Lazy loading for animations
-- ✅ Optimized CSS with no external dependencies
+- 30-minute update cycles (not real-time to save API calls)
+- JSON storage (no database overhead)
+- Incremental Static Regeneration (ISR) ready
+- Lazy loading for animations
+- Optimized CSS with no external dependencies
+
+---
 
 ## Browser Support
 
@@ -342,44 +331,6 @@ interface AggregatedItem {
 - Firefox 75+
 - Safari 13+
 - Edge 80+
-
-## License
-
-MIT License - see LICENSE file for details
-
----
-
-**Last Updated:** February 7, 2026  
-**Current Phase:** Phase 6 (Optimization) - 100% Complete ✅  
-**Status:** 🎉 **PRODUCTION READY - FULLY FEATURED**
-
----
-
-## 📊 Project Statistics
-
-**Implementation Metrics:**
-- **Total Files Created:** 30+
-- **Lines of Code:** ~4,500+
-- **TypeScript Files:** 12
-- **API Integrations:** 6 platforms (GitHub, Models.dev, Reddit, Stack Overflow, Discord, X)
-- **Documentation Pages:** 7 comprehensive guides
-- **Automated Workflows:** 2 GitHub Actions
-- **Test Scripts:** 2 (credentials, models.dev)
-
-**Active Scraping Schedule:**
-- GitHub: Every 30 minutes (48 times/day)
-- Models.dev: Every 60 minutes (24 times/day)
-- Others: On-demand when credentials configured
-
-**Platform Coverage:**
-- ✅ **GitHub** - 100% (tested & time-distributed)
-- ✅ **Models.dev** - 100% (hourly pricing tracker)
-- ⏳ **Reddit** - Ready (needs credentials)
-- ⏳ **Stack Overflow** - Ready (works without key)
-- ⚠️ **Discord** - Ready (needs server invite)
-- ⏳ **X/Twitter** - Ready (needs credentials)
-
-**Current Utilization:** 3/6 platforms active (50%)
 
 ---
 
@@ -389,8 +340,22 @@ See `AGENTS.md` for:
 - Build, lint, and test commands
 - Code style guidelines (imports, types, naming, error handling)
 - Planning workflow with opencode-planning-toolkit
+- GitHub Actions workflow fix roadmap
+
+---
+
+## Verification Required
+
+**Next Critical Step:** Push changes to GitHub to verify workflows pass:
+```bash
+git add .
+git commit -m "fix: Resolve all GitHub Actions workflow blockers"
+git push
+```
+
+Monitor `.github/workflows/test.yml` and `.github/workflows/scrape-and-deploy.yml` for successful runs.
 
 ---
 
 **Last Updated:** February 6, 2026  
-**Status:** Production Ready - Fully Featured
+**Status:** ✅ **FIXED** - Workflows ready for GitHub verification

@@ -133,3 +133,60 @@ docs/
 3. Link Specs to Plans (`append_spec`)
 4. Read full context before work (`read_plan`)
 5. Mark complete when done (`mark_plan_done`)
+
+---
+
+## Roadmap: GitHub Actions Workflow Fixes
+
+### Status: Both workflows are 100% non-functional (30+ failed runs)
+
+---
+
+### CRITICAL - Phase 1: ESLint Configuration
+
+- [ ] **ESLint-001**: Create ESLint configuration file (`.eslintrc.js` or `eslint.config.js`)
+  - Required before test workflow can pass
+  - Command: `npm init @eslint/config`
+  - Affects: `.github/workflows/test.yml` lint step
+
+---
+
+### CRITICAL - Phase 2: TypeScript Import Extensions
+
+- [ ] **TS-IMP-001**: Fix import extensions in `src/api/github.ts` - add `.js` to imports
+- [ ] **TS-IMP-002**: Fix import extensions in `src/api/discord.ts` - add `.js` to imports
+- [ ] **TS-IMP-003**: Fix import extensions in `src/api/reddit.ts` - add `.js` to imports
+- [ ] **TS-IMP-004**: Fix import extensions in `src/api/stackoverflow.ts` - add `.js` to imports
+- [ ] **TS-IMP-005**: Fix import extensions in `src/api/x.ts` - add `.js` to imports
+- [ ] **TS-IMP-006**: Fix import extensions in `src/api/modelsdev.ts` - add `.js` to imports
+- [ ] **TS-IMP-007**: Fix import extensions in `src/index.ts` - add `.js` to imports
+- [ ] **TS-IMP-008**: Fix import extensions in `src/scraper/cli.ts` - add `.js` to imports
+- [ ] **TS-IMP-009**: Fix import extensions in `src/scraper/index.ts` - add `.js` to imports
+
+**Alternative**: Change `moduleResolution` from `'node16'` to `'bundler'` in `tsconfig.json` or `tsconfig.scraper.json`
+
+---
+
+### CRITICAL - Phase 3: TypeScript Type Definitions
+
+- [ ] **TS-TYPE-001**: Add `rateLimit()` method to `GitHubAPI` type interface
+- [ ] **TS-TYPE-002**: Add `rateLimit()` method to `DiscordAPI` type interface
+- [ ] **TS-TYPE-003**: Add `rateLimit()` method to `RedditAPI` type interface
+- [ ] **TS-TYPE-004**: Add `rateLimit()` method to `StackOverflowAPI` type interface
+- [ ] **TS-TYPE-005**: Add `rateLimit()` method to `XAPI` type interface
+- [ ] **TS-TYPE-006**: Add `rateLimit()` method to `ModelsDevAPI` type interface
+- [ ] **TS-TYPE-007**: Add `handleError()` method to `GitHubAPI` type interface
+- [ ] **TS-TYPE-008**: Add `handleError()` method to `DiscordAPI` type interface
+- [ ] **TS-TYPE-009**: Add `handleError()` method to `RedditAPI` type interface
+- [ ] **TS-TYPE-010**: Add `handleError()` method to `StackOverflowAPI` type interface
+- [ ] **TS-TYPE-011**: Add `handleError()` method to `XAPI` type interface
+- [ ] **TS-TYPE-012**: Add `handleError()` method to `ModelsDevAPI` type interface
+- [ ] **TS-TYPE-013**: Add platform properties to `ScraperConfig` interface (`github`, `reddit`, `stackoverflow`, `discord`, `x`)
+
+---
+
+### HIGH PRIORITY - Phase 4: Workflow Verification
+
+- [ ] **WF-001**: Run test workflow and verify linting passes
+- [ ] **WF-002**: Run scrape-and-deploy workflow and verify compilation passes
+- [ ] **WF-003**: Verify both workflows complete successfully with no errors

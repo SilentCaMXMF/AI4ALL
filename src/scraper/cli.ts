@@ -1,34 +1,7 @@
 #!/usr/bin/env node
 
-import { ScraperService, ScraperConfig } from './index';
-import { readFile } from 'fs/promises';
-import { join } from 'path';
-
-interface ConfigFile {
-  github?: {
-    token: string;
-    username?: string;
-    orgs?: string[];
-  };
-  reddit?: {
-    clientId: string;
-    clientSecret: string;
-    username: string;
-    password: string;
-    subreddits?: string[];
-  };
-  stackoverflow?: {
-    key?: string;
-    tags?: string[];
-  };
-  discord?: {
-    token: string;
-    channels?: string[];
-  };
-  x?: {
-    bearerToken: string;
-  };
-}
+import { ScraperService } from './index.js';
+import type { ScraperConfig } from './index.js';
 
 async function loadConfig(): Promise<ScraperConfig> {
   const config: ScraperConfig = {};
@@ -103,15 +76,6 @@ async function main() {
       process.exit(1);
     }
 
-    // Parse command line arguments
-    const args = process.argv.slice(2);
-    let platforms: string[] | undefined;
-    
-    const platformsIndex = args.indexOf('--platforms');
-    if (platformsIndex !== -1 && args[platformsIndex + 1]) {
-      platforms = args[platformsIndex + 1].split(',').map(p => p.trim());
-    }
-
     console.log('[Main] Starting scrape...');
     console.log();
 
@@ -163,7 +127,7 @@ async function main() {
 
 // Run if called directly
 if (import.meta.url === `file://${process.argv[1]}`) {
-  main();
+  void main();
 }
 
 export { main, loadConfig };
