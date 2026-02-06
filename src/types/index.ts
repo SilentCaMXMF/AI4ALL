@@ -113,10 +113,10 @@ export interface PlatformConfig {
   };
   x?: {
     bearerToken: string;
-    apiKey: string;
-    apiSecret: string;
-    accessToken: string;
-    accessTokenSecret: string;
+    apiKey?: string;
+    apiSecret?: string;
+    accessToken?: string;
+    accessTokenSecret?: string;
     searchQueries?: string[];
   };
 }

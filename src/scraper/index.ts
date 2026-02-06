@@ -1,11 +1,11 @@
-import { GitHubAPI } from '../api/github.js';
-import { RedditAPI } from '../api/reddit.js';
-import { StackOverflowAPI } from '../api/stackoverflow.js';
-import { DiscordAPI } from '../api/discord.js';
-import { XAPI } from '../api/x.js';
-import { ModelsDevAPI } from '../api/modelsdev.js';
+import { GitHubAPI } from '../api/github.ts';
+import { RedditAPI } from '../api/reddit.ts';
+import { StackOverflowAPI } from '../api/stackoverflow.ts';
+import { DiscordAPI } from '../api/discord.ts';
+import { XAPI } from '../api/x.ts';
+import { ModelsDevAPI } from '../api/modelsdev.ts';
 import { AggregatedItem, PlatformConfig, FetchOptions } from '../types/index.js';
-import { DataStore } from '../data/store.js';
+import { DataStore } from '../data/store.ts';
 
 export interface ScraperConfig extends PlatformConfig {
   platforms?: string[]; // Which platforms to scrape (defaults to all configured)
