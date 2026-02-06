@@ -1,0 +1,10 @@
+/// <reference types="node" />
+
+export * from './types/index.js';
+export { ScraperService, ScraperConfig, ScraperResult } from './scraper/index.js';
+export { DataStore } from './data/store.js';
+export { GitHubAPI } from './api/github.js';
+export { RedditAPI } from './api/reddit.js';
+export { StackOverflowAPI } from './api/stackoverflow.js';
+export { DiscordAPI } from './api/discord.js';
+export { XAPI } from './api/x.js';

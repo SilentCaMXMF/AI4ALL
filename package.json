@@ -1,0 +1,41 @@
+{
+  "name": "social-media-aggregator",
+  "version": "1.0.0",
+  "description": "Aggregate content from GitHub, Reddit, StackOverflow, Discord, and X (Twitter)",
+  "main": "src/index.ts",
+  "type": "module",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "scrape": "ts-node src/scraper/index.ts",
+    "scrape:github": "ts-node src/scraper/platforms/github.ts",
+    "scrape:reddit": "ts-node src/scraper/platforms/reddit.ts",
+    "scrape:stackoverflow": "ts-node src/scraper/platforms/stackoverflow.ts",
+    "lint": "eslint . --ext .ts,.tsx",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest"
+  },
+  "dependencies": {
+    "next": "^14.1.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "node-fetch": "^3.3.2",
+    "date-fns": "^3.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.16",
+    "@types/react": "^18.2.55",
+    "@types/react-dom": "^18.2.19",
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
+    "eslint": "^8.56.0",
+    "eslint-config-next": "^14.1.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3",
+    "vitest": "^1.2.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

@@ -1,0 +1,116 @@
+name: Scrape and Deploy
+
+on:
+  schedule:
+    # Run every 30 minutes
+    - cron: '*/30 * * * *'
+  
+  # Allow manual trigger
+  workflow_dispatch:
+    inputs:
+      platforms:
+        description: 'Platforms to scrape (comma-separated, or "all")'
+        required: false
+        default: 'all'
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Create data directory
+        run: mkdir -p data
+
+      - name: Run scraper
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REDDIT_CLIENT_ID: ${{ secrets.REDDIT_CLIENT_ID }}
+          REDDIT_CLIENT_SECRET: ${{ secrets.REDDIT_CLIENT_SECRET }}
+          REDDIT_USERNAME: ${{ secrets.REDDIT_USERNAME }}
+          REDDIT_PASSWORD: ${{ secrets.REDDIT_PASSWORD }}
+          DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
+          X_BEARER_TOKEN: ${{ secrets.X_BEARER_TOKEN }}
+          PLATFORMS: ${{ github.event.inputs.platforms || 'all' }}
+        run: |
+          if [ "$PLATFORMS" = "all" ]; then
+            npx ts-node src/scraper/index.ts
+          else
+            npx ts-node src/scraper/index.ts --platforms $PLATFORMS
+          fi
+
+      - name: Upload scraped data
+        uses: actions/upload-artifact@v4
+        with:
+          name: scraped-data
+          path: data/aggregated-data.json
+          retention-days: 7
+
+      - name: Commit and push data
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add data/aggregated-data.json
+          git diff --staged --quiet || (git commit -m "Update aggregated data [$(date +%Y-%m-%d_%H:%M)]" && git push)
+
+  deploy:
+    needs: scrape
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download scraped data
+        uses: actions/download-artifact@v4
+        with:
+          name: scraped-data
+          path: data/
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build site
+        run: npm run build
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        if: github.ref == 'refs/heads/main'
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./out
+
+  notify:
+    needs: [scrape, deploy]
+    runs-on: ubuntu-latest
+    if: always()
+    
+    steps:
+      - name: Notify on success
+        if: needs.scrape.result == 'success' && needs.deploy.result == 'success'
+        run: echo "✅ Scrape and deployment completed successfully!"
+
+      - name: Notify on failure
+        if: needs.scrape.result == 'failure' || needs.deploy.result == 'failure'
+        run: |
+          echo "❌ Workflow failed!"
+          echo "Scrape result: ${{ needs.scrape.result }}"
+          echo "Deploy result: ${{ needs.deploy.result }}"
