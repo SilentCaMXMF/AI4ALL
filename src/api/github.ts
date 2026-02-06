@@ -44,7 +44,29 @@ interface GitHubIssue {
 interface GitHubSearchItem {
   total_count: number;
   incomplete_results: boolean;
-  items: (GitHubRepo | GitHubIssue | any)[];
+  items: (GitHubRepo | GitHubIssue)[];
+}
+
+interface GitHubLabel {
+  name: string;
+}
+
+interface GitHubDiscussion {
+  id: number;
+  title: string;
+  body: string;
+  html_url: string;
+  created_at: string;
+  comments: number;
+  labels: GitHubLabel[];
+  category?: {
+    name: string;
+  };
+  user: {
+    login: string;
+    html_url: string;
+    avatar_url: string;
+  };
 }
 
 interface ScrapeState {
@@ -268,11 +290,9 @@ export class GitHubAPI extends BasePlatformAPI {
     }) as GitHubIssue[];
   }
 
-  private async searchFreshDiscussions(query: string, timeWindow: { start: Date; end: Date }): Promise<any[]> {
+  private async searchFreshDiscussions(query: string, timeWindow: { start: Date; end: Date }): Promise<GitHubDiscussion[]> {
     await this.rateLimit();
     
-    // Note: GitHub Discussions API requires GraphQL
-    // For now, we'll search for issues labeled as discussions
     const dateQuery = `created:>${timeWindow.start.toISOString()} label:discussion ${query}`;
     const encodedQuery = encodeURIComponent(dateQuery);
     
@@ -288,7 +308,7 @@ export class GitHubAPI extends BasePlatformAPI {
     );
 
     if (!response.ok) {
-      return []; // Discussions might not be available
+      return [];
     }
 
     const data = await response.json() as GitHubSearchItem;
@@ -297,7 +317,7 @@ export class GitHubAPI extends BasePlatformAPI {
     return data.items.filter(item => {
       const createdAt = new Date(item.created_at);
       return createdAt >= timeWindow.start && createdAt <= timeWindow.end;
-    });
+    }) as unknown as GitHubDiscussion[];
   }
 
   private async fetchRecentUserRepos(username: string, timeWindow: { start: Date; end: Date }): Promise<GitHubRepo[]> {
@@ -441,7 +461,7 @@ export class GitHubAPI extends BasePlatformAPI {
     };
   }
 
-  private normalizeDiscussion(discussion: any): AggregatedItem {
+  private normalizeDiscussion(discussion: GitHubDiscussion): AggregatedItem {
     return {
       id: `github-discussion-${discussion.id}`,
       platform: 'github',
@@ -458,7 +478,7 @@ export class GitHubAPI extends BasePlatformAPI {
       metrics: {
         comments: discussion.comments
       },
-      tags: discussion.labels ? discussion.labels.map((l: any) => l.name) : [discussion.category?.name].filter(Boolean),
+      tags: discussion.labels ? discussion.labels.map((l: GitHubLabel) => l.name) : [discussion.category?.name].filter(Boolean),
       raw: discussion
     };
   }
