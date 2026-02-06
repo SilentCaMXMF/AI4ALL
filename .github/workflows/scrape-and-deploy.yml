@@ -33,9 +33,6 @@ jobs:
       - name: Create data directory
         run: mkdir -p data
 
-      - name: Install tsx
-        run: npm install -g tsx
-
       - name: Run scraper
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -48,9 +45,9 @@ jobs:
           PLATFORMS: ${{ github.event.inputs.platforms || 'all' }}
         run: |
           if [ "$PLATFORMS" = "all" ]; then
-            npx tsx src/scraper/index.ts
+            npx ts-node-esm src/scraper/index.ts
           else
-            npx tsx src/scraper/index.ts --platforms $PLATFORMS
+            npx ts-node-esm src/scraper/index.ts --platforms $PLATFORMS
           fi
 
       - name: Upload scraped data
