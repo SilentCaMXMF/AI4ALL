@@ -12,6 +12,8 @@
     "scrape:github": "ts-node src/scraper/platforms/github.ts",
     "scrape:reddit": "ts-node src/scraper/platforms/reddit.ts",
     "scrape:stackoverflow": "ts-node src/scraper/platforms/stackoverflow.ts",
+    "schedule": "node github-distribution.ts",
+    "schedule:github": "node github-distribution.ts",
     "lint": "eslint . --ext .ts,.tsx",
     "typecheck": "tsc --noEmit",
     "test": "vitest"

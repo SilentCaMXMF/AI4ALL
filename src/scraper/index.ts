@@ -3,6 +3,7 @@ import { RedditAPI } from '../api/reddit.js';
 import { StackOverflowAPI } from '../api/stackoverflow.js';
 import { DiscordAPI } from '../api/discord.js';
 import { XAPI } from '../api/x.js';
+import { ModelsDevAPI } from '../api/modelsdev.js';
 import { AggregatedItem, PlatformConfig, FetchOptions } from '../types/index.js';
 import { DataStore } from '../data/store.js';
 
@@ -21,7 +22,7 @@ export interface ScraperResult {
 export class ScraperService {
   private config: ScraperConfig;
   private store: DataStore;
-  private apis: Map<string, GitHubAPI | RedditAPI | StackOverflowAPI | DiscordAPI | XAPI>;
+  private apis: Map<string, GitHubAPI | RedditAPI | StackOverflowAPI | DiscordAPI | XAPI | ModelsDevAPI>;
 
   constructor(config: ScraperConfig) {
     this.config = config;
@@ -53,6 +54,11 @@ export class ScraperService {
     if (this.config.x?.bearerToken) {
       this.apis.set('x', new XAPI(this.config.x));
     }
+
+    // Initialize Models.dev API (no credentials needed - public API)
+    this.apis.set('modelsdev', new ModelsDevAPI({
+      searchTerms: ['opencode', 'zen']
+    }));
   }
 
   async scrapeAll(options: FetchOptions = {}): Promise<ScraperResult[]> {

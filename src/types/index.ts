@@ -17,7 +17,7 @@ export interface AggregatedItem {
   raw: unknown; // Original platform-specific data
 }
 
-export type Platform = 'github' | 'reddit' | 'stackoverflow' | 'discord' | 'x';
+export type Platform = 'github' | 'reddit' | 'stackoverflow' | 'discord' | 'x' | 'modelsdev';
 
 export type ContentType = 
   | 'repository' 
@@ -27,7 +27,9 @@ export type ContentType =
   | 'post' 
   | 'comment'
   | 'question'
-  | 'answer';
+  | 'answer'
+  | 'model'
+  | 'price_alert';
 
 export interface PlatformMetrics {
   stars?: number;

@@ -48,6 +48,7 @@ Visit `index.html` for a beautiful, interactive roadmap showing:
 
 - **Multi-Platform Support**: Aggregates content from:
   - ✅ **GitHub** (repositories, issues, pull requests) - TESTED & WORKING
+  - ✅ **Models.dev** (opencode/zen model pricing) - Hourly price tracking
   - ⏳ **Reddit** (posts from configured subreddits) - Ready for credentials
   - ⏳ **Stack Overflow** (questions and answers) - Ready for credentials
   - ⚠️ **Discord** (messages from configured channels) - Bot valid, needs invite
@@ -156,10 +157,133 @@ See `API-SETUP-GUIDE.md` for complete step-by-step instructions with screenshots
 | Platform | Rate Limit | Status | Last Tested |
 |----------|-----------|--------|-------------|
 | GitHub | 5,000 req/hour | ✅ Active | Feb 6, 2026 |
+| Models.dev | 60 req/hour | ✅ Active | Hourly pricing |
 | Reddit | 60 req/minute | ✅ Ready | - |
 | Stack Overflow | 300 req/day | ✅ Ready | - |
 | Discord | Varies by endpoint | ⚠️ Needs Setup | Feb 6, 2026 |
 | X (Twitter) | Depends on tier | ✅ Ready | - |
+
+### Models.dev - Opencode Zen Pricing Tracker
+
+A dedicated integration for tracking AI model pricing from [Models.dev](https://models.dev), specifically focused on **OpenCode Zen** provider models.
+
+#### 🎯 What It Tracks
+
+- **Model Specifications**: Context limits, capabilities (tool calling, reasoning)
+- **Pricing Data**: Input cost, output cost, reasoning cost per 1M tokens
+- **Price Changes**: Automatic detection when pricing is updated
+- **Search Terms**: Filters for "opencode" and "zen" related models
+
+#### ⏰ Update Frequency
+
+- **Hourly Intervals**: Fetches fresh data every hour
+- **Smart Caching**: Skips fetches if less than 1 hour has passed
+- **Change Detection**: Compares with previous fetch to detect price changes
+- **History Tracking**: Maintains history of last 1,000 price changes
+
+#### 📊 Data Structure
+
+```typescript
+interface ModelsDevModel {
+  id: string;
+  name: string;
+  provider: string;      // e.g., "OpenCode Zen"
+  providerId: string;    // e.g., "opencode"
+  modelId: string;       // e.g., "claude-sonnet-4-5"
+  inputCost?: number;    // Cost per 1M input tokens
+  outputCost?: number;   // Cost per 1M output tokens
+  contextLimit?: number; // Max context window
+  toolCall?: boolean;    // Supports tool calling
+  reasoning?: boolean;   // Supports reasoning
+  lastUpdated?: string;  // ISO timestamp
+}
+```
+
+#### 💰 Price Alert System
+
+When a price change is detected between hourly fetches:
+- 🚨 Creates a "price_alert" type item
+- 📊 Shows old vs new price with percentage change
+- 🕐 Timestamps the change
+- 🔗 Links to the model on models.dev
+
+#### 🚀 Usage
+
+```bash
+# Test the models.dev integration
+npx ts-node test-modelsdev.ts
+
+# Scrape all platforms (includes models.dev)
+npm run scrape
+```
+
+#### 📁 State Files
+
+- **Cache**: `data/modelsdev-state.json`
+- **Tracks**: Last fetch time, current models, price history
+
+### GitHub Time Distribution Strategy
+
+The GitHub API implementation uses an intelligent time distribution system to maximize fresh content discovery while respecting rate limits:
+
+#### ⏰ 48 Periods per Day (30-minute intervals)
+
+```
+24 hours ÷ 30 minutes = 48 scrape periods per day
+Period 0 (00:00) → Period 47 (23:30)
+```
+
+#### 📊 Rate Limit Distribution
+
+| Metric | Value |
+|--------|-------|
+| **GitHub Rate Limit** | 5,000 requests/hour |
+| **Conservative Usage** | 20% per period (1,000 requests) |
+| **Requests per Day** | 48,000 requests (40% of daily limit) |
+| **Emergency Buffer** | 4,000 req/hour remaining |
+
+#### 🎯 Search Query Rotation
+
+Each period searches for **fresh content only** (last 2 hours) using rotating queries:
+
+| Period | Search Query | Content Type |
+|--------|--------------|--------------|
+| 0, 5, 10, 15... | "free AI models" | Repos, Issues, Discussions |
+| 1, 6, 11, 16... | "open source LLM" | Repos, Issues, Discussions |
+| 2, 7, 12, 17... | "free API providers" | Repos, Issues, Discussions |
+| 3, 8, 13, 18... | "opencode" | Repos, Issues, Discussions |
+| 4, 9, 14, 19... | "zen AI" | Repos, Issues, Discussions |
+
+#### 🔍 Fresh Content Strategy
+
+- **Time Window**: Last 2 hours (to catch delayed items)
+- **Repositories**: `pushed:>YYYY-MM-DD` + query
+- **Issues**: `created:>YYYY-MM-DDTHH:MM:SSZ` + query
+- **Discussions**: `created:>YYYY-MM-DDTHH:MM:SSZ` + label:discussion + query
+- **User/Org Repos**: Checked every 6 periods (every 3 hours)
+
+#### 💡 Key Benefits
+
+✅ **Freshness**: Only fetches content from last 2 hours  
+✅ **Distribution**: 48 evenly-spaced scrapes per day  
+✅ **Safety**: Stays well within rate limits (20% usage)  
+✅ **Coverage**: Rotates through 5 different search queries  
+✅ **Efficiency**: 48,000 requests/day utilized from 120,000 available  
+✅ **Buffer**: 4,000 req/hour emergency buffer for manual searches  
+
+#### 📁 State Tracking
+
+The scraper maintains state in `data/github-scrape-state.json`:
+- Last scrape timestamp
+- Current period (0-47)
+- Requests used this period
+- Requests used today
+- Searches already performed
+
+View the distribution schedule:
+```bash
+node github-distribution.ts
+```
 
 ### Data Normalization
 
@@ -168,8 +292,8 @@ All content is normalized to a common schema:
 ```typescript
 interface AggregatedItem {
   id: string;
-  platform: 'github' | 'reddit' | 'stackoverflow' | 'discord' | 'x';
-  type: string;
+  platform: 'github' | 'reddit' | 'stackoverflow' | 'discord' | 'x' | 'modelsdev';
+  type: 'repository' | 'issue' | 'model' | 'price_alert' | 'post' | 'question' | 'answer';
   title: string;
   content: string;
   author: {
@@ -201,6 +325,7 @@ interface AggregatedItem {
 ├── src/
 │   ├── api/              # Platform API clients
 │   │   ├── github.ts     # ✅ Tested & working
+│   │   ├── modelsdev.ts  # ✅ Hourly pricing tracker
 │   │   ├── reddit.ts     # ✅ Ready
 │   │   ├── stackoverflow.ts  # ✅ Ready
 │   │   ├── discord.ts    # ⚠️ Bot valid, needs invite
@@ -297,6 +422,19 @@ This will:
 - ✅ Validate Discord bot token
 - ✅ Check channel access permissions
 - ✅ Show helpful error messages if something's wrong
+
+#### Testing Models.dev Integration
+
+```bash
+# Test models.dev pricing tracker
+npx ts-node test-modelsdev.ts
+```
+
+This will:
+- ✅ Fetch opencode/zen models from models.dev API
+- ✅ Display current pricing information
+- ✅ Show price change history
+- ✅ Track model specifications and capabilities
 
 ### Adding a New Platform
 
