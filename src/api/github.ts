@@ -21,6 +21,7 @@ interface GitHubRepo {
     html_url: string;
     avatar_url: string;
   };
+  pull_request?: undefined;
 }
 
 interface GitHubIssue {
@@ -288,10 +289,10 @@ export class GitHubAPI extends BasePlatformAPI {
     console.log(`[GitHub] Found ${data.total_count} issues (showing ${data.items.length})`);
     
     // Filter issues only (not PRs) created in time window
-    return data.items.filter(item => {
+    return data.items.filter((item): item is GitHubIssue => {
       const createdAt = new Date(item.created_at);
       return !item.pull_request && createdAt >= timeWindow.start && createdAt <= timeWindow.end;
-    }) as GitHubIssue[];
+    });
   }
 
   private async searchFreshDiscussions(query: string, timeWindow: { start: Date; end: Date }): Promise<GitHubDiscussion[]> {
