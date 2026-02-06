@@ -98,7 +98,7 @@ export class RedditAPI extends BasePlatformAPI {
       throw new Error(`Reddit auth error: ${response.status} ${response.statusText}`);
     }
 
-    const data: RedditTokenResponse = await response.json();
+    const data = await response.json() as RedditTokenResponse;
     this.accessToken = data.access_token;
     this.tokenExpiry = Date.now() + (data.expires_in * 1000) - 60000; // Refresh 1 min before expiry
   }
@@ -124,7 +124,7 @@ export class RedditAPI extends BasePlatformAPI {
       throw new Error(`Reddit API error: ${response.status} ${response.statusText}`);
     }
 
-    const data = await response.json();
+    const data = await response.json() as { data?: { children?: RedditPost[] } };
     return data.data?.children || [];
   }
 

@@ -87,7 +87,7 @@ export class DiscordAPI extends BasePlatformAPI {
       throw new Error(`Discord API error: ${response.status} ${response.statusText}`);
     }
 
-    return response.json();
+    return response.json() as Promise<DiscordMessage[]>;
   }
 
   async fetchGuildChannels(guildId: string): Promise<DiscordChannel[]> {
@@ -108,7 +108,7 @@ export class DiscordAPI extends BasePlatformAPI {
       throw new Error(`Discord API error: ${response.status} ${response.statusText}`);
     }
 
-    return response.json();
+    return response.json() as Promise<DiscordChannel[]>;
   }
 
   private normalizeMessage(message: DiscordMessage): AggregatedItem {

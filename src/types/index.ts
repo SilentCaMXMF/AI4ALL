@@ -29,7 +29,8 @@ export type ContentType =
   | 'question'
   | 'answer'
   | 'model'
-  | 'price_alert';
+  | 'price_alert'
+  | 'discussion';
 
 export interface PlatformMetrics {
   stars?: number;
@@ -116,5 +117,6 @@ export interface PlatformConfig {
     apiSecret: string;
     accessToken: string;
     accessTokenSecret: string;
+    searchQueries?: string[];
   };
 }

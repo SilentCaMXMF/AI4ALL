@@ -96,7 +96,7 @@ export class XAPI extends BasePlatformAPI {
       throw new Error(`X API error: ${response.status} ${response.statusText}`);
     }
 
-    const data = await response.json();
+    const data = await response.json() as { data?: XTweet[] };
     return data.data || [];
   }
 
@@ -124,7 +124,7 @@ export class XAPI extends BasePlatformAPI {
       throw new Error(`X API error: ${response.status} ${response.statusText}`);
     }
 
-    const data = await response.json();
+    const data = await response.json() as { data?: XUser[] };
     return data.data || [];
   }
 

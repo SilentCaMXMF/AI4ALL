@@ -1,10 +1,11 @@
 /// <reference types="node" />
 
-export * from './types/index.js';
-export { ScraperService, ScraperConfig, ScraperResult } from './scraper/index.js';
-export { DataStore } from './data/store.js';
-export { GitHubAPI } from './api/github.js';
-export { RedditAPI } from './api/reddit.js';
-export { StackOverflowAPI } from './api/stackoverflow.js';
-export { DiscordAPI } from './api/discord.js';
-export { XAPI } from './api/x.js';
+export * from './types/index';
+export { ScraperService, ScraperConfig, ScraperResult } from './scraper/index';
+export { DataStore } from './data/store';
+export { GitHubAPI } from './api/github';
+export { RedditAPI } from './api/reddit';
+export { StackOverflowAPI } from './api/stackoverflow';
+export { DiscordAPI } from './api/discord';
+export { XAPI } from './api/x';
+export { ModelsDevAPI } from './api/modelsdev';

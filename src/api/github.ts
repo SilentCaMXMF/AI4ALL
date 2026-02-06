@@ -240,7 +240,7 @@ export class GitHubAPI extends BasePlatformAPI {
       throw new Error(`GitHub API error: ${response.status} ${response.statusText}`);
     }
 
-    const data: GitHubSearchItem = await response.json();
+    const data = await response.json() as GitHubSearchItem;
     this.incrementRequestCounter();
     
     console.log(`[GitHub] Found ${data.total_count} repos (showing ${data.items.length})`);
@@ -275,7 +275,7 @@ export class GitHubAPI extends BasePlatformAPI {
       throw new Error(`GitHub API error: ${response.status} ${response.statusText}`);
     }
 
-    const data: GitHubSearchItem = await response.json();
+    const data = await response.json() as GitHubSearchItem;
     this.incrementRequestCounter();
     
     console.log(`[GitHub] Found ${data.total_count} issues (showing ${data.items.length})`);
@@ -310,7 +310,7 @@ export class GitHubAPI extends BasePlatformAPI {
       return []; // Discussions might not be available
     }
 
-    const data: GitHubSearchItem = await response.json();
+    const data = await response.json() as GitHubSearchItem;
     this.incrementRequestCounter();
     
     return data.items.filter(item => {
@@ -337,7 +337,7 @@ export class GitHubAPI extends BasePlatformAPI {
       throw new Error(`GitHub API error: ${response.status} ${response.statusText}`);
     }
 
-    const repos: GitHubRepo[] = await response.json();
+    const repos = await response.json() as GitHubRepo[];
     this.incrementRequestCounter();
     
     // Filter to only recent updates
@@ -365,7 +365,7 @@ export class GitHubAPI extends BasePlatformAPI {
       throw new Error(`GitHub API error: ${response.status} ${response.statusText}`);
     }
 
-    const repos: GitHubRepo[] = await response.json();
+    const repos = await response.json() as GitHubRepo[];
     this.incrementRequestCounter();
     
     // Filter to only recent updates

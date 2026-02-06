@@ -102,7 +102,7 @@ export class StackOverflowAPI extends BasePlatformAPI {
       throw new Error(`Stack Overflow API error: ${response.status} ${response.statusText}`);
     }
 
-    const data = await response.json();
+    const data = await response.json() as { items?: StackOverflowQuestion[] };
     return data.items || [];
   }
 
@@ -135,7 +135,7 @@ export class StackOverflowAPI extends BasePlatformAPI {
       throw new Error(`Stack Overflow API error: ${response.status} ${response.statusText}`);
     }
 
-    const data = await response.json();
+    const data = await response.json() as { items?: StackOverflowAnswer[] };
     return data.items || [];
   }
 

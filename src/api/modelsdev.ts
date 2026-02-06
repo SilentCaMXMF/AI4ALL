@@ -96,7 +96,7 @@ export class ModelsDevAPI extends BasePlatformAPI {
         throw new Error(`Models.dev API error: ${response.status} ${response.statusText}`);
       }
 
-      const allModels: ModelsDevModel[] = await response.json();
+      const allModels = await response.json() as ModelsDevModel[];
       this.state.fetchCount++;
       
       console.log(`[ModelsDev] Total models in database: ${allModels.length}`);

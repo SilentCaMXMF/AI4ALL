@@ -2,9 +2,9 @@ import { GitHubAPI } from '../api/github.js';
 import { readFile } from 'fs/promises';
 
 // Load environment variables manually
-function loadEnv() {
+async function loadEnv() {
   try {
-    const envContent = readFile('.env', 'utf-8');
+    const envContent = await readFile('.env', 'utf-8');
     const lines = envContent.split('\n');
     const env: Record<string, string> = {};
     
@@ -24,7 +24,7 @@ function loadEnv() {
   }
 }
 
-const env = loadEnv();
+const env = await loadEnv();
 
 console.log('╔════════════════════════════════════════════════════════════════╗');
 console.log('║     GitHub API Time Distribution & Rate Limit Analyzer         ║');

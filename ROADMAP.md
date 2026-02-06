@@ -1,9 +1,9 @@
 # Roadmap: Social Media Aggregator Static Site
 
-## Current Status - February 6, 2026 ✅
+## Current Status - February 6, 2026
 
 **Overall Progress: 98% Complete**
-**Last Updated: February 7, 2026**
+**Last Updated: February 6, 2026**
 
 ### ✅ Completed Phases
 
@@ -380,3 +380,17 @@ MIT License - see LICENSE file for details
 - ⏳ **X/Twitter** - Ready (needs credentials)
 
 **Current Utilization:** 3/6 platforms active (50%)
+
+---
+
+## Development Guidelines
+
+See `AGENTS.md` for:
+- Build, lint, and test commands
+- Code style guidelines (imports, types, naming, error handling)
+- Planning workflow with opencode-planning-toolkit
+
+---
+
+**Last Updated:** February 6, 2026  
+**Status:** Production Ready - Fully Featured
