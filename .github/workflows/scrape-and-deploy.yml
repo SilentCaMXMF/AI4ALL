@@ -33,6 +33,9 @@ jobs:
       - name: Create data directory
         run: mkdir -p data
 
+      - name: Compile scraper
+        run: npx tsc -p tsconfig.scraper.json
+
       - name: Run scraper
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -45,9 +48,9 @@ jobs:
           PLATFORMS: ${{ github.event.inputs.platforms || 'all' }}
         run: |
           if [ "$PLATFORMS" = "all" ]; then
-            npx ts-node-esm src/scraper/index.ts
+            node dist/scraper/index.js
           else
-            npx ts-node-esm src/scraper/index.ts --platforms $PLATFORMS
+            node dist/scraper/index.js --platforms $PLATFORMS
           fi
 
       - name: Upload scraped data

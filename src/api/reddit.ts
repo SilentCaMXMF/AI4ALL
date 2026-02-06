@@ -1,4 +1,4 @@
-import { BasePlatformAPI, AggregatedItem, FetchOptions, FetchResult, Platform } from '../types/index.js';
+import { BasePlatformAPI, AggregatedItem, FetchOptions, FetchResult, Platform } from '../types/index';
 
 interface RedditPost {
   data: {

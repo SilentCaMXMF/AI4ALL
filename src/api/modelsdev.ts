@@ -1,4 +1,4 @@
-import { BasePlatformAPI, AggregatedItem, FetchOptions, FetchResult, Platform } from '../types/index.js';
+import { BasePlatformAPI, AggregatedItem, FetchOptions, FetchResult, Platform } from '../types/index';
 import { readFile, writeFile, access } from 'fs/promises';
 import { join } from 'path';
 
