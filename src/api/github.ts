@@ -39,6 +39,10 @@ interface GitHubIssue {
   };
   comments: number;
   labels: Array<{ name: string }>;
+  pull_request?: {
+    url: string;
+    html_url: string;
+  };
 }
 
 interface GitHubSearchItem {
@@ -478,7 +482,9 @@ export class GitHubAPI extends BasePlatformAPI {
       metrics: {
         comments: discussion.comments
       },
-      tags: discussion.labels ? discussion.labels.map((l: GitHubLabel) => l.name) : [discussion.category?.name].filter(Boolean),
+      tags: discussion.labels
+        ? discussion.labels.map((l: GitHubLabel) => l.name)
+        : (([discussion.category?.name].filter(Boolean) as string[])),
       raw: discussion
     };
   }

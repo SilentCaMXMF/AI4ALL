@@ -25,6 +25,8 @@ export default [
       'scrape-data.js',
       'scrape-opencode-zen.js',
       'test-*.ts',
+      '*test*.ts',
+      '*.md',
     ],
   },
   js.configs.recommended,
