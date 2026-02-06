@@ -4,7 +4,8 @@ import { StackOverflowAPI } from '../api/stackoverflow.js';
 import { DiscordAPI } from '../api/discord.js';
 import { XAPI } from '../api/x.js';
 import { ModelsDevAPI } from '../api/modelsdev.js';
-import { DataStore } from '../data/store.js';
+import type { AggregatedItem, PlatformConfig, FetchOptions } from '../types/index';
+import { DataStore } from '../data/store';
 import type { AggregatedItem, PlatformConfig, FetchOptions } from '../types/index.js';
 
 export interface ScraperConfig extends PlatformConfig {

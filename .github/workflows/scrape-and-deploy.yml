@@ -33,10 +33,7 @@ jobs:
       - name: Create data directory
         run: mkdir -p data
 
-      - name: Compile scraper
-        run: npx tsc -p tsconfig.scraper.json
-
-      - name: Run scraper
+      - name: Run scraper (using tsx)
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REDDIT_CLIENT_ID: ${{ secrets.REDDIT_CLIENT_ID }}
@@ -48,9 +45,9 @@ jobs:
           PLATFORMS: ${{ github.event.inputs.platforms || 'all' }}
         run: |
           if [ "$PLATFORMS" = "all" ]; then
-            node dist/scraper/index.js
+            npx tsx src/scraper/index.ts
           else
-            node dist/scraper/index.js --platforms $PLATFORMS
+            npx tsx src/scraper/index.ts --platforms $PLATFORMS
           fi
 
       - name: Upload scraped data

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
-import { ScraperService } from './index.js';
-import type { ScraperConfig } from './index.js';
+import { ScraperService } from './index';
+import type { ScraperConfig } from './index';
 
 async function loadConfig(): Promise<ScraperConfig> {
   const config: ScraperConfig = {};
