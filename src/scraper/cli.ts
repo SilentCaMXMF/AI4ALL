@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { ScraperService, ScraperConfig } from './index.js';
+import { ScraperService, ScraperConfig } from './index';
 import { readFile } from 'fs/promises';
 import { join } from 'path';
 
