@@ -1,6 +1,191 @@
 {
   "items": [
     {
+      "id": "github-issue-3910554390",
+      "platform": "github",
+      "type": "issue",
+      "title": "Workflows/issues #1322: [Follow-up] Update docs/verification-concerns-1307.md: Ensure  (PR #1316)",
+      "content": "# Address Remaining Verification Gaps from PR #1316\n\n## Why\nPR #1316 addressed issue #1315, but verification returned a **CONCERNS** verdict due to remaining gaps: high-severity concerns are not fully traceable to concrete resolutions/decisions with repo-local evidence, LLM invocation paths still lack tests that assert config/metadata propagation (and logging on fallback), model classification logic can misclassify names, and some workflows still reference older `actions/upload-artifact` versions. This follow-up issue closes those gaps with explicit documentation, evidence, tests, and minimal safe refactors.\n\n## Source\n- Original PR: #1316\n- Parent issue: #1315\n\n## Tasks\n\n### Documentation & Traceability\n- [ ] Add resolution links and summaries to each high-severity concern in `docs/verification-concerns-1307.md` that was resolved by code changes\n- [ ] Add explicit `DECISIONS.md` references to each high-severity concern in `docs/verification-concerns-1307.md` that was resolved by architectural decision\n- [ ] Add per-concern evidence links pointing to repo-local verification artifacts for each high-severity concern in `docs/verification-concerns-1307.md`\n- [ ] Add dated entry to `DECISIONS.md` for the \"missing artifacts\" concern including decision statement, rationale, date (ISO format), and evidence link\n\n### Re-verification Evidence Artifacts\n- [ ] Create `docs/reverification/README.md` explaining how evidence files are produced and what they contain\n- [ ] Create a dated re-verification evidence markdown file under `docs/reverification/` with clearly labeled sections for each high-severity concern\n- [ ] Update `docs/verification-concerns-1307.md` to link to the dated re-verification evidence file for each high-severity concern\n\n### LLM Invocation Testing\n- [ ] Add unit tests in `tests/test_pr_verifier.py` that mock `client.invoke` and assert config/metadata propagation for all LLM invocation call sites\n- [ ] Add unit tests in `tests/test_followup_issue_generator.py` that mock `client.invoke` and assert config/metadata propagation for all LLM invocation call sites\n- [ ] Add test in `tests/test_followup_issue_generator.py` that forces the `TypeError` path and asserts warning/error log emission with exception info and fallback phrase\n\n### Model Classification Refactoring\n- [ ] Refactor `tools/langchain_client._is_reasoning_model` to use a start-anchored regex pattern that matches only `o` followed by digits\n- [ ] Add unit tests in `tests/test_langchain_client.py` covering both intended model names (`o1`, `o3`, `o123`) and edge cases (`o-mini`, `gpt-4o`, `foo`, `O1`) for `_is_reasoning_model` classification\n\n### Logging Improvements\n- [ ] Update `followup_issue_generator.py` `_invoke_llm` to log warning/error when `TypeError` is raised, including exception text and explicit phrase indicating config/metadata fallback\n\n## Deferred Tasks (Requires Human)\n- [ ] **Manual:** Update all `.github/workflows/*.yml` files to use `actions/upload-artifact@v7` instead of older versions (v3/v4/v5/v6) and adjust any related inputs for v7 compatibility\n\n## Acceptance Criteria\n\n### Documentation Traceability\n- [ ] In `docs/verification-concerns-1307.md`, every high-severity concern entry includes a `Resolution:` field with at least one GitHub PR URL (containing `/pull/`) OR commit URL (containing `/commit/`) plus a non-empty `Summary:` line\n- [ ] In `docs/verification-concerns-1307.md`, every high-severity concern entry that was resolved by architectural decision includes a `Decision:` field that references a `DECISIONS.md` entry by anchor or heading text\n- [ ] In `docs/verification-concerns-1307.md`, every high-severity concern entry contains an `Evidence:` field with a relative link to a repo-local file path under `docs/reverification/`\n- [ ] `DECISIONS.md` contains a dated entry for the \"missing artifacts\" concern with all of:\n  - A one-sentence `Decision` statement\n  - A `Rationale` section with at least one bullet or paragraph\n  - A `Date:` field in ISO format `YYYY-MM-DD`\n  - An `Evidence:` link to a repo-local file under `docs/reverification/`\n\n### Re-verification Evidence\n- [ ] A repo-local re-verification evidence file exists at `docs/reverification/<YYYY-MM-DD>-*.md` where the filename contains a date prefix in `YYYY-MM-DD` format\n- [ ] `docs/reverification/README.md` exists and describes how the evidence file is produced or what it contains\n- [ ] `docs/verification-concerns-1307.md` links to the dated `docs/reverification` evidence file and each high-severity concern's `Evidence:` link points to a specific section within that file (markdown anchor) or to a per-concern evidence file under `docs/reverification/`\n\n### LLM Invocation Tests - pr_verifier.py\n- [ ] `tests/test_pr_verifier.py` contains at least one test that patches/mocks the underlying LLM client's `invoke` method used by `pr_verifier.py`\n- [ ] The test asserts that the invocation receives the constructed config/metadata argument (not just that `_build_llm_config` returns it)\n- [ ] The test covers every call site in `pr_verifier.py` that triggers an LLM invocation\n\n### LLM Invocation Tests - followup_issue_generator.py\n- [ ] `tests/test_followup_issue_generator.py` contains at least one test that patches/mocks the underlying LLM client's `invoke` method used by `followup_issue_generator.py`\n- [ ] The test asserts that `_invoke_llm` passes the constructed config/metadata argument through to `invoke`\n- [ ] The test covers every call site in `followup_issue_generator.py` that triggers an LLM invocation\n- [ ] `tests/test_followup_issue_generator.py` includes a test that forces the `TypeError` path by mocking `invoke` to raise `TypeError` when called with config/metadata\n- [ ] The `TypeError` test asserts a warning/error log record is emitted containing:\n  - The exception text or repr\n  - An explicit phrase indicating config/metadata fallback occurred\n- [ ] The `TypeError` test verifies that a second invocation without config/metadata occurs (fallback behavior preserved)\n\n### Model Classification\n- [ ] `tools/langchain_client._is_reasoning_model` uses a regex anchored at the start that matches only model names beginning with `o` followed immediately by one or more digits (e.g., `^o\\d+`)\n- [ ] `tools/langchain_client._is_reasoning_model` does not match names like `o-mini`\n- [ ] `tests/test_langchain_client.py` includes explicit cases asserting `_is_reasoning_model` returns `True` for: `o1`, `o3`, `o123`\n- [ ] `tests/test_langchain_client.py` includes explicit cases asserting `_is_reasoning_model` returns `False` for: `o-mini`, `gpt-4o`, `foo`, `O1`\n\n### Logging\n- [ ] `followup_issue_generator.py` `_invoke_llm` logs a warning or error when a `TypeError` is raised due to passing config/metadata to a client that does not accept it\n- [ ] The log message includes both:\n  - The exception text (or repr)\n  - An explicit phrase indicating config/metadata was not passed due to fallback\n\n### Test Suite\n- [ ] All newly added tests in `tests/test_pr_verifier.py`, `tests/test_followup_issue_generator.py`, and `tests/test_langchain_client.py` pass individually when run with pytest\n- [ ] No new test failures are introduced in existing test files when running the full test suite\n\n## Implementation Notes\n\n### Documentation traceability\n- In `docs/verification-concerns-1307.md`, standardize each high-severity concern to include fields like `Resolution:` (PR/commit link) + `Summary:` or `Decision:` (link to `DECISIONS.md` entry), plus `Evidence:` pointing to a repo-local `docs/` path.\n- Prefer relative links (e.g., `docs/reverification/2026-02-07-...md#concern-x`) so they work in GitHub UI and remain stable.\n\n### Re-verification evidence artifact\n- Add `docs/reverification/README.md` explaining what is captured (commands run, environment assumptions, how to regenerate).\n- Add at least one dated evidence markdown file whose filename begins with `YYYY-MM-DD` and contains clearly labeled sections per high-severity concern to support anchored links.\n\n### LLM invocation tests\n- Ensure tests validate real invocation paths: patch/mock the actual `client.invoke` used by each module, call the public/entry methods that trigger LLM calls, and assert the invoke args include the constructed config/metadata.\n- Cover *all* LLM invocation call sites in `pr_verifier.py` and `followup_issue_generator.py`, not only helper builders.\n- For the fallback behavior in `followup_issue_generator.py`, use `caplog` (or equivalent) to assert a warning/error log is emitted, and assert the invoke call happens twice (first with config → `TypeError`, second without config succeeds).\n\n### Model classification\n- Update `_is_reasoning_model` to a start-anchored regex such as `r\"^o\\d+\"` and add explicit tests including `O1` to lock down case-sensitivity expectations.\n\n### Workflow changes (manual)\n- Keep workflow edits scoped: only bump `actions/upload-artifact` to `@v7` and adjust inputs solely as required for v7 compatibility.\n- After manual updates, validate via ripgrep: `rg \"actions/upload-artifact@v[3-6]\" .github/workflows/` should return no matches.\n\n<details>\n<summary>Background (previous attempt context)</summary>\n\n- **Lack of explicit re-verification evidence for high-severity concerns:**\n  - Earlier approach referenced workflow artifacts without ensuring repository documentation provided direct evidence.\n  - Instead: incorporate embedded test results/artifact files in the repo, or dated repo-local evidence links in `docs/verification-concerns-1307.md` and `DECISIONS.md`.\n\n- **Insufficient tests for verifying metadata propagation in LLM invocation:**\n  - Prior iterations only tested the configuration builder (`_build_llm_config`) but not the use of this configuration in actual `client.invoke` calls.\n  - Instead: mock/intercept `client.invoke` and assert constructed config/metadata is passed for each invocation path; include coverage for fallback behavior.\n\n</details>\n\n## Critical Rules\n1. Do NOT include \"Remaining Unchecked Items\" or \"Iteration Details\" sections unless they contain specific, useful failure context\n2. Tasks should be concrete actions, not verification concerns restated\n3. Acceptance criteria must be testable (not \"all concerns addressed\")\n4. Keep the main body focused - hide background/history in the collapsible section\n5. Do NOT include the entire analysis object - only include specific failure contexts from `blockers_to_avoid`",
+      "author": {
+        "name": "stranske",
+        "url": "https://github.com/stranske",
+        "avatar": "https://avatars.githubusercontent.com/u/23046322?v=4"
+      },
+      "timestamp": "2026-02-07T15:31:19Z",
+      "url": "https://github.com/stranske/Workflows/issues/1322",
+      "metrics": {
+        "comments": 9
+      },
+      "tags": [
+        "agent:codex",
+        "status:in-progress",
+        "agents:apply-suggestions",
+        "agents:formatted",
+        "follow-up"
+      ],
+      "raw": {
+        "url": "https://api.github.com/repos/stranske/Workflows/issues/1322",
+        "repository_url": "https://api.github.com/repos/stranske/Workflows",
+        "labels_url": "https://api.github.com/repos/stranske/Workflows/issues/1322/labels{/name}",
+        "comments_url": "https://api.github.com/repos/stranske/Workflows/issues/1322/comments",
+        "events_url": "https://api.github.com/repos/stranske/Workflows/issues/1322/events",
+        "html_url": "https://github.com/stranske/Workflows/issues/1322",
+        "id": 3910554390,
+        "node_id": "I_kwDOQprj9M7pFlMW",
+        "number": 1322,
+        "title": "[Follow-up] Update docs/verification-concerns-1307.md: Ensure  (PR #1316)",
+        "user": {
+          "login": "stranske",
+          "id": 23046322,
+          "node_id": "MDQ6VXNlcjIzMDQ2MzIy",
+          "avatar_url": "https://avatars.githubusercontent.com/u/23046322?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/stranske",
+          "html_url": "https://github.com/stranske",
+          "followers_url": "https://api.github.com/users/stranske/followers",
+          "following_url": "https://api.github.com/users/stranske/following{/other_user}",
+          "gists_url": "https://api.github.com/users/stranske/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/stranske/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/stranske/subscriptions",
+          "organizations_url": "https://api.github.com/users/stranske/orgs",
+          "repos_url": "https://api.github.com/users/stranske/repos",
+          "events_url": "https://api.github.com/users/stranske/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/stranske/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "labels": [
+          {
+            "id": 9842909480,
+            "node_id": "LA_kwDOQprj9M8AAAACSq7hKA",
+            "url": "https://api.github.com/repos/stranske/Workflows/labels/agent:codex",
+            "name": "agent:codex",
+            "color": "ededed",
+            "default": false,
+            "description": "Agent-created issues from Codex"
+          },
+          {
+            "id": 9842911473,
+            "node_id": "LA_kwDOQprj9M8AAAACSq7o8Q",
+            "url": "https://api.github.com/repos/stranske/Workflows/labels/status:in-progress",
+            "name": "status:in-progress",
+            "color": "ededed",
+            "default": false,
+            "description": "Work in progress"
+          },
+          {
+            "id": 9961463613,
+            "node_id": "LA_kwDOQprj9M8AAAACUb_fPQ",
+            "url": "https://api.github.com/repos/stranske/Workflows/labels/agents:apply-suggestions",
+            "name": "agents:apply-suggestions",
+            "color": "cded24",
+            "default": false,
+            "description": ""
+          },
+          {
+            "id": 9963600451,
+            "node_id": "LA_kwDOQprj9M8AAAACUeB6Qw",
+            "url": "https://api.github.com/repos/stranske/Workflows/labels/agents:formatted",
+            "name": "agents:formatted",
+            "color": "1d76db",
+            "default": false,
+            "description": "Issue has been formatted to agent template"
+          },
+          {
+            "id": 9966125565,
+            "node_id": "LA_kwDOQprj9M8AAAACUgcB_Q",
+            "url": "https://api.github.com/repos/stranske/Workflows/labels/follow-up",
+            "name": "follow-up",
+            "color": "ededed",
+            "default": false,
+            "description": null
+          }
+        ],
+        "state": "open",
+        "locked": false,
+        "assignee": {
+          "login": "stranske-automation-bot",
+          "id": 231602290,
+          "node_id": "U_kgDODc34cg",
+          "avatar_url": "https://avatars.githubusercontent.com/u/231602290?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/stranske-automation-bot",
+          "html_url": "https://github.com/stranske-automation-bot",
+          "followers_url": "https://api.github.com/users/stranske-automation-bot/followers",
+          "following_url": "https://api.github.com/users/stranske-automation-bot/following{/other_user}",
+          "gists_url": "https://api.github.com/users/stranske-automation-bot/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/stranske-automation-bot/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/stranske-automation-bot/subscriptions",
+          "organizations_url": "https://api.github.com/users/stranske-automation-bot/orgs",
+          "repos_url": "https://api.github.com/users/stranske-automation-bot/repos",
+          "events_url": "https://api.github.com/users/stranske-automation-bot/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/stranske-automation-bot/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "assignees": [
+          {
+            "login": "stranske-automation-bot",
+            "id": 231602290,
+            "node_id": "U_kgDODc34cg",
+            "avatar_url": "https://avatars.githubusercontent.com/u/231602290?v=4",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/stranske-automation-bot",
+            "html_url": "https://github.com/stranske-automation-bot",
+            "followers_url": "https://api.github.com/users/stranske-automation-bot/followers",
+            "following_url": "https://api.github.com/users/stranske-automation-bot/following{/other_user}",
+            "gists_url": "https://api.github.com/users/stranske-automation-bot/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/stranske-automation-bot/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/stranske-automation-bot/subscriptions",
+            "organizations_url": "https://api.github.com/users/stranske-automation-bot/orgs",
+            "repos_url": "https://api.github.com/users/stranske-automation-bot/repos",
+            "events_url": "https://api.github.com/users/stranske-automation-bot/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/stranske-automation-bot/received_events",
+            "type": "User",
+            "user_view_type": "public",
+            "site_admin": false
+          }
+        ],
+        "milestone": null,
+        "comments": 9,
+        "created_at": "2026-02-07T15:31:19Z",
+        "updated_at": "2026-02-07T15:37:57Z",
+        "closed_at": null,
+        "author_association": "OWNER",
+        "active_lock_reason": null,
+        "sub_issues_summary": {
+          "total": 0,
+          "completed": 0,
+          "percent_completed": 0
+        },
+        "issue_dependencies_summary": {
+          "blocked_by": 0,
+          "total_blocked_by": 0,
+          "blocking": 0,
+          "total_blocking": 0
+        },
+        "body": "# Address Remaining Verification Gaps from PR #1316\n\n## Why\nPR #1316 addressed issue #1315, but verification returned a **CONCERNS** verdict due to remaining gaps: high-severity concerns are not fully traceable to concrete resolutions/decisions with repo-local evidence, LLM invocation paths still lack tests that assert config/metadata propagation (and logging on fallback), model classification logic can misclassify names, and some workflows still reference older `actions/upload-artifact` versions. This follow-up issue closes those gaps with explicit documentation, evidence, tests, and minimal safe refactors.\n\n## Source\n- Original PR: #1316\n- Parent issue: #1315\n\n## Tasks\n\n### Documentation & Traceability\n- [ ] Add resolution links and summaries to each high-severity concern in `docs/verification-concerns-1307.md` that was resolved by code changes\n- [ ] Add explicit `DECISIONS.md` references to each high-severity concern in `docs/verification-concerns-1307.md` that was resolved by architectural decision\n- [ ] Add per-concern evidence links pointing to repo-local verification artifacts for each high-severity concern in `docs/verification-concerns-1307.md`\n- [ ] Add dated entry to `DECISIONS.md` for the \"missing artifacts\" concern including decision statement, rationale, date (ISO format), and evidence link\n\n### Re-verification Evidence Artifacts\n- [ ] Create `docs/reverification/README.md` explaining how evidence files are produced and what they contain\n- [ ] Create a dated re-verification evidence markdown file under `docs/reverification/` with clearly labeled sections for each high-severity concern\n- [ ] Update `docs/verification-concerns-1307.md` to link to the dated re-verification evidence file for each high-severity concern\n\n### LLM Invocation Testing\n- [ ] Add unit tests in `tests/test_pr_verifier.py` that mock `client.invoke` and assert config/metadata propagation for all LLM invocation call sites\n- [ ] Add unit tests in `tests/test_followup_issue_generator.py` that mock `client.invoke` and assert config/metadata propagation for all LLM invocation call sites\n- [ ] Add test in `tests/test_followup_issue_generator.py` that forces the `TypeError` path and asserts warning/error log emission with exception info and fallback phrase\n\n### Model Classification Refactoring\n- [ ] Refactor `tools/langchain_client._is_reasoning_model` to use a start-anchored regex pattern that matches only `o` followed by digits\n- [ ] Add unit tests in `tests/test_langchain_client.py` covering both intended model names (`o1`, `o3`, `o123`) and edge cases (`o-mini`, `gpt-4o`, `foo`, `O1`) for `_is_reasoning_model` classification\n\n### Logging Improvements\n- [ ] Update `followup_issue_generator.py` `_invoke_llm` to log warning/error when `TypeError` is raised, including exception text and explicit phrase indicating config/metadata fallback\n\n## Deferred Tasks (Requires Human)\n- [ ] **Manual:** Update all `.github/workflows/*.yml` files to use `actions/upload-artifact@v7` instead of older versions (v3/v4/v5/v6) and adjust any related inputs for v7 compatibility\n\n## Acceptance Criteria\n\n### Documentation Traceability\n- [ ] In `docs/verification-concerns-1307.md`, every high-severity concern entry includes a `Resolution:` field with at least one GitHub PR URL (containing `/pull/`) OR commit URL (containing `/commit/`) plus a non-empty `Summary:` line\n- [ ] In `docs/verification-concerns-1307.md`, every high-severity concern entry that was resolved by architectural decision includes a `Decision:` field that references a `DECISIONS.md` entry by anchor or heading text\n- [ ] In `docs/verification-concerns-1307.md`, every high-severity concern entry contains an `Evidence:` field with a relative link to a repo-local file path under `docs/reverification/`\n- [ ] `DECISIONS.md` contains a dated entry for the \"missing artifacts\" concern with all of:\n  - A one-sentence `Decision` statement\n  - A `Rationale` section with at least one bullet or paragraph\n  - A `Date:` field in ISO format `YYYY-MM-DD`\n  - An `Evidence:` link to a repo-local file under `docs/reverification/`\n\n### Re-verification Evidence\n- [ ] A repo-local re-verification evidence file exists at `docs/reverification/<YYYY-MM-DD>-*.md` where the filename contains a date prefix in `YYYY-MM-DD` format\n- [ ] `docs/reverification/README.md` exists and describes how the evidence file is produced or what it contains\n- [ ] `docs/verification-concerns-1307.md` links to the dated `docs/reverification` evidence file and each high-severity concern's `Evidence:` link points to a specific section within that file (markdown anchor) or to a per-concern evidence file under `docs/reverification/`\n\n### LLM Invocation Tests - pr_verifier.py\n- [ ] `tests/test_pr_verifier.py` contains at least one test that patches/mocks the underlying LLM client's `invoke` method used by `pr_verifier.py`\n- [ ] The test asserts that the invocation receives the constructed config/metadata argument (not just that `_build_llm_config` returns it)\n- [ ] The test covers every call site in `pr_verifier.py` that triggers an LLM invocation\n\n### LLM Invocation Tests - followup_issue_generator.py\n- [ ] `tests/test_followup_issue_generator.py` contains at least one test that patches/mocks the underlying LLM client's `invoke` method used by `followup_issue_generator.py`\n- [ ] The test asserts that `_invoke_llm` passes the constructed config/metadata argument through to `invoke`\n- [ ] The test covers every call site in `followup_issue_generator.py` that triggers an LLM invocation\n- [ ] `tests/test_followup_issue_generator.py` includes a test that forces the `TypeError` path by mocking `invoke` to raise `TypeError` when called with config/metadata\n- [ ] The `TypeError` test asserts a warning/error log record is emitted containing:\n  - The exception text or repr\n  - An explicit phrase indicating config/metadata fallback occurred\n- [ ] The `TypeError` test verifies that a second invocation without config/metadata occurs (fallback behavior preserved)\n\n### Model Classification\n- [ ] `tools/langchain_client._is_reasoning_model` uses a regex anchored at the start that matches only model names beginning with `o` followed immediately by one or more digits (e.g., `^o\\d+`)\n- [ ] `tools/langchain_client._is_reasoning_model` does not match names like `o-mini`\n- [ ] `tests/test_langchain_client.py` includes explicit cases asserting `_is_reasoning_model` returns `True` for: `o1`, `o3`, `o123`\n- [ ] `tests/test_langchain_client.py` includes explicit cases asserting `_is_reasoning_model` returns `False` for: `o-mini`, `gpt-4o`, `foo`, `O1`\n\n### Logging\n- [ ] `followup_issue_generator.py` `_invoke_llm` logs a warning or error when a `TypeError` is raised due to passing config/metadata to a client that does not accept it\n- [ ] The log message includes both:\n  - The exception text (or repr)\n  - An explicit phrase indicating config/metadata was not passed due to fallback\n\n### Test Suite\n- [ ] All newly added tests in `tests/test_pr_verifier.py`, `tests/test_followup_issue_generator.py`, and `tests/test_langchain_client.py` pass individually when run with pytest\n- [ ] No new test failures are introduced in existing test files when running the full test suite\n\n## Implementation Notes\n\n### Documentation traceability\n- In `docs/verification-concerns-1307.md`, standardize each high-severity concern to include fields like `Resolution:` (PR/commit link) + `Summary:` or `Decision:` (link to `DECISIONS.md` entry), plus `Evidence:` pointing to a repo-local `docs/` path.\n- Prefer relative links (e.g., `docs/reverification/2026-02-07-...md#concern-x`) so they work in GitHub UI and remain stable.\n\n### Re-verification evidence artifact\n- Add `docs/reverification/README.md` explaining what is captured (commands run, environment assumptions, how to regenerate).\n- Add at least one dated evidence markdown file whose filename begins with `YYYY-MM-DD` and contains clearly labeled sections per high-severity concern to support anchored links.\n\n### LLM invocation tests\n- Ensure tests validate real invocation paths: patch/mock the actual `client.invoke` used by each module, call the public/entry methods that trigger LLM calls, and assert the invoke args include the constructed config/metadata.\n- Cover *all* LLM invocation call sites in `pr_verifier.py` and `followup_issue_generator.py`, not only helper builders.\n- For the fallback behavior in `followup_issue_generator.py`, use `caplog` (or equivalent) to assert a warning/error log is emitted, and assert the invoke call happens twice (first with config → `TypeError`, second without config succeeds).\n\n### Model classification\n- Update `_is_reasoning_model` to a start-anchored regex such as `r\"^o\\d+\"` and add explicit tests including `O1` to lock down case-sensitivity expectations.\n\n### Workflow changes (manual)\n- Keep workflow edits scoped: only bump `actions/upload-artifact` to `@v7` and adjust inputs solely as required for v7 compatibility.\n- After manual updates, validate via ripgrep: `rg \"actions/upload-artifact@v[3-6]\" .github/workflows/` should return no matches.\n\n<details>\n<summary>Background (previous attempt context)</summary>\n\n- **Lack of explicit re-verification evidence for high-severity concerns:**\n  - Earlier approach referenced workflow artifacts without ensuring repository documentation provided direct evidence.\n  - Instead: incorporate embedded test results/artifact files in the repo, or dated repo-local evidence links in `docs/verification-concerns-1307.md` and `DECISIONS.md`.\n\n- **Insufficient tests for verifying metadata propagation in LLM invocation:**\n  - Prior iterations only tested the configuration builder (`_build_llm_config`) but not the use of this configuration in actual `client.invoke` calls.\n  - Instead: mock/intercept `client.invoke` and assert constructed config/metadata is passed for each invocation path; include coverage for fallback behavior.\n\n</details>\n\n## Critical Rules\n1. Do NOT include \"Remaining Unchecked Items\" or \"Iteration Details\" sections unless they contain specific, useful failure context\n2. Tasks should be concrete actions, not verification concerns restated\n3. Acceptance criteria must be testable (not \"all concerns addressed\")\n4. Keep the main body focused - hide background/history in the collapsible section\n5. Do NOT include the entire analysis object - only include specific failure contexts from `blockers_to_avoid`",
+        "reactions": {
+          "url": "https://api.github.com/repos/stranske/Workflows/issues/1322/reactions",
+          "total_count": 0,
+          "+1": 0,
+          "-1": 0,
+          "laugh": 0,
+          "hooray": 0,
+          "confused": 0,
+          "heart": 0,
+          "rocket": 0,
+          "eyes": 0
+        },
+        "timeline_url": "https://api.github.com/repos/stranske/Workflows/issues/1322/timeline",
+        "performed_via_github_app": null,
+        "state_reason": null,
+        "score": 1
+      }
+    },
+    {
       "id": "github-issue-3910550819",
       "platform": "github",
       "type": "issue",
@@ -108,7 +293,7 @@
       "metrics": {
         "upvotes": 0,
         "comments": 0,
-        "views": 5
+        "views": 17
       },
       "tags": [
         "javascript",
@@ -129,7 +314,7 @@
           "link": "https://stackoverflow.com/users/32330204/slobado"
         },
         "is_answered": false,
-        "view_count": 5,
+        "view_count": 17,
         "answer_count": 0,
         "score": 0,
         "last_activity_date": 1770477853,
@@ -157,7 +342,7 @@
       "metrics": {
         "upvotes": 0,
         "comments": 0,
-        "views": 8
+        "views": 12
       },
       "tags": [
         "reactjs",
@@ -180,7 +365,7 @@
           "link": "https://stackoverflow.com/users/8103934/bustinout"
         },
         "is_answered": false,
-        "view_count": 8,
+        "view_count": 12,
         "answer_count": 0,
         "score": 0,
         "last_activity_date": 1770477025,
@@ -504,7 +689,7 @@
       "metrics": {
         "upvotes": 0,
         "comments": 0,
-        "views": 18
+        "views": 20
       },
       "tags": [
         "javascript",
@@ -531,7 +716,7 @@
           "link": "https://stackoverflow.com/users/15927992/literallycode"
         },
         "is_answered": false,
-        "view_count": 18,
+        "view_count": 20,
         "answer_count": 0,
         "score": 0,
         "last_activity_date": 1770471336,
@@ -697,9 +882,9 @@
       "timestamp": "2026-02-07T09:53:12.000Z",
       "url": "https://stackoverflow.com/questions/79884804/javascript-is-redirecting-me-to-html-file-not-php-file",
       "metrics": {
-        "upvotes": -4,
+        "upvotes": -5,
         "comments": 0,
-        "views": 40
+        "views": 43
       },
       "tags": [
         "javascript",
@@ -722,15 +907,16 @@
           "link": "https://stackoverflow.com/users/21361864/user21361864"
         },
         "is_answered": false,
-        "view_count": 40,
+        "view_count": 43,
+        "closed_date": 1770478508,
         "answer_count": 0,
-        "score": -4,
+        "score": -5,
         "last_activity_date": 1770478031,
         "creation_date": 1770457992,
         "last_edit_date": 1770478031,
         "question_id": 79884804,
-        "content_license": "CC BY-SA 4.0",
         "link": "https://stackoverflow.com/questions/79884804/javascript-is-redirecting-me-to-html-file-not-php-file",
+        "closed_reason": "Not suitable for this site",
         "title": "JavaScript is redirecting me to .html file, not .php file",
         "body": "<p>I'm trying to make my own little search input selection thing, yet it always says:<br />\n&quot;404 not found&quot;<br />\n&quot;Not Found<br />\nThe requested URL was not found on this server.<br />\nApache/2.4.58 (Win64) OpenSSL/3.1.3 PHP/8.2.12 Server at localhost Port 80&quot;</p>\n<p>I've tried working out something this works:</p>\n<p>&lt;p&gt;The Belgrade Encyclopedia is a website situated in &lt;a href=&quot;belgrade.php&quot;&gt;Belgrade&lt;/a&gt;, Serbia...&lt;/p&gt;</p>\n<p>Yet this doesn't.</p>\n<p><div class=\"snippet\" data-lang=\"js\" data-hide=\"false\" data-console=\"true\" data-babel=\"false\" data-babel-preset-react=\"false\" data-babel-preset-ts=\"false\">\n<div class=\"snippet-code\">\n<pre class=\"snippet-code-js lang-js prettyprint-override\"><code>document.addEventListener('DOMContentLoaded', () =&gt; {\n  const searchInput = document.getElementById(\"search\");\n  const resultsBox = document.getElementById(\"search-results\");\n\n  const pages = [{\n      name: \"Belgrade\",\n      link: \"http://localhost/belgrade.php\"\n    },\n    {\n      name: \"Home\",\n      link: \"http://localhost/betah_website.php\"\n    },\n    {\n      name: \"Serbia\",\n      link: \"http://localhost/serbia.php\"\n    }\n  ];\n\n\n  // --- Search box behavior ---\n  if (searchInput &amp;&amp; resultsBox) {\n    resultsBox.style.display = \"none\";\n\n    searchInput.addEventListener(\"input\", () =&gt; {\n      const query = searchInput.value.trim().toLowerCase();\n      resultsBox.innerHTML = \"\";\n\n      if (!query) {\n        resultsBox.style.display = \"none\";\n        return;\n      }\n\n      const matches = pages\n        .filter(p =&gt; p.name.toLowerCase().includes(query))\n        .sort((a, b) =&gt;\n          a.name.toLowerCase().indexOf(query) - b.name.toLowerCase().indexOf(query)\n        );\n\n      matches.forEach(match =&gt; {\n        const li = document.createElement(\"li\");\n        const a = document.createElement(\"a\");\n        a.href = match.link;\n        a.textContent = match.name;\n        li.appendChild(a);\n        resultsBox.appendChild(li);\n      });\n\n      resultsBox.style.display = matches.length ? \"block\" : \"none\";\n    });\n  }\n});</code></pre>\n<pre class=\"snippet-code-html lang-html prettyprint-override\"><code>&lt;div class=\"search-container\"&gt;\n  &lt;input\n    type=\"text\"\n    id=\"search\"\n    placeholder=\"Search…\"\n    autocomplete=\"off\"\n  /&gt;\n\n  &lt;ul id=\"search-results\"&gt;&lt;/ul&gt;\n&lt;/div&gt;</code></pre>\n</div>\n</div>\n</p>\n"
       }
@@ -1342,5 +1528,5 @@
       }
     }
   ],
-  "lastUpdated": "2026-02-07T15:29:44.030Z"
+  "lastUpdated": "2026-02-07T15:52:34.994Z"
 }
