@@ -1,6 +1,695 @@
 {
   "items": [
     {
+      "id": "github-issue-3911522226",
+      "platform": "github",
+      "type": "issue",
+      "title": "biatec-tokens/issues #215: MVP: Remove wallet UX, enforce email/password auth, and fix token creation routing",
+      "content": "## Summary\n\nImplement and validate an end-to-end authentication and token creation experience that is fully email/password based, derives the ARC76 account server-side, and eliminates all wallet-related UI or flows in the frontend. This issue targets the MVP blockers in the business roadmap by ensuring users can sign in without wallets, create tokens with backend processing, and navigate the app without any wallet connector artifacts. The focus is on removing UX dead-ends and ensuring the frontend routes are aligned with the product vision of a non-crypto-native, compliant tokenization platform.\n\n## Business Value\n\nThe Biatec Tokens platform is positioned for non-crypto-native users who expect a traditional SaaS onboarding flow and do not want to interact with wallets or blockchain-specific concepts. Currently, the roadmap highlights that authentication failures and wallet-centric UX are critical blockers to launch. Fixing the frontend experience is central to unlocking revenue and user acquisition: the platform cannot reach its Year 1 ARR goals without a clean, reliable sign-in and token creation flow. Removing wallet connectors and enforcing a consistent email/password flow reduces user confusion, improves conversion, and aligns with the product’s primary promise of regulated token issuance without blockchain knowledge. This issue directly addresses the most urgent MVP blocker and unblocks beta readiness by ensuring users can complete core tasks in a predictable way. It also reduces support costs, lowers drop-off in onboarding, and creates a more professional, enterprise-grade user experience. Competitors in the RWA tokenization space often require wallet interaction; by eliminating that complexity and providing a familiar login and onboarding process, we differentiate the product and build trust with regulated customers. This scope also improves compliance readiness by enforcing a traceable, credential-based identity flow with ARC76 account derivation, which is essential for audit trails and KYC integration later. In short, this issue is a revenue enabler, a conversion improvement, and a strategic differentiation aligned with the business vision of democratizing compliant token issuance without blockchain friction.\n\n## Product overview\n\nSee the business roadmap for vision and blockers: https://raw.githubusercontent.com/scholtz/biatec-tokens/refs/heads/main/business-owner-roadmap.md\n\n## Scope\n\n### In scope\n\n- Remove all wallet connector UI elements, buttons, dialogs, and any wallet-related flows in the frontend. Ensure no wallet-specific language appears anywhere in the UI.\n- Enforce email/password authentication as the only sign-in method; sign-in should always present email and password fields and never show wallet connection options.\n- Align routing so that “Create Token” routes to the authentication page when unauthenticated, then routes to token creation after successful login.\n- Remove the onboarding wizard popup and any showOnboarding parameter flow; replace it with explicit routes and standard navigation.\n- Ensure the top navigation does not display wallet-related status such as “Not connected” and instead displays the appropriate auth status.\n- Remove mock data from any visible views that are part of the token creation or dashboard surfaces.\n- Wire frontend to backend authentication responses, ensuring the frontend reflects authenticated state consistently.\n- Add Playwright E2E coverage for the critical flows listed in the roadmap: network persistence, email/password authentication, token creation flow with backend processing, and no-wallet connectors.\n- Provide clear error messaging when authentication fails or backend token creation returns an error, following existing UI patterns.\n\n### Out of scope\n\n- Backend ARC76 implementation details or server-side token creation logic (belongs to backend repo).\n- New subscription billing work or pricing UI.\n- Changes to compliance feature sets beyond removing wallet references where they appear in the UI.\n- Major redesign of UI components outside the authentication and token creation flows.\n\n### Technical approach\n\n- Identify and remove wallet connector components, providers, hooks, and routes that expose wallet flows.\n- Refactor routing to use explicit routes for login and token creation with auth guards.\n- Replace any conditional UI that checks wallet state with auth state derived from email/password login.\n- Ensure network selection persists in localStorage and does not rely on wallet state.\n- Update Playwright tests to validate the new flow and ensure no wallet UI appears anywhere.\n- Audit dashboards and token creation screens for mock data sources, and replace with real backend API data or empty state.\n\n### Dependencies\n\n- Backend auth endpoint and ARC76 derivation must be functional.\n- Backend token creation endpoint must be reachable for E2E tests.\n- CI environment must support Playwright tests for the new flows.\n\n## Acceptance Criteria\n\n- Users can navigate to the app and see a login flow that only contains email/password fields.\n- No wallet connector UI elements or wallet references appear anywhere in the application.\n- Clicking “Create Token” while unauthenticated redirects to login, then to token creation upon successful authentication.\n- Onboarding wizard popup is removed; showOnboarding flow no longer exists.\n- Top navigation does not display wallet connection status; it displays appropriate auth state instead.\n- All mock data is removed from key views used in the token creation workflow, and empty states are shown when data is unavailable.\n- Playwright E2E tests cover network persistence, login flow, token creation flow, and no-wallet UI validation, passing in CI.\n- Error states are handled with clear messages and do not leak wallet-related concepts.\n\n## Testing\n\n- Add/extend unit tests for auth state management and routing guards where applicable.\n- Add/extend integration tests for token creation forms to ensure they react correctly to authentication state.\n- Implement Playwright E2E tests for:\n  1. Network persistence across sessions.\n  2. Email/password authentication without any wallet UI.\n  3. Token creation flow with backend processing and success confirmation.\n  4. No wallet connectors throughout the application navigation.\n- Ensure CI passes with all tests green and no skipped critical E2E coverage.\n\n## Additional context and rationale\n\nThe business roadmap explicitly calls out wallet UI and authentication failures as MVP blockers, making this issue a top priority for launch readiness. The product vision is to serve traditional business users who require a SaaS-like experience and cannot be expected to understand wallets or blockchain accounts. Therefore, the frontend must fully remove wallet connection concepts and provide a reliable, credential-based login and creation flow. This issue consolidates the necessary UI/UX corrections and testing work to ensure the product delivers its promised user experience and can pass internal QA.\n\n### User stories\n\n- As a traditional business user, I want to sign in with email and password so I can access token creation without needing a wallet.\n- As a compliance officer, I want the UI to avoid wallet prompts to ensure only regulated, credential-based access is used.\n- As a product manager, I want the onboarding and routing to be straightforward so users do not get stuck in modal wizards.\n- As a QA engineer, I want automated E2E coverage to prove the login and token creation flows are stable and wallet-free.\n\n### Risk and mitigation\n\n- Risk: Removing wallet hooks could break network selection or other shared state. Mitigation: ensure network persistence is managed independently of wallet state and validated by E2E tests.\n- Risk: Backend responses might change; mitigate by using API contracts and clear error handling.\n- Risk: Eliminating mock data could lead to empty screens; mitigate by designing meaningful empty states and error banners.\n\n### Definition of done\n\n- All acceptance criteria satisfied.\n- All required tests implemented and passing in CI.\n- UI shows no wallet concepts or connectors.\n- Token creation flow works end-to-end in a test environment.\n",
+      "author": {
+        "name": "ludovit-scholtz",
+        "url": "https://github.com/ludovit-scholtz",
+        "avatar": "https://avatars.githubusercontent.com/u/256357527?v=4"
+      },
+      "timestamp": "2026-02-07T23:10:58Z",
+      "url": "https://github.com/scholtz/biatec-tokens/issues/215",
+      "metrics": {
+        "comments": 0
+      },
+      "tags": [],
+      "raw": {
+        "url": "https://api.github.com/repos/scholtz/biatec-tokens/issues/215",
+        "repository_url": "https://api.github.com/repos/scholtz/biatec-tokens",
+        "labels_url": "https://api.github.com/repos/scholtz/biatec-tokens/issues/215/labels{/name}",
+        "comments_url": "https://api.github.com/repos/scholtz/biatec-tokens/issues/215/comments",
+        "events_url": "https://api.github.com/repos/scholtz/biatec-tokens/issues/215/events",
+        "html_url": "https://github.com/scholtz/biatec-tokens/issues/215",
+        "id": 3911522226,
+        "node_id": "I_kwDOO7RXHM7pJRey",
+        "number": 215,
+        "title": "MVP: Remove wallet UX, enforce email/password auth, and fix token creation routing",
+        "user": {
+          "login": "ludovit-scholtz",
+          "id": 256357527,
+          "node_id": "U_kgDOD0e0lw",
+          "avatar_url": "https://avatars.githubusercontent.com/u/256357527?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/ludovit-scholtz",
+          "html_url": "https://github.com/ludovit-scholtz",
+          "followers_url": "https://api.github.com/users/ludovit-scholtz/followers",
+          "following_url": "https://api.github.com/users/ludovit-scholtz/following{/other_user}",
+          "gists_url": "https://api.github.com/users/ludovit-scholtz/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/ludovit-scholtz/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/ludovit-scholtz/subscriptions",
+          "organizations_url": "https://api.github.com/users/ludovit-scholtz/orgs",
+          "repos_url": "https://api.github.com/users/ludovit-scholtz/repos",
+          "events_url": "https://api.github.com/users/ludovit-scholtz/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/ludovit-scholtz/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "labels": [],
+        "state": "open",
+        "locked": false,
+        "assignee": {
+          "login": "Copilot",
+          "id": 198982749,
+          "node_id": "BOT_kgDOC9w8XQ",
+          "avatar_url": "https://avatars.githubusercontent.com/in/1143301?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/Copilot",
+          "html_url": "https://github.com/apps/copilot-swe-agent",
+          "followers_url": "https://api.github.com/users/Copilot/followers",
+          "following_url": "https://api.github.com/users/Copilot/following{/other_user}",
+          "gists_url": "https://api.github.com/users/Copilot/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/Copilot/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/Copilot/subscriptions",
+          "organizations_url": "https://api.github.com/users/Copilot/orgs",
+          "repos_url": "https://api.github.com/users/Copilot/repos",
+          "events_url": "https://api.github.com/users/Copilot/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/Copilot/received_events",
+          "type": "Bot",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "assignees": [
+          {
+            "login": "Copilot",
+            "id": 198982749,
+            "node_id": "BOT_kgDOC9w8XQ",
+            "avatar_url": "https://avatars.githubusercontent.com/in/1143301?v=4",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/Copilot",
+            "html_url": "https://github.com/apps/copilot-swe-agent",
+            "followers_url": "https://api.github.com/users/Copilot/followers",
+            "following_url": "https://api.github.com/users/Copilot/following{/other_user}",
+            "gists_url": "https://api.github.com/users/Copilot/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/Copilot/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/Copilot/subscriptions",
+            "organizations_url": "https://api.github.com/users/Copilot/orgs",
+            "repos_url": "https://api.github.com/users/Copilot/repos",
+            "events_url": "https://api.github.com/users/Copilot/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/Copilot/received_events",
+            "type": "Bot",
+            "user_view_type": "public",
+            "site_admin": false
+          },
+          {
+            "login": "ludovit-scholtz",
+            "id": 256357527,
+            "node_id": "U_kgDOD0e0lw",
+            "avatar_url": "https://avatars.githubusercontent.com/u/256357527?v=4",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/ludovit-scholtz",
+            "html_url": "https://github.com/ludovit-scholtz",
+            "followers_url": "https://api.github.com/users/ludovit-scholtz/followers",
+            "following_url": "https://api.github.com/users/ludovit-scholtz/following{/other_user}",
+            "gists_url": "https://api.github.com/users/ludovit-scholtz/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/ludovit-scholtz/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/ludovit-scholtz/subscriptions",
+            "organizations_url": "https://api.github.com/users/ludovit-scholtz/orgs",
+            "repos_url": "https://api.github.com/users/ludovit-scholtz/repos",
+            "events_url": "https://api.github.com/users/ludovit-scholtz/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/ludovit-scholtz/received_events",
+            "type": "User",
+            "user_view_type": "public",
+            "site_admin": false
+          }
+        ],
+        "milestone": null,
+        "comments": 0,
+        "created_at": "2026-02-07T23:10:58Z",
+        "updated_at": "2026-02-07T23:10:58Z",
+        "closed_at": null,
+        "author_association": "COLLABORATOR",
+        "active_lock_reason": null,
+        "sub_issues_summary": {
+          "total": 0,
+          "completed": 0,
+          "percent_completed": 0
+        },
+        "issue_dependencies_summary": {
+          "blocked_by": 0,
+          "total_blocked_by": 0,
+          "blocking": 0,
+          "total_blocking": 0
+        },
+        "body": "## Summary\n\nImplement and validate an end-to-end authentication and token creation experience that is fully email/password based, derives the ARC76 account server-side, and eliminates all wallet-related UI or flows in the frontend. This issue targets the MVP blockers in the business roadmap by ensuring users can sign in without wallets, create tokens with backend processing, and navigate the app without any wallet connector artifacts. The focus is on removing UX dead-ends and ensuring the frontend routes are aligned with the product vision of a non-crypto-native, compliant tokenization platform.\n\n## Business Value\n\nThe Biatec Tokens platform is positioned for non-crypto-native users who expect a traditional SaaS onboarding flow and do not want to interact with wallets or blockchain-specific concepts. Currently, the roadmap highlights that authentication failures and wallet-centric UX are critical blockers to launch. Fixing the frontend experience is central to unlocking revenue and user acquisition: the platform cannot reach its Year 1 ARR goals without a clean, reliable sign-in and token creation flow. Removing wallet connectors and enforcing a consistent email/password flow reduces user confusion, improves conversion, and aligns with the product’s primary promise of regulated token issuance without blockchain knowledge. This issue directly addresses the most urgent MVP blocker and unblocks beta readiness by ensuring users can complete core tasks in a predictable way. It also reduces support costs, lowers drop-off in onboarding, and creates a more professional, enterprise-grade user experience. Competitors in the RWA tokenization space often require wallet interaction; by eliminating that complexity and providing a familiar login and onboarding process, we differentiate the product and build trust with regulated customers. This scope also improves compliance readiness by enforcing a traceable, credential-based identity flow with ARC76 account derivation, which is essential for audit trails and KYC integration later. In short, this issue is a revenue enabler, a conversion improvement, and a strategic differentiation aligned with the business vision of democratizing compliant token issuance without blockchain friction.\n\n## Product overview\n\nSee the business roadmap for vision and blockers: https://raw.githubusercontent.com/scholtz/biatec-tokens/refs/heads/main/business-owner-roadmap.md\n\n## Scope\n\n### In scope\n\n- Remove all wallet connector UI elements, buttons, dialogs, and any wallet-related flows in the frontend. Ensure no wallet-specific language appears anywhere in the UI.\n- Enforce email/password authentication as the only sign-in method; sign-in should always present email and password fields and never show wallet connection options.\n- Align routing so that “Create Token” routes to the authentication page when unauthenticated, then routes to token creation after successful login.\n- Remove the onboarding wizard popup and any showOnboarding parameter flow; replace it with explicit routes and standard navigation.\n- Ensure the top navigation does not display wallet-related status such as “Not connected” and instead displays the appropriate auth status.\n- Remove mock data from any visible views that are part of the token creation or dashboard surfaces.\n- Wire frontend to backend authentication responses, ensuring the frontend reflects authenticated state consistently.\n- Add Playwright E2E coverage for the critical flows listed in the roadmap: network persistence, email/password authentication, token creation flow with backend processing, and no-wallet connectors.\n- Provide clear error messaging when authentication fails or backend token creation returns an error, following existing UI patterns.\n\n### Out of scope\n\n- Backend ARC76 implementation details or server-side token creation logic (belongs to backend repo).\n- New subscription billing work or pricing UI.\n- Changes to compliance feature sets beyond removing wallet references where they appear in the UI.\n- Major redesign of UI components outside the authentication and token creation flows.\n\n### Technical approach\n\n- Identify and remove wallet connector components, providers, hooks, and routes that expose wallet flows.\n- Refactor routing to use explicit routes for login and token creation with auth guards.\n- Replace any conditional UI that checks wallet state with auth state derived from email/password login.\n- Ensure network selection persists in localStorage and does not rely on wallet state.\n- Update Playwright tests to validate the new flow and ensure no wallet UI appears anywhere.\n- Audit dashboards and token creation screens for mock data sources, and replace with real backend API data or empty state.\n\n### Dependencies\n\n- Backend auth endpoint and ARC76 derivation must be functional.\n- Backend token creation endpoint must be reachable for E2E tests.\n- CI environment must support Playwright tests for the new flows.\n\n## Acceptance Criteria\n\n- Users can navigate to the app and see a login flow that only contains email/password fields.\n- No wallet connector UI elements or wallet references appear anywhere in the application.\n- Clicking “Create Token” while unauthenticated redirects to login, then to token creation upon successful authentication.\n- Onboarding wizard popup is removed; showOnboarding flow no longer exists.\n- Top navigation does not display wallet connection status; it displays appropriate auth state instead.\n- All mock data is removed from key views used in the token creation workflow, and empty states are shown when data is unavailable.\n- Playwright E2E tests cover network persistence, login flow, token creation flow, and no-wallet UI validation, passing in CI.\n- Error states are handled with clear messages and do not leak wallet-related concepts.\n\n## Testing\n\n- Add/extend unit tests for auth state management and routing guards where applicable.\n- Add/extend integration tests for token creation forms to ensure they react correctly to authentication state.\n- Implement Playwright E2E tests for:\n  1. Network persistence across sessions.\n  2. Email/password authentication without any wallet UI.\n  3. Token creation flow with backend processing and success confirmation.\n  4. No wallet connectors throughout the application navigation.\n- Ensure CI passes with all tests green and no skipped critical E2E coverage.\n\n## Additional context and rationale\n\nThe business roadmap explicitly calls out wallet UI and authentication failures as MVP blockers, making this issue a top priority for launch readiness. The product vision is to serve traditional business users who require a SaaS-like experience and cannot be expected to understand wallets or blockchain accounts. Therefore, the frontend must fully remove wallet connection concepts and provide a reliable, credential-based login and creation flow. This issue consolidates the necessary UI/UX corrections and testing work to ensure the product delivers its promised user experience and can pass internal QA.\n\n### User stories\n\n- As a traditional business user, I want to sign in with email and password so I can access token creation without needing a wallet.\n- As a compliance officer, I want the UI to avoid wallet prompts to ensure only regulated, credential-based access is used.\n- As a product manager, I want the onboarding and routing to be straightforward so users do not get stuck in modal wizards.\n- As a QA engineer, I want automated E2E coverage to prove the login and token creation flows are stable and wallet-free.\n\n### Risk and mitigation\n\n- Risk: Removing wallet hooks could break network selection or other shared state. Mitigation: ensure network persistence is managed independently of wallet state and validated by E2E tests.\n- Risk: Backend responses might change; mitigate by using API contracts and clear error handling.\n- Risk: Eliminating mock data could lead to empty screens; mitigate by designing meaningful empty states and error banners.\n\n### Definition of done\n\n- All acceptance criteria satisfied.\n- All required tests implemented and passing in CI.\n- UI shows no wallet concepts or connectors.\n- Token creation flow works end-to-end in a test environment.\n",
+        "reactions": {
+          "url": "https://api.github.com/repos/scholtz/biatec-tokens/issues/215/reactions",
+          "total_count": 1,
+          "+1": 0,
+          "-1": 0,
+          "laugh": 0,
+          "hooray": 0,
+          "confused": 0,
+          "heart": 0,
+          "rocket": 0,
+          "eyes": 1
+        },
+        "timeline_url": "https://api.github.com/repos/scholtz/biatec-tokens/issues/215/timeline",
+        "performed_via_github_app": null,
+        "state_reason": null,
+        "score": 1
+      }
+    },
+    {
+      "id": "github-issue-3911520698",
+      "platform": "github",
+      "type": "issue",
+      "title": "bounty-challenge/issues #6724: [BUG] [v0.0.7] PROVIDER_ENV_VARS only contains \"cortex\" — SmallModelSelector::select() always returns None for all 6 listed providers (small_model.rs:39)",
+      "content": "### Project\n\ncortex\n\n### Description\n\n`PROVIDER_ENV_VARS` at `small_model.rs:39` only defines a single entry `(\"cortex\", \"CORTEX_AUTH_TOKEN\")`, but the `SMALL_MODELS` array at line 29 lists 6 providers: `groq`, `openai`, `anthropic`, `google`, `mistral`, and `xai`. Since `detect_available_providers()` iterates exclusively over `PROVIDER_ENV_VARS`, it can never detect any of the 6 providers that `SMALL_MODELS` actually uses. As a result, `SmallModelSelector::select()` always returns `None`, and all functions that depend on it (`call_small_model`, `generate_title`, `generate_summary`, `classify_intent`) unconditionally fail with \"No small model available.\"\n\n**This is NOT intentional behavior** because:\n1. `SMALL_MODELS` explicitly lists 6 providers with specific model names and comments like \"Ultra-fast, free tier\" — these are clearly meant to be used.\n2. `detect_available_providers()` is designed to auto-detect providers via env vars, but the lookup table is empty for all relevant providers.\n3. The `\"cortex\"` entry in `PROVIDER_ENV_VARS` isn't even present in `SMALL_MODELS`, making the only env var check useless.\n4. Tests bypass the broken detection by using `with_providers()` or `with_configured_model()` — no test exercises the actual auto-detection path.\n\n### Error Message\n\n```\nError: No small model available. Please configure an API key.\n```\n\n### Debug Logs\n\nSource code at `cortex-source/src/cortex-engine/src/small_model.rs`:\n\n**Line 29-36 — SMALL_MODELS defines 6 providers:**\n```rust\npub const SMALL_MODELS: &[(&str, &str)] = &[\n    (\"groq\", \"llama-3.1-8b-instant\"),\n    (\"openai\", \"gpt-4o-mini\"),\n    (\"anthropic\", \"claude-3-5-haiku-latest\"),\n    (\"google\", \"gemini-2.0-flash-lite\"),\n    (\"mistral\", \"mistral-small-latest\"),\n    (\"xai\", \"grok-2-mini\"),\n];\n```\n\n**Line 39 — PROVIDER_ENV_VARS only has \"cortex\":**\n```rust\npub const PROVIDER_ENV_VARS: &[(&str, &str)] = &[(\"cortex\", \"CORTEX_AUTH_TOKEN\")];\n```\n\n**Lines 306-321 — detect_available_providers() only checks PROVIDER_ENV_VARS:**\n```rust\npub fn detect_available_providers() -> Vec<String> {\n    let mut providers = Vec::new();\n    for (provider, env_var) in PROVIDER_ENV_VARS {\n        if std::env::var(env_var).is_ok() {\n            providers.push(provider.to_string());\n        }\n    }\n    if std::env::var(\"CORTEX_BACKEND_URL\").is_ok() {\n        providers.push(\"backend\".to_string());\n    }\n    providers\n}\n```\n\n**Lines 234-254 — select() checks is_provider_available(), which always returns false for SMALL_MODELS providers:**\n```rust\npub fn select(&self) -> Option<(String, String)> {\n    if let Some(ref configured) = self.configured_model {\n        return self.parse_model_string(configured);\n    }\n    for (provider, model) in SMALL_MODELS {\n        if self.is_provider_available(provider) {  // Always false!\n            return Some((provider.to_string(), model.to_string()));\n        }\n    }\n    None  // Always reached\n}\n```\n\n**Lines 429-432 — call_small_model() always errors:**\n```rust\nlet selector = SmallModelSelector::new();\nlet (provider, model) = selector\n    .select()\n    .ok_or_else(|| anyhow!(\"No small model available. Please configure an API key.\"))?;\n// ^ Always hits this error\n```\n\n**The logic error:**\n1. `SMALL_MODELS` lists providers: groq, openai, anthropic, google, mistral, xai.\n2. `PROVIDER_ENV_VARS` only has \"cortex\" — which is NOT in `SMALL_MODELS`.\n3. `detect_available_providers()` can never return any provider from `SMALL_MODELS`.\n4. `select()` can never find an available provider → always returns `None`.\n5. All dependent functions (`generate_title`, `generate_summary`, `classify_intent`) always fail.\n\n### System Information\n\n```shell\nCortex Version: 0.0.7\nOS: macOS Darwin 25.2.0\n```\n\n### Steps to Reproduce\n\n```rust\nuse cortex_engine::small_model::{SmallModelSelector, detect_available_providers};\n\n// Even with OPENAI_API_KEY set in environment:\nstd::env::set_var(\"OPENAI_API_KEY\", \"sk-test-key\");\n\nlet providers = detect_available_providers();\nprintln!(\"{:?}\", providers);  // [] (empty — OPENAI_API_KEY is never checked)\n\nlet selector = SmallModelSelector::new();\nlet result = selector.select();\nprintln!(\"{:?}\", result);  // None (no providers detected)\n\n// generate_title, generate_summary, classify_intent all fail:\n// Error: \"No small model available. Please configure an API key.\"\n```\n\n### Expected Behavior\n\n`PROVIDER_ENV_VARS` should include env var mappings for all providers in `SMALL_MODELS`:\n\n```rust\npub const PROVIDER_ENV_VARS: &[(&str, &str)] = &[\n    (\"groq\", \"GROQ_API_KEY\"),\n    (\"openai\", \"OPENAI_API_KEY\"),\n    (\"anthropic\", \"ANTHROPIC_API_KEY\"),\n    (\"google\", \"GOOGLE_API_KEY\"),\n    (\"mistral\", \"MISTRAL_API_KEY\"),\n    (\"xai\", \"XAI_API_KEY\"),\n    (\"cortex\", \"CORTEX_AUTH_TOKEN\"),\n];\n```\n\nWith proper env var mappings, `detect_available_providers()` would detect configured providers and `select()` would return the best available model.\n\n### Actual Behavior\n\n`PROVIDER_ENV_VARS` only contains `(\"cortex\", \"CORTEX_AUTH_TOKEN\")`, so no providers from `SMALL_MODELS` are ever detected. `select()` always returns `None`. All small model functions always fail.\n\n### Additional Context\n\n**Severity:** HIGH (entire small model subsystem non-functional)\n\n**Impact:**\n- `generate_title()` — session titles cannot be auto-generated\n- `generate_summary()` — conversation summaries cannot be auto-generated\n- `classify_intent()` — user intent classification always fails\n- `call_small_model()` — all small model tasks fail\n- `has_small_model()` — always returns false\n- Users with valid API keys (OPENAI_API_KEY, etc.) are told \"No small model available\" despite having configured providers",
+      "author": {
+        "name": "DanielDerefaka",
+        "url": "https://github.com/DanielDerefaka",
+        "avatar": "https://avatars.githubusercontent.com/u/101010297?v=4"
+      },
+      "timestamp": "2026-02-07T23:10:01Z",
+      "url": "https://github.com/PlatformNetwork/bounty-challenge/issues/6724",
+      "metrics": {
+        "comments": 0
+      },
+      "tags": [
+        "valid",
+        "cortex"
+      ],
+      "raw": {
+        "url": "https://api.github.com/repos/PlatformNetwork/bounty-challenge/issues/6724",
+        "repository_url": "https://api.github.com/repos/PlatformNetwork/bounty-challenge",
+        "labels_url": "https://api.github.com/repos/PlatformNetwork/bounty-challenge/issues/6724/labels{/name}",
+        "comments_url": "https://api.github.com/repos/PlatformNetwork/bounty-challenge/issues/6724/comments",
+        "events_url": "https://api.github.com/repos/PlatformNetwork/bounty-challenge/issues/6724/events",
+        "html_url": "https://github.com/PlatformNetwork/bounty-challenge/issues/6724",
+        "id": 3911520698,
+        "node_id": "I_kwDOQymhts7pJRG6",
+        "number": 6724,
+        "title": "[BUG] [v0.0.7] PROVIDER_ENV_VARS only contains \"cortex\" — SmallModelSelector::select() always returns None for all 6 listed providers (small_model.rs:39)",
+        "user": {
+          "login": "DanielDerefaka",
+          "id": 101010297,
+          "node_id": "U_kgDOBgVLeQ",
+          "avatar_url": "https://avatars.githubusercontent.com/u/101010297?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/DanielDerefaka",
+          "html_url": "https://github.com/DanielDerefaka",
+          "followers_url": "https://api.github.com/users/DanielDerefaka/followers",
+          "following_url": "https://api.github.com/users/DanielDerefaka/following{/other_user}",
+          "gists_url": "https://api.github.com/users/DanielDerefaka/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/DanielDerefaka/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/DanielDerefaka/subscriptions",
+          "organizations_url": "https://api.github.com/users/DanielDerefaka/orgs",
+          "repos_url": "https://api.github.com/users/DanielDerefaka/repos",
+          "events_url": "https://api.github.com/users/DanielDerefaka/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/DanielDerefaka/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "labels": [
+          {
+            "id": 10018787826,
+            "node_id": "LA_kwDOQymhts8AAAACVSqR8g",
+            "url": "https://api.github.com/repos/PlatformNetwork/bounty-challenge/labels/valid",
+            "name": "valid",
+            "color": "b1a5ef",
+            "default": false,
+            "description": "Valid issue"
+          },
+          {
+            "id": 10023292253,
+            "node_id": "LA_kwDOQymhts8AAAACVW9NXQ",
+            "url": "https://api.github.com/repos/PlatformNetwork/bounty-challenge/labels/cortex",
+            "name": "cortex",
+            "color": "7B68EE",
+            "default": false,
+            "description": "Issues related to CortexLM/cortex repository"
+          }
+        ],
+        "state": "open",
+        "locked": false,
+        "assignee": null,
+        "assignees": [],
+        "milestone": null,
+        "comments": 0,
+        "created_at": "2026-02-07T23:10:01Z",
+        "updated_at": "2026-02-07T23:18:27Z",
+        "closed_at": null,
+        "author_association": "NONE",
+        "type": null,
+        "active_lock_reason": null,
+        "sub_issues_summary": {
+          "total": 0,
+          "completed": 0,
+          "percent_completed": 0
+        },
+        "issue_dependencies_summary": {
+          "blocked_by": 0,
+          "total_blocked_by": 0,
+          "blocking": 0,
+          "total_blocking": 0
+        },
+        "body": "### Project\n\ncortex\n\n### Description\n\n`PROVIDER_ENV_VARS` at `small_model.rs:39` only defines a single entry `(\"cortex\", \"CORTEX_AUTH_TOKEN\")`, but the `SMALL_MODELS` array at line 29 lists 6 providers: `groq`, `openai`, `anthropic`, `google`, `mistral`, and `xai`. Since `detect_available_providers()` iterates exclusively over `PROVIDER_ENV_VARS`, it can never detect any of the 6 providers that `SMALL_MODELS` actually uses. As a result, `SmallModelSelector::select()` always returns `None`, and all functions that depend on it (`call_small_model`, `generate_title`, `generate_summary`, `classify_intent`) unconditionally fail with \"No small model available.\"\n\n**This is NOT intentional behavior** because:\n1. `SMALL_MODELS` explicitly lists 6 providers with specific model names and comments like \"Ultra-fast, free tier\" — these are clearly meant to be used.\n2. `detect_available_providers()` is designed to auto-detect providers via env vars, but the lookup table is empty for all relevant providers.\n3. The `\"cortex\"` entry in `PROVIDER_ENV_VARS` isn't even present in `SMALL_MODELS`, making the only env var check useless.\n4. Tests bypass the broken detection by using `with_providers()` or `with_configured_model()` — no test exercises the actual auto-detection path.\n\n### Error Message\n\n```\nError: No small model available. Please configure an API key.\n```\n\n### Debug Logs\n\nSource code at `cortex-source/src/cortex-engine/src/small_model.rs`:\n\n**Line 29-36 — SMALL_MODELS defines 6 providers:**\n```rust\npub const SMALL_MODELS: &[(&str, &str)] = &[\n    (\"groq\", \"llama-3.1-8b-instant\"),\n    (\"openai\", \"gpt-4o-mini\"),\n    (\"anthropic\", \"claude-3-5-haiku-latest\"),\n    (\"google\", \"gemini-2.0-flash-lite\"),\n    (\"mistral\", \"mistral-small-latest\"),\n    (\"xai\", \"grok-2-mini\"),\n];\n```\n\n**Line 39 — PROVIDER_ENV_VARS only has \"cortex\":**\n```rust\npub const PROVIDER_ENV_VARS: &[(&str, &str)] = &[(\"cortex\", \"CORTEX_AUTH_TOKEN\")];\n```\n\n**Lines 306-321 — detect_available_providers() only checks PROVIDER_ENV_VARS:**\n```rust\npub fn detect_available_providers() -> Vec<String> {\n    let mut providers = Vec::new();\n    for (provider, env_var) in PROVIDER_ENV_VARS {\n        if std::env::var(env_var).is_ok() {\n            providers.push(provider.to_string());\n        }\n    }\n    if std::env::var(\"CORTEX_BACKEND_URL\").is_ok() {\n        providers.push(\"backend\".to_string());\n    }\n    providers\n}\n```\n\n**Lines 234-254 — select() checks is_provider_available(), which always returns false for SMALL_MODELS providers:**\n```rust\npub fn select(&self) -> Option<(String, String)> {\n    if let Some(ref configured) = self.configured_model {\n        return self.parse_model_string(configured);\n    }\n    for (provider, model) in SMALL_MODELS {\n        if self.is_provider_available(provider) {  // Always false!\n            return Some((provider.to_string(), model.to_string()));\n        }\n    }\n    None  // Always reached\n}\n```\n\n**Lines 429-432 — call_small_model() always errors:**\n```rust\nlet selector = SmallModelSelector::new();\nlet (provider, model) = selector\n    .select()\n    .ok_or_else(|| anyhow!(\"No small model available. Please configure an API key.\"))?;\n// ^ Always hits this error\n```\n\n**The logic error:**\n1. `SMALL_MODELS` lists providers: groq, openai, anthropic, google, mistral, xai.\n2. `PROVIDER_ENV_VARS` only has \"cortex\" — which is NOT in `SMALL_MODELS`.\n3. `detect_available_providers()` can never return any provider from `SMALL_MODELS`.\n4. `select()` can never find an available provider → always returns `None`.\n5. All dependent functions (`generate_title`, `generate_summary`, `classify_intent`) always fail.\n\n### System Information\n\n```shell\nCortex Version: 0.0.7\nOS: macOS Darwin 25.2.0\n```\n\n### Steps to Reproduce\n\n```rust\nuse cortex_engine::small_model::{SmallModelSelector, detect_available_providers};\n\n// Even with OPENAI_API_KEY set in environment:\nstd::env::set_var(\"OPENAI_API_KEY\", \"sk-test-key\");\n\nlet providers = detect_available_providers();\nprintln!(\"{:?}\", providers);  // [] (empty — OPENAI_API_KEY is never checked)\n\nlet selector = SmallModelSelector::new();\nlet result = selector.select();\nprintln!(\"{:?}\", result);  // None (no providers detected)\n\n// generate_title, generate_summary, classify_intent all fail:\n// Error: \"No small model available. Please configure an API key.\"\n```\n\n### Expected Behavior\n\n`PROVIDER_ENV_VARS` should include env var mappings for all providers in `SMALL_MODELS`:\n\n```rust\npub const PROVIDER_ENV_VARS: &[(&str, &str)] = &[\n    (\"groq\", \"GROQ_API_KEY\"),\n    (\"openai\", \"OPENAI_API_KEY\"),\n    (\"anthropic\", \"ANTHROPIC_API_KEY\"),\n    (\"google\", \"GOOGLE_API_KEY\"),\n    (\"mistral\", \"MISTRAL_API_KEY\"),\n    (\"xai\", \"XAI_API_KEY\"),\n    (\"cortex\", \"CORTEX_AUTH_TOKEN\"),\n];\n```\n\nWith proper env var mappings, `detect_available_providers()` would detect configured providers and `select()` would return the best available model.\n\n### Actual Behavior\n\n`PROVIDER_ENV_VARS` only contains `(\"cortex\", \"CORTEX_AUTH_TOKEN\")`, so no providers from `SMALL_MODELS` are ever detected. `select()` always returns `None`. All small model functions always fail.\n\n### Additional Context\n\n**Severity:** HIGH (entire small model subsystem non-functional)\n\n**Impact:**\n- `generate_title()` — session titles cannot be auto-generated\n- `generate_summary()` — conversation summaries cannot be auto-generated\n- `classify_intent()` — user intent classification always fails\n- `call_small_model()` — all small model tasks fail\n- `has_small_model()` — always returns false\n- Users with valid API keys (OPENAI_API_KEY, etc.) are told \"No small model available\" despite having configured providers",
+        "reactions": {
+          "url": "https://api.github.com/repos/PlatformNetwork/bounty-challenge/issues/6724/reactions",
+          "total_count": 0,
+          "+1": 0,
+          "-1": 0,
+          "laugh": 0,
+          "hooray": 0,
+          "confused": 0,
+          "heart": 0,
+          "rocket": 0,
+          "eyes": 0
+        },
+        "timeline_url": "https://api.github.com/repos/PlatformNetwork/bounty-challenge/issues/6724/timeline",
+        "performed_via_github_app": null,
+        "state_reason": null,
+        "score": 1
+      }
+    },
+    {
+      "id": "github-issue-3911508095",
+      "platform": "github",
+      "type": "issue",
+      "title": "ai-feature-tracker/issues #94: [Unconfirmed Change] Microsoft Copilot - Copilot Connectors",
+      "content": "## Unconfirmed Change\n\nAutomated verification found a potential change but couldn't reach consensus:\n\n**Platform:** Microsoft Copilot\n**Feature:** Copilot Connectors\n**Confirmations:** 2/3\n\n## Model Responses\n\n### Gemini Flash\n\n<details>\n<summary>Response</summary>\n\nHere's a breakdown of the current status of Microsoft Copilot's \"Copilot Connectors\" feature, based on the provided search results:\n\n**1. Pricing Tier Availability:**\n\n*   **Which subscription plans have access?**\n    *   Microsoft 365 Copilot is available for enterprise at 0/user/month and for SMBs with ≤300 users as Microsoft 365 Copilot Business at 1/user/month.\n    *   Microsoft 365 Personal increased to .99/month (9.99/year), and Family to 2.99/month (29.99/year) which includes basic Copilot access.\n    *   Microsoft 365 Premium now bundles Copilot Pro features.\n    *   Copilot Pro costs 0 per user per month.\n    *   Copilot Chat is available at no additional cost for Microsoft Entra account users with an eligible Microsoft 365 subscription.\n*   **What are the usage limits per tier (if any)?**\n    *   Copilot Studio includes Copilot Credit capacity packs of 25,000 Copilot Credits each, priced at 00.00/pack/month.\n    *   Autonomous agents use Copilot Credits on a pay-as-you-go basis (25 credits per trigger).\n    *   API calls per connection are limited to 300 per 60 seconds.\n\n**2. Platform/Surface Availability:**\n\n*   Connectors enable Copilot to connect to Outlook, OneDrive, Gmail, and Google Drive.\n*   Copilot is integrated into Windows and Microsoft 365 apps.\n*   Copilot works inside Word, Excel, PowerPoint, Outlook, Teams, OneNote, and Loop.\n*   Copilot connector content powers other Microsoft 365 intelligent experiences like Microsoft Search and Context IQ.\n*   Available in Power Apps and Power Automate.\n\n**3. Current Status:**\n\n*   Generally Available (GA).\n*   Federated connectors are in early access preview and are available only to Frontier preview program and Targeted release members.\n\n**4. Access Gating:**\n\n*   Microsoft Copilot in Windows is available for free.\n*   Copilot Pro and Copilot for Microsoft 365 are paid.\n*   Connectors offered by partners might require separate licenses or subscriptions billed by those providers.\n\n**5. Regional Availability:**\n\n*   Available globally where M365 Copilot is available.\n*   Copilot connectors are available in the global service and in Microsoft 365 Government Community Cloud (GCC) and Government Community Cloud High (GCCH) environments. They aren't available in Department of Defense (DoD) environments. However, as of January 31, 2026, Copilot connectors are available for the U.S. Department of Defense environment.\n*   By default, Copilot features are available in the North America region only.\n\n**6. Official URL:**\n\n*   Microsoft Copilot Studio: <https://aka.ms/copilotstudio>\n*   Microsoft Copilot for individuals features: <https://www.microsoft.com/en-us/microsoft-copilot/for-individuals/features?form=M301DN#groups&OCID=CGE_osocial_Copilot_Free_868g2vm8m>\n*   Microsoft 365 Roadmap: <https://www.microsoft.com/microsoft-365/roadmap?id=512428>\n*   Connectors Gallery: <https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHqM5bXuWI5q6DA6PFgwS0g47L84FnoxH9dihi5QloIxRcVLqG4b1YOWbtV6S9Ks_0BNiabeQ_sxP5VEBF0LdWocaaFLDanhvTgspxphGV9pu6k41eK602zliYShrfS0yf9LDCQlymeSE-WrqNDjRANH5SCxZoiwEHqQxfPTLG->\n*   These URLs are presumed active and accessible.\n\n**7. Recent Changes (Last 30 Days):**\n\n*   Microsoft Copilot data connector for Microsoft Sentinel is now in public preview (announced on February 3, 2026).\n*   Copilot connectors are available for the U.S. Department of Defense environment (announced January 31, 2026).\n*   Microsoft 365 Copilot declarative agents will upgrade to the GPT-5.1 model by mid-January 2026.\n*   Microsoft 365 Copilot now defaults to GPT-5 with a mode selector (December 2025 - January 2026).\n*   Microsoft 365 Copilot Notebooks will allow users to add public web links as references (November 2025 - January 2026).\n*   Microsoft 365 Copilot will enable natural language commands for email triage in Outlook (December 2025).\n*   Support for refining query filters for Confluence Copilot connectors (December 2025).\n*   Copilot Chat available when using Copilot Search (December 2025).\n\n\n</details>\n\n### Perplexity\n\n<details>\n<summary>Response</summary>\n\n### 1. Pricing Tier Availability\n**Copilot Connectors are not explicitly detailed in search results as a standalone feature with dedicated pricing tiers.** They appear tied to **Microsoft Copilot Studio** (for building/extending agents and connectors) or broader **Microsoft 365 Copilot** add-ons, which require qualifying base licenses. No specific mentions for Free, Copilot Pro, or Copilot for Microsoft 365 plans[1][2][3][4][5][6][7].\n\n- **Subscription plans with access**: Available via **Microsoft 365 Copilot** (0/user/month for enterprise, requires E3/E5 or equivalent base) or **Copilot Business** (8–1/user/month promo for SMB with Business Basic/Standard/Premium base, up to 300 seats)[2][3][4][6][9]. Copilot Studio standalone uses metered **Copilot Credits** (e.g., packs from €187.20/month for 25,000 credits)[5][7].\n- **Usage limits per tier**: Metered via **Copilot Credits** in Copilot Studio/agents (consumption-based on actions/responses; pre-purchase tiers with discounts, e.g., 3,000 CCCUs at ,850 for 5% off)[5][7]. Enterprise Copilot includes some agent usage (pay-as-you-go unlimited or 25,000 credits/pack); SMB has quotas that can overrun budgets without governance[2][6][7].\n\n### 2. Platform/Surface Availability\n**No direct information on Copilot Connectors' platform availability in search results.** Inferred as part of **Copilot Studio** or **Microsoft 365 Copilot**, which are web-based SaaS with access across Microsoft 365 apps (e.g., Teams, web chat). Likely available on **web** and integrated surfaces (Windows/macOS via apps, iOS/Android via mobile apps), but not confirmed for Linux, terminal, or API[3][4][5][8][9].\n\n### 3. Current Status\n**Status unclear from results; appears GA within Copilot Studio/Microsoft 365 Copilot as of February 2026.** Copilot Studio licensing guide (Feb 2026) treats connectors/extensibility as active/production (not labeled Beta/Preview/Deprecated)[5][7]. Broader Copilot offerings are generally available with promos through March 2026[2][3][4].\n\n### 4. Access Gating\n**Paid-only, requiring base Microsoft 365 license + Copilot add-on.** Not free; enterprise/business plans only (no individual/free tier access mentioned). Tenant-wide for Studio credits; SMB limited to <300 seats[2][3][4][5][6][7][9]. Org-only for enterprise features.\n\n### 5. Regional Availability\n**Available globally where Microsoft 365 Copilot is available, with some market restrictions.** One source notes Copilot Studio \"not available in your market\" (Ireland example), implying regional limits despite global M365 Copilot baseline. Matches stored info; no full country list provided[5].\n\n### 6. Official URL\n**No official product/feature page URL specifically for \"Copilot Connectors\" identified.** Closest: \n- Copilot Studio pricing: https://www.microsoft.com/en-us/microsoft-365-copilot/pricing/copilot-studio[5].\n- M365 Copilot pricing: https://www.microsoft.com/en-us/microsoft-365-copilot/pricing[4].\nAll linked pages appear active (pricing/promos listed as of 2026)[3][4][5][8][9].\n\n### 7. Recent Changes\n**No announcements or changes specific to Copilot Connectors in last 30 days (since ~Jan 2026).** Broader context: Dec 2025 M365 price hikes announced (effective July 2026); SMB Copilot Business promo at 8/user through March 31, 2026; Feb 2026 Copilot Studio licensing guide details credit tiers (active as of guide date)[1][2][7]. No connector-specific updates.\n\n</details>\n\n## Action Required\n\nPlease manually verify if this feature has changed.\n\n---\n*This issue was automatically generated by the pricing verification system.*\n",
+      "author": {
+        "name": "github-actions[bot]",
+        "url": "https://github.com/apps/github-actions",
+        "avatar": "https://avatars.githubusercontent.com/in/15368?v=4"
+      },
+      "timestamp": "2026-02-07T23:03:15Z",
+      "url": "https://github.com/snapsynapse/ai-feature-tracker/issues/94",
+      "metrics": {
+        "comments": 0
+      },
+      "tags": [
+        "needs-review",
+        "verification-inconclusive"
+      ],
+      "raw": {
+        "url": "https://api.github.com/repos/snapsynapse/ai-feature-tracker/issues/94",
+        "repository_url": "https://api.github.com/repos/snapsynapse/ai-feature-tracker",
+        "labels_url": "https://api.github.com/repos/snapsynapse/ai-feature-tracker/issues/94/labels{/name}",
+        "comments_url": "https://api.github.com/repos/snapsynapse/ai-feature-tracker/issues/94/comments",
+        "events_url": "https://api.github.com/repos/snapsynapse/ai-feature-tracker/issues/94/events",
+        "html_url": "https://github.com/snapsynapse/ai-feature-tracker/issues/94",
+        "id": 3911508095,
+        "node_id": "I_kwDOQ95Z3s7pJOB_",
+        "number": 94,
+        "title": "[Unconfirmed Change] Microsoft Copilot - Copilot Connectors",
+        "user": {
+          "login": "github-actions[bot]",
+          "id": 41898282,
+          "node_id": "MDM6Qm90NDE4OTgyODI=",
+          "avatar_url": "https://avatars.githubusercontent.com/in/15368?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/github-actions%5Bbot%5D",
+          "html_url": "https://github.com/apps/github-actions",
+          "followers_url": "https://api.github.com/users/github-actions%5Bbot%5D/followers",
+          "following_url": "https://api.github.com/users/github-actions%5Bbot%5D/following{/other_user}",
+          "gists_url": "https://api.github.com/users/github-actions%5Bbot%5D/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/github-actions%5Bbot%5D/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/github-actions%5Bbot%5D/subscriptions",
+          "organizations_url": "https://api.github.com/users/github-actions%5Bbot%5D/orgs",
+          "repos_url": "https://api.github.com/users/github-actions%5Bbot%5D/repos",
+          "events_url": "https://api.github.com/users/github-actions%5Bbot%5D/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/github-actions%5Bbot%5D/received_events",
+          "type": "Bot",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "labels": [
+          {
+            "id": 10088996689,
+            "node_id": "LA_kwDOQ95Z3s8AAAACWVnfUQ",
+            "url": "https://api.github.com/repos/snapsynapse/ai-feature-tracker/labels/needs-review",
+            "name": "needs-review",
+            "color": "fbca04",
+            "default": false,
+            "description": "Needs manual review"
+          },
+          {
+            "id": 10089086404,
+            "node_id": "LA_kwDOQ95Z3s8AAAACWVs9xA",
+            "url": "https://api.github.com/repos/snapsynapse/ai-feature-tracker/labels/verification-inconclusive",
+            "name": "verification-inconclusive",
+            "color": "fbca04",
+            "default": false,
+            "description": ""
+          }
+        ],
+        "state": "open",
+        "locked": false,
+        "assignee": null,
+        "assignees": [],
+        "milestone": null,
+        "comments": 0,
+        "created_at": "2026-02-07T23:03:15Z",
+        "updated_at": "2026-02-07T23:03:15Z",
+        "closed_at": null,
+        "author_association": "CONTRIBUTOR",
+        "active_lock_reason": null,
+        "sub_issues_summary": {
+          "total": 0,
+          "completed": 0,
+          "percent_completed": 0
+        },
+        "issue_dependencies_summary": {
+          "blocked_by": 0,
+          "total_blocked_by": 0,
+          "blocking": 0,
+          "total_blocking": 0
+        },
+        "body": "## Unconfirmed Change\n\nAutomated verification found a potential change but couldn't reach consensus:\n\n**Platform:** Microsoft Copilot\n**Feature:** Copilot Connectors\n**Confirmations:** 2/3\n\n## Model Responses\n\n### Gemini Flash\n\n<details>\n<summary>Response</summary>\n\nHere's a breakdown of the current status of Microsoft Copilot's \"Copilot Connectors\" feature, based on the provided search results:\n\n**1. Pricing Tier Availability:**\n\n*   **Which subscription plans have access?**\n    *   Microsoft 365 Copilot is available for enterprise at 0/user/month and for SMBs with ≤300 users as Microsoft 365 Copilot Business at 1/user/month.\n    *   Microsoft 365 Personal increased to .99/month (9.99/year), and Family to 2.99/month (29.99/year) which includes basic Copilot access.\n    *   Microsoft 365 Premium now bundles Copilot Pro features.\n    *   Copilot Pro costs 0 per user per month.\n    *   Copilot Chat is available at no additional cost for Microsoft Entra account users with an eligible Microsoft 365 subscription.\n*   **What are the usage limits per tier (if any)?**\n    *   Copilot Studio includes Copilot Credit capacity packs of 25,000 Copilot Credits each, priced at 00.00/pack/month.\n    *   Autonomous agents use Copilot Credits on a pay-as-you-go basis (25 credits per trigger).\n    *   API calls per connection are limited to 300 per 60 seconds.\n\n**2. Platform/Surface Availability:**\n\n*   Connectors enable Copilot to connect to Outlook, OneDrive, Gmail, and Google Drive.\n*   Copilot is integrated into Windows and Microsoft 365 apps.\n*   Copilot works inside Word, Excel, PowerPoint, Outlook, Teams, OneNote, and Loop.\n*   Copilot connector content powers other Microsoft 365 intelligent experiences like Microsoft Search and Context IQ.\n*   Available in Power Apps and Power Automate.\n\n**3. Current Status:**\n\n*   Generally Available (GA).\n*   Federated connectors are in early access preview and are available only to Frontier preview program and Targeted release members.\n\n**4. Access Gating:**\n\n*   Microsoft Copilot in Windows is available for free.\n*   Copilot Pro and Copilot for Microsoft 365 are paid.\n*   Connectors offered by partners might require separate licenses or subscriptions billed by those providers.\n\n**5. Regional Availability:**\n\n*   Available globally where M365 Copilot is available.\n*   Copilot connectors are available in the global service and in Microsoft 365 Government Community Cloud (GCC) and Government Community Cloud High (GCCH) environments. They aren't available in Department of Defense (DoD) environments. However, as of January 31, 2026, Copilot connectors are available for the U.S. Department of Defense environment.\n*   By default, Copilot features are available in the North America region only.\n\n**6. Official URL:**\n\n*   Microsoft Copilot Studio: <https://aka.ms/copilotstudio>\n*   Microsoft Copilot for individuals features: <https://www.microsoft.com/en-us/microsoft-copilot/for-individuals/features?form=M301DN#groups&OCID=CGE_osocial_Copilot_Free_868g2vm8m>\n*   Microsoft 365 Roadmap: <https://www.microsoft.com/microsoft-365/roadmap?id=512428>\n*   Connectors Gallery: <https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHqM5bXuWI5q6DA6PFgwS0g47L84FnoxH9dihi5QloIxRcVLqG4b1YOWbtV6S9Ks_0BNiabeQ_sxP5VEBF0LdWocaaFLDanhvTgspxphGV9pu6k41eK602zliYShrfS0yf9LDCQlymeSE-WrqNDjRANH5SCxZoiwEHqQxfPTLG->\n*   These URLs are presumed active and accessible.\n\n**7. Recent Changes (Last 30 Days):**\n\n*   Microsoft Copilot data connector for Microsoft Sentinel is now in public preview (announced on February 3, 2026).\n*   Copilot connectors are available for the U.S. Department of Defense environment (announced January 31, 2026).\n*   Microsoft 365 Copilot declarative agents will upgrade to the GPT-5.1 model by mid-January 2026.\n*   Microsoft 365 Copilot now defaults to GPT-5 with a mode selector (December 2025 - January 2026).\n*   Microsoft 365 Copilot Notebooks will allow users to add public web links as references (November 2025 - January 2026).\n*   Microsoft 365 Copilot will enable natural language commands for email triage in Outlook (December 2025).\n*   Support for refining query filters for Confluence Copilot connectors (December 2025).\n*   Copilot Chat available when using Copilot Search (December 2025).\n\n\n</details>\n\n### Perplexity\n\n<details>\n<summary>Response</summary>\n\n### 1. Pricing Tier Availability\n**Copilot Connectors are not explicitly detailed in search results as a standalone feature with dedicated pricing tiers.** They appear tied to **Microsoft Copilot Studio** (for building/extending agents and connectors) or broader **Microsoft 365 Copilot** add-ons, which require qualifying base licenses. No specific mentions for Free, Copilot Pro, or Copilot for Microsoft 365 plans[1][2][3][4][5][6][7].\n\n- **Subscription plans with access**: Available via **Microsoft 365 Copilot** (0/user/month for enterprise, requires E3/E5 or equivalent base) or **Copilot Business** (8–1/user/month promo for SMB with Business Basic/Standard/Premium base, up to 300 seats)[2][3][4][6][9]. Copilot Studio standalone uses metered **Copilot Credits** (e.g., packs from €187.20/month for 25,000 credits)[5][7].\n- **Usage limits per tier**: Metered via **Copilot Credits** in Copilot Studio/agents (consumption-based on actions/responses; pre-purchase tiers with discounts, e.g., 3,000 CCCUs at ,850 for 5% off)[5][7]. Enterprise Copilot includes some agent usage (pay-as-you-go unlimited or 25,000 credits/pack); SMB has quotas that can overrun budgets without governance[2][6][7].\n\n### 2. Platform/Surface Availability\n**No direct information on Copilot Connectors' platform availability in search results.** Inferred as part of **Copilot Studio** or **Microsoft 365 Copilot**, which are web-based SaaS with access across Microsoft 365 apps (e.g., Teams, web chat). Likely available on **web** and integrated surfaces (Windows/macOS via apps, iOS/Android via mobile apps), but not confirmed for Linux, terminal, or API[3][4][5][8][9].\n\n### 3. Current Status\n**Status unclear from results; appears GA within Copilot Studio/Microsoft 365 Copilot as of February 2026.** Copilot Studio licensing guide (Feb 2026) treats connectors/extensibility as active/production (not labeled Beta/Preview/Deprecated)[5][7]. Broader Copilot offerings are generally available with promos through March 2026[2][3][4].\n\n### 4. Access Gating\n**Paid-only, requiring base Microsoft 365 license + Copilot add-on.** Not free; enterprise/business plans only (no individual/free tier access mentioned). Tenant-wide for Studio credits; SMB limited to <300 seats[2][3][4][5][6][7][9]. Org-only for enterprise features.\n\n### 5. Regional Availability\n**Available globally where Microsoft 365 Copilot is available, with some market restrictions.** One source notes Copilot Studio \"not available in your market\" (Ireland example), implying regional limits despite global M365 Copilot baseline. Matches stored info; no full country list provided[5].\n\n### 6. Official URL\n**No official product/feature page URL specifically for \"Copilot Connectors\" identified.** Closest: \n- Copilot Studio pricing: https://www.microsoft.com/en-us/microsoft-365-copilot/pricing/copilot-studio[5].\n- M365 Copilot pricing: https://www.microsoft.com/en-us/microsoft-365-copilot/pricing[4].\nAll linked pages appear active (pricing/promos listed as of 2026)[3][4][5][8][9].\n\n### 7. Recent Changes\n**No announcements or changes specific to Copilot Connectors in last 30 days (since ~Jan 2026).** Broader context: Dec 2025 M365 price hikes announced (effective July 2026); SMB Copilot Business promo at 8/user through March 31, 2026; Feb 2026 Copilot Studio licensing guide details credit tiers (active as of guide date)[1][2][7]. No connector-specific updates.\n\n</details>\n\n## Action Required\n\nPlease manually verify if this feature has changed.\n\n---\n*This issue was automatically generated by the pricing verification system.*\n",
+        "reactions": {
+          "url": "https://api.github.com/repos/snapsynapse/ai-feature-tracker/issues/94/reactions",
+          "total_count": 0,
+          "+1": 0,
+          "-1": 0,
+          "laugh": 0,
+          "hooray": 0,
+          "confused": 0,
+          "heart": 0,
+          "rocket": 0,
+          "eyes": 0
+        },
+        "timeline_url": "https://api.github.com/repos/snapsynapse/ai-feature-tracker/issues/94/timeline",
+        "performed_via_github_app": null,
+        "state_reason": null,
+        "score": 1
+      }
+    },
+    {
+      "id": "github-issue-3911507336",
+      "platform": "github",
+      "type": "issue",
+      "title": "ai-feature-tracker/issues #86: [Verification Conflict] Local/Open Models - Mistral Small 3",
+      "content": "## Verification Conflict\n\nAutomated verification found conflicting information about:\n\n**Platform:** Local/Open Models\n**Feature:** Mistral Small 3\n\n## Model Responses\n\n### Gemini Flash\n\n**Result:** Detected change\n\n<details>\n<summary>Full response</summary>\n\nHere's a breakdown of the information available regarding Mistral Small 3 as of February 7, 2026:\n\n**1. Pricing Tier Availability:**\n\n*   The pricing for Mistral Small 3 is /bin/sh.10 per 1 million input tokens and /bin/sh.30 per 1 million output tokens. Some sources indicate slightly different pricing, such as /bin/sh.03 per 1M input tokens and /bin/sh.11 per 1M output tokens. Another source mentions /bin/sh.2 per million input tokens and /bin/sh.6 per million output tokens for Mistral Small 3.1.\n*   It's important to note that Mistral AI also offers custom model training services for tailored AI solutions.\n\n**2. Platform/Surface Availability:**\n\n*   Mistral Small 3 is available on various platforms, including:\n    *   Hugging Face\n    *   Ollama\n    *   Kaggle\n    *   Together AI\n    *   Fireworks AI\n    *   Mistral AI's developer platform \"La Plateforme\"\n    *   Google Cloud Vertex AI\n    *   Amazon Bedrock\n    *   Azure Foundry\n    *   OpenRouter\n    *   Modal\n    *   IBM WatsonX\n    *   Unsloth AI\n*   It will soon be available on:\n    *   NVIDIA NIM\n    *   Amazon SageMaker\n    *   Groq\n    *   Databricks\n    *   Snowflake\n\n**3. Current Status:**\n\n*   Mistral Small 3 appears to be generally available (GA).\n\n**4. Access Gating:**\n\n*   Mistral Small 3 is released under the Apache 2.0 license, making it open-source. This means it is free to use, modify, and distribute.\n\n**5. Regional Availability:**\n\n*   The Apache 2.0 license suggests no regional restrictions.\n\n**6. Official URL:**\n\n*   The official product page is: [https://mistral.ai/news/mistral-small-3/](https://mistral.ai/news/mistral-small-3/).\n*   This URL is active and accessible.\n\n**7. Recent Changes:**\n\n*   **Ministral 3 Family:** Mistral AI has released the Ministral 3 family, which are smaller versions of Mistral Small 3.1, created using cascade distillation. These models come in 3B, 8B, and 14B parameter sizes, with base, instruction-tuned, and reasoning variants.\n*   **API Updates:** There have been API updates, including renaming some API endpoints.\n*   **Mistral Small 3.1 Instruct Gated:** There was a report in June 2025 that Mistral Small 3.1 Instruct was suddenly a gated model on Hugging Face, but the 3.2 model was not.\n*   **Availability on Platforms:** Mistral Small 3.2 became available on Amazon Bedrock Marketplace and Amazon SageMaker JumpStart in July 2025.\n*   **Voxtral Small:** Voxtral Small, an enhancement of Mistral Small 3 with audio input capabilities, was released in July 2025.\n*   **Mistral 3 Release:** Mistral AI announced Mistral 3, including Mistral Large 3 and Ministral 3 models, in December 2025.\n\n\n</details>\n\n### Perplexity\n\n**Result:** No change detected\n\n<details>\n<summary>Full response</summary>\n\n### 1. Pricing tier availability\n**Mistral Small 3 is an open-weight model under Apache 2.0 license, designed for self-hosting with no subscription plans or usage limits required.**[3][4][5][6]  \nHosted API access (e.g., via Mistral AI or providers like DeepInfra) uses pay-per-token pricing (/bin/sh.07–/bin/sh.10/M input, /bin/sh.14–/bin/sh.30/M output), but this does not apply to local/open self-hosted use.[1][2][4][8][9]\n\n### 2. Platform/surface availability\n**Available on any platform supporting local inference: Windows, macOS, Linux, terminal (via tools like Ollama or vLLM); web/terminal via self-hosted servers; no native iOS/Android apps, but possible via cross-platform tools.**[3][4][6]  \nNot available as official API for local/open category (API is hosted).[1][4][7]\n\n### 3. Current status\n**Generally Available (GA), released January 29–30, 2025.**[4][9]\n\n### 4. Access gating\n**Free for all (Apache 2.0 license, downloadable for self-hosting).**[3][4][5][6]\n\n### 5. Regional availability\n**Available globally with no restrictions (Apache 2.0 license).**  \nNo country-specific limitations noted.[3][4][5][6]\n\n### 6. Official URL\n**No single official product page identified in results; model details via Mistral AI announcements or repositories (e.g., Hugging Face implied).**  \nMistral AI pricing page (https://mistral.ai/pricing) covers hosted plans but not local model specifics; active as of results.[4][7]\n\n### 7. Recent changes\n**No announcements or changes in the last 30 days (since early January 2026); model stable post-2025 release.**[1][2][4][5][9]\n\n</details>\n\n## Action Required\n\nPlease manually verify this feature's current status:\n\n1. Check the official pricing page\n2. Verify platform availability\n3. Update the data file if needed\n4. Close this issue with findings\n\n---\n*This issue was automatically generated by the pricing verification system.*\n",
+      "author": {
+        "name": "github-actions[bot]",
+        "url": "https://github.com/apps/github-actions",
+        "avatar": "https://avatars.githubusercontent.com/in/15368?v=4"
+      },
+      "timestamp": "2026-02-07T23:02:56Z",
+      "url": "https://github.com/snapsynapse/ai-feature-tracker/issues/86",
+      "metrics": {
+        "comments": 0
+      },
+      "tags": [
+        "needs-review",
+        "verification-conflict"
+      ],
+      "raw": {
+        "url": "https://api.github.com/repos/snapsynapse/ai-feature-tracker/issues/86",
+        "repository_url": "https://api.github.com/repos/snapsynapse/ai-feature-tracker",
+        "labels_url": "https://api.github.com/repos/snapsynapse/ai-feature-tracker/issues/86/labels{/name}",
+        "comments_url": "https://api.github.com/repos/snapsynapse/ai-feature-tracker/issues/86/comments",
+        "events_url": "https://api.github.com/repos/snapsynapse/ai-feature-tracker/issues/86/events",
+        "html_url": "https://github.com/snapsynapse/ai-feature-tracker/issues/86",
+        "id": 3911507336,
+        "node_id": "I_kwDOQ95Z3s7pJN2I",
+        "number": 86,
+        "title": "[Verification Conflict] Local/Open Models - Mistral Small 3",
+        "user": {
+          "login": "github-actions[bot]",
+          "id": 41898282,
+          "node_id": "MDM6Qm90NDE4OTgyODI=",
+          "avatar_url": "https://avatars.githubusercontent.com/in/15368?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/github-actions%5Bbot%5D",
+          "html_url": "https://github.com/apps/github-actions",
+          "followers_url": "https://api.github.com/users/github-actions%5Bbot%5D/followers",
+          "following_url": "https://api.github.com/users/github-actions%5Bbot%5D/following{/other_user}",
+          "gists_url": "https://api.github.com/users/github-actions%5Bbot%5D/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/github-actions%5Bbot%5D/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/github-actions%5Bbot%5D/subscriptions",
+          "organizations_url": "https://api.github.com/users/github-actions%5Bbot%5D/orgs",
+          "repos_url": "https://api.github.com/users/github-actions%5Bbot%5D/repos",
+          "events_url": "https://api.github.com/users/github-actions%5Bbot%5D/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/github-actions%5Bbot%5D/received_events",
+          "type": "Bot",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "labels": [
+          {
+            "id": 10088996689,
+            "node_id": "LA_kwDOQ95Z3s8AAAACWVnfUQ",
+            "url": "https://api.github.com/repos/snapsynapse/ai-feature-tracker/labels/needs-review",
+            "name": "needs-review",
+            "color": "fbca04",
+            "default": false,
+            "description": "Needs manual review"
+          },
+          {
+            "id": 10089085659,
+            "node_id": "LA_kwDOQ95Z3s8AAAACWVs62w",
+            "url": "https://api.github.com/repos/snapsynapse/ai-feature-tracker/labels/verification-conflict",
+            "name": "verification-conflict",
+            "color": "d73a4a",
+            "default": false,
+            "description": ""
+          }
+        ],
+        "state": "open",
+        "locked": false,
+        "assignee": null,
+        "assignees": [],
+        "milestone": null,
+        "comments": 0,
+        "created_at": "2026-02-07T23:02:56Z",
+        "updated_at": "2026-02-07T23:02:56Z",
+        "closed_at": null,
+        "author_association": "CONTRIBUTOR",
+        "active_lock_reason": null,
+        "sub_issues_summary": {
+          "total": 0,
+          "completed": 0,
+          "percent_completed": 0
+        },
+        "issue_dependencies_summary": {
+          "blocked_by": 0,
+          "total_blocked_by": 0,
+          "blocking": 0,
+          "total_blocking": 0
+        },
+        "body": "## Verification Conflict\n\nAutomated verification found conflicting information about:\n\n**Platform:** Local/Open Models\n**Feature:** Mistral Small 3\n\n## Model Responses\n\n### Gemini Flash\n\n**Result:** Detected change\n\n<details>\n<summary>Full response</summary>\n\nHere's a breakdown of the information available regarding Mistral Small 3 as of February 7, 2026:\n\n**1. Pricing Tier Availability:**\n\n*   The pricing for Mistral Small 3 is /bin/sh.10 per 1 million input tokens and /bin/sh.30 per 1 million output tokens. Some sources indicate slightly different pricing, such as /bin/sh.03 per 1M input tokens and /bin/sh.11 per 1M output tokens. Another source mentions /bin/sh.2 per million input tokens and /bin/sh.6 per million output tokens for Mistral Small 3.1.\n*   It's important to note that Mistral AI also offers custom model training services for tailored AI solutions.\n\n**2. Platform/Surface Availability:**\n\n*   Mistral Small 3 is available on various platforms, including:\n    *   Hugging Face\n    *   Ollama\n    *   Kaggle\n    *   Together AI\n    *   Fireworks AI\n    *   Mistral AI's developer platform \"La Plateforme\"\n    *   Google Cloud Vertex AI\n    *   Amazon Bedrock\n    *   Azure Foundry\n    *   OpenRouter\n    *   Modal\n    *   IBM WatsonX\n    *   Unsloth AI\n*   It will soon be available on:\n    *   NVIDIA NIM\n    *   Amazon SageMaker\n    *   Groq\n    *   Databricks\n    *   Snowflake\n\n**3. Current Status:**\n\n*   Mistral Small 3 appears to be generally available (GA).\n\n**4. Access Gating:**\n\n*   Mistral Small 3 is released under the Apache 2.0 license, making it open-source. This means it is free to use, modify, and distribute.\n\n**5. Regional Availability:**\n\n*   The Apache 2.0 license suggests no regional restrictions.\n\n**6. Official URL:**\n\n*   The official product page is: [https://mistral.ai/news/mistral-small-3/](https://mistral.ai/news/mistral-small-3/).\n*   This URL is active and accessible.\n\n**7. Recent Changes:**\n\n*   **Ministral 3 Family:** Mistral AI has released the Ministral 3 family, which are smaller versions of Mistral Small 3.1, created using cascade distillation. These models come in 3B, 8B, and 14B parameter sizes, with base, instruction-tuned, and reasoning variants.\n*   **API Updates:** There have been API updates, including renaming some API endpoints.\n*   **Mistral Small 3.1 Instruct Gated:** There was a report in June 2025 that Mistral Small 3.1 Instruct was suddenly a gated model on Hugging Face, but the 3.2 model was not.\n*   **Availability on Platforms:** Mistral Small 3.2 became available on Amazon Bedrock Marketplace and Amazon SageMaker JumpStart in July 2025.\n*   **Voxtral Small:** Voxtral Small, an enhancement of Mistral Small 3 with audio input capabilities, was released in July 2025.\n*   **Mistral 3 Release:** Mistral AI announced Mistral 3, including Mistral Large 3 and Ministral 3 models, in December 2025.\n\n\n</details>\n\n### Perplexity\n\n**Result:** No change detected\n\n<details>\n<summary>Full response</summary>\n\n### 1. Pricing tier availability\n**Mistral Small 3 is an open-weight model under Apache 2.0 license, designed for self-hosting with no subscription plans or usage limits required.**[3][4][5][6]  \nHosted API access (e.g., via Mistral AI or providers like DeepInfra) uses pay-per-token pricing (/bin/sh.07–/bin/sh.10/M input, /bin/sh.14–/bin/sh.30/M output), but this does not apply to local/open self-hosted use.[1][2][4][8][9]\n\n### 2. Platform/surface availability\n**Available on any platform supporting local inference: Windows, macOS, Linux, terminal (via tools like Ollama or vLLM); web/terminal via self-hosted servers; no native iOS/Android apps, but possible via cross-platform tools.**[3][4][6]  \nNot available as official API for local/open category (API is hosted).[1][4][7]\n\n### 3. Current status\n**Generally Available (GA), released January 29–30, 2025.**[4][9]\n\n### 4. Access gating\n**Free for all (Apache 2.0 license, downloadable for self-hosting).**[3][4][5][6]\n\n### 5. Regional availability\n**Available globally with no restrictions (Apache 2.0 license).**  \nNo country-specific limitations noted.[3][4][5][6]\n\n### 6. Official URL\n**No single official product page identified in results; model details via Mistral AI announcements or repositories (e.g., Hugging Face implied).**  \nMistral AI pricing page (https://mistral.ai/pricing) covers hosted plans but not local model specifics; active as of results.[4][7]\n\n### 7. Recent changes\n**No announcements or changes in the last 30 days (since early January 2026); model stable post-2025 release.**[1][2][4][5][9]\n\n</details>\n\n## Action Required\n\nPlease manually verify this feature's current status:\n\n1. Check the official pricing page\n2. Verify platform availability\n3. Update the data file if needed\n4. Close this issue with findings\n\n---\n*This issue was automatically generated by the pricing verification system.*\n",
+        "reactions": {
+          "url": "https://api.github.com/repos/snapsynapse/ai-feature-tracker/issues/86/reactions",
+          "total_count": 0,
+          "+1": 0,
+          "-1": 0,
+          "laugh": 0,
+          "hooray": 0,
+          "confused": 0,
+          "heart": 0,
+          "rocket": 0,
+          "eyes": 0
+        },
+        "timeline_url": "https://api.github.com/repos/snapsynapse/ai-feature-tracker/issues/86/timeline",
+        "performed_via_github_app": null,
+        "state_reason": null,
+        "score": 1
+      }
+    },
+    {
+      "id": "github-issue-3911495947",
+      "platform": "github",
+      "type": "issue",
+      "title": "openclaw/issues #11516: [Bug]: [Bug] auth-profiles.json not working on Windows for Google/Groq providers",
+      "content": "## Summary\n`auth-profiles.json` is not being read on Windows for Google and Groq providers, even when the file exists in the correct location with valid JSON and API keys. Only Anthropic works via environment variable (`$env:ANTHROPIC_API_KEY`).\n\n## Steps to reproduce\n1. Install OpenClaw on Windows: `npm install -g openclaw`\n2. Run `openclaw setup` and configure Gateway as local\n3. Create `C:\\Users\\[USERNAME]\\.openclaw\\agents\\main\\agent\\auth-profiles.json` with valid Google and Groq API keys:\n```json\n{\n  \"google\": {\"apiKey\": \"AIzaSyB...\"},\n  \"groq\": {\"apiKey\": \"gsk_...\"}\n}\nSet model: openclaw config set agents.defaults.model.primary google/gemini-1.5-flash\nRestart gateway: openclaw gateway restart\nTry to use: openclaw agent --agent main --local --message \"test\"\nExpected behavior\nOpenClaw should read the API key from auth-profiles.json and successfully authenticate with Google/Groq.\n\nActual behavior\nError message:\n\nError: No API key found for provider \"google\". \nAuth store: C:\\Users\\Rodrigo\\.openclaw\\agents\\main\\agent\\auth-profiles.json \n(agentDir: C:\\Users\\Rodrigo\\.openclaw\\agents\\main\\agent). \nConfigure auth for this agent (openclaw agents add <id>) or copy auth-profiles.json from the main agentDir.\nFile verification shows it exists:\n\nPS> Test-Path \"C:\\Users\\Rodrigo\\.openclaw\\agents\\main\\agent\\auth-profiles.json\"\nTrue\n\nPS> type C:\\Users\\Rodrigo\\.openclaw\\agents\\main\\agent\\auth-profiles.json\n{\"google\":{\"apiKey\":\"AIza...\"},\"groq\":{\"apiKey\":\"gsk_...\"}}\nWorkaround that DOES work:\n\nAnthropic works when using environment variable: $env:ANTHROPIC_API_KEY = \"sk-ant-...\"\nBut Google and Groq DON'T work even with $env:GOOGLE_API_KEY or $env:GROQ_API_KEY\nEnvironment\nOpenClaw version: 2026.2.3-1 (d84eb46)\nOS: Windows 11\nInstall method: npm global (npm install -g openclaw)\nGateway mode: local (ws://127.0.0.1:18789)\nGateway service: Windows Scheduled Task\nLogs or screenshots\nGateway diagnostic logs:\n\n22:51:46 [diagnostic] lane task error: lane=main durationMs=7 \nerror=\"Error: No API key found for provider \"google\". \nAuth store: C:\\Users\\Rodrigo\\.openclaw\\agents\\main\\agent\\auth-profiles.json \n(agentDir: C:\\Users\\Rodrigo\\.openclaw\\agents\\main\\agent). \nConfigure auth for this agent (openclaw agents add <id>) or \ncopy auth-profiles.json from the main agentDir.\"\nAdditional attempts (all failed):\n\nCopied auth-profiles.json to C:\\Users\\Rodrigo\\.openclaw\\ and C:\\Users\\Rodrigo\\.openclaw\\agents\\ - same error\nSet $env:GOOGLE_API_KEY and $env:GROQ_API_KEY - still fails\nRecreated JSON file multiple times - no change\nGateway restarts - no change\nImpact: Cannot use free models (Gemini/Groq) on Windows, forced to use paid Claude API.\n",
+      "author": {
+        "name": "MetatronEUSOU",
+        "url": "https://github.com/MetatronEUSOU",
+        "avatar": "https://avatars.githubusercontent.com/u/259774304?v=4"
+      },
+      "timestamp": "2026-02-07T22:58:22Z",
+      "url": "https://github.com/openclaw/openclaw/issues/11516",
+      "metrics": {
+        "comments": 0
+      },
+      "tags": [
+        "bug"
+      ],
+      "raw": {
+        "url": "https://api.github.com/repos/openclaw/openclaw/issues/11516",
+        "repository_url": "https://api.github.com/repos/openclaw/openclaw",
+        "labels_url": "https://api.github.com/repos/openclaw/openclaw/issues/11516/labels{/name}",
+        "comments_url": "https://api.github.com/repos/openclaw/openclaw/issues/11516/comments",
+        "events_url": "https://api.github.com/repos/openclaw/openclaw/issues/11516/events",
+        "html_url": "https://github.com/openclaw/openclaw/issues/11516",
+        "id": 3911495947,
+        "node_id": "I_kwDOQb6kR87pJLEL",
+        "number": 11516,
+        "title": "[Bug]: [Bug] auth-profiles.json not working on Windows for Google/Groq providers",
+        "user": {
+          "login": "MetatronEUSOU",
+          "id": 259774304,
+          "node_id": "U_kgDOD3vXYA",
+          "avatar_url": "https://avatars.githubusercontent.com/u/259774304?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/MetatronEUSOU",
+          "html_url": "https://github.com/MetatronEUSOU",
+          "followers_url": "https://api.github.com/users/MetatronEUSOU/followers",
+          "following_url": "https://api.github.com/users/MetatronEUSOU/following{/other_user}",
+          "gists_url": "https://api.github.com/users/MetatronEUSOU/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/MetatronEUSOU/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/MetatronEUSOU/subscriptions",
+          "organizations_url": "https://api.github.com/users/MetatronEUSOU/orgs",
+          "repos_url": "https://api.github.com/users/MetatronEUSOU/repos",
+          "events_url": "https://api.github.com/users/MetatronEUSOU/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/MetatronEUSOU/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "labels": [
+          {
+            "id": 9706244967,
+            "node_id": "LA_kwDOQb6kR88AAAACQomLZw",
+            "url": "https://api.github.com/repos/openclaw/openclaw/labels/bug",
+            "name": "bug",
+            "color": "d73a4a",
+            "default": true,
+            "description": "Something isn't working"
+          }
+        ],
+        "state": "open",
+        "locked": false,
+        "assignee": null,
+        "assignees": [],
+        "milestone": null,
+        "comments": 0,
+        "created_at": "2026-02-07T22:58:22Z",
+        "updated_at": "2026-02-07T22:58:22Z",
+        "closed_at": null,
+        "author_association": "NONE",
+        "type": null,
+        "active_lock_reason": null,
+        "sub_issues_summary": {
+          "total": 0,
+          "completed": 0,
+          "percent_completed": 0
+        },
+        "issue_dependencies_summary": {
+          "blocked_by": 0,
+          "total_blocked_by": 0,
+          "blocking": 0,
+          "total_blocking": 0
+        },
+        "body": "## Summary\n`auth-profiles.json` is not being read on Windows for Google and Groq providers, even when the file exists in the correct location with valid JSON and API keys. Only Anthropic works via environment variable (`$env:ANTHROPIC_API_KEY`).\n\n## Steps to reproduce\n1. Install OpenClaw on Windows: `npm install -g openclaw`\n2. Run `openclaw setup` and configure Gateway as local\n3. Create `C:\\Users\\[USERNAME]\\.openclaw\\agents\\main\\agent\\auth-profiles.json` with valid Google and Groq API keys:\n```json\n{\n  \"google\": {\"apiKey\": \"AIzaSyB...\"},\n  \"groq\": {\"apiKey\": \"gsk_...\"}\n}\nSet model: openclaw config set agents.defaults.model.primary google/gemini-1.5-flash\nRestart gateway: openclaw gateway restart\nTry to use: openclaw agent --agent main --local --message \"test\"\nExpected behavior\nOpenClaw should read the API key from auth-profiles.json and successfully authenticate with Google/Groq.\n\nActual behavior\nError message:\n\nError: No API key found for provider \"google\". \nAuth store: C:\\Users\\Rodrigo\\.openclaw\\agents\\main\\agent\\auth-profiles.json \n(agentDir: C:\\Users\\Rodrigo\\.openclaw\\agents\\main\\agent). \nConfigure auth for this agent (openclaw agents add <id>) or copy auth-profiles.json from the main agentDir.\nFile verification shows it exists:\n\nPS> Test-Path \"C:\\Users\\Rodrigo\\.openclaw\\agents\\main\\agent\\auth-profiles.json\"\nTrue\n\nPS> type C:\\Users\\Rodrigo\\.openclaw\\agents\\main\\agent\\auth-profiles.json\n{\"google\":{\"apiKey\":\"AIza...\"},\"groq\":{\"apiKey\":\"gsk_...\"}}\nWorkaround that DOES work:\n\nAnthropic works when using environment variable: $env:ANTHROPIC_API_KEY = \"sk-ant-...\"\nBut Google and Groq DON'T work even with $env:GOOGLE_API_KEY or $env:GROQ_API_KEY\nEnvironment\nOpenClaw version: 2026.2.3-1 (d84eb46)\nOS: Windows 11\nInstall method: npm global (npm install -g openclaw)\nGateway mode: local (ws://127.0.0.1:18789)\nGateway service: Windows Scheduled Task\nLogs or screenshots\nGateway diagnostic logs:\n\n22:51:46 [diagnostic] lane task error: lane=main durationMs=7 \nerror=\"Error: No API key found for provider \"google\". \nAuth store: C:\\Users\\Rodrigo\\.openclaw\\agents\\main\\agent\\auth-profiles.json \n(agentDir: C:\\Users\\Rodrigo\\.openclaw\\agents\\main\\agent). \nConfigure auth for this agent (openclaw agents add <id>) or \ncopy auth-profiles.json from the main agentDir.\"\nAdditional attempts (all failed):\n\nCopied auth-profiles.json to C:\\Users\\Rodrigo\\.openclaw\\ and C:\\Users\\Rodrigo\\.openclaw\\agents\\ - same error\nSet $env:GOOGLE_API_KEY and $env:GROQ_API_KEY - still fails\nRecreated JSON file multiple times - no change\nGateway restarts - no change\nImpact: Cannot use free models (Gemini/Groq) on Windows, forced to use paid Claude API.\n",
+        "reactions": {
+          "url": "https://api.github.com/repos/openclaw/openclaw/issues/11516/reactions",
+          "total_count": 0,
+          "+1": 0,
+          "-1": 0,
+          "laugh": 0,
+          "hooray": 0,
+          "confused": 0,
+          "heart": 0,
+          "rocket": 0,
+          "eyes": 0
+        },
+        "timeline_url": "https://api.github.com/repos/openclaw/openclaw/issues/11516/timeline",
+        "performed_via_github_app": null,
+        "state_reason": null,
+        "score": 1
+      }
+    },
+    {
+      "id": "github-issue-3911495120",
+      "platform": "github",
+      "type": "issue",
+      "title": "ComfyUI-KugelAudio/issues #6: Stuttering / micro-freezes in audio generated by KugelAudio",
+      "content": "### Bug description\nGenerated audio output from KugelAudio nodes stutters during playback, regardless of generation settings:\n[converted_flac_ComfyUI_temp_jvxjq_00001_.wav](https://github.com/user-attachments/files/25156334/converted_flac_ComfyUI_temp_jvxjq_00001_.wav)\nNote: WAV file was converted directly from generated FLAC only for GitHub embed, problem exists on both.\n\n### Steps to reproduce\n1. Open ComfyUI\n2. Use any KugelAudio node (TTS/Single/Multi)\n3. Settings (checked also with other attention type, seed, language etc.):\n- <img width=\"256\" height=\"256\" alt=\"Image\" src=\"https://github.com/user-attachments/assets/e272d2fd-9e37-4480-ac2c-3b544d943bd5\">\n4. Generate audio\n5. Play output → stuttering occurs\n\n### Expected behavior\nSmooth audio playback without interruptions\n\n### Actual behavior\nAudio stutters / micro-freezes\n\n### Comparison with Wan2gp KugelAudio workflow\n- Similar settings\n- Output plays correctly\n[2026-02-07-23h19m08s_seed999999999_To jest test mowy po polsku..wav](https://github.com/user-attachments/files/25156339/2026-02-07-23h19m08s_seed999999999_To.jest.test.mowy.po.polsku.wav)\n\n### Environment\n- OS: Windows 11 25H2\n- GPU: RTX 3090 (24 GB)\n- Python: 3.13.9\n- ComfyUI version: portable 0.12.3\n- KugelAudio node commit: 2b6cea8b1a878a88978e73f62a8f432b9286d522\n\n### Logs\n```\nC:\\ComfyUI>.\\python_embeded\\python.exe -s ComfyUI\\main.py   --use-flash-attention   --input-directory  \"X:\\input\"   --output-directory \"X:\\output\"   --disable-smart-memory   --windows-standalone-build\nSetting output directory to: X:\\output\nSetting input directory to: X:\\input\n[START] Security scan\n[DONE] Security scan\n## ComfyUI-Manager: installing dependencies done.\n** ComfyUI startup time: 2026-02-07 23:39:45.984\n** Platform: Windows\n** Python version: 3.13.9 (tags/v3.13.9:8183fa5, Oct 14 2025, 14:09:13) [MSC v.1944 64 bit (AMD64)]\n** Python executable: C:\\ComfyUI\\python_embeded\\python.exe\n** ComfyUI Path: C:\\ComfyUI\\ComfyUI\n** ComfyUI Base Folder Path: C:\\ComfyUI\\ComfyUI\n** User directory: C:\\ComfyUI\\ComfyUI\\user\n** ComfyUI-Manager config path: C:\\ComfyUI\\ComfyUI\\user\\__manager\\config.ini\n** Log path: C:\\ComfyUI\\ComfyUI\\user\\comfyui.log\n\nPrestartup times for custom nodes:\n   0.0 seconds: C:\\ComfyUI\\ComfyUI\\custom_nodes\\rgthree-comfy\n   1.7 seconds: C:\\ComfyUI\\ComfyUI\\custom_nodes\\ComfyUI-Manager\n\nC:\\ComfyUI\\python_embeded\\Lib\\site-packages\\torch\\cuda\\__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.\n  import pynvml  # type: ignore[import]\nCheckpoint files will always be loaded safely.\nFound comfy_kitchen backend triton: {'available': True, 'disabled': True, 'unavailable_reason': None, 'capabilities': ['apply_rope', 'apply_rope1', 'dequantize_nvfp4', 'dequantize_per_tensor_fp8', 'quantize_nvfp4', 'quantize_per_tensor_fp8']}\nFound comfy_kitchen backend cuda: {'available': True, 'disabled': False, 'unavailable_reason': None, 'capabilities': ['apply_rope', 'apply_rope1', 'dequantize_nvfp4', 'dequantize_per_tensor_fp8', 'quantize_nvfp4', 'quantize_per_tensor_fp8', 'scaled_mm_nvfp4']}\nFound comfy_kitchen backend eager: {'available': True, 'disabled': False, 'unavailable_reason': None, 'capabilities': ['apply_rope', 'apply_rope1', 'dequantize_nvfp4', 'dequantize_per_tensor_fp8', 'quantize_nvfp4', 'quantize_per_tensor_fp8', 'scaled_mm_nvfp4']}\nTotal VRAM 24576 MB, total RAM 32362 MB\npytorch version: 2.9.1+cu130\nSet vram state to: NORMAL_VRAM\nDisabling smart memory management\nDevice: cuda:0 NVIDIA GeForce RTX 3090 : cudaMallocAsync\nUsing async weight offloading with 2 streams\nEnabled pinned memory 14562.0\nworking around nvidia conv3d memory bug.\nUsing Flash Attention\nPython version: 3.13.9 (tags/v3.13.9:8183fa5, Oct 14 2025, 14:09:13) [MSC v.1944 64 bit (AMD64)]\nComfyUI version: 0.12.3\nComfyUI frontend version: 1.38.13\n[Prompt Server] web root: C:\\ComfyUI\\python_embeded\\Lib\\site-packages\\comfyui_frontend_package\\static\n[Crystools INFO] Crystools version: 1.27.4\n[Crystools INFO] Platform release: 11\n[Crystools INFO] JETSON: Not detected.\n[Crystools INFO] CPU: AMD Ryzen 7 7800X3D 8-Core Processor - Arch: AMD64 - OS: Windows 11\n[Crystools INFO] pynvml (NVIDIA) initialized.\n[Crystools INFO] GPU/s:\n[Crystools INFO] 0) NVIDIA GeForce RTX 3090\n[Crystools INFO] NVIDIA Driver: 591.86\nComfyUI-GGUF: Allowing full torch compile\nSageAttention: Using SM80+ (Ampere) FP16 kernel with pv_accum_dtype='fp32'.\n[KugelAudio] KugelAudio nodes registered successfully (v1.0.0)\n### Loading: ComfyUI-Manager (V3.39.2)\n[ComfyUI-Manager] network_mode: public\n[ComfyUI-Manager] ComfyUI per-queue preview override detected (PR #11261). Manager's preview method feature is disabled. Use ComfyUI's --preview-method CLI option or 'Settings > Execution > Live preview method'.\n### ComfyUI Version: v0.12.3-13-g5ff4fded | Released on '2026-02-07'\nComfyUI-QuantOps: Failed to register layouts: cannot import name 'LAYOUTS' from 'comfy.quant_ops' (C:\\ComfyUI\\ComfyUI\\comfy\\quant_ops.py)\n[ComfyUI-Manager] default cache updated: https://raw.githubusercontent.com/ltdrdata/ComfyUI-Manager/main/alter-list.json\n[ComfyUI-Manager] default cache updated: https://raw.githubusercontent.com/ltdrdata/ComfyUI-Manager/main/model-list.json\n[ComfyUI-Manager] default cache updated: https://raw.githubusercontent.com/ltdrdata/ComfyUI-Manager/main/github-stats.json\n[ComfyUI-Manager] default cache updated: https://raw.githubusercontent.com/ltdrdata/ComfyUI-Manager/main/extension-node-map.json\n[ComfyUI-Manager] default cache updated: https://raw.githubusercontent.com/ltdrdata/ComfyUI-Manager/main/custom-node-list.json\n[C:\\ComfyUI\\ComfyUI\\custom_nodes\\comfyui_controlnet_aux] | INFO -> Using ckpts path: C:\\ComfyUI\\ComfyUI\\custom_nodes\\comfyui_controlnet_aux\\ckpts\n[C:\\ComfyUI\\ComfyUI\\custom_nodes\\comfyui_controlnet_aux] | INFO -> Using symlinks: False\n[C:\\ComfyUI\\ComfyUI\\custom_nodes\\comfyui_controlnet_aux] | INFO -> Using ort providers: ['CUDAExecutionProvider', 'DirectMLExecutionProvider', 'OpenVINOExecutionProvider', 'ROCMExecutionProvider', 'CPUExecutionProvider', 'CoreMLExecutionProvider']\nDWPose: Onnxruntime with acceleration providers detected\n\n[rgthree-comfy] Loaded 48 exciting nodes. 🎉\n\n[rgthree-comfy] ComfyUI's new Node 2.0 rendering may be incompatible with some rgthree-comfy nodes and features, breaking some rendering as well as losing the ability to access a node's properties (a vital part of many nodes). It also appears to run MUCH more slowly spiking CPU usage and causing jankiness and unresponsiveness, especially with large workflows. Personally I am not planning to use the new Nodes 2.0 and, unfortunately, am not able to invest the time to investigate and overhaul rgthree-comfy where needed. If you have issues when Nodes 2.0 is enabled, I'd urge you to switch it off as well and join me in hoping ComfyUI is not planning to deprecate the existing, stable canvas rendering all together.\n\n⚡ SeedVR2 optimizations check: SageAttention ✅ | Flash Attention ✅ | Triton ✅\n🔧 Conv3d workaround active: PyTorch 2.9.1, cuDNN 91200 (fixing VAE 3x memory bug)\n📊 Initial CUDA memory: 22.69GB free / 24.00GB total\nWAS Node Suite: OpenCV Python FFMPEG support is enabled\nWAS Node Suite Warning: `ffmpeg_bin_path` is not set in `C:\\ComfyUI\\ComfyUI\\custom_nodes\\was-ns\\was_suite_config.json` config file. Will attempt to use system ffmpeg binaries if available.\nWAS Node Suite: Finished. Loaded 220 nodes successfully.\n\n        \"Believe in yourself, and the rest will fall into place.\" - Unknown\n\n\nImport times for custom nodes:\n   0.0 seconds: C:\\ComfyUI\\ComfyUI\\custom_nodes\\websocket_image_save.py\n   0.0 seconds: C:\\ComfyUI\\ComfyUI\\custom_nodes\\textencodeeditadvanced\n   0.0 seconds: C:\\ComfyUI\\ComfyUI\\custom_nodes\\scale-image-to-total-pixels-advanced\n   0.0 seconds: C:\\ComfyUI\\ComfyUI\\custom_nodes\\ad-image-concatenation-advanced\n   0.0 seconds: C:\\ComfyUI\\ComfyUI\\custom_nodes\\seedvarianceenhancer\n   0.0 seconds: C:\\ComfyUI\\ComfyUI\\custom_nodes\\ComfyUI-Flux2-INT8\n   0.0 seconds: C:\\ComfyUI\\ComfyUI\\custom_nodes\\ComfyUI-VAE-Utils\n   0.0 seconds: C:\\ComfyUI\\ComfyUI\\custom_nodes\\ComfyUI-SCAIL-Pose\n   0.0 seconds: C:\\ComfyUI\\ComfyUI\\custom_nodes\\ComfyUI-MelBandRoFormer\n   0.0 seconds: C:\\ComfyUI\\ComfyUI\\custom_nodes\\LanPaint\n   0.0 seconds: C:\\ComfyUI\\ComfyUI\\custom_nodes\\comfyui_essentials\n   0.0 seconds: C:\\ComfyUI\\ComfyUI\\custom_nodes\\comfyui-custom-scripts\n   0.0 seconds: C:\\ComfyUI\\ComfyUI\\custom_nodes\\ComfyUI-QuantOps\n   0.0 seconds: C:\\ComfyUI\\ComfyUI\\custom_nodes\\ComfyUI-NAG\n   0.0 seconds: C:\\ComfyUI\\ComfyUI\\custom_nodes\\comfyui-frame-interpolation\n   0.0 seconds: C:\\ComfyUI\\ComfyUI\\custom_nodes\\comfyui-segment-anything-2\n   0.0 seconds: C:\\ComfyUI\\ComfyUI\\custom_nodes\\rgthree-comfy\n   0.0 seconds: C:\\ComfyUI\\ComfyUI\\custom_nodes\\ComfyUI-GGUF\n   0.0 seconds: C:\\ComfyUI\\ComfyUI\\custom_nodes\\comfyui_controlnet_aux\n   0.0 seconds: C:\\ComfyUI\\ComfyUI\\custom_nodes\\comfyui-kjnodes\n   0.0 seconds: C:\\ComfyUI\\ComfyUI\\custom_nodes\\ComfyUI-LTXVideo\n   0.1 seconds: C:\\ComfyUI\\ComfyUI\\custom_nodes\\comfyui-videohelpersuite\n   0.1 seconds: C:\\ComfyUI\\ComfyUI\\custom_nodes\\ComfyUI-Manager\n   0.2 seconds: C:\\ComfyUI\\ComfyUI\\custom_nodes\\ComfyUI-Crystools\n   0.2 seconds: C:\\ComfyUI\\ComfyUI\\custom_nodes\\ComfyUI-WanAnimatePreprocess\n   0.4 seconds: C:\\ComfyUI\\ComfyUI\\custom_nodes\\ComfyUI-WanVideoWrapper\n   0.4 seconds: C:\\ComfyUI\\ComfyUI\\custom_nodes\\seedvr2_videoupscaler\n   0.8 seconds: C:\\ComfyUI\\ComfyUI\\custom_nodes\\was-ns\n   0.9 seconds: C:\\ComfyUI\\ComfyUI\\custom_nodes\\ComfyUI-KugelAudio\n\nContext impl SQLiteImpl.\nWill assume non-transactional DDL.\nAssets scan(roots=['models']) completed in 0.192s (created=0, skipped_existing=95, orphans_pruned=0, total_seen=98)\nStarting server\n\nTo see the GUI go to: http://127.0.0.1:8188\n[DEPRECATION WARNING] Detected import of deprecated legacy API: /scripts/ui/components/buttonGroup.js. This is likely caused by a custom node extension using outdated APIs. Please update your extensions or contact the extension author for an updated version.\n[DEPRECATION WARNING] Detected import of deprecated legacy API: /scripts/ui.js. This is likely caused by a custom node extension using outdated APIs. Please update your extensions or contact the extension author for an updated version.\n[DEPRECATION WARNING] Detected import of deprecated legacy API: /extensions/core/groupNode.js. This is likely caused by a custom node extension using outdated APIs. Please update your extensions or contact the extension author for an updated version.\n[DEPRECATION WARNING] Detected import of deprecated legacy API: /extensions/core/widgetInputs.js. This is likely caused by a custom node extension using outdated APIs. Please update your extensions or contact the extension author for an updated version.\n[DEPRECATION WARNING] Detected import of deprecated legacy API: /scripts/ui/components/button.js. This is likely caused by a custom node extension using outdated APIs. Please update your extensions or contact the extension author for an updated version.\nFETCH ComfyRegistry Data: 5/124\nFETCH ComfyRegistry Data: 10/124\nFETCH ComfyRegistry Data: 15/124\nFETCH ComfyRegistry Data: 20/124\nFETCH ComfyRegistry Data: 25/124\nFETCH ComfyRegistry Data: 30/124\nFETCH ComfyRegistry Data: 35/124\nFETCH ComfyRegistry Data: 40/124\nFETCH ComfyRegistry Data: 45/124\nFETCH ComfyRegistry Data: 50/124\nFETCH ComfyRegistry Data: 55/124\nFETCH ComfyRegistry Data: 60/124\nFETCH ComfyRegistry Data: 65/124\nFETCH ComfyRegistry Data: 70/124\nFETCH ComfyRegistry Data: 75/124\nFETCH ComfyRegistry Data: 80/124\nFETCH ComfyRegistry Data: 85/124\nFETCH ComfyRegistry Data: 90/124\nFETCH ComfyRegistry Data: 95/124\nFETCH ComfyRegistry Data: 100/124\nFETCH ComfyRegistry Data: 105/124\nFETCH ComfyRegistry Data: 110/124\nFETCH ComfyRegistry Data: 115/124\nFETCH ComfyRegistry Data: 120/124\nFETCH ComfyRegistry Data [DONE]\n[ComfyUI-Manager] default cache updated: https://api.comfy.org/nodes\nFETCH DATA from: https://raw.githubusercontent.com/ltdrdata/ComfyUI-Manager/main/custom-node-list.json [DONE]\n[ComfyUI-Manager] All startup tasks have been completed.\ngot prompt\n[KugelAudio] Using seed: 42\n[KugelAudio] Progress: 0/3 - Loading model...\n[KugelAudio] Model memory freed\n[KugelAudio] Using device: cuda\n[KugelAudio] Using flash_attention_2 attention implementation\n[KugelAudio] Loading model...\n`torch_dtype` is deprecated! Use `dtype` instead!\nLoading checkpoint shards: 100%|█████████████████████████████████████████████████████████| 4/4 [00:07<00:00,  1.87s/it]\nCould not load config: C:\\ComfyUI\\ComfyUI\\models\\kugelaudio\\kugelaudio-0-open does not appear to have a file named preprocessor_config.json. Checkout 'https://huggingface.co/C:\\ComfyUI\\ComfyUI\\models\\kugelaudio\\kugelaudio-0-open/tree/main' for available files.. Using defaults.\nLoading tokenizer from Qwen/Qwen2.5-1.5B\nThe tokenizer class you load from this checkpoint is not the same type as the class this function is called from. It may result in unexpected tokenization.\nThe tokenizer class you load from this checkpoint is 'Qwen2Tokenizer'.\nThe class this function is called from is 'KugelAudioTextTokenizer'.\n[KugelAudio] Model loaded in 8.4s\n[KugelAudio] Generating audio (~15 estimated tokens, max 2048 allowed)...\n[KugelAudio] Audio generated successfully\n[KugelAudio] Model memory freed\nPrompt executed in 11.91 seconds\n```\n\nI can provide additional test files or try specific debug builds if needed.",
+      "author": {
+        "name": "tentin-quarantino",
+        "url": "https://github.com/tentin-quarantino",
+        "avatar": "https://avatars.githubusercontent.com/u/122933810?v=4"
+      },
+      "timestamp": "2026-02-07T22:58:01Z",
+      "url": "https://github.com/Saganaki22/ComfyUI-KugelAudio/issues/6",
+      "metrics": {
+        "comments": 0
+      },
+      "tags": [],
+      "raw": {
+        "url": "https://api.github.com/repos/Saganaki22/ComfyUI-KugelAudio/issues/6",
+        "repository_url": "https://api.github.com/repos/Saganaki22/ComfyUI-KugelAudio",
+        "labels_url": "https://api.github.com/repos/Saganaki22/ComfyUI-KugelAudio/issues/6/labels{/name}",
+        "comments_url": "https://api.github.com/repos/Saganaki22/ComfyUI-KugelAudio/issues/6/comments",
+        "events_url": "https://api.github.com/repos/Saganaki22/ComfyUI-KugelAudio/issues/6/events",
+        "html_url": "https://github.com/Saganaki22/ComfyUI-KugelAudio/issues/6",
+        "id": 3911495120,
+        "node_id": "I_kwDORGXnPs7pJK3Q",
+        "number": 6,
+        "title": "Stuttering / micro-freezes in audio generated by KugelAudio",
+        "user": {
+          "login": "tentin-quarantino",
+          "id": 122933810,
+          "node_id": "U_kgDOB1PSMg",
+          "avatar_url": "https://avatars.githubusercontent.com/u/122933810?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/tentin-quarantino",
+          "html_url": "https://github.com/tentin-quarantino",
+          "followers_url": "https://api.github.com/users/tentin-quarantino/followers",
+          "following_url": "https://api.github.com/users/tentin-quarantino/following{/other_user}",
+          "gists_url": "https://api.github.com/users/tentin-quarantino/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/tentin-quarantino/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/tentin-quarantino/subscriptions",
+          "organizations_url": "https://api.github.com/users/tentin-quarantino/orgs",
+          "repos_url": "https://api.github.com/users/tentin-quarantino/repos",
+          "events_url": "https://api.github.com/users/tentin-quarantino/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/tentin-quarantino/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "labels": [],
+        "state": "open",
+        "locked": false,
+        "assignee": null,
+        "assignees": [],
+        "milestone": null,
+        "comments": 0,
+        "created_at": "2026-02-07T22:58:01Z",
+        "updated_at": "2026-02-07T22:58:01Z",
+        "closed_at": null,
+        "author_association": "NONE",
+        "active_lock_reason": null,
+        "sub_issues_summary": {
+          "total": 0,
+          "completed": 0,
+          "percent_completed": 0
+        },
+        "issue_dependencies_summary": {
+          "blocked_by": 0,
+          "total_blocked_by": 0,
+          "blocking": 0,
+          "total_blocking": 0
+        },
+        "body": "### Bug description\nGenerated audio output from KugelAudio nodes stutters during playback, regardless of generation settings:\n[converted_flac_ComfyUI_temp_jvxjq_00001_.wav](https://github.com/user-attachments/files/25156334/converted_flac_ComfyUI_temp_jvxjq_00001_.wav)\nNote: WAV file was converted directly from generated FLAC only for GitHub embed, problem exists on both.\n\n### Steps to reproduce\n1. Open ComfyUI\n2. Use any KugelAudio node (TTS/Single/Multi)\n3. Settings (checked also with other attention type, seed, language etc.):\n- <img width=\"256\" height=\"256\" alt=\"Image\" src=\"https://github.com/user-attachments/assets/e272d2fd-9e37-4480-ac2c-3b544d943bd5\">\n4. Generate audio\n5. Play output → stuttering occurs\n\n### Expected behavior\nSmooth audio playback without interruptions\n\n### Actual behavior\nAudio stutters / micro-freezes\n\n### Comparison with Wan2gp KugelAudio workflow\n- Similar settings\n- Output plays correctly\n[2026-02-07-23h19m08s_seed999999999_To jest test mowy po polsku..wav](https://github.com/user-attachments/files/25156339/2026-02-07-23h19m08s_seed999999999_To.jest.test.mowy.po.polsku.wav)\n\n### Environment\n- OS: Windows 11 25H2\n- GPU: RTX 3090 (24 GB)\n- Python: 3.13.9\n- ComfyUI version: portable 0.12.3\n- KugelAudio node commit: 2b6cea8b1a878a88978e73f62a8f432b9286d522\n\n### Logs\n```\nC:\\ComfyUI>.\\python_embeded\\python.exe -s ComfyUI\\main.py   --use-flash-attention   --input-directory  \"X:\\input\"   --output-directory \"X:\\output\"   --disable-smart-memory   --windows-standalone-build\nSetting output directory to: X:\\output\nSetting input directory to: X:\\input\n[START] Security scan\n[DONE] Security scan\n## ComfyUI-Manager: installing dependencies done.\n** ComfyUI startup time: 2026-02-07 23:39:45.984\n** Platform: Windows\n** Python version: 3.13.9 (tags/v3.13.9:8183fa5, Oct 14 2025, 14:09:13) [MSC v.1944 64 bit (AMD64)]\n** Python executable: C:\\ComfyUI\\python_embeded\\python.exe\n** ComfyUI Path: C:\\ComfyUI\\ComfyUI\n** ComfyUI Base Folder Path: C:\\ComfyUI\\ComfyUI\n** User directory: C:\\ComfyUI\\ComfyUI\\user\n** ComfyUI-Manager config path: C:\\ComfyUI\\ComfyUI\\user\\__manager\\config.ini\n** Log path: C:\\ComfyUI\\ComfyUI\\user\\comfyui.log\n\nPrestartup times for custom nodes:\n   0.0 seconds: C:\\ComfyUI\\ComfyUI\\custom_nodes\\rgthree-comfy\n   1.7 seconds: C:\\ComfyUI\\ComfyUI\\custom_nodes\\ComfyUI-Manager\n\nC:\\ComfyUI\\python_embeded\\Lib\\site-packages\\torch\\cuda\\__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.\n  import pynvml  # type: ignore[import]\nCheckpoint files will always be loaded safely.\nFound comfy_kitchen backend triton: {'available': True, 'disabled': True, 'unavailable_reason': None, 'capabilities': ['apply_rope', 'apply_rope1', 'dequantize_nvfp4', 'dequantize_per_tensor_fp8', 'quantize_nvfp4', 'quantize_per_tensor_fp8']}\nFound comfy_kitchen backend cuda: {'available': True, 'disabled': False, 'unavailable_reason': None, 'capabilities': ['apply_rope', 'apply_rope1', 'dequantize_nvfp4', 'dequantize_per_tensor_fp8', 'quantize_nvfp4', 'quantize_per_tensor_fp8', 'scaled_mm_nvfp4']}\nFound comfy_kitchen backend eager: {'available': True, 'disabled': False, 'unavailable_reason': None, 'capabilities': ['apply_rope', 'apply_rope1', 'dequantize_nvfp4', 'dequantize_per_tensor_fp8', 'quantize_nvfp4', 'quantize_per_tensor_fp8', 'scaled_mm_nvfp4']}\nTotal VRAM 24576 MB, total RAM 32362 MB\npytorch version: 2.9.1+cu130\nSet vram state to: NORMAL_VRAM\nDisabling smart memory management\nDevice: cuda:0 NVIDIA GeForce RTX 3090 : cudaMallocAsync\nUsing async weight offloading with 2 streams\nEnabled pinned memory 14562.0\nworking around nvidia conv3d memory bug.\nUsing Flash Attention\nPython version: 3.13.9 (tags/v3.13.9:8183fa5, Oct 14 2025, 14:09:13) [MSC v.1944 64 bit (AMD64)]\nComfyUI version: 0.12.3\nComfyUI frontend version: 1.38.13\n[Prompt Server] web root: C:\\ComfyUI\\python_embeded\\Lib\\site-packages\\comfyui_frontend_package\\static\n[Crystools INFO] Crystools version: 1.27.4\n[Crystools INFO] Platform release: 11\n[Crystools INFO] JETSON: Not detected.\n[Crystools INFO] CPU: AMD Ryzen 7 7800X3D 8-Core Processor - Arch: AMD64 - OS: Windows 11\n[Crystools INFO] pynvml (NVIDIA) initialized.\n[Crystools INFO] GPU/s:\n[Crystools INFO] 0) NVIDIA GeForce RTX 3090\n[Crystools INFO] NVIDIA Driver: 591.86\nComfyUI-GGUF: Allowing full torch compile\nSageAttention: Using SM80+ (Ampere) FP16 kernel with pv_accum_dtype='fp32'.\n[KugelAudio] KugelAudio nodes registered successfully (v1.0.0)\n### Loading: ComfyUI-Manager (V3.39.2)\n[ComfyUI-Manager] network_mode: public\n[ComfyUI-Manager] ComfyUI per-queue preview override detected (PR #11261). Manager's preview method feature is disabled. Use ComfyUI's --preview-method CLI option or 'Settings > Execution > Live preview method'.\n### ComfyUI Version: v0.12.3-13-g5ff4fded | Released on '2026-02-07'\nComfyUI-QuantOps: Failed to register layouts: cannot import name 'LAYOUTS' from 'comfy.quant_ops' (C:\\ComfyUI\\ComfyUI\\comfy\\quant_ops.py)\n[ComfyUI-Manager] default cache updated: https://raw.githubusercontent.com/ltdrdata/ComfyUI-Manager/main/alter-list.json\n[ComfyUI-Manager] default cache updated: https://raw.githubusercontent.com/ltdrdata/ComfyUI-Manager/main/model-list.json\n[ComfyUI-Manager] default cache updated: https://raw.githubusercontent.com/ltdrdata/ComfyUI-Manager/main/github-stats.json\n[ComfyUI-Manager] default cache updated: https://raw.githubusercontent.com/ltdrdata/ComfyUI-Manager/main/extension-node-map.json\n[ComfyUI-Manager] default cache updated: https://raw.githubusercontent.com/ltdrdata/ComfyUI-Manager/main/custom-node-list.json\n[C:\\ComfyUI\\ComfyUI\\custom_nodes\\comfyui_controlnet_aux] | INFO -> Using ckpts path: C:\\ComfyUI\\ComfyUI\\custom_nodes\\comfyui_controlnet_aux\\ckpts\n[C:\\ComfyUI\\ComfyUI\\custom_nodes\\comfyui_controlnet_aux] | INFO -> Using symlinks: False\n[C:\\ComfyUI\\ComfyUI\\custom_nodes\\comfyui_controlnet_aux] | INFO -> Using ort providers: ['CUDAExecutionProvider', 'DirectMLExecutionProvider', 'OpenVINOExecutionProvider', 'ROCMExecutionProvider', 'CPUExecutionProvider', 'CoreMLExecutionProvider']\nDWPose: Onnxruntime with acceleration providers detected\n\n[rgthree-comfy] Loaded 48 exciting nodes. 🎉\n\n[rgthree-comfy] ComfyUI's new Node 2.0 rendering may be incompatible with some rgthree-comfy nodes and features, breaking some rendering as well as losing the ability to access a node's properties (a vital part of many nodes). It also appears to run MUCH more slowly spiking CPU usage and causing jankiness and unresponsiveness, especially with large workflows. Personally I am not planning to use the new Nodes 2.0 and, unfortunately, am not able to invest the time to investigate and overhaul rgthree-comfy where needed. If you have issues when Nodes 2.0 is enabled, I'd urge you to switch it off as well and join me in hoping ComfyUI is not planning to deprecate the existing, stable canvas rendering all together.\n\n⚡ SeedVR2 optimizations check: SageAttention ✅ | Flash Attention ✅ | Triton ✅\n🔧 Conv3d workaround active: PyTorch 2.9.1, cuDNN 91200 (fixing VAE 3x memory bug)\n📊 Initial CUDA memory: 22.69GB free / 24.00GB total\nWAS Node Suite: OpenCV Python FFMPEG support is enabled\nWAS Node Suite Warning: `ffmpeg_bin_path` is not set in `C:\\ComfyUI\\ComfyUI\\custom_nodes\\was-ns\\was_suite_config.json` config file. Will attempt to use system ffmpeg binaries if available.\nWAS Node Suite: Finished. Loaded 220 nodes successfully.\n\n        \"Believe in yourself, and the rest will fall into place.\" - Unknown\n\n\nImport times for custom nodes:\n   0.0 seconds: C:\\ComfyUI\\ComfyUI\\custom_nodes\\websocket_image_save.py\n   0.0 seconds: C:\\ComfyUI\\ComfyUI\\custom_nodes\\textencodeeditadvanced\n   0.0 seconds: C:\\ComfyUI\\ComfyUI\\custom_nodes\\scale-image-to-total-pixels-advanced\n   0.0 seconds: C:\\ComfyUI\\ComfyUI\\custom_nodes\\ad-image-concatenation-advanced\n   0.0 seconds: C:\\ComfyUI\\ComfyUI\\custom_nodes\\seedvarianceenhancer\n   0.0 seconds: C:\\ComfyUI\\ComfyUI\\custom_nodes\\ComfyUI-Flux2-INT8\n   0.0 seconds: C:\\ComfyUI\\ComfyUI\\custom_nodes\\ComfyUI-VAE-Utils\n   0.0 seconds: C:\\ComfyUI\\ComfyUI\\custom_nodes\\ComfyUI-SCAIL-Pose\n   0.0 seconds: C:\\ComfyUI\\ComfyUI\\custom_nodes\\ComfyUI-MelBandRoFormer\n   0.0 seconds: C:\\ComfyUI\\ComfyUI\\custom_nodes\\LanPaint\n   0.0 seconds: C:\\ComfyUI\\ComfyUI\\custom_nodes\\comfyui_essentials\n   0.0 seconds: C:\\ComfyUI\\ComfyUI\\custom_nodes\\comfyui-custom-scripts\n   0.0 seconds: C:\\ComfyUI\\ComfyUI\\custom_nodes\\ComfyUI-QuantOps\n   0.0 seconds: C:\\ComfyUI\\ComfyUI\\custom_nodes\\ComfyUI-NAG\n   0.0 seconds: C:\\ComfyUI\\ComfyUI\\custom_nodes\\comfyui-frame-interpolation\n   0.0 seconds: C:\\ComfyUI\\ComfyUI\\custom_nodes\\comfyui-segment-anything-2\n   0.0 seconds: C:\\ComfyUI\\ComfyUI\\custom_nodes\\rgthree-comfy\n   0.0 seconds: C:\\ComfyUI\\ComfyUI\\custom_nodes\\ComfyUI-GGUF\n   0.0 seconds: C:\\ComfyUI\\ComfyUI\\custom_nodes\\comfyui_controlnet_aux\n   0.0 seconds: C:\\ComfyUI\\ComfyUI\\custom_nodes\\comfyui-kjnodes\n   0.0 seconds: C:\\ComfyUI\\ComfyUI\\custom_nodes\\ComfyUI-LTXVideo\n   0.1 seconds: C:\\ComfyUI\\ComfyUI\\custom_nodes\\comfyui-videohelpersuite\n   0.1 seconds: C:\\ComfyUI\\ComfyUI\\custom_nodes\\ComfyUI-Manager\n   0.2 seconds: C:\\ComfyUI\\ComfyUI\\custom_nodes\\ComfyUI-Crystools\n   0.2 seconds: C:\\ComfyUI\\ComfyUI\\custom_nodes\\ComfyUI-WanAnimatePreprocess\n   0.4 seconds: C:\\ComfyUI\\ComfyUI\\custom_nodes\\ComfyUI-WanVideoWrapper\n   0.4 seconds: C:\\ComfyUI\\ComfyUI\\custom_nodes\\seedvr2_videoupscaler\n   0.8 seconds: C:\\ComfyUI\\ComfyUI\\custom_nodes\\was-ns\n   0.9 seconds: C:\\ComfyUI\\ComfyUI\\custom_nodes\\ComfyUI-KugelAudio\n\nContext impl SQLiteImpl.\nWill assume non-transactional DDL.\nAssets scan(roots=['models']) completed in 0.192s (created=0, skipped_existing=95, orphans_pruned=0, total_seen=98)\nStarting server\n\nTo see the GUI go to: http://127.0.0.1:8188\n[DEPRECATION WARNING] Detected import of deprecated legacy API: /scripts/ui/components/buttonGroup.js. This is likely caused by a custom node extension using outdated APIs. Please update your extensions or contact the extension author for an updated version.\n[DEPRECATION WARNING] Detected import of deprecated legacy API: /scripts/ui.js. This is likely caused by a custom node extension using outdated APIs. Please update your extensions or contact the extension author for an updated version.\n[DEPRECATION WARNING] Detected import of deprecated legacy API: /extensions/core/groupNode.js. This is likely caused by a custom node extension using outdated APIs. Please update your extensions or contact the extension author for an updated version.\n[DEPRECATION WARNING] Detected import of deprecated legacy API: /extensions/core/widgetInputs.js. This is likely caused by a custom node extension using outdated APIs. Please update your extensions or contact the extension author for an updated version.\n[DEPRECATION WARNING] Detected import of deprecated legacy API: /scripts/ui/components/button.js. This is likely caused by a custom node extension using outdated APIs. Please update your extensions or contact the extension author for an updated version.\nFETCH ComfyRegistry Data: 5/124\nFETCH ComfyRegistry Data: 10/124\nFETCH ComfyRegistry Data: 15/124\nFETCH ComfyRegistry Data: 20/124\nFETCH ComfyRegistry Data: 25/124\nFETCH ComfyRegistry Data: 30/124\nFETCH ComfyRegistry Data: 35/124\nFETCH ComfyRegistry Data: 40/124\nFETCH ComfyRegistry Data: 45/124\nFETCH ComfyRegistry Data: 50/124\nFETCH ComfyRegistry Data: 55/124\nFETCH ComfyRegistry Data: 60/124\nFETCH ComfyRegistry Data: 65/124\nFETCH ComfyRegistry Data: 70/124\nFETCH ComfyRegistry Data: 75/124\nFETCH ComfyRegistry Data: 80/124\nFETCH ComfyRegistry Data: 85/124\nFETCH ComfyRegistry Data: 90/124\nFETCH ComfyRegistry Data: 95/124\nFETCH ComfyRegistry Data: 100/124\nFETCH ComfyRegistry Data: 105/124\nFETCH ComfyRegistry Data: 110/124\nFETCH ComfyRegistry Data: 115/124\nFETCH ComfyRegistry Data: 120/124\nFETCH ComfyRegistry Data [DONE]\n[ComfyUI-Manager] default cache updated: https://api.comfy.org/nodes\nFETCH DATA from: https://raw.githubusercontent.com/ltdrdata/ComfyUI-Manager/main/custom-node-list.json [DONE]\n[ComfyUI-Manager] All startup tasks have been completed.\ngot prompt\n[KugelAudio] Using seed: 42\n[KugelAudio] Progress: 0/3 - Loading model...\n[KugelAudio] Model memory freed\n[KugelAudio] Using device: cuda\n[KugelAudio] Using flash_attention_2 attention implementation\n[KugelAudio] Loading model...\n`torch_dtype` is deprecated! Use `dtype` instead!\nLoading checkpoint shards: 100%|█████████████████████████████████████████████████████████| 4/4 [00:07<00:00,  1.87s/it]\nCould not load config: C:\\ComfyUI\\ComfyUI\\models\\kugelaudio\\kugelaudio-0-open does not appear to have a file named preprocessor_config.json. Checkout 'https://huggingface.co/C:\\ComfyUI\\ComfyUI\\models\\kugelaudio\\kugelaudio-0-open/tree/main' for available files.. Using defaults.\nLoading tokenizer from Qwen/Qwen2.5-1.5B\nThe tokenizer class you load from this checkpoint is not the same type as the class this function is called from. It may result in unexpected tokenization.\nThe tokenizer class you load from this checkpoint is 'Qwen2Tokenizer'.\nThe class this function is called from is 'KugelAudioTextTokenizer'.\n[KugelAudio] Model loaded in 8.4s\n[KugelAudio] Generating audio (~15 estimated tokens, max 2048 allowed)...\n[KugelAudio] Audio generated successfully\n[KugelAudio] Model memory freed\nPrompt executed in 11.91 seconds\n```\n\nI can provide additional test files or try specific debug builds if needed.",
+        "reactions": {
+          "url": "https://api.github.com/repos/Saganaki22/ComfyUI-KugelAudio/issues/6/reactions",
+          "total_count": 0,
+          "+1": 0,
+          "-1": 0,
+          "laugh": 0,
+          "hooray": 0,
+          "confused": 0,
+          "heart": 0,
+          "rocket": 0,
+          "eyes": 0
+        },
+        "timeline_url": "https://api.github.com/repos/Saganaki22/ComfyUI-KugelAudio/issues/6/timeline",
+        "performed_via_github_app": null,
+        "state_reason": null,
+        "score": 1
+      }
+    },
+    {
       "id": "github-issue-3911421905",
       "platform": "github",
       "type": "issue",
@@ -218,9 +907,9 @@
       "timestamp": "2026-02-07T21:58:58.000Z",
       "url": "https://stackoverflow.com/questions/79885085/telegram-newmessage-event-handler-not-firing-for-large-supergroups-gramjs",
       "metrics": {
-        "upvotes": 0,
+        "upvotes": -2,
         "comments": 0,
-        "views": 6
+        "views": 15
       },
       "tags": [
         "javascript",
@@ -237,7 +926,7 @@
         ],
         "owner": {
           "account_id": 4111943,
-          "reputation": 35,
+          "reputation": 31,
           "user_id": 3374544,
           "user_type": "registered",
           "profile_image": "https://graph.facebook.com/1554216215/picture?type=large",
@@ -245,9 +934,9 @@
           "link": "https://stackoverflow.com/users/3374544/user3374544"
         },
         "is_answered": false,
-        "view_count": 6,
+        "view_count": 15,
         "answer_count": 0,
-        "score": 0,
+        "score": -2,
         "last_activity_date": 1770501538,
         "creation_date": 1770501538,
         "question_id": 79885085,
@@ -763,7 +1452,7 @@
       "metrics": {
         "upvotes": -7,
         "comments": 0,
-        "views": 41
+        "views": 50
       },
       "tags": [
         "javascript"
@@ -782,7 +1471,7 @@
           "link": "https://stackoverflow.com/users/31944621/resad505"
         },
         "is_answered": false,
-        "view_count": 41,
+        "view_count": 50,
         "closed_date": 1770499742,
         "answer_count": 0,
         "score": -7,
@@ -1083,8 +1772,8 @@
       "url": "https://stackoverflow.com/questions/79885061/nx-typescript-monorepo-cannot-find-module-scope-package-even-though-the-fo",
       "metrics": {
         "upvotes": 0,
-        "comments": 1,
-        "views": 11
+        "comments": 0,
+        "views": 16
       },
       "tags": [
         "typescript",
@@ -1107,8 +1796,8 @@
           "link": "https://stackoverflow.com/users/30343441/elliot-datsomor"
         },
         "is_answered": false,
-        "view_count": 11,
-        "answer_count": 1,
+        "view_count": 16,
+        "answer_count": 0,
         "score": 0,
         "last_activity_date": 1770498633,
         "creation_date": 1770498298,
@@ -2915,7 +3604,7 @@
       "metrics": {
         "upvotes": -1,
         "comments": 0,
-        "views": 40
+        "views": 44
       },
       "tags": [
         "javascript",
@@ -2937,15 +3626,16 @@
           "link": "https://stackoverflow.com/users/4512005/razvan-zamfir"
         },
         "is_answered": false,
-        "view_count": 40,
+        "view_count": 44,
+        "closed_date": 1770504207,
         "answer_count": 0,
         "score": -1,
         "last_activity_date": 1770486462,
         "creation_date": 1770485691,
         "last_edit_date": 1770486462,
         "question_id": 79884986,
-        "content_license": "CC BY-SA 4.0",
         "link": "https://stackoverflow.com/questions/79884986/what-caues-the-failure-to-unblock-a-custom-javascript-video-player-by-using-the",
+        "closed_reason": "Needs details or clarity",
         "title": "What caues the failure to unblock a custom JavaScript video player by using the seeker?",
         "body": "<p>I have been working on a JavaScript video player.</p>\n<p><div class=\"snippet\" data-lang=\"js\" data-hide=\"false\" data-console=\"true\" data-babel=\"false\" data-babel-preset-react=\"false\" data-babel-preset-ts=\"false\">\n<div class=\"snippet-code\">\n<pre class=\"snippet-code-js lang-js prettyprint-override\"><code>document.addEventListener('DOMContentLoaded', () =&gt; {\n\n  String.prototype.timeFormat = function() {\n    let sec = parseInt(this, 10);\n    let h = Math.floor(sec / 3600);\n    let m = Math.floor((sec % 3600) / 60);\n    let s = sec % 60;\n    if (h &lt; 10) h = '0' + h;\n    if (m &lt; 10) m = '0' + m;\n    if (s &lt; 10) s = '0' + s;\n    return h &gt; 0 ? `${h}:${m}:${s}` : `${m}:${s}`;\n  };\n\n  function toggleFullScreen(elem) {\n    if (!document.fullscreenElement) {\n      elem.requestFullscreen?.() || elem.webkitRequestFullscreen?.() || elem.msRequestFullscreen?.();\n    } else {\n      document.exitFullscreen?.() || document.webkitExitFullscreen?.() || document.msExitFullscreen?.();\n    }\n  }\n\n  document.querySelectorAll('.video-container').forEach(container =&gt; {\n    const video = container.querySelector('video');\n    const poster = container.querySelector('.poster');\n    const spinner = container.querySelector('.loading-spinner');\n    const playBtn = container.querySelector('input[name=\"play-pause\"]');\n    const progressBar = container.querySelector('.progress-bar');\n    const progress = container.querySelector('.progress');\n    const currentTimeEl = container.querySelector('.current-time');\n    const durationEl = container.querySelector('.duration');\n    const volumeSlider = container.querySelector('.volume-slider');\n    const muteToggle = container.querySelector('.mute-toggle');\n    const muteCheckbox = muteToggle.querySelector('input[type=\"checkbox\"]');\n    const rateDisplay = container.querySelector('.rate_display');\n    const fullscreenBtn = container.querySelector('input[name=\"screen-toggler\"]');\n    const rateOptions = container.querySelectorAll('.playback-rate ul li');\n\n    let manualPaused = false;\n    let isTryingToPlay = false;\n\n    function showSpinner() {\n      spinner.style.opacity = 1;\n    }\n\n    function hideSpinner() {\n      spinner.style.opacity = 0;\n    }\n\n    function updatePlayPause() {\n      if (video.paused) {\n        playBtn.value = 'Play';\n        playBtn.classList.add('play');\n        playBtn.classList.remove('pause');\n      } else {\n        playBtn.value = 'Pause';\n        playBtn.classList.remove('play');\n        playBtn.classList.add('pause');\n      }\n    }\n\n    function updateProgress() {\n      const dur = isFinite(video.duration) ? video.duration : 0;\n      const cur = isFinite(video.currentTime) ? video.currentTime : 0;\n      const percent = dur &gt; 0 ? (cur / dur) * 100 : 0;\n      progress.style.width = percent + '%';\n      currentTimeEl.textContent = Math.round(cur).toString().timeFormat();\n      durationEl.textContent = dur &gt; 0 ? Math.round(dur).toString().timeFormat() : '--:--';\n    }\n\n    async function attemptPlay() {\n      if (manualPaused || isTryingToPlay) return;\n      isTryingToPlay = true;\n      showSpinner();\n      try {\n        await video.play();\n      } catch {}\n      hideSpinner();\n      isTryingToPlay = false;\n      updatePlayPause();\n    }\n\n    playBtn.addEventListener('click', () =&gt; {\n      manualPaused = !video.paused;\n      if (!manualPaused) {\n        poster.style.display = 'none';\n        attemptPlay();\n      } else {\n        video.pause();\n      }\n    });\n\n    volumeSlider.addEventListener('input', () =&gt; {\n      video.volume = volumeSlider.value;\n      video.muted = video.volume === 0;\n      muteCheckbox.checked = video.muted;\n      muteToggle.classList.toggle('muted', video.muted);\n    });\n\n    muteToggle.addEventListener('click', () =&gt; {\n      video.muted = muteCheckbox.checked;\n      muteToggle.classList.toggle('muted', video.muted);\n    });\n\n    progressBar.addEventListener('click', e =&gt; {\n      const rect = progressBar.getBoundingClientRect();\n      const dur = isFinite(video.duration) &amp;&amp; video.duration &gt; 0 ? video.duration : 100;\n      video.currentTime = ((e.clientX - rect.left) / rect.width) * dur;\n      updateProgress();\n      attemptPlay();\n    });\n\n    fullscreenBtn.addEventListener('click', () =&gt; {\n      container.classList.toggle('fullscreen');\n      fullscreenBtn.classList.toggle('exit');\n      toggleFullScreen(document.body);\n    });\n\n    document.addEventListener('fullscreenchange', () =&gt; {\n      if (!document.fullscreenElement) {\n        container.classList.remove('fullscreen');\n        fullscreenBtn.classList.remove('exit');\n      }\n    });\n\n    rateOptions.forEach(opt =&gt; {\n      opt.addEventListener('click', () =&gt; {\n        video.playbackRate = parseFloat(opt.dataset.rate);\n        rateDisplay.textContent = video.playbackRate === 1 ? 'Normal' : video.playbackRate + 'x';\n      });\n    });\n\n    video.addEventListener('loadedmetadata', updateProgress);\n    video.addEventListener('timeupdate', updateProgress);\n    video.addEventListener('waiting', showSpinner);\n    video.addEventListener('stalled', showSpinner);\n    video.addEventListener('seeking', showSpinner);\n    video.addEventListener('playing', () =&gt; {\n      hideSpinner();\n      updatePlayPause();\n    });\n    video.addEventListener('canplay', () =&gt; {\n      hideSpinner();\n      updatePlayPause();\n    });\n    video.addEventListener('pause', updatePlayPause);\n    video.addEventListener('ended', updatePlayPause);\n    video.addEventListener('seeked', () =&gt; {\n      updateProgress();\n      if (!manualPaused) attemptPlay();\n      updatePlayPause();\n    });\n  });\n});</code></pre>\n<pre class=\"snippet-code-css lang-css prettyprint-override\"><code>.video-container {\n  font-family: Arial, sans-serif;\n  max-width: 960px;\n  margin: 0 auto;\n  position: relative;\n  overflow: hidden;\n  aspect-ratio: 16 / 9;\n}\n\n.video-container video,\n.video-container .poster {\n  width: 100%;\n  height: 100%;\n  object-fit: cover;\n  display: block;\n}\n\n/* Video loading indicator (spinner) */\n@keyframes spin {\n  to {\n    transform: rotate(360deg)\n  }\n}\n\n.loading-spinner {\n  position: absolute;\n  top: 0;\n  bottom: 0;\n  left: 0;\n  right: 0;\n  background: rgba(0, 0, 0, 0.6);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  z-index: 5;\n  pointer-events: none;\n  opacity: 0;\n  transition: opacity 0.2s ease;\n  pointer-events: none;\n}\n\n.video-container.loading .loading-spinner {\n  opacity: 1;\n}\n\n.spinner {\n  width: 48px;\n  height: 48px;\n  border: 4px solid rgba(255, 255, 255, 0.3);\n  border-top-color: #fff;\n  border-radius: 50%;\n  animation: spin 0.9s linear infinite;\n}\n\n.video-container:hover .controls-wrapper {\n  bottom: 0;\n}\n\n.video-container.fullscreen {\n  max-width: none;\n  position: fixed;\n  top: 0;\n  bottom: 0;\n  left: 0;\n  right: 0;\n  z-index: 1021;\n}\n\n.video-container.fullscreen video {\n  position: absolute;\n  top: 50%;\n  -webkit-transform: translateY(-50%);\n  -ms-transform: translateY(-50%);\n  transform: translateY(-50%);\n}\n\n.controls-wrapper {\n  position: absolute;\n  height: 50px;\n  bottom: -57px;\n  left: 0;\n  right: 0;\n  z-index: 10;\n  -webkit-transition: all 0.25s ease-in-out;\n  -moz-transition: all 0.25s ease-in-out;\n  transition: all 0.25s ease-in-out;\n}\n\n.controls-wrapper * {\n  cursor: pointer;\n}\n\n.controls-wrapper span {\n  cursor: default;\n  color: #fff;\n}\n\n.progress-bar {\n  height: 5px;\n  width: 100%;\n  background: #777;\n  cursor: pointer;\n}\n\n.progress {\n  height: 5px;\n  width: 0%;\n  max-width: 100%;\n  background: #c62129;\n}\n\n.video-controls {\n  list-style-type: none;\n  margin: 0;\n  padding: 0;\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  height: 45px;\n  background: linear-gradient(to top,\n      rgba(0, 0, 0, 0.4) 0,\n      rgba(0, 0, 0, 0) 100%);\n}\n\n.video-controls&gt;li {\n  font-size: 12px;\n  margin: 0 5px;\n}\n\n.video-controls li.fullscreen-container {\n  margin: 0 10px 0 auto;\n}\n\n.video-controls li input {\n  display: inline-block;\n  padding: 0 2px;\n  float: left;\n  height: 24px;\n  line-height: 24px;\n  cursor: pointer;\n  width: 20px;\n  overflow: hidden;\n  line-height: 999px;\n  margin: 0;\n  border: none;\n  background: transparent;\n  outline: none;\n  background: url(\"https://i.sstatic.net/Da9PZ5i4.png\") no-repeat top left;\n  width: 20px;\n  height: 20px;\n}\n\n.video-controls li span {\n  display: inline-block;\n  padding: 0 2px;\n  float: left;\n  height: 24px;\n  line-height: 24px;\n}\n\n.video-controls li a {\n  display: inline-block;\n  padding: 0 2px;\n  float: left;\n  height: 24px;\n  line-height: 24px;\n  cursor: pointer;\n  width: 20px;\n  overflow: hidden;\n  line-height: 999px;\n  margin: 0;\n  border: none;\n  background: transparent;\n  outline: none;\n  text-decoration: none;\n  background: url(\"https://i.sstatic.net/Da9PZ5i4.png\") no-repeat top left;\n  width: 20px;\n  height: 20px;\n}\n\n.video-controls li input[type=\"checkbox\"] {\n  opacity: 0;\n}\n\n.video-controls li input.volume-slider {\n  width: 100px;\n  background: #c62129;\n  height: 5px;\n}\n\n.video-controls li input.play {\n  background-position: 0 0;\n}\n\n.video-controls li input.pause {\n  background-position: 0 -30px;\n}\n\n.video-controls li .previous {\n  background-position: 0 -60px;\n}\n\n.video-controls li .next {\n  background-position: 0 -90px;\n}\n\n.video-controls li input.toggle-fullscreen {\n  background-position: 0 -180px;\n}\n\n.video-controls li input.toggle-fullscreen.exit {\n  background-position: 0 -210px;\n}\n\n.video-controls input[type=\"range\"] {\n  -webkit-appearance: none;\n  height: 4px;\n  background: #c62129;\n  opacity: 0.8;\n  padding: 0;\n  margin: 0;\n  outline: none;\n  overflow: visible;\n}\n\n.video-controls input[type=\"range\"]:focus {\n  -webkit-appearance: none;\n  height: 4px;\n  background: #c62129;\n  opacity: 0.8;\n  padding: 0;\n  margin: 0;\n  outline: none;\n  overflow: visible;\n}\n\n.video-controls input[type=\"range\"]::-webkit-slider-thumb {\n  -webkit-appearance: none;\n  height: 10px;\n  width: 10px;\n  border-radius: 50%;\n  background: #fff;\n  cursor: pointer;\n  margin-top: -1px;\n}\n\n.video-controls input[type=\"range\"]::-moz-range-thumb {\n  -webkit-appearance: none;\n  height: 10px;\n  width: 10px;\n  border-radius: 50%;\n  background: #fff;\n  cursor: pointer;\n  margin-top: -2px;\n}\n\n.video-controls li.mute-toggle {\n  background: url(\"https://i.sstatic.net/Da9PZ5i4.png\") no-repeat top left;\n  width: 20px;\n  height: 20px;\n}\n\n.video-controls li.unmuted {\n  background-position: 0 -120px;\n}\n\n.video-controls li.muted {\n  background-position: 0 -150px;\n}\n\n.playback-rate {\n  position: relative;\n}\n\n.playback-rate span {\n  width: 55px;\n  text-align: center;\n  color: #1c232c;\n  padding: 5px;\n  border-radius: 2px;\n  background: rgba(255, 255, 255, 0.7);\n  cursor: pointer;\n}\n\n.playback-rate .piker {\n  cursor: pointer;\n  transition: opacity 1s ease-in-out;\n  display: none;\n  position: absolute;\n  opacity: 0;\n  bottom: 0;\n  padding-bottom: 30px;\n  width: 55px;\n}\n\n.playback-rate:hover .piker {\n  display: block;\n  opacity: 1;\n  text-align: center;\n}\n\n.playback-rate ul {\n  padding: 0;\n  margin: 0;\n  overflow: hidden;\n  border-radius: 2px;\n  background: rgba(0, 0, 0, 0.75);\n  box-shadow: 0 1px 1px 0px rgba(0, 0, 0, 0.12);\n}\n\n.playback-rate ul li {\n  color: #fff;\n  text-align: right;\n  margin: 0;\n  display: block;\n  height: 20px;\n  line-height: 20px;\n  padding: 0 5px;\n}\n\n.playback-rate ul li:hover {\n  background: rgba(255, 255, 255, 0.1);\n}</code></pre>\n<pre class=\"snippet-code-html lang-html prettyprint-override\"><code>&lt;div class=\"video-container mb-3\"&gt;\n  &lt;img\n      src=\"https://fastly.picsum.photos/id/866/1200/800.jpg?hmac=cMZ0zQRwnCFQskIqM7bmp90xVm9-k6lHUAFEJZp3mw4\"\n      class=\"poster\"\n    /&gt;\n  &lt;div class=\"loading-spinner\"&gt;\n    &lt;div class=\"spinner\"&gt;&lt;/div&gt;\n  &lt;/div&gt;\n  &lt;video\n      src=\"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4\"\n      type=\"video/mp4\"\n    &gt;&lt;/video&gt;\n\n  &lt;div class=\"controls-wrapper\"&gt;\n    &lt;div class=\"progress-bar\"&gt;\n      &lt;div class=\"progress\"&gt;&lt;/div&gt;\n    &lt;/div&gt;\n    &lt;ul class=\"video-controls\"&gt;\n      &lt;li&gt;\n        &lt;input type=\"button\" name=\"play-pause\" value=\"Play\" class=\"play\" /&gt;\n      &lt;/li&gt;\n      &lt;li&gt;\n        &lt;a\n            href=\"https://larablog.com/show/enhancing-female-pleasure-techniques-for-deeper-intimacy\"\n            class=\"previous\"\n            title=\"Previous video: Whatever\"\n          &gt;\n            Previous\n          &lt;/a&gt;\n      &lt;/li&gt;\n      &lt;li&gt;&lt;/li&gt;\n      &lt;li class=\"mute-toggle unmuted\"&gt;\n        &lt;input type=\"checkbox\" name=\"mute\" /&gt;\n      &lt;/li&gt;\n      &lt;li&gt;\n        &lt;input type=\"range\" min=\"0\" max=\"1\" step=\"0.01\" class=\"volume-slider\" /&gt;\n      &lt;/li&gt;\n      &lt;li class=\"timer\"&gt;\n        &lt;span class=\"current-time\"&gt;&lt;/span&gt;&lt;span&gt;/&lt;/span&gt;&lt;span class=\"duration\"&gt;&lt;/span&gt;\n      &lt;/li&gt;\n      &lt;li class=\"playback-rate\"&gt;\n        &lt;span class=\"rate_display\"&gt;Normal&lt;/span&gt;\n        &lt;div class=\"piker\"&gt;\n          &lt;ul class=\"dropdown-content\" id=\"rate_selector\"&gt;\n            &lt;li data-rate=\"0.5\"&gt;0.5x&lt;/li&gt;\n            &lt;li data-rate=\"0.75\"&gt;0.75x&lt;/li&gt;\n            &lt;li data-rate=\"1\"&gt;Normal&lt;/li&gt;\n            &lt;li data-rate=\"1.125\"&gt;1.125x&lt;/li&gt;\n            &lt;li data-rate=\"1.5\"&gt;1.5x&lt;/li&gt;\n            &lt;li data-rate=\"2\"&gt;2x&lt;/li&gt;\n          &lt;/ul&gt;\n        &lt;/div&gt;\n      &lt;/li&gt;\n      &lt;li class=\"fullscreen-container\"&gt;\n        &lt;input\n            type=\"button\"\n            name=\"screen-toggler\"\n            value=\"Fullscreen\"\n            class=\"toggle-fullscreen\"\n          /&gt;\n      &lt;/li&gt;\n    &lt;/ul&gt;\n  &lt;/div&gt;\n&lt;/div&gt;</code></pre>\n</div>\n</div>\n</p>\n<p>The problem I am faced with is this: when the video is very big (100 MB or more), it gets blocked, and trying to unblock it by s<em>eeking an already buffered point on the timeline</em> fails to unblock it.</p>\n<p>What causes this bug?\nWhat is a reliable way to make it possible for the user to unblock a video by navigating back on the timeline?</p>\n"
       }
@@ -4222,7 +4912,7 @@
       "metrics": {
         "upvotes": -2,
         "comments": 0,
-        "views": 38
+        "views": 39
       },
       "tags": [
         "javascript",
@@ -4243,7 +4933,7 @@
           "link": "https://stackoverflow.com/users/32330204/slobado"
         },
         "is_answered": false,
-        "view_count": 38,
+        "view_count": 39,
         "closed_date": 1770480369,
         "answer_count": 0,
         "score": -2,
@@ -4272,7 +4962,7 @@
       "metrics": {
         "upvotes": -1,
         "comments": 0,
-        "views": 34
+        "views": 35
       },
       "tags": [
         "javascript",
@@ -4297,7 +4987,7 @@
           "link": "https://stackoverflow.com/users/8103934/bustinout"
         },
         "is_answered": false,
-        "view_count": 34,
+        "view_count": 35,
         "answer_count": 0,
         "score": -1,
         "last_activity_date": 1770486800,
@@ -5466,7 +6156,7 @@
       "metrics": {
         "upvotes": -3,
         "comments": 0,
-        "views": 37
+        "views": 39
       },
       "tags": [
         "reactjs"
@@ -5485,7 +6175,7 @@
           "link": "https://stackoverflow.com/users/32199527/dat-vo"
         },
         "is_answered": false,
-        "view_count": 37,
+        "view_count": 39,
         "closed_date": 1770377042,
         "answer_count": 0,
         "score": -3,
@@ -5608,5 +6298,5 @@
       }
     }
   ],
-  "lastUpdated": "2026-02-07T22:31:06.824Z"
+  "lastUpdated": "2026-02-07T23:34:40.414Z"
 }
