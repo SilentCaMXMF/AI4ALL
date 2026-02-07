@@ -1,0 +1,858 @@
+{
+  "items": [
+    {
+      "id": "stackoverflow-question-79884886",
+      "platform": "stackoverflow",
+      "type": "question",
+      "title": "Selectively route keydown events to iframe or parent",
+      "content": "",
+      "author": {
+        "name": "LiterallyCode",
+        "url": "https://stackoverflow.com/users/15927992/literallycode",
+        "avatar": "https://www.gravatar.com/avatar/4758b824e4ab647aa0ffec7695a0f469?s=256&d=identicon&r=PG&f=y&so-version=2"
+      },
+      "timestamp": "2026-02-07T13:35:36.000Z",
+      "url": "https://stackoverflow.com/questions/79884886/selectively-route-keydown-events-to-iframe-or-parent",
+      "metrics": {
+        "upvotes": 0,
+        "comments": 0,
+        "views": 6
+      },
+      "tags": [
+        "javascript",
+        "google-chrome",
+        "iframe",
+        "event-handling",
+        "keydown"
+      ],
+      "raw": {
+        "tags": [
+          "javascript",
+          "google-chrome",
+          "iframe",
+          "event-handling",
+          "keydown"
+        ],
+        "owner": {
+          "account_id": 21599611,
+          "reputation": 166,
+          "user_id": 15927992,
+          "user_type": "registered",
+          "profile_image": "https://www.gravatar.com/avatar/4758b824e4ab647aa0ffec7695a0f469?s=256&d=identicon&r=PG&f=y&so-version=2",
+          "display_name": "LiterallyCode",
+          "link": "https://stackoverflow.com/users/15927992/literallycode"
+        },
+        "is_answered": false,
+        "view_count": 6,
+        "answer_count": 0,
+        "score": 0,
+        "last_activity_date": 1770471336,
+        "creation_date": 1770471336,
+        "question_id": 79884886,
+        "content_license": "CC BY-SA 4.0",
+        "link": "https://stackoverflow.com/questions/79884886/selectively-route-keydown-events-to-iframe-or-parent",
+        "title": "Selectively route keydown events to iframe or parent",
+        "body": "<p>I would like to capure some keydown events (e.g. SPACE) in the parent website and all the other keydown events in an iframe inside the parent.</p>\n<p>It seems, as soon as the iframe gets focus (which seems to happen after finishing loading), all keydown events go to the iframe only. Otherwise, all keydown events go to the parent page.</p>\n<p>My use case: Chromium-based kiosk system with keyboard, using SPACE (or any other key) to switch between different pages, each showing an iframe with an external app/website, e.g. different games. I have no control over the code of the iframe contents.</p>\n<p>In case routing of keydown events is not possible, how can I implement my use case?</p>\n"
+      }
+    },
+    {
+      "id": "stackoverflow-answer-79884879",
+      "platform": "stackoverflow",
+      "type": "answer",
+      "title": "Answer to: Series of treemaps with shared areas",
+      "content": "",
+      "author": {
+        "name": "ADyson",
+        "url": "https://stackoverflow.com/users/5947043/adyson",
+        "avatar": "https://i.sstatic.net/jUK37.png?s=256"
+      },
+      "timestamp": "2026-02-07T13:12:58.000Z",
+      "metrics": {
+        "upvotes": 0
+      },
+      "tags": [],
+      "raw": {
+        "owner": {
+          "account_id": 7869117,
+          "reputation": 62989,
+          "user_id": 5947043,
+          "user_type": "registered",
+          "profile_image": "https://i.sstatic.net/jUK37.png?s=256",
+          "display_name": "ADyson",
+          "link": "https://stackoverflow.com/users/5947043/adyson"
+        },
+        "is_accepted": false,
+        "score": 0,
+        "last_activity_date": 1770469978,
+        "creation_date": 1770469978,
+        "answer_id": 79884879,
+        "question_id": 79884847,
+        "content_license": "CC BY-SA 4.0",
+        "body": "<p>Edit the question to show us what you've done so far, then it'll be clearer</p>\n"
+      }
+    },
+    {
+      "id": "stackoverflow-question-79884847",
+      "platform": "stackoverflow",
+      "type": "question",
+      "title": "Series of treemaps with shared areas",
+      "content": "",
+      "author": {
+        "name": "Pauline",
+        "url": "https://stackoverflow.com/users/32328914/pauline",
+        "avatar": "https://www.gravatar.com/avatar/ce46cd55ef275400b126f2fe72e4f694?s=256&d=identicon&r=PG&f=y&so-version=2"
+      },
+      "timestamp": "2026-02-07T11:47:42.000Z",
+      "url": "https://stackoverflow.com/questions/79884847/series-of-treemaps-with-shared-areas",
+      "metrics": {
+        "upvotes": 0,
+        "comments": 1,
+        "views": 15
+      },
+      "tags": [
+        "javascript",
+        "d3.js",
+        "treemap"
+      ],
+      "raw": {
+        "tags": [
+          "javascript",
+          "d3.js",
+          "treemap"
+        ],
+        "owner": {
+          "account_id": 45547057,
+          "reputation": 1,
+          "user_id": 32328914,
+          "user_type": "registered",
+          "profile_image": "https://www.gravatar.com/avatar/ce46cd55ef275400b126f2fe72e4f694?s=256&d=identicon&r=PG&f=y&so-version=2",
+          "display_name": "Pauline",
+          "link": "https://stackoverflow.com/users/32328914/pauline"
+        },
+        "is_answered": false,
+        "view_count": 15,
+        "answer_count": 1,
+        "score": 0,
+        "last_activity_date": 1770469978,
+        "creation_date": 1770464862,
+        "last_edit_date": 1770466305,
+        "question_id": 79884847,
+        "content_license": "CC BY-SA 4.0",
+        "link": "https://stackoverflow.com/questions/79884847/series-of-treemaps-with-shared-areas",
+        "title": "Series of treemaps with shared areas",
+        "body": "<p>I would like to make a dataviz with five different treemaps probably using d3.js. it would single level treemaps, each treemap would have a different size, but the parts inside each treemaps should be sized on the same scale. The trick is that i would like some treemaps to share a common zone.</p>\n<p>I would have treemaps A and B. With pieces 1; 2; 3; 4 in A and 3;4;5;6;7 in B. So pieces 3 and 4 should be in both treemaps on the same time, but only appear once in the svg : thay would be a shared area between both treemaps.</p>\n<p>For now, i'm drawing the biggest treemap first, identifying the pieces that will be at an intersection. But i am having trouble to define the exact position of the second treemaps in order for it to be based on the shared area. Any suggestions ?</p>\n<p>Thank you very much</p>\n"
+      }
+    },
+    {
+      "id": "stackoverflow-question-79884805",
+      "platform": "stackoverflow",
+      "type": "question",
+      "title": "Summernote hint feature not showing options",
+      "content": "",
+      "author": {
+        "name": "Jelle2005",
+        "url": "https://stackoverflow.com/users/16143561/jelle2005",
+        "avatar": "https://www.gravatar.com/avatar/4a00e4222dd78ef2fce1bbef21785b4c?s=256&d=identicon&r=PG&f=y&so-version=2"
+      },
+      "timestamp": "2026-02-07T10:02:46.000Z",
+      "url": "https://stackoverflow.com/questions/79884805/summernote-hint-feature-not-showing-options",
+      "metrics": {
+        "upvotes": 0,
+        "comments": 0,
+        "views": 6
+      },
+      "tags": [
+        "javascript",
+        "html",
+        "summernote"
+      ],
+      "raw": {
+        "tags": [
+          "javascript",
+          "html",
+          "summernote"
+        ],
+        "owner": {
+          "account_id": 21851552,
+          "reputation": 21,
+          "user_id": 16143561,
+          "user_type": "registered",
+          "profile_image": "https://www.gravatar.com/avatar/4a00e4222dd78ef2fce1bbef21785b4c?s=256&d=identicon&r=PG&f=y&so-version=2",
+          "display_name": "Jelle2005",
+          "link": "https://stackoverflow.com/users/16143561/jelle2005"
+        },
+        "is_answered": false,
+        "view_count": 6,
+        "answer_count": 0,
+        "score": 0,
+        "last_activity_date": 1770458764,
+        "creation_date": 1770458566,
+        "last_edit_date": 1770458764,
+        "question_id": 79884805,
+        "content_license": "CC BY-SA 4.0",
+        "link": "https://stackoverflow.com/questions/79884805/summernote-hint-feature-not-showing-options",
+        "title": "Summernote hint feature not showing options",
+        "body": "<p>I am trying to implement a summernote wysiwyg editor with a mentioning feature for names of users. However, when I start typing with &quot;@&quot; the small dropdown/suggestion list does appear, but without any entries.</p>\n<p>I added a console.log to the <code>template</code> option, and I can see from the logs it fires once for each option found for the given &quot;@...&quot;. Also <code>item</code> is a string, so that should also be correct.</p>\n<p>Do you have a suggestion on what to try?</p>\n<pre><code>const userData = (window.PAGE_DATA?.users || []).map(u =&gt; ({\n    name: u.name,\n    id: u.id\n}));\n\n$(el).summernote({\n    height: 150,\n    placeholder: '@name...',\n    toolbar: [\n        ['style', ['bold', 'italic', 'underline']],\n        ['para', ['ul', 'ol']],\n        ['insert', ['link']],\n        ['view', ['codeview']]\n    ],\n    hint: [\n        {\n            match: /\\B@([\\w\\s]*)$/,\n            search: function (keyword, callback) {\n                const result = userData\n                    .filter(u =&gt;\n                        u.name.toLowerCase().includes(keyword.toLowerCase())\n                    )\n                    .map(u =&gt; u.name);\n\n                callback(result);\n            },\n            template: function (item) {\n                console.log(&quot;&lt;strong&gt;@&quot; + item + &quot;&lt;/strong&gt;&quot;);\n                return &quot;&lt;strong&gt;@&quot; + item + &quot;&lt;/strong&gt;&quot;;\n            },\n            content: function (item) {\n                return `&lt;span class=&quot;mention&quot; data-mention=&quot;${item}&quot;&gt;@${item}&lt;/span&gt;&amp;nbsp;`;\n            }\n        }\n    ]\n});\n</code></pre>\n<p><a href=\"https://i.sstatic.net/jWKdLoFd.png\" rel=\"nofollow noreferrer\"><img src=\"https://i.sstatic.net/jWKdLoFd.png\" alt=\"enter image description here\" /></a></p>\n"
+      }
+    },
+    {
+      "id": "stackoverflow-question-79884804",
+      "platform": "stackoverflow",
+      "type": "question",
+      "title": "JavaScript is redirecting me to .html file, not .php file",
+      "content": "",
+      "author": {
+        "name": "user21361864",
+        "url": "https://stackoverflow.com/users/21361864/user21361864",
+        "avatar": "https://www.gravatar.com/avatar/2eb42f00253a81cd9c54ff3d18d74e4b?s=256&d=identicon&r=PG"
+      },
+      "timestamp": "2026-02-07T09:53:12.000Z",
+      "url": "https://stackoverflow.com/questions/79884804/javascript-is-redirecting-me-to-html-file-not-php-file",
+      "metrics": {
+        "upvotes": -4,
+        "comments": 0,
+        "views": 31
+      },
+      "tags": [
+        "javascript",
+        "php",
+        "xampp"
+      ],
+      "raw": {
+        "tags": [
+          "javascript",
+          "php",
+          "xampp"
+        ],
+        "owner": {
+          "account_id": 27972371,
+          "reputation": 1,
+          "user_id": 21361864,
+          "user_type": "registered",
+          "profile_image": "https://www.gravatar.com/avatar/2eb42f00253a81cd9c54ff3d18d74e4b?s=256&d=identicon&r=PG",
+          "display_name": "user21361864",
+          "link": "https://stackoverflow.com/users/21361864/user21361864"
+        },
+        "is_answered": false,
+        "view_count": 31,
+        "answer_count": 0,
+        "score": -4,
+        "last_activity_date": 1770458660,
+        "creation_date": 1770457992,
+        "last_edit_date": 1770458660,
+        "question_id": 79884804,
+        "content_license": "CC BY-SA 4.0",
+        "link": "https://stackoverflow.com/questions/79884804/javascript-is-redirecting-me-to-html-file-not-php-file",
+        "title": "JavaScript is redirecting me to .html file, not .php file",
+        "body": "<p>I'm trying to make my own little search input selection thing, yet it always says:<br />\n&quot;404 not found&quot;<br />\n&quot;Not Found<br />\nThe requested URL was not found on this server.<br />\nApache/2.4.58 (Win64) OpenSSL/3.1.3 PHP/8.2.12 Server at localhost Port 80&quot;</p>\n<p>I've tried working out something this works:</p>\n<p>&lt;p&gt;The Belgrade Encyclopedia is a website situated in &lt;a href=&quot;belgrade.php&quot;&gt;Belgrade&lt;/a&gt;, Serbia...&lt;/p&gt;</p>\n<p>Yet this doesn't.</p>\n<pre class=\"lang-js prettyprint-override\"><code>document.addEventListener('DOMContentLoaded', () =&gt; {\n  const searchInput = document.getElementById(&quot;search&quot;);\n  const resultsBox = document.getElementById(&quot;search-results&quot;);\n\n  const pages = [\n    { name: &quot;Belgrade&quot;, link: &quot;http://localhost/belgrade.php&quot; },\n    { name: &quot;Home&quot;, link: &quot;http://localhost/betah_website.php&quot; },\n    { name: &quot;Serbia&quot;, link: &quot;http://localhost/serbia.php&quot; }\n  ];\n\n\n  // --- Search box behavior ---\n  if (searchInput &amp;&amp; resultsBox) {\n    resultsBox.style.display = &quot;none&quot;;\n\n    searchInput.addEventListener(&quot;input&quot;, () =&gt; {\n      const query = searchInput.value.trim().toLowerCase();\n      resultsBox.innerHTML = &quot;&quot;;\n\n      if (!query) {\n        resultsBox.style.display = &quot;none&quot;;\n        return;\n      }\n\n      const matches = pages\n        .filter(p =&gt; p.name.toLowerCase().includes(query))\n        .sort((a, b) =&gt;\n          a.name.toLowerCase().indexOf(query) - b.name.toLowerCase().indexOf(query)\n        );\n\n      matches.forEach(match =&gt; {\n        const li = document.createElement(&quot;li&quot;);\n        const a  = document.createElement(&quot;a&quot;);\n        a.href = match.link;\n        a.textContent = match.name;\n        li.appendChild(a);\n        resultsBox.appendChild(li);\n      });\n\n      resultsBox.style.display = matches.length ? &quot;block&quot; : &quot;none&quot;;\n    });\n  }\n</code></pre>\n"
+      }
+    },
+    {
+      "id": "stackoverflow-question-79884799",
+      "platform": "stackoverflow",
+      "type": "question",
+      "title": "JS changing a DOM element&#39;s style transition animation doesn&#39;t work",
+      "content": "",
+      "author": {
+        "name": "XiaoShang",
+        "url": "https://stackoverflow.com/users/10538358/xiaoshang",
+        "avatar": "https://www.gravatar.com/avatar/3884a5a6cd9e0ef34a8ef7a48ea5e9e1?s=256&d=identicon&r=PG&f=y&so-version=2"
+      },
+      "timestamp": "2026-02-07T09:35:37.000Z",
+      "url": "https://stackoverflow.com/questions/79884799/js-changing-a-dom-elements-style-transition-animation-doesnt-work",
+      "metrics": {
+        "upvotes": 1,
+        "comments": 1,
+        "views": 35
+      },
+      "tags": [
+        "javascript",
+        "transition",
+        "flip"
+      ],
+      "raw": {
+        "tags": [
+          "javascript",
+          "transition",
+          "flip"
+        ],
+        "owner": {
+          "account_id": 14591362,
+          "reputation": 41,
+          "user_id": 10538358,
+          "user_type": "registered",
+          "profile_image": "https://www.gravatar.com/avatar/3884a5a6cd9e0ef34a8ef7a48ea5e9e1?s=256&d=identicon&r=PG&f=y&so-version=2",
+          "display_name": "XiaoShang",
+          "link": "https://stackoverflow.com/users/10538358/xiaoshang"
+        },
+        "is_answered": true,
+        "view_count": 35,
+        "answer_count": 1,
+        "score": 1,
+        "last_activity_date": 1770470085,
+        "creation_date": 1770456937,
+        "last_edit_date": 1770461871,
+        "question_id": 79884799,
+        "content_license": "CC BY-SA 4.0",
+        "link": "https://stackoverflow.com/questions/79884799/js-changing-a-dom-elements-style-transition-animation-doesnt-work",
+        "title": "JS changing a DOM element&#39;s style transition animation doesn&#39;t work",
+        "body": "<p>I'm trying to understand the principle of FLIP animations.</p>\n<pre class=\"lang-js prettyprint-override\"><code>dom.style.width = '40px';\ndom.style.transition = 'width 300ms ease';\ndom.offsetHeight;\ndom.style.width = '80px';\n// This code has an animation effect\n\ndom.style.width = '40px';\ndom.style.transition = 'width 300ms ease';\nrequestAnimationFrame(() =&gt; {\n  dom.style.width = '80px';\n}); \n// This code does NOT have an animation effect. Why?\n</code></pre>\n<p>Below is the specific code. You can change the function executed by setTimeout and then refresh the page. Running run1 will show an animation, while run2 will not.</p>\n<pre class=\"lang-html prettyprint-override\"><code>&lt;!doctype html&gt;\n&lt;html&gt;\n  &lt;head&gt;\n    &lt;meta charset=&quot;utf-8&quot; /&gt;\n    &lt;title&gt;document&lt;/title&gt;\n    &lt;style&gt;\n      #dom {\n        list-style: none;\n        padding: 12px;\n        margin: 6px 0;\n        background: #e6f0ff;\n        border-radius: 6px;\n        font-size: 16px;\n      }\n    &lt;/style&gt;\n  &lt;/head&gt;\n  &lt;body&gt;\n    &lt;div id=&quot;dom&quot;&gt;dom&lt;/div&gt;\n\n    &lt;script&gt;\n      const dom = document.getElementById(&quot;dom&quot;);\n      \n      const run1 = () =&gt; { //Good\n        dom.style.width = &quot;40px&quot;;\n        dom.style.transition = &quot;width 300ms ease&quot;;\n        dom.offsetHeight;\n        dom.style.width = &quot;80px&quot;;\n      };\n\n      const run2 = () =&gt; { //bad\n        dom.style.width = &quot;40px&quot;;\n        dom.style.transition = &quot;width 300ms ease&quot;;\n        requestAnimationFrame(() =&gt; {\n          dom.style.width = &quot;80px&quot;;\n        });\n      };\n\n      setTimeout(run2, 3000);\n    &lt;/script&gt;\n  &lt;/body&gt;\n&lt;/html&gt;\n\n</code></pre>\n"
+      }
+    },
+    {
+      "id": "stackoverflow-answer-79884739",
+      "platform": "stackoverflow",
+      "type": "answer",
+      "title": "Answer to: What is causing VSCode to ignore _ prefixed arguments like _arg? ts(6133)",
+      "content": "",
+      "author": {
+        "name": "Ryan Cavanaugh",
+        "url": "https://stackoverflow.com/users/1704166/ryan-cavanaugh",
+        "avatar": "https://www.gravatar.com/avatar/d256baab2fcfd81b0f109d394404fd67?s=256&d=identicon&r=PG"
+      },
+      "timestamp": "2026-02-07T06:05:32.000Z",
+      "metrics": {
+        "upvotes": 0
+      },
+      "tags": [],
+      "raw": {
+        "owner": {
+          "account_id": 1285973,
+          "reputation": 223023,
+          "user_id": 1704166,
+          "user_type": "registered",
+          "accept_rate": 64,
+          "profile_image": "https://www.gravatar.com/avatar/d256baab2fcfd81b0f109d394404fd67?s=256&d=identicon&r=PG",
+          "display_name": "Ryan Cavanaugh",
+          "link": "https://stackoverflow.com/users/1704166/ryan-cavanaugh"
+        },
+        "is_accepted": false,
+        "score": 0,
+        "last_activity_date": 1770444332,
+        "creation_date": 1770444332,
+        "answer_id": 79884739,
+        "question_id": 79884683,
+        "content_license": "CC BY-SA 4.0",
+        "body": "<p>This isn't a configurable behavior in TypeScript. You'll need to turn eslint back on</p>\n"
+      }
+    },
+    {
+      "id": "stackoverflow-question-79884683",
+      "platform": "stackoverflow",
+      "type": "question",
+      "title": "What is causing VSCode to ignore _ prefixed arguments like _arg? ts(6133)",
+      "content": "",
+      "author": {
+        "name": "Qwerty",
+        "url": "https://stackoverflow.com/users/985454/qwerty",
+        "avatar": "https://www.gravatar.com/avatar/cb96169403450ab7cc3cb7994ed4283f?s=256&d=identicon&r=PG"
+      },
+      "timestamp": "2026-02-07T00:34:59.000Z",
+      "url": "https://stackoverflow.com/questions/79884683/what-is-causing-vscode-to-ignore-prefixed-arguments-like-arg-ts6133",
+      "metrics": {
+        "upvotes": 1,
+        "comments": 1,
+        "views": 27
+      },
+      "tags": [
+        "typescript",
+        "visual-studio-code"
+      ],
+      "raw": {
+        "tags": [
+          "typescript",
+          "visual-studio-code"
+        ],
+        "owner": {
+          "account_id": 942854,
+          "reputation": 32609,
+          "user_id": 985454,
+          "user_type": "registered",
+          "accept_rate": 84,
+          "profile_image": "https://www.gravatar.com/avatar/cb96169403450ab7cc3cb7994ed4283f?s=256&d=identicon&r=PG",
+          "display_name": "Qwerty",
+          "link": "https://stackoverflow.com/users/985454/qwerty"
+        },
+        "is_answered": false,
+        "view_count": 27,
+        "answer_count": 1,
+        "score": 1,
+        "last_activity_date": 1770444332,
+        "creation_date": 1770424499,
+        "last_edit_date": 1770425473,
+        "question_id": 79884683,
+        "content_license": "CC BY-SA 4.0",
+        "link": "https://stackoverflow.com/questions/79884683/what-is-causing-vscode-to-ignore-prefixed-arguments-like-arg-ts6133",
+        "title": "What is causing VSCode to ignore _ prefixed arguments like _arg? ts(6133)",
+        "body": "<p>I turned off eslint and this is what I get in the IDE: (Only <code>row</code> is used.)</p>\n<p><img src=\"https://i.sstatic.net/M6OcPI8p.png\" alt=\"function argument cell is dimmed, but _column is not\" /></p>\n<p>When I hover each of those arguments, I get this:</p>\n<pre class=\"lang-js prettyprint-override\"><code>'cell' is declared but its value is never read.ts(6133)\n'ev' is declared but its value is never read.ts(6133)\n// nothing for _cell\n// nothing for _ev\n</code></pre>\n<p>When I add and enable configuration for <code>noUnusedParameters</code> in <code>tsconfig.json</code>, I get this:<br />\n<img src=\"https://i.sstatic.net/jtVyKPnF.png\" alt=\"function argument cell has squiggles, but _column does not\" /></p>\n<p>And the very same <code>ts(6133)</code> warnings as above, nothing on <code>_x</code>.</p>\n<p>👉 <strong>How can I make it so that</strong></p>\n<ul>\n<li>unused variables are rendered with squiggles and a warning\n<ul>\n<li>unless that variable is prefixed with <code>_</code>, e.g. <code>_ev</code>, in that case, no squiggles and warning</li>\n</ul>\n</li>\n<li>any unused variable is dimmed, even those prefixed</li>\n</ul>\n<p>My reasoning for rule 3 is simple: An unused variable is still unused and I want to see it quickly in IDE, even if I choose to ignore it by naming it <code>_x</code>.\nThe thing is that in all the variables, it is much easier to spot a dimmed variable than a prefixed variable. And secondly, sometimes I need underscored variables to avoid shadowing, e.g.</p>\n<pre><code>const table = //... some global variable\n{ // the example could be better, but you get my point\n  someCallback: (_ev, _value, _table) =&gt; {\n    const value = clamp(0, _value, 100)\n    return _table.rows.map(row =&gt; row + value)\n    // _ev is unused\n    // _value is deliberately named with underscore\n    // _table, because table exists in the higher scope\n  }\n}\n</code></pre>\n<p>But alll variables are rendered opaque:<br />\n<a href=\"https://i.sstatic.net/YFji7ptx.png\" rel=\"nofollow noreferrer\"><img src=\"https://i.sstatic.net/YFji7ptx.png\" alt=\"function argument ev is unused and dimmed, _value is used and opaque\" /></a></p>\n<p>This is better, but it would produce squiggles when <code>noUnusedParameters</code> is enabled.<br />\n<a href=\"https://i.sstatic.net/4aiOKqqL.png\" rel=\"nofollow noreferrer\"><img src=\"https://i.sstatic.net/4aiOKqqL.png\" alt=\"function argument _ev is unused, _value is used, but both are opaque\" /></a></p>\n<p>It is definitely caused by typescript, because this is what I get when TS Server is turned off (restarting).\n<img src=\"https://i.sstatic.net/VJkAwith.png\" alt=\"all arguments are opaque\" /></p>\n"
+      }
+    },
+    {
+      "id": "stackoverflow-question-79884643",
+      "platform": "stackoverflow",
+      "type": "question",
+      "title": "Object does not respond to mouse events",
+      "content": "",
+      "author": {
+        "name": "lost sock",
+        "url": "https://stackoverflow.com/users/32327034/lost-sock",
+        "avatar": "https://www.gravatar.com/avatar/77c1f327a542c5f31b0eddf82a8b7145?s=256&d=identicon&r=PG&f=y&so-version=2"
+      },
+      "timestamp": "2026-02-06T22:17:37.000Z",
+      "url": "https://stackoverflow.com/questions/79884643/object-does-not-respond-to-mouse-events",
+      "metrics": {
+        "upvotes": -1,
+        "comments": 4,
+        "views": 70
+      },
+      "tags": [
+        "javascript",
+        "html"
+      ],
+      "raw": {
+        "tags": [
+          "javascript",
+          "html"
+        ],
+        "owner": {
+          "account_id": 45543035,
+          "reputation": 15,
+          "user_id": 32327034,
+          "user_type": "registered",
+          "profile_image": "https://www.gravatar.com/avatar/77c1f327a542c5f31b0eddf82a8b7145?s=256&d=identicon&r=PG&f=y&so-version=2",
+          "display_name": "lost sock",
+          "link": "https://stackoverflow.com/users/32327034/lost-sock"
+        },
+        "is_answered": true,
+        "view_count": 70,
+        "answer_count": 4,
+        "score": -1,
+        "last_activity_date": 1770456853,
+        "creation_date": 1770416257,
+        "last_edit_date": 1770424630,
+        "question_id": 79884643,
+        "content_license": "CC BY-SA 4.0",
+        "link": "https://stackoverflow.com/questions/79884643/object-does-not-respond-to-mouse-events",
+        "title": "Object does not respond to mouse events",
+        "body": "<p>I have a JS script that swaps out an element's inner text with an alternative held in a <code>data-*</code> attribute:</p>\n<pre class=\"lang-html prettyprint-override\"><code>&lt;span data-swapinnertext=&quot;new text&quot;&gt;old text&lt;/span&gt;\n</code></pre>\n<p>I have been using this, and it works fine to a point. The point being that there's only one swap on the page:</p>\n<pre class=\"lang-js prettyprint-override\"><code>function swapInnerText0() {\n  if (document.querySelectorAll('span[data-swapinnertext]').length &gt; 0) {\n    var s, spans = document.querySelectorAll('span[data-swapinnertext]');\n    for (s = 0; s &lt; spans.length; s++) {\n      var swapText = spans[s].dataset.swapinnertext, innerText = spans[s].innerText;\n      spans[s].onmouseover = function() {\n        this.innerText = swapText;\n      }\n      spans[s].onmouseout = function() {\n        this.innerText = innerText;\n      }\n      spans[s].onclick = function() {\n        this.innerText = swapText;\n        this.onmouseover = null;\n        this.onmouseout = null;\n        this.removeAttribute('data-swapinnertext');\n      }\n    }\n  }\n}\n</code></pre>\n<p>However, if there's more that one, then the <code>onmouseout</code> event replaces the text with the value from the last member of span[s]. I realize why this is the case, so I sought to fix it.</p>\n<p>This works, creating temporary <code>data-*</code> cache attributes to hold the text versions for each element:</p>\n<pre class=\"lang-js prettyprint-override\"><code>function swapInnerText1() {\n  if (document.querySelectorAll('span[data-swapinnertext]').length &gt; 0) {\n    var s, spans = document.querySelectorAll('span[data-swapinnertext]');\n    for (s = 0; s &lt; spans.length; s++) {\n      spans[s].setAttribute('data-swapcache1', spans[s].dataset.swapinnertext);\n      spans[s].setAttribute('data-swapcache2', spans[s].innerText);\n      spans[s].onmouseover = function() {\n        this.innerText = this.dataset.swapcache1;\n      }\n      spans[s].onmouseout = function() {\n        this.innerText = this.dataset.swapcache2;\n      }\n      spans[s].onclick = function() {\n        this.innerText = this.dataset.swapcache1;\n        this.onmouseover = null;\n        this.onmouseout = null;\n        this.removeAttribute('data-swapinnertext');\n        this.removeAttribute('data-swapcache1');\n        this.removeAttribute('data-swapcache2');\n      }\n    }\n  }\n}\n</code></pre>\n<p>But it is inelegant. What I had tried to earlier do was create a 2D array of the elements and use that to ensure that the text versions for each element were separated from the others:</p>\n<pre class=\"lang-js prettyprint-override\"><code>function swapInnerText2() {\n  if (document.querySelectorAll('span[data-swapinnertext]').length &gt; 0) {\n    var sp, sw, spans = document.querySelectorAll('span[data-swapinnertext]'), swaps = Array();\n    for (sp = 0; sp &lt; spans.length; sp++) {\n      var swapText = spans[sp].dataset.swapinnertext, innerText = spans[sp].innerText;\n      swaps.push(Array(swapText, innerText));\n    } \n    for (sw = 0; sw &lt; swaps.length; sw++) {\n      var newText = swaps[sw][0], oldText = swaps[sw][1];\n      swaps[sw].onmouseover = function() {\n        this.innerText = newText;\n      }\n      swaps[sw].onmouseout = function() {\n        this.innerText = oldText;\n      }\n      swaps[sw].onclick = function() {\n        this.innerText = newText;\n        this.onmouseover = null;\n        this.onmouseout = null;\n        this.removeAttribute('data-swapinnertext');\n      }\n    }\n  }\n}\n</code></pre>\n<p>And this is where things go weird. None of the <code>swaps[sw]</code> objects respond to the mouse events. I placed alert() outside the anonymous functions, and they picked up that <code>swaps[sw]</code> were objects, the index and text values for each one, but within the functions nothing happened.</p>\n<p>I've racked what little brain I have, and searched extensively, but simply cannot understand why the mouse events don't work in the third version—which I prefer over the second—but do in the other two.</p>\n"
+      }
+    },
+    {
+      "id": "stackoverflow-question-79884625",
+      "platform": "stackoverflow",
+      "type": "question",
+      "title": "Alphabet-only string in typescript (without recursion)",
+      "content": "",
+      "author": {
+        "name": "EzioMercer",
+        "url": "https://stackoverflow.com/users/13349770/eziomercer",
+        "avatar": "https://www.gravatar.com/avatar/2748e7e54c12fa7da407df6e85fe2b6d?s=256&d=identicon&r=PG"
+      },
+      "timestamp": "2026-02-06T21:42:27.000Z",
+      "url": "https://stackoverflow.com/questions/79884625/alphabet-only-string-in-typescript-without-recursion",
+      "metrics": {
+        "upvotes": -1,
+        "comments": 0,
+        "views": 38
+      },
+      "tags": [
+        "typescript",
+        "typescript-generics"
+      ],
+      "raw": {
+        "tags": [
+          "typescript",
+          "typescript-generics"
+        ],
+        "owner": {
+          "account_id": 18331303,
+          "reputation": 2204,
+          "user_id": 13349770,
+          "user_type": "registered",
+          "profile_image": "https://www.gravatar.com/avatar/2748e7e54c12fa7da407df6e85fe2b6d?s=256&d=identicon&r=PG",
+          "display_name": "EzioMercer",
+          "link": "https://stackoverflow.com/users/13349770/eziomercer"
+        },
+        "is_answered": false,
+        "view_count": 38,
+        "answer_count": 0,
+        "score": -1,
+        "last_activity_date": 1770414147,
+        "creation_date": 1770414147,
+        "question_id": 79884625,
+        "content_license": "CC BY-SA 4.0",
+        "link": "https://stackoverflow.com/questions/79884625/alphabet-only-string-in-typescript-without-recursion",
+        "title": "Alphabet-only string in typescript (without recursion)",
+        "body": "<p>Similar question: <a href=\"https://stackoverflow.com/questions/74201771/is-it-possible-to-annotate-alphabet-only-string-in-typescript\">Is it possible to annotate alphabet-only string in typescript?</a></p>\n<p>The goal is to create a non-recursive type which will able to detect if the passed string contains only alphabet characters (TS version is 5.9.3)</p>\n<p><a href=\"https://www.typescriptlang.org/play/?ts=5.9.3#code/C4TwDgpgBAypDGBLAhgGygXigGQPYHcIAneZAZwgB4zgjEA7AcwD4oAyKAVTEhPKpp0mzANwBYAFCTQkKAEkyAQVRgAFsgBGEYJQAqUCAA9gEegBMyUQQxaYo+oyfOWABgBIA3taYBfT3AgkND8vWhsfFygAfih6CAA3YigALntxKQkZaF0IGhs7BWU1TW1KACIARjLRKAB6WqgKoA\" rel=\"nofollow noreferrer\">First attempt</a> (straight):</p>\n<pre class=\"lang-ts prettyprint-override\"><code>type Special = Lowercase&lt;string&gt; &amp; Uppercase&lt;string&gt;;\n\ntype IsAlphabet&lt;T extends string&gt; = T extends `${string}${Special}${string}` ? never : T;\n\ntype Testing = IsAlphabet&lt;&quot;1&quot;&gt;; // 1\n</code></pre>\n<p>I thought that the reason is that <code>Special</code> contains empty string so it just checks 3 times empty string and fails because <code>&quot;1&quot;</code> doesn't extends <code>&quot;&quot;</code></p>\n<p><a href=\"https://www.typescriptlang.org/play/?ts=5.9.3&amp;ssl=11&amp;ssc=37&amp;pln=1&amp;pc=1#code/C4TwDgpgBAypDGBLAhgGwMIAtkCcoF4oAZAewHcId5kBnCAHhuB0QDsBzAPigDIoBVMJCq0GTFh04BuALAAoeaEiwEKVASgADACQBvOBCRosuAL57xbdqc2yFc+CVZMoyAFwrDajQHIfUqAB6QKgAFXBoH0sOHyhEGihWEmBXGhpEdlZkACNUaGASKCVInX1VY2wcc11o600feUdnFOyPAyN1Qh9kfyCQ8OUo5itY+MTk1PTMnLyiwuKoH1L2tRMqi2GOGwaHJxd4NvLOxYBGXuCoAHkAaXlFCKgASRoAQVQwbGyIYHpQqAgAB7ACCsAAmCVq3EIf0BwLBCVKtWqKzQ1SRmigAH5EhAAG6UKAeUJ2e7KUIQJhWDTPN4fHLfegAIhOjOkfSgJyAA\" rel=\"nofollow noreferrer\">Second attempt</a> (exclude empty string):</p>\n<pre class=\"lang-ts prettyprint-override\"><code>type SpecialChar = Lowercase&lt;string&gt; &amp; Uppercase&lt;string&gt;;\n\ntype Special = `${SpecialChar}${string}`;\n\nconst a: Special = ''; // Type 'string' is not assignable to type '`${SpecialChar}${string}`'\nconst b: Special = 'a'; // Type 'string' is not assignable to type '`${SpecialChar}${string}`'\nconst c: Special = '1'; // OK\n\ntype IsAlphabet&lt;T extends string&gt; = T extends `${string}${Special}${string}` ? never : T;\n\ntype Testing = IsAlphabet&lt;&quot;1&quot;&gt;; // 1\n</code></pre>\n<p>I don't know why but <code>Exclude&lt;Lowercase&lt;string&gt; &amp; Uppercase&lt;string&gt;, ''&gt;</code> doesn't exclude the empty string</p>\n<p><a href=\"https://www.typescriptlang.org/play/?ts=5.9.3#code/C4TwDgpgBAypDGBLAhgGwMIAtkCcoF4oAZAewHcId5kBnCAHhuB0QDsBzAPigDIoBVMJCq0GTFh04BuALAAoeaEiwEKVASgADACQBvOBCRosuAL57xbdqc2yFc+CVZMoyAFwrDajQHIfUqAB6QKgAFXBoH0sOHyhEGihWEmBXGhpEdlZkACNUaGASKCVInX1VY2wcc11o600feUdnFOyPAyN1Qh9kfyCQ8OUo5itY+MTk1PTMnLyiwuKoH1L2tRMqi2GOGwaHJxd4NvLOxYBGXuCoAHkAaXlFCKgASRoAQVQwbGyIYHpQqAgAB7ACCsAAmCVq3EIf0BwLBCRWaCgAH5EhAAG6UKAeAAU8igYX+QJB4NKtWqiNQNhRaMxeFx+IJhNhJJoyyO1XJmhprAxWIZciZTJhxPhZM21j0lM5EupqN5dOxYUZBIAlIz1XJVXZ7spQhAmFYThpnm8PjlvvQAEQnK3SPq0yi66D6w0cABMJte70+lptyDtAQuCqdcgWruAVgAzF6zb6flbkLb7cG+ThnWEDZGOAAWWM+i0JpMBlMhEPpsMPCNWACs+fNXyLxZLQZCiebVoz1Y4ADZ6-HrQAJCCoVAkADqJBwqFBgYdVuHo4nU5nVqAA\" rel=\"nofollow noreferrer\">Third attempt</a> (step by step):</p>\n<pre class=\"lang-ts prettyprint-override\"><code>type SpecialChar = Lowercase&lt;string&gt; &amp; Uppercase&lt;string&gt;;\n\ntype Special = `${SpecialChar}${string}`;\n\nconst a: Special = ''; // Type 'string' is not assignable to type '`${SpecialChar}${string}`'\nconst b: Special = 'a'; // Type 'string' is not assignable to type '`${SpecialChar}${string}`'\nconst c: Special = '1'; // OK\n\ntype IsAlphabet&lt;T extends string&gt; = T extends Special ? never : (\n  T extends`${string}${Special}` ? never : (\n    T extends`${Special}${string}` ? never : (\n      T extends`${string}${Special}${string}` ? never : T\n    )\n  )\n);\n\ntype Testing1 = IsAlphabet&lt;&quot;1&quot;&gt;; // never\ntype Testing2 = IsAlphabet&lt;&quot;1a&quot;&gt;; // never\ntype Testing3 = IsAlphabet&lt;&quot;a1&quot;&gt;; // never\ntype Testing4 = IsAlphabet&lt;&quot;a1a&quot;&gt;; // never\ntype Testing5 = IsAlphabet&lt;&quot;aa1aa&quot;&gt;; // &quot;aa1aa&quot;\ntype Testing6 = IsAlphabet&lt;&quot;HelloWorld&quot;&gt;; // &quot;HelloWorld&quot;\n</code></pre>\n<ol>\n<li>Why none of them work? (It seems like <code>string</code> matches only 1 character not the any string)</li>\n<li>Is there any way to not use the recursion?</li>\n</ol>\n"
+      }
+    },
+    {
+      "id": "stackoverflow-question-79884519",
+      "platform": "stackoverflow",
+      "type": "question",
+      "title": "TypeScript error in vite.config.ts: &#39;test&#39; does not exist in type UserConfigExport when configuring Vitest",
+      "content": "",
+      "author": {
+        "name": "Ian Kabaka",
+        "url": "https://stackoverflow.com/users/11830389/ian-kabaka",
+        "avatar": "https://graph.facebook.com/405935280027090/picture?type=large"
+      },
+      "timestamp": "2026-02-06T17:52:26.000Z",
+      "url": "https://stackoverflow.com/questions/79884519/typescript-error-in-vite-config-ts-test-does-not-exist-in-type-userconfigexpo",
+      "metrics": {
+        "upvotes": 0,
+        "comments": 0,
+        "views": 34
+      },
+      "tags": [
+        "reactjs",
+        "typescript",
+        "vite",
+        "vitest"
+      ],
+      "raw": {
+        "tags": [
+          "reactjs",
+          "typescript",
+          "vite",
+          "vitest"
+        ],
+        "owner": {
+          "account_id": 16378891,
+          "reputation": 1,
+          "user_id": 11830389,
+          "user_type": "registered",
+          "profile_image": "https://graph.facebook.com/405935280027090/picture?type=large",
+          "display_name": "Ian Kabaka",
+          "link": "https://stackoverflow.com/users/11830389/ian-kabaka"
+        },
+        "is_answered": false,
+        "view_count": 34,
+        "answer_count": 0,
+        "score": 0,
+        "last_activity_date": 1770401582,
+        "creation_date": 1770400346,
+        "last_edit_date": 1770401582,
+        "question_id": 79884519,
+        "content_license": "CC BY-SA 4.0",
+        "link": "https://stackoverflow.com/questions/79884519/typescript-error-in-vite-config-ts-test-does-not-exist-in-type-userconfigexpo",
+        "title": "TypeScript error in vite.config.ts: &#39;test&#39; does not exist in type UserConfigExport when configuring Vitest",
+        "body": "<p>I have been battling this issue for a while now, setting up Vitest in a react and typescript project, vitest does run from the cli but typescript reports an overload error in vite.config.ts</p>\n<p>the exact error is:</p>\n<blockquote>\n<p>No overload matches this call.</p>\n<p>Object literal may only specify known properties, and 'test' does not\nexist in type 'UserConfigExport'</p>\n</blockquote>\n<p>The problem occurs when I add the test config to vite.config.ts like so</p>\n<pre class=\"lang-js prettyprint-override\"><code>export default defineConfig({\n  plugins: [react(), tailwindcss()],\n  test: {\n    globals: true,\n    environment: &quot;jsdom&quot;,\n    setupFiles: &quot;./src/tests/setup.ts&quot;,\n    css: true,\n  },\n});\n</code></pre>\n<p>There is a red squiqqly line on <code>test</code>.</p>\n<p>If I try importing <code>defineConfig</code> from <code>vitest/config</code> instead, the error moves to the <code>plugins</code> array.</p>\n<p>Here are my current configs:</p>\n<p>vite.config.ts</p>\n<pre class=\"lang-js prettyprint-override\"><code>import { defineConfig } from &quot;vite&quot;;\nimport react from &quot;@vitejs/plugin-react&quot;;\nimport tailwindcss from &quot;@tailwindcss/vite&quot;;\n\nexport default defineConfig({\n  plugins: [react(), tailwindcss()],\n  test: {\n    globals: true,\n    environment: &quot;jsdom&quot;,\n    setupFiles: &quot;./src/tests/setup.ts&quot;,\n    css: true\n  }\n});\n</code></pre>\n<p>tsconfig.node.json</p>\n<pre class=\"lang-json prettyprint-override\"><code>{\n  &quot;compilerOptions&quot;: {\n    &quot;target&quot;: &quot;ES2022&quot;,\n    &quot;lib&quot;: [&quot;ES2023&quot;],\n    &quot;module&quot;: &quot;ESNext&quot;,\n    &quot;moduleResolution&quot;: &quot;bundler&quot;,\n    &quot;isolatedModules&quot;: true,\n    &quot;noEmit&quot;: true,\n    &quot;strict&quot;: true,\n    &quot;skipLibCheck&quot;: true,\n    &quot;types&quot;: [&quot;vitest&quot;]\n  },\n  &quot;include&quot;: [&quot;vite.config.ts&quot;]\n}\n</code></pre>\n<p>vite-env.d.ts</p>\n<pre class=\"lang-none prettyprint-override\"><code>/// \\&lt;reference types=&quot;vite/client&quot; /\\&gt;\n\n/// \\&lt;reference types=&quot;vitest&quot; /\\&gt;\n</code></pre>\n<p><strong>What works</strong></p>\n<p>Vitest <strong>does run from the CLI</strong></p>\n<p>output:</p>\n<p>RUN  v4.0.18</p>\n<p>No test files found</p>\n<p>So Vitest itself is installed and executable.</p>\n<p><strong>Versions</strong></p>\n<pre class=\"lang-bash prettyprint-override\"><code>npm ls vite vitest typescript @vitejs/plugin-react\n</code></pre>\n<p>Output:</p>\n<p>vite@5.4.21</p>\n<p>@vitejs/plugin-react@4.7.0</p>\n<p>vitest@4.0.18</p>\n<p>typescript@5.9.3</p>\n<p>vitest -&gt; vite@7.3.1 (dependency)</p>\n<p>project -&gt; vite@5.4.21</p>\n<p><strong>Question</strong></p>\n<p>How should Vitest be correctly typed so that TypeScript accepts the <code>test</code> field in <code>vite.config.ts</code> <strong>without breaking plugin typings</strong>?</p>\n<p>Am I missing a required configuration?</p>\n"
+      }
+    },
+    {
+      "id": "stackoverflow-question-79884460",
+      "platform": "stackoverflow",
+      "type": "question",
+      "title": "Errors declaring a global variable in frontend TypeScript app in Vite",
+      "content": "",
+      "author": {
+        "name": "pythonNovice",
+        "url": "https://stackoverflow.com/users/11337273/pythonnovice",
+        "avatar": "https://www.gravatar.com/avatar/ae842f2423a4495850f90392c3f27ceb?s=256&d=identicon&r=PG&f=y&so-version=2"
+      },
+      "timestamp": "2026-02-06T16:11:56.000Z",
+      "url": "https://stackoverflow.com/questions/79884460/errors-declaring-a-global-variable-in-frontend-typescript-app-in-vite",
+      "metrics": {
+        "upvotes": 0,
+        "comments": 1,
+        "views": 38
+      },
+      "tags": [
+        "typescript"
+      ],
+      "raw": {
+        "tags": [
+          "typescript"
+        ],
+        "owner": {
+          "account_id": 15712150,
+          "reputation": 1496,
+          "user_id": 11337273,
+          "user_type": "registered",
+          "profile_image": "https://www.gravatar.com/avatar/ae842f2423a4495850f90392c3f27ceb?s=256&d=identicon&r=PG&f=y&so-version=2",
+          "display_name": "pythonNovice",
+          "link": "https://stackoverflow.com/users/11337273/pythonnovice"
+        },
+        "is_answered": false,
+        "view_count": 38,
+        "answer_count": 1,
+        "score": 0,
+        "last_activity_date": 1770401817,
+        "creation_date": 1770394316,
+        "last_edit_date": 1770396574,
+        "question_id": 79884460,
+        "content_license": "CC BY-SA 4.0",
+        "link": "https://stackoverflow.com/questions/79884460/errors-declaring-a-global-variable-in-frontend-typescript-app-in-vite",
+        "title": "Errors declaring a global variable in frontend TypeScript app in Vite",
+        "body": "<p>I have the following file to declare a global variable</p>\n<p><code>globals.d.ts</code></p>\n<pre><code>import { Game } from './Game';\ndeclare const game: Game;\nexport {};\n</code></pre>\n<p>However when I call the variable in a file I get the warning</p>\n<p><code>Card.ts</code></p>\n<pre><code>\nclass Card {\n...\n  draw() {\n   // Cannot find name `game`\n   game.hoverContext = {\n        id: this.id,\n        type: 'card',\n      };\n   }\n}\n\n\n</code></pre>\n<p>How am I meant to detect it in my TypeScript app? Is there a tsconfig property I should be adjusting?</p>\n"
+      }
+    },
+    {
+      "id": "stackoverflow-question-79884439",
+      "platform": "stackoverflow",
+      "type": "question",
+      "title": "Direct Upload to S3 from Angular failing with 400 response",
+      "content": "",
+      "author": {
+        "name": "Mark Hill",
+        "url": "https://stackoverflow.com/users/2617144/mark-hill",
+        "avatar": "https://i.sstatic.net/nQ9AV.jpg?s=256"
+      },
+      "timestamp": "2026-02-06T15:47:42.000Z",
+      "url": "https://stackoverflow.com/questions/79884439/direct-upload-to-s3-from-angular-failing-with-400-response",
+      "metrics": {
+        "upvotes": 1,
+        "comments": 1,
+        "views": 49
+      },
+      "tags": [
+        "node.js",
+        "angular",
+        "typescript",
+        "amazon-s3"
+      ],
+      "raw": {
+        "tags": [
+          "node.js",
+          "angular",
+          "typescript",
+          "amazon-s3"
+        ],
+        "owner": {
+          "account_id": 3091072,
+          "reputation": 1861,
+          "user_id": 2617144,
+          "user_type": "registered",
+          "profile_image": "https://i.sstatic.net/nQ9AV.jpg?s=256",
+          "display_name": "Mark Hill",
+          "link": "https://stackoverflow.com/users/2617144/mark-hill"
+        },
+        "is_answered": false,
+        "view_count": 49,
+        "answer_count": 1,
+        "score": 1,
+        "last_activity_date": 1770412283,
+        "creation_date": 1770392862,
+        "question_id": 79884439,
+        "content_license": "CC BY-SA 4.0",
+        "link": "https://stackoverflow.com/questions/79884439/direct-upload-to-s3-from-angular-failing-with-400-response",
+        "title": "Direct Upload to S3 from Angular failing with 400 response",
+        "body": "<p>I am attempting to upload a file directly to S3 using a <code>put_object</code> presigned URL. When I attempt to upload using a <code>PUT</code> command via the <code>HttpClient</code> I get a 200 on the preflight, but then 400 on the request. No error is thrown that tells me what is incorrect.</p>\n<p>I am working in Angular 20+, and Node 20+ for environment references.</p>\n<p><strong>File Upload Process</strong></p>\n<p><code>store.ts &lt;snippet&gt;</code></p>\n<pre><code> async uploadFile(\n  dto: FileUploadDto,\n  file: File,\n  callback?: () =&gt; void\n) {\n  patchState(store, { loading: true });\n\n  try {\n    await firstValueFrom(\n      fileService.preFlightCommunicationFileUpload(dto).pipe(\n        switchMap((response: FileUploadResponseDto) =&gt; {\n          const {\n            presigned_s3_link,\n            object_key,\n            bucket_name\n          } = response;\n\n          return fileService\n            .uploadFileToS3(presigned_s3_link, file)\n            .pipe(\n              switchMap(() =&gt; {\n                const createDto = {\n                  provider_id: dto.provider_id,\n                  object_key,\n                  bucket_name\n                };\n\n                return malpracticeService.saveFile(createDto).pipe(\n                  map((response: any) =&gt; response)\n                );\n              })\n            );\n        })\n      )\n    );\n\n    callback?.();\n  } catch (err) {\n    console.error(err);\n  } finally {\n    patchState(store, { loading: false });\n  }\n}\n\n</code></pre>\n<p><code>file-upload.service.ts</code></p>\n<pre><code>import { Injectable, inject } from '@angular/core';\nimport { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';\nimport { Observable, throwError } from 'rxjs';\nimport { catchError } from 'rxjs/operators';\nimport { environment } from '../../../environment/environment';\nimport { AuthStore } from '../store/authentication/authentication.store';\n\n\nexport interface FileUploadDto {\n  provider_id: number;\n  filename: string;\n}\n\nexport interface FileUploadS3Params {\n    object_key: string\n    bucket_name: string\n}\n\nexport interface FileUploadS3PresignedUrl {\n    presigned_s3_link: string\n}\n\nexport interface FileUploadResponseDto extends FileUploadS3Params, FileUploadS3PresignedUrl{ }\n\n@Injectable({\n  providedIn: 'root'\n})\nexport class FileUploadService {\n  private http = inject(HttpClient);\n  private authStore = inject(AuthStore);\n  private readonly baseUrl = `${environment.apiBase}`;\n\n  /**\n   * Get HTTP headers with authorization token if available\n   */\n  preFlightCommunicationFileUpload = (dto: FileUploadDto): Observable&lt;FileUploadResponseDto&gt; =&gt;\n    this.http.post&lt;FileUploadResponseDto&gt;(`${this.baseUrl}/provider/document`, dto).pipe(\n      catchError((error: HttpErrorResponse) =&gt; throwError(() =&gt; error)))\n\n  uploadFileToS3(url: string, file: File) {\n    return this.http.put(url, file, {\n      observe: 'response',\n      responseType: 'text' as 'json',\n      withCredentials: false\n    });\n  }\n}\n</code></pre>\n<p>This is service that the preflight hits to obtain the s3 url. I left the commented out code in there to help give an idea of what we have been working on:</p>\n<pre><code>def init_document_upload(self, data: Dict[str, Any]) -&gt; Dict[str, Any]:\n    try:\n        # filename = data.get('filename')\n        # if not filename:\n        #     return {\n        #         'error': 'Filename is required'\n        #     }\n\n        # # Generate unique key for S3\n        # file_extension = filename.split('.')[-1] if '.' in filename else ''\n        # unique_id = str(uuid.uuid4())\n        # object_key = f&quot;provider-documents/{unique_id}.{file_extension}&quot;\n\n        # Determine content type based on file extension\n        # content_type = 'application/octet-stream'  # Default\n        # if file_extension.lower() in ['pdf']:\n        #     content_type = 'application/pdf'\n        # elif file_extension.lower() in ['doc']:\n        #     content_type = 'application/msword'\n        # elif file_extension.lower() in ['docx']:\n        #     content_type = (\n        #         'application/vnd.openxmlformats-officedocument.wordprocessingml.document'\n        #     )\n        # elif file_extension.lower() in ['jpg', 'jpeg']:\n        #     content_type = 'image/jpeg'\n        # elif file_extension.lower() in ['png']:\n        #     content_type = 'image/png'\n\n        # bucket_name = data.get(&quot;s3_bucket_name&quot;) or os.getenv('S3BucketName')\n\n        s3_bucket_name = os.getenv(&quot;S3BucketName&quot;)\n        filename = data.get(&quot;filename&quot;) or f&quot;{uuid.uuid4()}.bin&quot;\n        content_type = data.get(&quot;content_type&quot;) or &quot;application/octet-stream&quot;\n        object_key = f&quot;provider-documents/{filename}&quot;\n\n        presigned_url = self.api_utility.presign_from(\n            s3_bucket_name,\n            object_key,\n            content_type=content_type,\n            object_method=&quot;put_object&quot;\n        )\n\n        return {\n            'success': True,\n            'presigned_s3_link': presigned_url,\n            'bucket_name': s3_bucket_name,\n            'object_key': object_key\n        }\n\n    except Exception as e:\n        logger.error(f&quot;Failed to initialize document upload: {str(e)}&quot;)\n        return {\n            'error': f'Failed to initialize document upload: {str(e)}'\n        }\n</code></pre>\n<p><strong>Attempted Fixes</strong></p>\n<p>There is a catch to all of this. If we run a simple node function outside of the application:</p>\n<pre><code>import { createReadStream } from &quot;node:fs&quot;;\nimport { stat } from &quot;node:fs/promises&quot;;\n\nexport async function putPresignedS3(url, filename) {\n  const fileStat = await stat(filename);\n\n  const res = await fetch(url, {\n    method: &quot;PUT&quot;,\n    duplex: &quot;half&quot;,\n    headers: {\n      &quot;Content-Type&quot;: &quot;application/octet-stream&quot;,\n      &quot;Content-Length&quot;: String(fileStat.size),\n    },\n    body: createReadStream(filename),\n  });\n\n  if (!res.ok) {\n    const text = await res.text().catch(() =&gt; &quot;&quot;);\n    throw new Error(`Upload failed: HTTP ${res.status}\\n${text}`);\n  }\n\n  console.log(res.status);\n}\n</code></pre>\n<p>it will successfully hit with the signed URL that we have created. That puts us at a total loss for what is going wrong.</p>\n"
+      }
+    },
+    {
+      "id": "stackoverflow-question-79884380",
+      "platform": "stackoverflow",
+      "type": "question",
+      "title": "How would you recreate a 3D-like hexagonal progress bar in React Native?",
+      "content": "",
+      "author": {
+        "name": "Kenza Schuler",
+        "url": "https://stackoverflow.com/users/18954341/kenza-schuler",
+        "avatar": "https://lh3.googleusercontent.com/a/AATXAJyHr_b7Cqg5CBxNmcEMY8Ldqim0lQRCkbYc5HANUA=k-s256"
+      },
+      "timestamp": "2026-02-06T14:25:02.000Z",
+      "url": "https://stackoverflow.com/questions/79884380/how-would-you-recreate-a-3d-like-hexagonal-progress-bar-in-react-native",
+      "metrics": {
+        "upvotes": -7,
+        "comments": 0,
+        "views": 59
+      },
+      "tags": [
+        "css",
+        "reactjs",
+        "3d",
+        "frontend"
+      ],
+      "raw": {
+        "tags": [
+          "css",
+          "reactjs",
+          "3d",
+          "frontend"
+        ],
+        "owner": {
+          "account_id": 25103971,
+          "reputation": 1,
+          "user_id": 18954341,
+          "user_type": "registered",
+          "profile_image": "https://lh3.googleusercontent.com/a/AATXAJyHr_b7Cqg5CBxNmcEMY8Ldqim0lQRCkbYc5HANUA=k-s256",
+          "display_name": "Kenza Schuler",
+          "link": "https://stackoverflow.com/users/18954341/kenza-schuler"
+        },
+        "is_answered": false,
+        "view_count": 59,
+        "closed_date": 1770388236,
+        "answer_count": 0,
+        "score": -7,
+        "last_activity_date": 1770388412,
+        "creation_date": 1770387902,
+        "last_edit_date": 1770388412,
+        "question_id": 79884380,
+        "link": "https://stackoverflow.com/questions/79884380/how-would-you-recreate-a-3d-like-hexagonal-progress-bar-in-react-native",
+        "closed_reason": "Needs more focus",
+        "title": "How would you recreate a 3D-like hexagonal progress bar in React Native?",
+        "body": "<p><strong>Hi everyone 👋</strong></p>\n<p><strong>I'm building a mobile app with React Native.</strong></p>\n<p>I’m struggling with <strong>a front-end component</strong> and would really appreciate some guidance.</p>\n<p>I need to recreate <strong>a hexagonal loading/progress</strong> component generated with IA by PNG. It is made of <strong>two independent progress bars (two colors)</strong> layered in the same shape.</p>\n<p>It’s composed of:</p>\n<ul>\n<li>An outer hexagon</li>\n<li>An inner hexagon (slightly smaller, with spacing between them)</li>\n<li>Two independent progress bars (two color sets)</li>\n<li>A 3D / depth effect using shadows and light (this is where I’m stuck)</li>\n</ul>\n<p>I already managed to build <strong>a flat version</strong>, but I can’t reproduce the depth, highlights, and shadow gradients that give it a 3D look.</p>\n<p>Constraints:</p>\n<ul>\n<li>This is a dynamic component (progress changes), so a static image isn’t enough.</li>\n<li>The hexagon shape + lighting + shadows makes it tricky.</li>\n</ul>\n<p>I’ll attach:</p>\n<ul>\n<li>The expected result</li>\n<li>My current flat implementation</li>\n</ul>\n<p>My question is:</p>\n<ul>\n<li><strong>Any tips on handling the 3D light/shadow effect cleanly?</strong></li>\n</ul>\n<p>Thanks a lot for your time 🙏</p>\n<p>Any advice or direction is welcome.</p>\n<p><a href=\"https://i.sstatic.net/19BHnLL3.png\" rel=\"nofollow noreferrer\">Expected hexagon component image</a></p>\n"
+      }
+    },
+    {
+      "id": "stackoverflow-question-79884209",
+      "platform": "stackoverflow",
+      "type": "question",
+      "title": "How can I setCacheData so that when pageSize changes, the list updates correctly?",
+      "content": "",
+      "author": {
+        "name": "Dat Vo",
+        "url": "https://stackoverflow.com/users/32199527/dat-vo",
+        "avatar": "https://www.gravatar.com/avatar/2fdac8130607d16a853e9b0f52ce2645?s=256&d=identicon&r=PG&f=y&so-version=2"
+      },
+      "timestamp": "2026-02-06T10:16:03.000Z",
+      "url": "https://stackoverflow.com/questions/79884209/how-can-i-setcachedata-so-that-when-pagesize-changes-the-list-updates-correctly",
+      "metrics": {
+        "upvotes": -3,
+        "comments": 0,
+        "views": 36
+      },
+      "tags": [
+        "reactjs"
+      ],
+      "raw": {
+        "tags": [
+          "reactjs"
+        ],
+        "owner": {
+          "account_id": 45295162,
+          "reputation": 1,
+          "user_id": 32199527,
+          "user_type": "registered",
+          "profile_image": "https://www.gravatar.com/avatar/2fdac8130607d16a853e9b0f52ce2645?s=256&d=identicon&r=PG&f=y&so-version=2",
+          "display_name": "Dat Vo",
+          "link": "https://stackoverflow.com/users/32199527/dat-vo"
+        },
+        "is_answered": false,
+        "view_count": 36,
+        "closed_date": 1770377042,
+        "answer_count": 0,
+        "score": -3,
+        "last_activity_date": 1770376401,
+        "creation_date": 1770372963,
+        "last_edit_date": 1770376401,
+        "question_id": 79884209,
+        "link": "https://stackoverflow.com/questions/79884209/how-can-i-setcachedata-so-that-when-pagesize-changes-the-list-updates-correctly",
+        "closed_reason": "Not suitable for this site",
+        "title": "How can I setCacheData so that when pageSize changes, the list updates correctly?",
+        "body": "<p>Initially, before I clicked and filled in the HotTable cells, the cacheData was empty. However, when I changed the pagesize, it displayed the correct amount of data according to the adjusted pagesize (thanks to RowDataClean). But when I clicked on that data cell in the HotTable, the cacheData now contained data. And when I changed the pagesize to 50 or 100, it displayed the wrong amount of data.</p>\n<p>Please help me.</p>\n<pre><code>const [cachedData, setCachedData] = useState({});\n</code></pre>\n<pre><code>\n  const listPending = useSelector((state) =&gt; {\n    return state.sourcing.procPending?.data || state.sourcing?.procPending;\n  });\n</code></pre>\n<pre><code> const rowDataClean = React.useMemo(() =&gt; {\n    if (!listPending) return [];\n    // Clone sâu từng cấp một\n    return listPending.map(item =&gt; ({\n      ...item,\n      // Clone level 1: mảng procurement_feed_backs\n      procurement_feed_backs: item.procurement_feed_backs\n        ? item.procurement_feed_backs.map(fb =&gt; ({\n          ...fb,\n          // TODO: Nếu trong fb còn object/array sâu hơn (ví dụ: fb.details),\n          // bạn cần tiếp tục map nó ở đây: details: { ...fb.details }\n        }))\n        : []\n    }));\n  }, [listPending]);\n</code></pre>\n<pre><code>const displayData = useMemo(() =&gt; {\n    console.log(&quot;cachedData[currentPage] = &quot; + cachedData[currentPage]?.length)\n    console.log(&quot;rowDataClean = &quot; + rowDataClean.length)\n    // return rowDataClean;\n    return cachedData[currentPage] || rowDataClean;\n  }, [currentPage, rowDataClean]);\n</code></pre>\n<pre><code> &lt;TablePagination\n                component=&quot;div&quot;\n                count={metadata.totalCount || 0}\n                page={currentPage - 1}\n                onPageChange={handleOnPageChange}\n                rowsPerPage={rowsPerPage}\n                onRowsPerPageChange={handleChangeRowsPerPage}\n                rowsPerPageOptions={[25, 50, 100, 200]}\n                labelDisplayedRows={() =&gt; null}\n                sx={{\n                  borderBottom: 'none',\n                  '.MuiTablePagination-actions': { display: 'none' },\n                  '.MuiTablePagination-spacer': { display: 'none' },\n                }}\n              /&gt;\n</code></pre>\n<pre><code>&lt;HotTable\n          ref={hotRef}\n          data={displayData}\n          columns={hotColumns}\n          licenseKey=&quot;non-commercial-and-evaluation&quot;\n          copyPaste={true}\n          beforePaste={handleBeforeCopyPaste} // 1\n          multiSelect={true}\n          search={true}\n          afterChange={handleAfterChange} //2\n\n          width=&quot;100%&quot;\n          rowHeaders={true}\n          colHeaders={true}\n          autoWrapRow={true}\n          height={900}\n          autoWrapCol={true}\n          renderAllRows={false}\n          viewportRowRenderingOffset={20}\n          pagination={false}\n          fillHandle={\n            {\n              direction: 'vertical',\n              autoInsertRow: true\n            }\n\n          }\n          // 3\n          beforeKeyDown={(event) =&gt; {\n            const hotInstance = hotRef.current.hotInstance;\n            if (!hotInstance || !hotInstance.getSelected()) return;\n\n            const selection = hotInstance.getSelectedRangeLast();\n            const colProp = hotInstance.colToProp(selection.highlight.col);\n\n            if (colProp === 'procurement_feed_backs.0.est_date_feedback') {\n              const isCtrlPressed = event.ctrlKey || event.metaKey;\n              console.log(&quot;isCtrlPressed = &quot;, isCtrlPressed)\n              if (isCtrlPressed &amp;&amp; (event.key === 'c' || event.key === 'v' || event.key === 'x' || event.key === 'a')) {\n\n                console.log(&quot;Đang vào 3...&quot;)\n                return;\n              }\n              const allowedKeys = ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab', 'Enter'];\n              if (!allowedKeys.includes(event.key) &amp;&amp; !/^[0-9\\/]$/.test(event.key)) {\n                // console.log(&quot;Đang vào 1....&quot;)\n                event.stopImmediatePropagation();\n                event.preventDefault();\n              }\n              if (/^[0-9\\/]$/.test(event.key)) {\n                // console.log(&quot;Đang vào 2....&quot;)\n                event.stopImmediatePropagation();\n                event.preventDefault();\n              }\n              // console.log(&quot;Đang vào 4....&quot;)\n            }\n          }}\n          //4\n          afterOnCellMouseDown={(event, coords, TD) =&gt; {\n            if (coords.row &lt; 0) return;\n            const colProp = hotColumns[coords.col].data;\n            if (colProp === 'procurement_feed_backs.0.attached_file') {\n              const target = event.target;\n              const hotInstance = hotRef.current.hotInstance;\n              if (target.classList.contains('view-files-trigger')) {\n                const value = hotInstance.getDataAtRowProp(coords.row, colProp);\n                if (value &amp;&amp; value.length &gt; 0) {\n                  const rect = TD.getBoundingClientRect();\n                  setHoverPopup({\n                    show: true,\n                    x: rect.left + window.scrollX,\n                    y: rect.top + window.scrollY - 100,\n                    files: Array.isArray(value) ? value : [value],\n                    row: coords.row,\n                    prop: colProp\n                  });\n                  return;\n                }\n              }\n              if (target.classList.contains('add-file-trigger') || target === TD || TD.contains(target)) {\n                const value = hotInstance.getDataAtRowProp(coords.row, colProp);\n                if (!value || value.length === 0 || target.classList.contains('add-file-trigger')) {\n                  setCurrentUpload({ row: coords.row, prop: colProp });\n                  openFileSelector();\n                  setHoverPopup(prev =&gt; ({ ...prev, show: false }));\n                  return;\n                }\n              }\n            } else {\n              setHoverPopup(prev =&gt; ({ ...prev, show: false }));\n            }\n          }}\n          //5\n          afterPageSizeChange={handlePageSizeChange}\n          observeChanges={false}\n          contextMenu={true}\n          stretchH=&quot;all&quot;\n          dragToScroll={true}\n          autoColumnSize={{ allowSampleDuplicates: true, }}\n          autoRowSize={false}\n          outsideClickDeselects={false}\n          rowHeights={13}\n          viewportColumnRenderingOffset={10}\n          manualRowResize={false}\n          manualColumnResize={true}\n          wordWrap={false}\n          // handlePageNumberChange={handlePageNumberChange}\n          afterPageChange={updatePaginationState} //6\n        /&gt;\n</code></pre>\n"
+      }
+    },
+    {
+      "id": "stackoverflow-question-79883944",
+      "platform": "stackoverflow",
+      "type": "question",
+      "title": "Why is callback reference not observed in useEffect",
+      "content": "",
+      "author": {
+        "name": "JustAnotherCoder894",
+        "url": "https://stackoverflow.com/users/1102726/justanothercoder894",
+        "avatar": "https://www.gravatar.com/avatar/78d1748531741e40d1ba859466d7f2ab?s=256&d=identicon&r=PG&f=y&so-version=2"
+      },
+      "timestamp": "2026-02-06T00:19:51.000Z",
+      "url": "https://stackoverflow.com/questions/79883944/why-is-callback-reference-not-observed-in-useeffect",
+      "metrics": {
+        "upvotes": -1,
+        "comments": 1,
+        "views": 69
+      },
+      "tags": [
+        "reactjs",
+        "react-hooks"
+      ],
+      "raw": {
+        "tags": [
+          "reactjs",
+          "react-hooks"
+        ],
+        "owner": {
+          "account_id": 1107336,
+          "reputation": 1668,
+          "user_id": 1102726,
+          "user_type": "registered",
+          "accept_rate": 63,
+          "profile_image": "https://www.gravatar.com/avatar/78d1748531741e40d1ba859466d7f2ab?s=256&d=identicon&r=PG&f=y&so-version=2",
+          "display_name": "JustAnotherCoder894",
+          "link": "https://stackoverflow.com/users/1102726/justanothercoder894"
+        },
+        "is_answered": true,
+        "view_count": 69,
+        "answer_count": 1,
+        "score": -1,
+        "last_activity_date": 1770376328,
+        "creation_date": 1770337191,
+        "last_edit_date": 1770340519,
+        "question_id": 79883944,
+        "content_license": "CC BY-SA 4.0",
+        "link": "https://stackoverflow.com/questions/79883944/why-is-callback-reference-not-observed-in-useeffect",
+        "title": "Why is callback reference not observed in useEffect",
+        "body": "<p>How do I render a div in a component conditionally based on a component property and the get a reference to that div when it's available?</p>\n<p>In this simplified example, the message displayed in the div varies depending on which button is pressed first. I understand why I see <em>div.current is truthy</em> when pressing the second button first. I don't understand why <code>useEffect</code> doesn't observe the change of the div loading upon the change of <code>showHere</code>.</p>\n<pre class=\"lang-jsx prettyprint-override\"><code>const Message = ({ showHere }) =&gt; {\n  const divRef = useRef(null);\n  useEffect(() =&gt; {\n    if (divRef.current) {\n      divRef.current.innerHTML = &quot;div.current is truthy&quot;;\n    }\n  }, [divRef, divRef.current]);\n\n  return &lt;&gt;{showHere ? &lt;div ref={divRef}&gt;no message&lt;/div&gt; : &quot;&quot;}&lt;/&gt;;\n};\n\nexport default function App() {\n  const [showInsideApp, setShowInsideApp] = useState(false);\n  const [showInsideComponent, setShowInsideComponent] = useState(false);\n  const onButton1Clicked = () =&gt; {\n    setShowInsideApp(true);\n  };\n  const onButton2Clicked = () =&gt; {\n    setShowInsideComponent(true);\n  };\n  return (\n    &lt;div&gt;\n      {showInsideApp ? &lt;Message showHere={showInsideComponent} /&gt; : &quot;&quot;}\n      &lt;button onClick={onButton1Clicked}&gt;Show in App&lt;/button&gt;\n      &lt;button onClick={onButton2Clicked}&gt;Show in Component&lt;/button&gt;\n    &lt;/div&gt;\n  );\n}\n</code></pre>\n<p>The <a href=\"https://react.dev/learn/manipulating-the-dom-with-refs\" rel=\"nofollow noreferrer\">React documentation</a> says:</p>\n<blockquote>\n<p>The useRef Hook returns an object with a single property called current. Initially, myRef.current will be null. When React creates a DOM node for this , React will put a reference to this node into myRef.current. You can then access this DOM node from your event handlers and use the built-in browser APIs defined on it.</p>\n</blockquote>\n<p>I've looked at <a href=\"https://stackoverflow.com/a/56541442/1102726\">this answer</a> but it links to outdated documentation, and the <a href=\"https://react.dev/learn/referencing-values-with-refs#refs-and-the-dom\" rel=\"nofollow noreferrer\">current version</a> is pretty different.</p>\n<p>Based on <a href=\"https://stackoverflow.com/a/58134357/1102726\">this answer</a> and <a href=\"https://stackoverflow.com/a/58579462/1102726\">this answer</a> I can monitor on every render by entirely omitting <code>useEffect</code>'s second parameter,  but I don't want to do that. My real-world problem on which this is based on wanting to configure Coloris's parent element and attach a <code>coloris:pick</code> event to the window but only when the parent element is available.</p>\n"
+      }
+    },
+    {
+      "id": "stackoverflow-question-79883733",
+      "platform": "stackoverflow",
+      "type": "question",
+      "title": "input fields become uneditable until Developer Tools is opened",
+      "content": "",
+      "author": {
+        "name": "Buildprax",
+        "url": "https://stackoverflow.com/users/32320632/buildprax",
+        "avatar": "https://www.gravatar.com/avatar/1a4b6d8f40797bfcfa75d9b26ee64edf?s=256&d=identicon&r=PG&f=y&so-version=2"
+      },
+      "timestamp": "2026-02-05T17:02:21.000Z",
+      "url": "https://stackoverflow.com/questions/79883733/input-fields-become-uneditable-until-developer-tools-is-opened",
+      "metrics": {
+        "upvotes": -4,
+        "comments": 0,
+        "views": 41
+      },
+      "tags": [
+        "reactjs",
+        "windows",
+        "electron",
+        "focus",
+        "konva"
+      ],
+      "raw": {
+        "tags": [
+          "reactjs",
+          "windows",
+          "electron",
+          "focus",
+          "konva"
+        ],
+        "owner": {
+          "account_id": 45530339,
+          "reputation": 1,
+          "user_id": 32320632,
+          "user_type": "registered",
+          "profile_image": "https://www.gravatar.com/avatar/1a4b6d8f40797bfcfa75d9b26ee64edf?s=256&d=identicon&r=PG&f=y&so-version=2",
+          "display_name": "Buildprax",
+          "link": "https://stackoverflow.com/users/32320632/buildprax"
+        },
+        "is_answered": false,
+        "view_count": 41,
+        "closed_date": 1770315381,
+        "answer_count": 0,
+        "score": -4,
+        "last_activity_date": 1770315416,
+        "creation_date": 1770310941,
+        "last_edit_date": 1770315416,
+        "question_id": 79883733,
+        "link": "https://stackoverflow.com/questions/79883733/input-fields-become-uneditable-until-developer-tools-is-opened",
+        "closed_reason": "Not suitable for this site",
+        "title": "input fields become uneditable until Developer Tools is opened",
+        "body": "<p>Context:</p>\n<p>This is a production Electron desktop application.  The issue occurs only on Windows and appears related to focus or hit-testing behaviour rather than application logic.</p>\n<p>This is a production Electron desktop application. The issue occurs only on Windows and appears related to focus or hit-testing behavior rather than application logic.</p>\n<p>Observed behavior:</p>\n<p>Application starts and input fields are editable</p>\n<p>Creating a new project still works</p>\n<p>Creating the first item causes input fields (descriptions) to become uneditable</p>\n<p>Clicking works but the cursor never appears</p>\n<p>Typing does nothing and onFocus/onChange never fire</p>\n<p>The macOS version works perfectly</p>\n<p>Workaround:</p>\n<p>Opening View → Toggle Developer Tools once immediately fixes the issue</p>\n<p>Closing Developer Tools keeps inputs working</p>\n<p>Creating another project breaks inputs again until Developer Tools is toggled</p>\n<p>Technology stack:</p>\n<p>Electron</p>\n<p>React 18</p>\n<p>Zustand</p>\n<p>react-konva (canvas/PDF viewer overlay)</p>\n<p>What we have tried:</p>\n<p>Removing stopPropagation and preventDefault from inputs</p>\n<p>Removing input onMouseDown handlers</p>\n<p>Guarding parent click handlers</p>\n<p>Disabling canvas pointer-events while typing</p>\n<p>Forcing resize using ResizeObserver and requestAnimationFrame</p>\n<p>None of these remove the need to toggle Developer Tools.</p>\n<p>Question:<br />\nWhat does opening Developer Tools trigger in Electron or Chromium on Windows that resets focus or hit-testing, and how can this be replicated programmatically or prevented entirely?</p>\n<p>This is a business application, so I cannot share the full repository, but I can provide a minimal non-proprietary reproduction if needed.</p>\n"
+      }
+    }
+  ],
+  "lastUpdated": "2026-02-07T13:50:07.790Z"
+}
