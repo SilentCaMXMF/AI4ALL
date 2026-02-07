@@ -1,6 +1,903 @@
 {
   "items": [
     {
+      "id": "github-issue-3911013017",
+      "platform": "github",
+      "type": "issue",
+      "title": "opencode-mem/issues #16: [Bug] OpenAI API rejects temperature parameter when using gpt-5-mini/nano (reasoning models)",
+      "content": "## Environment\n- **OS**: macOS (Apple Silicon, arm64)\n- **opencode-mem version**: 2.7.4\n- **opencode version**: 1.1.50\n- **memoryProvider**: `openai-chat`\n- **memoryModel**: `gpt-5-mini`\n\n## Bug\n\nWhen `memoryModel` is set to `gpt-5-mini` (or any GPT-5 family model), all AI-powered features fail with a 400 error because opencode-mem sends `temperature: 0.3` which reasoning models don't support.\n\n### Error (repeated continuously in logs)\n\n```log\n[2026-02-06T13:04:25.146Z] OpenAI Chat Completion API error: {\"status\":400,\"error\":\"{\\n  \\\"error\\\": {\\n    \\\"message\\\": \\\"Unsupported value: 'temperature' does not support 0.3 with this model. Only the default (1) value is supported.\\\",\\n    \\\"type\\\": \\\"invalid_request_error\\\",\\n    \\\"param\\\": \\\"temperature\\\",\\n    \\\"code\\\": \\\"unsupported_value\\\"\\n  }\\n}\"}\n[2026-02-06T13:04:25.146Z] Idle processing error: ...\n```\n\nThis error fires on every idle processing cycle, spamming the log file indefinitely.\n\n### Impact\n\nAll AI-dependent features are broken:\n- Idle memory analysis / auto-capture\n- User profile generation\n- Any other provider-backed operations\n\nBasic memory operations (add/list/forget) still work since they don't use the AI provider. Vector search also works since it uses the local embedding model.\n\n### Root Cause\n\nGPT-5 family models (`gpt-5`, `gpt-5-mini`, `gpt-5-nano`) are reasoning models and do not support the `temperature`, `top_p`, `presence_penalty`, or `frequency_penalty` parameters. OpenAI returns a 400 error if any of these are included.\n\nThe temperature value appears to be hardcoded in the OpenAI chat completion provider (`dist/services/ai/providers/openai-chat-completion.js`).\n\n### Suggested Fix\n\nBefore sending the API request, check if the model is a reasoning model and omit unsupported parameters:\n\n```javascript\nconst isReasoningModel = model.startsWith(\"gpt-5\") || model.startsWith(\"o1\") || model.startsWith(\"o3\") || model.startsWith(\"o4\");\n\nconst requestBody = {\n  model,\n  messages,\n  ...(isReasoningModel ? {} : { temperature: 0.3 }),\n  // same for top_p, presence_penalty, frequency_penalty if used\n};\n```\n\nAlternatively, allow the user to override or disable the temperature in the config file.\n\n### Workaround\n\nSwitch `memoryModel` to a non-reasoning model that supports temperature, e.g. `gpt-4.1-mini`:\n\n```jsonc\n{\n  \"memoryModel\": \"gpt-4.1-mini\"\n}\n```",
+      "author": {
+        "name": "ricardo-js-santos",
+        "url": "https://github.com/ricardo-js-santos",
+        "avatar": "https://avatars.githubusercontent.com/u/237006100?v=4"
+      },
+      "timestamp": "2026-02-07T19:23:42Z",
+      "url": "https://github.com/tickernelz/opencode-mem/issues/16",
+      "metrics": {
+        "comments": 0
+      },
+      "tags": [],
+      "raw": {
+        "url": "https://api.github.com/repos/tickernelz/opencode-mem/issues/16",
+        "repository_url": "https://api.github.com/repos/tickernelz/opencode-mem",
+        "labels_url": "https://api.github.com/repos/tickernelz/opencode-mem/issues/16/labels{/name}",
+        "comments_url": "https://api.github.com/repos/tickernelz/opencode-mem/issues/16/comments",
+        "events_url": "https://api.github.com/repos/tickernelz/opencode-mem/issues/16/events",
+        "html_url": "https://github.com/tickernelz/opencode-mem/issues/16",
+        "id": 3911013017,
+        "node_id": "I_kwDOQ3IE187pHVKZ",
+        "number": 16,
+        "title": "[Bug] OpenAI API rejects temperature parameter when using gpt-5-mini/nano (reasoning models)",
+        "user": {
+          "login": "ricardo-js-santos",
+          "id": 237006100,
+          "node_id": "U_kgDODiBtFA",
+          "avatar_url": "https://avatars.githubusercontent.com/u/237006100?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/ricardo-js-santos",
+          "html_url": "https://github.com/ricardo-js-santos",
+          "followers_url": "https://api.github.com/users/ricardo-js-santos/followers",
+          "following_url": "https://api.github.com/users/ricardo-js-santos/following{/other_user}",
+          "gists_url": "https://api.github.com/users/ricardo-js-santos/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/ricardo-js-santos/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/ricardo-js-santos/subscriptions",
+          "organizations_url": "https://api.github.com/users/ricardo-js-santos/orgs",
+          "repos_url": "https://api.github.com/users/ricardo-js-santos/repos",
+          "events_url": "https://api.github.com/users/ricardo-js-santos/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/ricardo-js-santos/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "labels": [],
+        "state": "open",
+        "locked": false,
+        "assignee": null,
+        "assignees": [],
+        "milestone": null,
+        "comments": 0,
+        "created_at": "2026-02-07T19:23:42Z",
+        "updated_at": "2026-02-07T19:23:42Z",
+        "closed_at": null,
+        "author_association": "NONE",
+        "active_lock_reason": null,
+        "sub_issues_summary": {
+          "total": 0,
+          "completed": 0,
+          "percent_completed": 0
+        },
+        "issue_dependencies_summary": {
+          "blocked_by": 0,
+          "total_blocked_by": 0,
+          "blocking": 0,
+          "total_blocking": 0
+        },
+        "body": "## Environment\n- **OS**: macOS (Apple Silicon, arm64)\n- **opencode-mem version**: 2.7.4\n- **opencode version**: 1.1.50\n- **memoryProvider**: `openai-chat`\n- **memoryModel**: `gpt-5-mini`\n\n## Bug\n\nWhen `memoryModel` is set to `gpt-5-mini` (or any GPT-5 family model), all AI-powered features fail with a 400 error because opencode-mem sends `temperature: 0.3` which reasoning models don't support.\n\n### Error (repeated continuously in logs)\n\n```log\n[2026-02-06T13:04:25.146Z] OpenAI Chat Completion API error: {\"status\":400,\"error\":\"{\\n  \\\"error\\\": {\\n    \\\"message\\\": \\\"Unsupported value: 'temperature' does not support 0.3 with this model. Only the default (1) value is supported.\\\",\\n    \\\"type\\\": \\\"invalid_request_error\\\",\\n    \\\"param\\\": \\\"temperature\\\",\\n    \\\"code\\\": \\\"unsupported_value\\\"\\n  }\\n}\"}\n[2026-02-06T13:04:25.146Z] Idle processing error: ...\n```\n\nThis error fires on every idle processing cycle, spamming the log file indefinitely.\n\n### Impact\n\nAll AI-dependent features are broken:\n- Idle memory analysis / auto-capture\n- User profile generation\n- Any other provider-backed operations\n\nBasic memory operations (add/list/forget) still work since they don't use the AI provider. Vector search also works since it uses the local embedding model.\n\n### Root Cause\n\nGPT-5 family models (`gpt-5`, `gpt-5-mini`, `gpt-5-nano`) are reasoning models and do not support the `temperature`, `top_p`, `presence_penalty`, or `frequency_penalty` parameters. OpenAI returns a 400 error if any of these are included.\n\nThe temperature value appears to be hardcoded in the OpenAI chat completion provider (`dist/services/ai/providers/openai-chat-completion.js`).\n\n### Suggested Fix\n\nBefore sending the API request, check if the model is a reasoning model and omit unsupported parameters:\n\n```javascript\nconst isReasoningModel = model.startsWith(\"gpt-5\") || model.startsWith(\"o1\") || model.startsWith(\"o3\") || model.startsWith(\"o4\");\n\nconst requestBody = {\n  model,\n  messages,\n  ...(isReasoningModel ? {} : { temperature: 0.3 }),\n  // same for top_p, presence_penalty, frequency_penalty if used\n};\n```\n\nAlternatively, allow the user to override or disable the temperature in the config file.\n\n### Workaround\n\nSwitch `memoryModel` to a non-reasoning model that supports temperature, e.g. `gpt-4.1-mini`:\n\n```jsonc\n{\n  \"memoryModel\": \"gpt-4.1-mini\"\n}\n```",
+        "reactions": {
+          "url": "https://api.github.com/repos/tickernelz/opencode-mem/issues/16/reactions",
+          "total_count": 0,
+          "+1": 0,
+          "-1": 0,
+          "laugh": 0,
+          "hooray": 0,
+          "confused": 0,
+          "heart": 0,
+          "rocket": 0,
+          "eyes": 0
+        },
+        "timeline_url": "https://api.github.com/repos/tickernelz/opencode-mem/issues/16/timeline",
+        "performed_via_github_app": null,
+        "state_reason": null,
+        "score": 1
+      }
+    },
+    {
+      "id": "github-issue-3911001806",
+      "platform": "github",
+      "type": "issue",
+      "title": "opencode/issues #12627: [WEB-UI] No new session can be started",
+      "content": "### Description\n\nWhen trying to open a new session and sending the first message, the message can't be submitted.\n\nInstead a lot of new session are created, all with a new placeholder name. In none of them the typed message is sent and the text input is also not cleared.\n\nThese newly created session are not even created in the same workspace / directory path.\n\nI attach a screen recoding of me trying to submit a prompt in a new session and then a screenshot of the other workspace / directory where these empty placeholder session are created.\n\nThe new session are created in the base directory the server is running in.\n\n\n### Plugins\n\nnone\n\n### OpenCode version\n\n1.1.53\n\n### Steps to reproduce\n\n1. Start opencode server `opencode serve --hostname localhost --port 4096`\n\n2. Open WebUI\n\n3. Open new session\n\n4. Try to send first prompt\n\n### Screenshot and/or share link\n\nhttps://github.com/user-attachments/assets/1a423c8e-19a2-46c6-80c4-08dca8ce6797\n![Image](https://github.com/user-attachments/assets/1cc65a11-2b19-4c6a-aec3-011e293e9d42)\n\n### Operating System\n\nmacOS\n\n### Terminal\n\nBrowser - Firefox / Zen and also iPhone Safari",
+      "author": {
+        "name": "LeonMueller-OneAndOnly",
+        "url": "https://github.com/LeonMueller-OneAndOnly",
+        "avatar": "https://avatars.githubusercontent.com/u/77194479?v=4"
+      },
+      "timestamp": "2026-02-07T19:18:23Z",
+      "url": "https://github.com/anomalyco/opencode/issues/12627",
+      "metrics": {
+        "comments": 1
+      },
+      "tags": [
+        "bug",
+        "web"
+      ],
+      "raw": {
+        "url": "https://api.github.com/repos/anomalyco/opencode/issues/12627",
+        "repository_url": "https://api.github.com/repos/anomalyco/opencode",
+        "labels_url": "https://api.github.com/repos/anomalyco/opencode/issues/12627/labels{/name}",
+        "comments_url": "https://api.github.com/repos/anomalyco/opencode/issues/12627/comments",
+        "events_url": "https://api.github.com/repos/anomalyco/opencode/issues/12627/events",
+        "html_url": "https://github.com/anomalyco/opencode/issues/12627",
+        "id": 3911001806,
+        "node_id": "I_kwDOOiiGL87pHSbO",
+        "number": 12627,
+        "title": "[WEB-UI] No new session can be started",
+        "user": {
+          "login": "LeonMueller-OneAndOnly",
+          "id": 77194479,
+          "node_id": "MDQ6VXNlcjc3MTk0NDc5",
+          "avatar_url": "https://avatars.githubusercontent.com/u/77194479?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/LeonMueller-OneAndOnly",
+          "html_url": "https://github.com/LeonMueller-OneAndOnly",
+          "followers_url": "https://api.github.com/users/LeonMueller-OneAndOnly/followers",
+          "following_url": "https://api.github.com/users/LeonMueller-OneAndOnly/following{/other_user}",
+          "gists_url": "https://api.github.com/users/LeonMueller-OneAndOnly/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/LeonMueller-OneAndOnly/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/LeonMueller-OneAndOnly/subscriptions",
+          "organizations_url": "https://api.github.com/users/LeonMueller-OneAndOnly/orgs",
+          "repos_url": "https://api.github.com/users/LeonMueller-OneAndOnly/repos",
+          "events_url": "https://api.github.com/users/LeonMueller-OneAndOnly/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/LeonMueller-OneAndOnly/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "labels": [
+          {
+            "id": 8542148739,
+            "node_id": "LA_kwDOOiiGL88AAAAB_SbYgw",
+            "url": "https://api.github.com/repos/anomalyco/opencode/labels/bug",
+            "name": "bug",
+            "color": "d73a4a",
+            "default": true,
+            "description": "Something isn't working"
+          },
+          {
+            "id": 9578754464,
+            "node_id": "LA_kwDOOiiGL88AAAACOvAxoA",
+            "url": "https://api.github.com/repos/anomalyco/opencode/labels/web",
+            "name": "web",
+            "color": "5fd4dc",
+            "default": false,
+            "description": "Relates to opencode on web / desktop"
+          }
+        ],
+        "state": "open",
+        "locked": false,
+        "assignee": {
+          "login": "adamdotdevin",
+          "id": 2363879,
+          "node_id": "MDQ6VXNlcjIzNjM4Nzk=",
+          "avatar_url": "https://avatars.githubusercontent.com/u/2363879?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/adamdotdevin",
+          "html_url": "https://github.com/adamdotdevin",
+          "followers_url": "https://api.github.com/users/adamdotdevin/followers",
+          "following_url": "https://api.github.com/users/adamdotdevin/following{/other_user}",
+          "gists_url": "https://api.github.com/users/adamdotdevin/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/adamdotdevin/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/adamdotdevin/subscriptions",
+          "organizations_url": "https://api.github.com/users/adamdotdevin/orgs",
+          "repos_url": "https://api.github.com/users/adamdotdevin/repos",
+          "events_url": "https://api.github.com/users/adamdotdevin/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/adamdotdevin/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "assignees": [
+          {
+            "login": "adamdotdevin",
+            "id": 2363879,
+            "node_id": "MDQ6VXNlcjIzNjM4Nzk=",
+            "avatar_url": "https://avatars.githubusercontent.com/u/2363879?v=4",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/adamdotdevin",
+            "html_url": "https://github.com/adamdotdevin",
+            "followers_url": "https://api.github.com/users/adamdotdevin/followers",
+            "following_url": "https://api.github.com/users/adamdotdevin/following{/other_user}",
+            "gists_url": "https://api.github.com/users/adamdotdevin/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/adamdotdevin/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/adamdotdevin/subscriptions",
+            "organizations_url": "https://api.github.com/users/adamdotdevin/orgs",
+            "repos_url": "https://api.github.com/users/adamdotdevin/repos",
+            "events_url": "https://api.github.com/users/adamdotdevin/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/adamdotdevin/received_events",
+            "type": "User",
+            "user_view_type": "public",
+            "site_admin": false
+          }
+        ],
+        "milestone": null,
+        "comments": 1,
+        "created_at": "2026-02-07T19:18:23Z",
+        "updated_at": "2026-02-07T19:24:57Z",
+        "closed_at": null,
+        "author_association": "CONTRIBUTOR",
+        "type": null,
+        "active_lock_reason": null,
+        "sub_issues_summary": {
+          "total": 0,
+          "completed": 0,
+          "percent_completed": 0
+        },
+        "issue_dependencies_summary": {
+          "blocked_by": 0,
+          "total_blocked_by": 0,
+          "blocking": 0,
+          "total_blocking": 0
+        },
+        "body": "### Description\n\nWhen trying to open a new session and sending the first message, the message can't be submitted.\n\nInstead a lot of new session are created, all with a new placeholder name. In none of them the typed message is sent and the text input is also not cleared.\n\nThese newly created session are not even created in the same workspace / directory path.\n\nI attach a screen recoding of me trying to submit a prompt in a new session and then a screenshot of the other workspace / directory where these empty placeholder session are created.\n\nThe new session are created in the base directory the server is running in.\n\n\n### Plugins\n\nnone\n\n### OpenCode version\n\n1.1.53\n\n### Steps to reproduce\n\n1. Start opencode server `opencode serve --hostname localhost --port 4096`\n\n2. Open WebUI\n\n3. Open new session\n\n4. Try to send first prompt\n\n### Screenshot and/or share link\n\nhttps://github.com/user-attachments/assets/1a423c8e-19a2-46c6-80c4-08dca8ce6797\n![Image](https://github.com/user-attachments/assets/1cc65a11-2b19-4c6a-aec3-011e293e9d42)\n\n### Operating System\n\nmacOS\n\n### Terminal\n\nBrowser - Firefox / Zen and also iPhone Safari",
+        "reactions": {
+          "url": "https://api.github.com/repos/anomalyco/opencode/issues/12627/reactions",
+          "total_count": 0,
+          "+1": 0,
+          "-1": 0,
+          "laugh": 0,
+          "hooray": 0,
+          "confused": 0,
+          "heart": 0,
+          "rocket": 0,
+          "eyes": 0
+        },
+        "timeline_url": "https://api.github.com/repos/anomalyco/opencode/issues/12627/timeline",
+        "performed_via_github_app": null,
+        "state_reason": null,
+        "score": 1
+      }
+    },
+    {
+      "id": "github-issue-3910997342",
+      "platform": "github",
+      "type": "issue",
+      "title": "AionUi/issues #743: [Feature]: Add custom api endpoint for openai/anthropic or other providers",
+      "content": "### Feature Description\n\nNow we can only specify api key, it would be nice if it can support specifying custom endpoint for these providers.\nOpencode support this and it is quite useful.\n\nThank you!\n\n### Problem Statement\n\nCannot use custom endpoint for openai/anthropic and other providers\n\n### Proposed Solution\n\nAdd this feature.\n\n### Feature Category\n\nAI Model Integration\n\n### Additional Context\n\n_No response_",
+      "author": {
+        "name": "txchen",
+        "url": "https://github.com/txchen",
+        "avatar": "https://avatars.githubusercontent.com/u/713074?v=4"
+      },
+      "timestamp": "2026-02-07T19:16:05Z",
+      "url": "https://github.com/iOfficeAI/AionUi/issues/743",
+      "metrics": {
+        "comments": 1
+      },
+      "tags": [
+        "enhancement",
+        "area/settings",
+        "area/gemini",
+        "area/claude",
+        "area/codex",
+        "priority/p3"
+      ],
+      "raw": {
+        "url": "https://api.github.com/repos/iOfficeAI/AionUi/issues/743",
+        "repository_url": "https://api.github.com/repos/iOfficeAI/AionUi",
+        "labels_url": "https://api.github.com/repos/iOfficeAI/AionUi/issues/743/labels{/name}",
+        "comments_url": "https://api.github.com/repos/iOfficeAI/AionUi/issues/743/comments",
+        "events_url": "https://api.github.com/repos/iOfficeAI/AionUi/issues/743/events",
+        "html_url": "https://github.com/iOfficeAI/AionUi/issues/743",
+        "id": 3910997342,
+        "node_id": "I_kwDOPZ417s7pHRVe",
+        "number": 743,
+        "title": "[Feature]: Add custom api endpoint for openai/anthropic or other providers",
+        "user": {
+          "login": "txchen",
+          "id": 713074,
+          "node_id": "MDQ6VXNlcjcxMzA3NA==",
+          "avatar_url": "https://avatars.githubusercontent.com/u/713074?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/txchen",
+          "html_url": "https://github.com/txchen",
+          "followers_url": "https://api.github.com/users/txchen/followers",
+          "following_url": "https://api.github.com/users/txchen/following{/other_user}",
+          "gists_url": "https://api.github.com/users/txchen/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/txchen/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/txchen/subscriptions",
+          "organizations_url": "https://api.github.com/users/txchen/orgs",
+          "repos_url": "https://api.github.com/users/txchen/repos",
+          "events_url": "https://api.github.com/users/txchen/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/txchen/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "labels": [
+          {
+            "id": 9071651097,
+            "node_id": "LA_kwDOPZ417s8AAAACHLZpGQ",
+            "url": "https://api.github.com/repos/iOfficeAI/AionUi/labels/enhancement",
+            "name": "enhancement",
+            "color": "a2eeef",
+            "default": true,
+            "description": "New feature or request"
+          },
+          {
+            "id": 10096622150,
+            "node_id": "LA_kwDOPZ417s8AAAACWc46Rg",
+            "url": "https://api.github.com/repos/iOfficeAI/AionUi/labels/area/settings",
+            "name": "area/settings",
+            "color": "006b75",
+            "default": false,
+            "description": "Settings and configuration"
+          },
+          {
+            "id": 10096622644,
+            "node_id": "LA_kwDOPZ417s8AAAACWc48NA",
+            "url": "https://api.github.com/repos/iOfficeAI/AionUi/labels/area/gemini",
+            "name": "area/gemini",
+            "color": "1d76db",
+            "default": false,
+            "description": "Gemini CLI integration"
+          },
+          {
+            "id": 10096623058,
+            "node_id": "LA_kwDOPZ417s8AAAACWc490g",
+            "url": "https://api.github.com/repos/iOfficeAI/AionUi/labels/area/claude",
+            "name": "area/claude",
+            "color": "5319e7",
+            "default": false,
+            "description": "Claude Code integration"
+          },
+          {
+            "id": 10096623455,
+            "node_id": "LA_kwDOPZ417s8AAAACWc4_Xw",
+            "url": "https://api.github.com/repos/iOfficeAI/AionUi/labels/area/codex",
+            "name": "area/codex",
+            "color": "b60205",
+            "default": false,
+            "description": "Codex integration"
+          },
+          {
+            "id": 10096626530,
+            "node_id": "LA_kwDOPZ417s8AAAACWc5LYg",
+            "url": "https://api.github.com/repos/iOfficeAI/AionUi/labels/priority/p3",
+            "name": "priority/p3",
+            "color": "0e8a16",
+            "default": false,
+            "description": "Low - nice to have"
+          }
+        ],
+        "state": "open",
+        "locked": false,
+        "assignee": null,
+        "assignees": [],
+        "milestone": null,
+        "comments": 1,
+        "created_at": "2026-02-07T19:16:05Z",
+        "updated_at": "2026-02-07T19:17:27Z",
+        "closed_at": null,
+        "author_association": "NONE",
+        "type": null,
+        "active_lock_reason": null,
+        "sub_issues_summary": {
+          "total": 0,
+          "completed": 0,
+          "percent_completed": 0
+        },
+        "issue_dependencies_summary": {
+          "blocked_by": 0,
+          "total_blocked_by": 0,
+          "blocking": 0,
+          "total_blocking": 0
+        },
+        "body": "### Feature Description\n\nNow we can only specify api key, it would be nice if it can support specifying custom endpoint for these providers.\nOpencode support this and it is quite useful.\n\nThank you!\n\n### Problem Statement\n\nCannot use custom endpoint for openai/anthropic and other providers\n\n### Proposed Solution\n\nAdd this feature.\n\n### Feature Category\n\nAI Model Integration\n\n### Additional Context\n\n_No response_",
+        "reactions": {
+          "url": "https://api.github.com/repos/iOfficeAI/AionUi/issues/743/reactions",
+          "total_count": 0,
+          "+1": 0,
+          "-1": 0,
+          "laugh": 0,
+          "hooray": 0,
+          "confused": 0,
+          "heart": 0,
+          "rocket": 0,
+          "eyes": 0
+        },
+        "timeline_url": "https://api.github.com/repos/iOfficeAI/AionUi/issues/743/timeline",
+        "performed_via_github_app": null,
+        "state_reason": null,
+        "score": 1
+      }
+    },
+    {
+      "id": "github-issue-3910979757",
+      "platform": "github",
+      "type": "issue",
+      "title": "opencode-antigravity-auth/issues #400: fix: bypass soft quota check for gemini-cli requests",
+      "content": "## Problem\nThe `AccountManager` incorrectly applies the Antigravity soft quota check to `gemini-cli` requests. When an account has exhausted its Antigravity quota (100% usage), `isOverSoftQuotaThreshold` returns `true`. This causes the account selection logic to skip the account, even if `cli_first` is enabled or the CLI pool is explicitly requested.\n\n## Impact\nUsers cannot utilize the `gemini-cli` pool as a fallback when their Antigravity quota is full.\n\n## Proposed Fix\nModify `src/plugin/accounts.ts` to bypass the soft quota check when the requested `headerStyle` is `gemini-cli`.\n\n### Changes in `src/plugin/accounts.ts`\n- Updated `getCurrentOrNextForFamily` (both hybrid and sticky paths) to skip quota threshold checks for CLI requests.\n- Updated `getNextForFamily` filter logic to allow CLI requests to proceed regardless of Antigravity quota status.\n\n## Verification\nVerified locally with a new test case in `src/plugin/accounts.test.ts` and confirmed via debug logs that `gemini-cli` requests now proceed when Antigravity quota is exhausted.",
+      "author": {
+        "name": "xzipyx",
+        "url": "https://github.com/xzipyx",
+        "avatar": "https://avatars.githubusercontent.com/u/16888367?v=4"
+      },
+      "timestamp": "2026-02-07T19:07:25Z",
+      "url": "https://github.com/NoeFabris/opencode-antigravity-auth/issues/400",
+      "metrics": {
+        "comments": 1
+      },
+      "tags": [
+        "bug",
+        "area/config"
+      ],
+      "raw": {
+        "url": "https://api.github.com/repos/NoeFabris/opencode-antigravity-auth/issues/400",
+        "repository_url": "https://api.github.com/repos/NoeFabris/opencode-antigravity-auth",
+        "labels_url": "https://api.github.com/repos/NoeFabris/opencode-antigravity-auth/issues/400/labels{/name}",
+        "comments_url": "https://api.github.com/repos/NoeFabris/opencode-antigravity-auth/issues/400/comments",
+        "events_url": "https://api.github.com/repos/NoeFabris/opencode-antigravity-auth/issues/400/events",
+        "html_url": "https://github.com/NoeFabris/opencode-antigravity-auth/issues/400",
+        "id": 3910979757,
+        "node_id": "I_kwDOQl0yRc7pHNCt",
+        "number": 400,
+        "title": "fix: bypass soft quota check for gemini-cli requests",
+        "user": {
+          "login": "xzipyx",
+          "id": 16888367,
+          "node_id": "MDQ6VXNlcjE2ODg4MzY3",
+          "avatar_url": "https://avatars.githubusercontent.com/u/16888367?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/xzipyx",
+          "html_url": "https://github.com/xzipyx",
+          "followers_url": "https://api.github.com/users/xzipyx/followers",
+          "following_url": "https://api.github.com/users/xzipyx/following{/other_user}",
+          "gists_url": "https://api.github.com/users/xzipyx/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/xzipyx/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/xzipyx/subscriptions",
+          "organizations_url": "https://api.github.com/users/xzipyx/orgs",
+          "repos_url": "https://api.github.com/users/xzipyx/repos",
+          "events_url": "https://api.github.com/users/xzipyx/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/xzipyx/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "labels": [
+          {
+            "id": 9801425066,
+            "node_id": "LA_kwDOQl0yRc8AAAACSDXgqg",
+            "url": "https://api.github.com/repos/NoeFabris/opencode-antigravity-auth/labels/bug",
+            "name": "bug",
+            "color": "d73a4a",
+            "default": true,
+            "description": "Something isn't working"
+          },
+          {
+            "id": 10024344562,
+            "node_id": "LA_kwDOQl0yRc8AAAACVX9b8g",
+            "url": "https://api.github.com/repos/NoeFabris/opencode-antigravity-auth/labels/area/config",
+            "name": "area/config",
+            "color": "0e8a16",
+            "default": false,
+            "description": "Configuration files, setup"
+          }
+        ],
+        "state": "open",
+        "locked": false,
+        "assignee": null,
+        "assignees": [],
+        "milestone": null,
+        "comments": 1,
+        "created_at": "2026-02-07T19:07:25Z",
+        "updated_at": "2026-02-07T19:08:39Z",
+        "closed_at": null,
+        "author_association": "NONE",
+        "active_lock_reason": null,
+        "sub_issues_summary": {
+          "total": 0,
+          "completed": 0,
+          "percent_completed": 0
+        },
+        "issue_dependencies_summary": {
+          "blocked_by": 0,
+          "total_blocked_by": 0,
+          "blocking": 0,
+          "total_blocking": 0
+        },
+        "body": "## Problem\nThe `AccountManager` incorrectly applies the Antigravity soft quota check to `gemini-cli` requests. When an account has exhausted its Antigravity quota (100% usage), `isOverSoftQuotaThreshold` returns `true`. This causes the account selection logic to skip the account, even if `cli_first` is enabled or the CLI pool is explicitly requested.\n\n## Impact\nUsers cannot utilize the `gemini-cli` pool as a fallback when their Antigravity quota is full.\n\n## Proposed Fix\nModify `src/plugin/accounts.ts` to bypass the soft quota check when the requested `headerStyle` is `gemini-cli`.\n\n### Changes in `src/plugin/accounts.ts`\n- Updated `getCurrentOrNextForFamily` (both hybrid and sticky paths) to skip quota threshold checks for CLI requests.\n- Updated `getNextForFamily` filter logic to allow CLI requests to proceed regardless of Antigravity quota status.\n\n## Verification\nVerified locally with a new test case in `src/plugin/accounts.test.ts` and confirmed via debug logs that `gemini-cli` requests now proceed when Antigravity quota is exhausted.",
+        "reactions": {
+          "url": "https://api.github.com/repos/NoeFabris/opencode-antigravity-auth/issues/400/reactions",
+          "total_count": 0,
+          "+1": 0,
+          "-1": 0,
+          "laugh": 0,
+          "hooray": 0,
+          "confused": 0,
+          "heart": 0,
+          "rocket": 0,
+          "eyes": 0
+        },
+        "timeline_url": "https://api.github.com/repos/NoeFabris/opencode-antigravity-auth/issues/400/timeline",
+        "performed_via_github_app": null,
+        "state_reason": null,
+        "score": 1
+      }
+    },
+    {
+      "id": "github-issue-3910963467",
+      "platform": "github",
+      "type": "issue",
+      "title": "agnix/issues #334: feat: Per-client skill validation rules (CR-SK, CL-SK, CP-SK, WS-SK, RC-SK, KR-SK, CX-SK, OC-SK, AMP-SK)",
+      "content": "## Summary\n\n10 of 14 major AI coding tools now support the Agent Skills standard (SKILL.md). Each tool has different supported frontmatter fields and constraints. agnix currently only validates the universal spec (AS-*) and Claude Code extensions (CC-SK-*), but doesn't warn when client-specific directories contain unsupported fields.\n\n## Problem\n\nA SKILL.md in `.cursor/skills/` with `context: fork` will pass validation, but Cursor doesn't support that field. Users get no warning that their skill won't work as expected in the target tool.\n\n## Research\n\nSee `knowledge-base/agent-docs/skills-in-other-tools.md` for the full 46-source research covering all 14 tools.\n\n### Client-Specific Field Support Matrix\n\n| Field | Claude Code | Cursor | Others |\n|-------|------------|--------|--------|\n| `disable-model-invocation` | Yes | Yes | No |\n| `user-invocable` | Yes | No | No |\n| `model` | Yes | No | No |\n| `context` (fork) | Yes | No | No |\n| `agent` | Yes | No | No |\n| `hooks` | Yes | No | No |\n| `argument-hint` | Yes | No | No |\n\n### Tools that support Agent Skills SKILL.md\n\nClaude Code, Cursor, Cline, VS Code/Copilot, Codex CLI, OpenCode, Windsurf, Amp, Kiro, Roo Code\n\n### Skill directory conventions per tool\n\n| Tool | Primary Path |\n|------|-------------|\n| Claude Code | `.claude/skills/` |\n| Cursor | `.cursor/skills/` |\n| Cline | `.cline/skills/` |\n| Copilot | `.github/skills/` |\n| Codex CLI | `.agents/skills/` |\n| OpenCode | `.opencode/skills/` |\n| Windsurf | `.windsurf/skills/` |\n| Amp | `.agents/skills/` |\n| Kiro | `.kiro/skills/` |\n| Roo Code | `.roo/skills/` |\n\n## Implementation Plan\n\n### Phase 1: Detection infrastructure\n\n- Extend `detect_file_type()` to distinguish skill directories by parent path\n- Add variants or context to `FileType::Skill` so validators know the target client\n- Alternative: pass directory context into validators without changing FileType enum\n\n### Phase 2: Per-client skill rules\n\nAdd new rule categories and rules to both `rules.json` and `VALIDATION-RULES.md`:\n\n**Per-client unsupported field warnings** (one rule per client that uses SKILL.md):\n- `CR-SK-001`: Cursor skill uses unsupported field (warn on `user-invocable`, `model`, `context`, `agent`, `hooks`, `argument-hint`)\n- `CL-SK-001`: Cline skill uses unsupported field\n- `CP-SK-001`: Copilot skill uses unsupported field\n- `CX-SK-001`: Codex skill uses unsupported field\n- `OC-SK-001`: OpenCode skill uses unsupported field\n- `WS-SK-001`: Windsurf skill uses unsupported field\n- `KR-SK-001`: Kiro skill uses unsupported field\n- `AMP-SK-001`: Amp skill uses unsupported field\n- `RC-SK-001`: Roo Code skill uses unsupported field\n\n**Cross-platform portability rule**:\n- `XP-SK-001`: Skill uses client-specific features (flags non-universal fields with which clients don't support them)\n\n### Phase 3: Validator implementation\n\n- Add per-client skill validator that checks fields against the supported set for each tool\n- Wire into `ValidatorRegistry` with appropriate `FileType` mapping\n- Add auto-fix suggestions where applicable (e.g., remove unsupported field)\n\n### Phase 4: Tests\n\n- Add test fixtures for each client's skill directory\n- Test that unsupported fields trigger warnings\n- Test that universal-only skills pass without warnings\n- Test portability rule\n\n## Acceptance Criteria\n\n- [ ] Skills in `.cursor/skills/` with Claude Code-only fields trigger CR-SK-001 warning\n- [ ] Skills in `.cline/skills/` with Claude Code-only fields trigger CL-SK-001 warning\n- [ ] Same pattern for all 9 non-Claude clients\n- [ ] XP-SK-001 fires for any skill using non-universal fields (regardless of directory)\n- [ ] Universal-only skills pass without warnings in any client directory\n- [ ] All new rules in both `rules.json` and `VALIDATION-RULES.md`\n- [ ] Tests for all new rules\n- [ ] Existing tests still pass",
+      "author": {
+        "name": "avifenesh",
+        "url": "https://github.com/avifenesh",
+        "avatar": "https://avatars.githubusercontent.com/u/55848801?v=4"
+      },
+      "timestamp": "2026-02-07T18:59:08Z",
+      "url": "https://github.com/avifenesh/agnix/issues/334",
+      "metrics": {
+        "comments": 0
+      },
+      "tags": [],
+      "raw": {
+        "url": "https://api.github.com/repos/avifenesh/agnix/issues/334",
+        "repository_url": "https://api.github.com/repos/avifenesh/agnix",
+        "labels_url": "https://api.github.com/repos/avifenesh/agnix/issues/334/labels{/name}",
+        "comments_url": "https://api.github.com/repos/avifenesh/agnix/issues/334/comments",
+        "events_url": "https://api.github.com/repos/avifenesh/agnix/issues/334/events",
+        "html_url": "https://github.com/avifenesh/agnix/issues/334",
+        "id": 3910963467,
+        "node_id": "I_kwDORFOznM7pHJEL",
+        "number": 334,
+        "title": "feat: Per-client skill validation rules (CR-SK, CL-SK, CP-SK, WS-SK, RC-SK, KR-SK, CX-SK, OC-SK, AMP-SK)",
+        "user": {
+          "login": "avifenesh",
+          "id": 55848801,
+          "node_id": "MDQ6VXNlcjU1ODQ4ODAx",
+          "avatar_url": "https://avatars.githubusercontent.com/u/55848801?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/avifenesh",
+          "html_url": "https://github.com/avifenesh",
+          "followers_url": "https://api.github.com/users/avifenesh/followers",
+          "following_url": "https://api.github.com/users/avifenesh/following{/other_user}",
+          "gists_url": "https://api.github.com/users/avifenesh/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/avifenesh/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/avifenesh/subscriptions",
+          "organizations_url": "https://api.github.com/users/avifenesh/orgs",
+          "repos_url": "https://api.github.com/users/avifenesh/repos",
+          "events_url": "https://api.github.com/users/avifenesh/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/avifenesh/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "labels": [],
+        "state": "open",
+        "locked": false,
+        "assignee": null,
+        "assignees": [],
+        "milestone": null,
+        "comments": 0,
+        "created_at": "2026-02-07T18:59:08Z",
+        "updated_at": "2026-02-07T18:59:08Z",
+        "closed_at": null,
+        "author_association": "OWNER",
+        "active_lock_reason": null,
+        "sub_issues_summary": {
+          "total": 0,
+          "completed": 0,
+          "percent_completed": 0
+        },
+        "issue_dependencies_summary": {
+          "blocked_by": 0,
+          "total_blocked_by": 0,
+          "blocking": 0,
+          "total_blocking": 0
+        },
+        "body": "## Summary\n\n10 of 14 major AI coding tools now support the Agent Skills standard (SKILL.md). Each tool has different supported frontmatter fields and constraints. agnix currently only validates the universal spec (AS-*) and Claude Code extensions (CC-SK-*), but doesn't warn when client-specific directories contain unsupported fields.\n\n## Problem\n\nA SKILL.md in `.cursor/skills/` with `context: fork` will pass validation, but Cursor doesn't support that field. Users get no warning that their skill won't work as expected in the target tool.\n\n## Research\n\nSee `knowledge-base/agent-docs/skills-in-other-tools.md` for the full 46-source research covering all 14 tools.\n\n### Client-Specific Field Support Matrix\n\n| Field | Claude Code | Cursor | Others |\n|-------|------------|--------|--------|\n| `disable-model-invocation` | Yes | Yes | No |\n| `user-invocable` | Yes | No | No |\n| `model` | Yes | No | No |\n| `context` (fork) | Yes | No | No |\n| `agent` | Yes | No | No |\n| `hooks` | Yes | No | No |\n| `argument-hint` | Yes | No | No |\n\n### Tools that support Agent Skills SKILL.md\n\nClaude Code, Cursor, Cline, VS Code/Copilot, Codex CLI, OpenCode, Windsurf, Amp, Kiro, Roo Code\n\n### Skill directory conventions per tool\n\n| Tool | Primary Path |\n|------|-------------|\n| Claude Code | `.claude/skills/` |\n| Cursor | `.cursor/skills/` |\n| Cline | `.cline/skills/` |\n| Copilot | `.github/skills/` |\n| Codex CLI | `.agents/skills/` |\n| OpenCode | `.opencode/skills/` |\n| Windsurf | `.windsurf/skills/` |\n| Amp | `.agents/skills/` |\n| Kiro | `.kiro/skills/` |\n| Roo Code | `.roo/skills/` |\n\n## Implementation Plan\n\n### Phase 1: Detection infrastructure\n\n- Extend `detect_file_type()` to distinguish skill directories by parent path\n- Add variants or context to `FileType::Skill` so validators know the target client\n- Alternative: pass directory context into validators without changing FileType enum\n\n### Phase 2: Per-client skill rules\n\nAdd new rule categories and rules to both `rules.json` and `VALIDATION-RULES.md`:\n\n**Per-client unsupported field warnings** (one rule per client that uses SKILL.md):\n- `CR-SK-001`: Cursor skill uses unsupported field (warn on `user-invocable`, `model`, `context`, `agent`, `hooks`, `argument-hint`)\n- `CL-SK-001`: Cline skill uses unsupported field\n- `CP-SK-001`: Copilot skill uses unsupported field\n- `CX-SK-001`: Codex skill uses unsupported field\n- `OC-SK-001`: OpenCode skill uses unsupported field\n- `WS-SK-001`: Windsurf skill uses unsupported field\n- `KR-SK-001`: Kiro skill uses unsupported field\n- `AMP-SK-001`: Amp skill uses unsupported field\n- `RC-SK-001`: Roo Code skill uses unsupported field\n\n**Cross-platform portability rule**:\n- `XP-SK-001`: Skill uses client-specific features (flags non-universal fields with which clients don't support them)\n\n### Phase 3: Validator implementation\n\n- Add per-client skill validator that checks fields against the supported set for each tool\n- Wire into `ValidatorRegistry` with appropriate `FileType` mapping\n- Add auto-fix suggestions where applicable (e.g., remove unsupported field)\n\n### Phase 4: Tests\n\n- Add test fixtures for each client's skill directory\n- Test that unsupported fields trigger warnings\n- Test that universal-only skills pass without warnings\n- Test portability rule\n\n## Acceptance Criteria\n\n- [ ] Skills in `.cursor/skills/` with Claude Code-only fields trigger CR-SK-001 warning\n- [ ] Skills in `.cline/skills/` with Claude Code-only fields trigger CL-SK-001 warning\n- [ ] Same pattern for all 9 non-Claude clients\n- [ ] XP-SK-001 fires for any skill using non-universal fields (regardless of directory)\n- [ ] Universal-only skills pass without warnings in any client directory\n- [ ] All new rules in both `rules.json` and `VALIDATION-RULES.md`\n- [ ] Tests for all new rules\n- [ ] Existing tests still pass",
+        "reactions": {
+          "url": "https://api.github.com/repos/avifenesh/agnix/issues/334/reactions",
+          "total_count": 0,
+          "+1": 0,
+          "-1": 0,
+          "laugh": 0,
+          "hooray": 0,
+          "confused": 0,
+          "heart": 0,
+          "rocket": 0,
+          "eyes": 0
+        },
+        "timeline_url": "https://api.github.com/repos/avifenesh/agnix/issues/334/timeline",
+        "performed_via_github_app": null,
+        "state_reason": null,
+        "score": 1
+      }
+    },
+    {
+      "id": "github-issue-3910941646",
+      "platform": "github",
+      "type": "issue",
+      "title": "opencode/issues #12626: [FEATURE]: Agent-driven Selective Context Management via Block IDs",
+      "content": "### Feature hasn't been suggested before.\n\n- [x] I have verified this feature I'm about to request hasn't been suggested before.\n\n### Describe the enhancement you want to request\n\n**Describe the enhancement you want to request**\n\n### **Disclaimer**\nI am a user of Opencode and do not have a background in TypeScript or the project's internal codebase. I am proposing this as a functional enhancement rather than a technical implementation plan.\n\n# **1. The Problem**\nCurrently, Opencode manages long conversations using automatic cleanup (pruning and compaction). While this is helpful for staying within token limits, it is a \"system-level\" decision that doesn't always align with the actual progress of the task. \n\nFor example, the system might automatically delete an important piece of code I read earlier that the agent still needs, or it might keep thousands of tokens of useless error logs that have already been resolved, simply because they are \"recent.\"\n\n# **2. The Proposed Idea: Agent-driven Context Management**\nI suggest giving the AI agent the ability to **actively manage its own memory** using a block-based system:\n\n- **Visible Block IDs**: Every significant part of the conversation (a user message, a large tool output, a reasoning block) should be assigned a unique ID that the agent can see.\n- **Agent Control**: Allow the agent to issue commands to manage these blocks. For instance:\n    - **Discard**: The agent can decide that a specific block (like a long, failed build log) is no longer useful and should be removed from its context.\n    - **Summarize**: The agent can choose to replace a massive block of data with a short summary it generates itself.\n    - **Pin**: The agent can mark a specific block as \"critical\" so that the automatic cleanup system never deletes it.\n\n# **3. Integration with Session Reversion (Rollback)**\nOpencode already has a powerful \"Revert\" feature. It is critical that this new memory management system is integrated with it:\n- **Consistent Rollback**: If a user reverts the session to a previous message, any \"Discard\" or \"Summarize\" actions taken by the agent *after* that point should also be automatically undone. \n- **Memory Sync**: The agent's memory (the state of which blocks are hidden or summarized) must stay perfectly in sync with the conversation history. If we go back in time, the agent should \"regain\" the full context that was available at that moment.\n\n# **4. Benefits**\n- **Smarter Context**: The agent knows better than the system which information is truly \"finished\" and which is \"ongoing.\"\n- **Efficiency**: By proactively cleaning up resolved issues, the agent can keep the conversation focused and high-quality for much longer.\n- **Reliability**: Ensuring that memory management respects rollbacks will prevent the agent from being \"confused\" by missing information that it previously discarded in a future that no longer exists.\n\n# Similar Issues\n\nhttps://github.com/anomalyco/opencode/issues/7459\nhttps://github.com/anomalyco/opencode/issues/9896\nhttps://github.com/anomalyco/opencode/issues/8932",
+      "author": {
+        "name": "Hubedge",
+        "url": "https://github.com/Hubedge",
+        "avatar": "https://avatars.githubusercontent.com/u/13092800?v=4"
+      },
+      "timestamp": "2026-02-07T18:48:46Z",
+      "url": "https://github.com/anomalyco/opencode/issues/12626",
+      "metrics": {
+        "comments": 1
+      },
+      "tags": [
+        "discussion"
+      ],
+      "raw": {
+        "url": "https://api.github.com/repos/anomalyco/opencode/issues/12626",
+        "repository_url": "https://api.github.com/repos/anomalyco/opencode",
+        "labels_url": "https://api.github.com/repos/anomalyco/opencode/issues/12626/labels{/name}",
+        "comments_url": "https://api.github.com/repos/anomalyco/opencode/issues/12626/comments",
+        "events_url": "https://api.github.com/repos/anomalyco/opencode/issues/12626/events",
+        "html_url": "https://github.com/anomalyco/opencode/issues/12626",
+        "id": 3910941646,
+        "node_id": "I_kwDOOiiGL87pHDvO",
+        "number": 12626,
+        "title": "[FEATURE]: Agent-driven Selective Context Management via Block IDs",
+        "user": {
+          "login": "Hubedge",
+          "id": 13092800,
+          "node_id": "MDQ6VXNlcjEzMDkyODAw",
+          "avatar_url": "https://avatars.githubusercontent.com/u/13092800?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/Hubedge",
+          "html_url": "https://github.com/Hubedge",
+          "followers_url": "https://api.github.com/users/Hubedge/followers",
+          "following_url": "https://api.github.com/users/Hubedge/following{/other_user}",
+          "gists_url": "https://api.github.com/users/Hubedge/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/Hubedge/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/Hubedge/subscriptions",
+          "organizations_url": "https://api.github.com/users/Hubedge/orgs",
+          "repos_url": "https://api.github.com/users/Hubedge/repos",
+          "events_url": "https://api.github.com/users/Hubedge/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/Hubedge/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "labels": [
+          {
+            "id": 9496536813,
+            "node_id": "LA_kwDOOiiGL88AAAACNgmm7Q",
+            "url": "https://api.github.com/repos/anomalyco/opencode/labels/discussion",
+            "name": "discussion",
+            "color": "0e8a16",
+            "default": false,
+            "description": "Used for feature requests, proposals, ideas, etc.  Open discussion"
+          }
+        ],
+        "state": "open",
+        "locked": false,
+        "assignee": {
+          "login": "thdxr",
+          "id": 826656,
+          "node_id": "MDQ6VXNlcjgyNjY1Ng==",
+          "avatar_url": "https://avatars.githubusercontent.com/u/826656?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/thdxr",
+          "html_url": "https://github.com/thdxr",
+          "followers_url": "https://api.github.com/users/thdxr/followers",
+          "following_url": "https://api.github.com/users/thdxr/following{/other_user}",
+          "gists_url": "https://api.github.com/users/thdxr/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/thdxr/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/thdxr/subscriptions",
+          "organizations_url": "https://api.github.com/users/thdxr/orgs",
+          "repos_url": "https://api.github.com/users/thdxr/repos",
+          "events_url": "https://api.github.com/users/thdxr/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/thdxr/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "assignees": [
+          {
+            "login": "thdxr",
+            "id": 826656,
+            "node_id": "MDQ6VXNlcjgyNjY1Ng==",
+            "avatar_url": "https://avatars.githubusercontent.com/u/826656?v=4",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/thdxr",
+            "html_url": "https://github.com/thdxr",
+            "followers_url": "https://api.github.com/users/thdxr/followers",
+            "following_url": "https://api.github.com/users/thdxr/following{/other_user}",
+            "gists_url": "https://api.github.com/users/thdxr/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/thdxr/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/thdxr/subscriptions",
+            "organizations_url": "https://api.github.com/users/thdxr/orgs",
+            "repos_url": "https://api.github.com/users/thdxr/repos",
+            "events_url": "https://api.github.com/users/thdxr/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/thdxr/received_events",
+            "type": "User",
+            "user_view_type": "public",
+            "site_admin": false
+          }
+        ],
+        "milestone": null,
+        "comments": 1,
+        "created_at": "2026-02-07T18:48:46Z",
+        "updated_at": "2026-02-07T18:50:16Z",
+        "closed_at": null,
+        "author_association": "NONE",
+        "type": null,
+        "active_lock_reason": null,
+        "sub_issues_summary": {
+          "total": 0,
+          "completed": 0,
+          "percent_completed": 0
+        },
+        "issue_dependencies_summary": {
+          "blocked_by": 0,
+          "total_blocked_by": 0,
+          "blocking": 0,
+          "total_blocking": 0
+        },
+        "body": "### Feature hasn't been suggested before.\n\n- [x] I have verified this feature I'm about to request hasn't been suggested before.\n\n### Describe the enhancement you want to request\n\n**Describe the enhancement you want to request**\n\n### **Disclaimer**\nI am a user of Opencode and do not have a background in TypeScript or the project's internal codebase. I am proposing this as a functional enhancement rather than a technical implementation plan.\n\n# **1. The Problem**\nCurrently, Opencode manages long conversations using automatic cleanup (pruning and compaction). While this is helpful for staying within token limits, it is a \"system-level\" decision that doesn't always align with the actual progress of the task. \n\nFor example, the system might automatically delete an important piece of code I read earlier that the agent still needs, or it might keep thousands of tokens of useless error logs that have already been resolved, simply because they are \"recent.\"\n\n# **2. The Proposed Idea: Agent-driven Context Management**\nI suggest giving the AI agent the ability to **actively manage its own memory** using a block-based system:\n\n- **Visible Block IDs**: Every significant part of the conversation (a user message, a large tool output, a reasoning block) should be assigned a unique ID that the agent can see.\n- **Agent Control**: Allow the agent to issue commands to manage these blocks. For instance:\n    - **Discard**: The agent can decide that a specific block (like a long, failed build log) is no longer useful and should be removed from its context.\n    - **Summarize**: The agent can choose to replace a massive block of data with a short summary it generates itself.\n    - **Pin**: The agent can mark a specific block as \"critical\" so that the automatic cleanup system never deletes it.\n\n# **3. Integration with Session Reversion (Rollback)**\nOpencode already has a powerful \"Revert\" feature. It is critical that this new memory management system is integrated with it:\n- **Consistent Rollback**: If a user reverts the session to a previous message, any \"Discard\" or \"Summarize\" actions taken by the agent *after* that point should also be automatically undone. \n- **Memory Sync**: The agent's memory (the state of which blocks are hidden or summarized) must stay perfectly in sync with the conversation history. If we go back in time, the agent should \"regain\" the full context that was available at that moment.\n\n# **4. Benefits**\n- **Smarter Context**: The agent knows better than the system which information is truly \"finished\" and which is \"ongoing.\"\n- **Efficiency**: By proactively cleaning up resolved issues, the agent can keep the conversation focused and high-quality for much longer.\n- **Reliability**: Ensuring that memory management respects rollbacks will prevent the agent from being \"confused\" by missing information that it previously discarded in a future that no longer exists.\n\n# Similar Issues\n\nhttps://github.com/anomalyco/opencode/issues/7459\nhttps://github.com/anomalyco/opencode/issues/9896\nhttps://github.com/anomalyco/opencode/issues/8932",
+        "reactions": {
+          "url": "https://api.github.com/repos/anomalyco/opencode/issues/12626/reactions",
+          "total_count": 0,
+          "+1": 0,
+          "-1": 0,
+          "laugh": 0,
+          "hooray": 0,
+          "confused": 0,
+          "heart": 0,
+          "rocket": 0,
+          "eyes": 0
+        },
+        "timeline_url": "https://api.github.com/repos/anomalyco/opencode/issues/12626/timeline",
+        "performed_via_github_app": null,
+        "state_reason": null,
+        "score": 1
+      }
+    },
+    {
+      "id": "github-discussion-3910941646",
+      "platform": "github",
+      "type": "discussion",
+      "title": "[FEATURE]: Agent-driven Selective Context Management via Block IDs",
+      "content": "### Feature hasn't been suggested before.\n\n- [x] I have verified this feature I'm about to request hasn't been suggested before.\n\n### Describe the enhancement you want to request\n\n**Describe the enhancement you want to request**\n\n### **Disclaimer**\nI am a user of Opencode and do not have a background in TypeScript or the project's internal codebase. I am proposing this as a functional enhancement rather than a technical implementation plan.\n\n# **1. The Problem**\nCurrently, Opencode manages long conversations using automatic cleanup (pruning and compaction). While this is helpful for staying within token limits, it is a \"system-level\" decision that doesn't always align with the actual progress of the task. \n\nFor example, the system might automatically delete an important piece of code I read earlier that the agent still needs, or it might keep thousands of tokens of useless error logs that have already been resolved, simply because they are \"recent.\"\n\n# **2. The Proposed Idea: Agent-driven Context Management**\nI suggest giving the AI agent the ability to **actively manage its own memory** using a block-based system:\n\n- **Visible Block IDs**: Every significant part of the conversation (a user message, a large tool output, a reasoning block) should be assigned a unique ID that the agent can see.\n- **Agent Control**: Allow the agent to issue commands to manage these blocks. For instance:\n    - **Discard**: The agent can decide that a specific block (like a long, failed build log) is no longer useful and should be removed from its context.\n    - **Summarize**: The agent can choose to replace a massive block of data with a short summary it generates itself.\n    - **Pin**: The agent can mark a specific block as \"critical\" so that the automatic cleanup system never deletes it.\n\n# **3. Integration with Session Reversion (Rollback)**\nOpencode already has a powerful \"Revert\" feature. It is critical that this new memory management system is integrated with it:\n- **Consistent Rollback**: If a user reverts the session to a previous message, any \"Discard\" or \"Summarize\" actions taken by the agent *after* that point should also be automatically undone. \n- **Memory Sync**: The agent's memory (the state of which blocks are hidden or summarized) must stay perfectly in sync with the conversation history. If we go back in time, the agent should \"regain\" the full context that was available at that moment.\n\n# **4. Benefits**\n- **Smarter Context**: The agent knows better than the system which information is truly \"finished\" and which is \"ongoing.\"\n- **Efficiency**: By proactively cleaning up resolved issues, the agent can keep the conversation focused and high-quality for much longer.\n- **Reliability**: Ensuring that memory management respects rollbacks will prevent the agent from being \"confused\" by missing information that it previously discarded in a future that no longer exists.\n\n# Similar Issues\n\nhttps://github.com/anomalyco/opencode/issues/7459\nhttps://github.com/anomalyco/opencode/issues/9896\nhttps://github.com/anomalyco/opencode/issues/8932",
+      "author": {
+        "name": "Hubedge",
+        "url": "https://github.com/Hubedge",
+        "avatar": "https://avatars.githubusercontent.com/u/13092800?v=4"
+      },
+      "timestamp": "2026-02-07T18:48:46Z",
+      "url": "https://github.com/anomalyco/opencode/issues/12626",
+      "metrics": {
+        "comments": 1
+      },
+      "tags": [
+        "discussion"
+      ],
+      "raw": {
+        "url": "https://api.github.com/repos/anomalyco/opencode/issues/12626",
+        "repository_url": "https://api.github.com/repos/anomalyco/opencode",
+        "labels_url": "https://api.github.com/repos/anomalyco/opencode/issues/12626/labels{/name}",
+        "comments_url": "https://api.github.com/repos/anomalyco/opencode/issues/12626/comments",
+        "events_url": "https://api.github.com/repos/anomalyco/opencode/issues/12626/events",
+        "html_url": "https://github.com/anomalyco/opencode/issues/12626",
+        "id": 3910941646,
+        "node_id": "I_kwDOOiiGL87pHDvO",
+        "number": 12626,
+        "title": "[FEATURE]: Agent-driven Selective Context Management via Block IDs",
+        "user": {
+          "login": "Hubedge",
+          "id": 13092800,
+          "node_id": "MDQ6VXNlcjEzMDkyODAw",
+          "avatar_url": "https://avatars.githubusercontent.com/u/13092800?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/Hubedge",
+          "html_url": "https://github.com/Hubedge",
+          "followers_url": "https://api.github.com/users/Hubedge/followers",
+          "following_url": "https://api.github.com/users/Hubedge/following{/other_user}",
+          "gists_url": "https://api.github.com/users/Hubedge/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/Hubedge/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/Hubedge/subscriptions",
+          "organizations_url": "https://api.github.com/users/Hubedge/orgs",
+          "repos_url": "https://api.github.com/users/Hubedge/repos",
+          "events_url": "https://api.github.com/users/Hubedge/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/Hubedge/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "labels": [
+          {
+            "id": 9496536813,
+            "node_id": "LA_kwDOOiiGL88AAAACNgmm7Q",
+            "url": "https://api.github.com/repos/anomalyco/opencode/labels/discussion",
+            "name": "discussion",
+            "color": "0e8a16",
+            "default": false,
+            "description": "Used for feature requests, proposals, ideas, etc.  Open discussion"
+          }
+        ],
+        "state": "open",
+        "locked": false,
+        "assignee": {
+          "login": "thdxr",
+          "id": 826656,
+          "node_id": "MDQ6VXNlcjgyNjY1Ng==",
+          "avatar_url": "https://avatars.githubusercontent.com/u/826656?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/thdxr",
+          "html_url": "https://github.com/thdxr",
+          "followers_url": "https://api.github.com/users/thdxr/followers",
+          "following_url": "https://api.github.com/users/thdxr/following{/other_user}",
+          "gists_url": "https://api.github.com/users/thdxr/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/thdxr/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/thdxr/subscriptions",
+          "organizations_url": "https://api.github.com/users/thdxr/orgs",
+          "repos_url": "https://api.github.com/users/thdxr/repos",
+          "events_url": "https://api.github.com/users/thdxr/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/thdxr/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "assignees": [
+          {
+            "login": "thdxr",
+            "id": 826656,
+            "node_id": "MDQ6VXNlcjgyNjY1Ng==",
+            "avatar_url": "https://avatars.githubusercontent.com/u/826656?v=4",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/thdxr",
+            "html_url": "https://github.com/thdxr",
+            "followers_url": "https://api.github.com/users/thdxr/followers",
+            "following_url": "https://api.github.com/users/thdxr/following{/other_user}",
+            "gists_url": "https://api.github.com/users/thdxr/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/thdxr/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/thdxr/subscriptions",
+            "organizations_url": "https://api.github.com/users/thdxr/orgs",
+            "repos_url": "https://api.github.com/users/thdxr/repos",
+            "events_url": "https://api.github.com/users/thdxr/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/thdxr/received_events",
+            "type": "User",
+            "user_view_type": "public",
+            "site_admin": false
+          }
+        ],
+        "milestone": null,
+        "comments": 1,
+        "created_at": "2026-02-07T18:48:46Z",
+        "updated_at": "2026-02-07T18:50:16Z",
+        "closed_at": null,
+        "author_association": "NONE",
+        "type": null,
+        "active_lock_reason": null,
+        "sub_issues_summary": {
+          "total": 0,
+          "completed": 0,
+          "percent_completed": 0
+        },
+        "issue_dependencies_summary": {
+          "blocked_by": 0,
+          "total_blocked_by": 0,
+          "blocking": 0,
+          "total_blocking": 0
+        },
+        "body": "### Feature hasn't been suggested before.\n\n- [x] I have verified this feature I'm about to request hasn't been suggested before.\n\n### Describe the enhancement you want to request\n\n**Describe the enhancement you want to request**\n\n### **Disclaimer**\nI am a user of Opencode and do not have a background in TypeScript or the project's internal codebase. I am proposing this as a functional enhancement rather than a technical implementation plan.\n\n# **1. The Problem**\nCurrently, Opencode manages long conversations using automatic cleanup (pruning and compaction). While this is helpful for staying within token limits, it is a \"system-level\" decision that doesn't always align with the actual progress of the task. \n\nFor example, the system might automatically delete an important piece of code I read earlier that the agent still needs, or it might keep thousands of tokens of useless error logs that have already been resolved, simply because they are \"recent.\"\n\n# **2. The Proposed Idea: Agent-driven Context Management**\nI suggest giving the AI agent the ability to **actively manage its own memory** using a block-based system:\n\n- **Visible Block IDs**: Every significant part of the conversation (a user message, a large tool output, a reasoning block) should be assigned a unique ID that the agent can see.\n- **Agent Control**: Allow the agent to issue commands to manage these blocks. For instance:\n    - **Discard**: The agent can decide that a specific block (like a long, failed build log) is no longer useful and should be removed from its context.\n    - **Summarize**: The agent can choose to replace a massive block of data with a short summary it generates itself.\n    - **Pin**: The agent can mark a specific block as \"critical\" so that the automatic cleanup system never deletes it.\n\n# **3. Integration with Session Reversion (Rollback)**\nOpencode already has a powerful \"Revert\" feature. It is critical that this new memory management system is integrated with it:\n- **Consistent Rollback**: If a user reverts the session to a previous message, any \"Discard\" or \"Summarize\" actions taken by the agent *after* that point should also be automatically undone. \n- **Memory Sync**: The agent's memory (the state of which blocks are hidden or summarized) must stay perfectly in sync with the conversation history. If we go back in time, the agent should \"regain\" the full context that was available at that moment.\n\n# **4. Benefits**\n- **Smarter Context**: The agent knows better than the system which information is truly \"finished\" and which is \"ongoing.\"\n- **Efficiency**: By proactively cleaning up resolved issues, the agent can keep the conversation focused and high-quality for much longer.\n- **Reliability**: Ensuring that memory management respects rollbacks will prevent the agent from being \"confused\" by missing information that it previously discarded in a future that no longer exists.\n\n# Similar Issues\n\nhttps://github.com/anomalyco/opencode/issues/7459\nhttps://github.com/anomalyco/opencode/issues/9896\nhttps://github.com/anomalyco/opencode/issues/8932",
+        "reactions": {
+          "url": "https://api.github.com/repos/anomalyco/opencode/issues/12626/reactions",
+          "total_count": 0,
+          "+1": 0,
+          "-1": 0,
+          "laugh": 0,
+          "hooray": 0,
+          "confused": 0,
+          "heart": 0,
+          "rocket": 0,
+          "eyes": 0
+        },
+        "timeline_url": "https://api.github.com/repos/anomalyco/opencode/issues/12626/timeline",
+        "performed_via_github_app": null,
+        "state_reason": null,
+        "score": 1
+      }
+    },
+    {
       "id": "github-issue-3910912961",
       "platform": "github",
       "type": "issue",
@@ -303,7 +1200,7 @@
       "metrics": {
         "upvotes": 0,
         "comments": 0,
-        "views": 20
+        "views": 28
       },
       "tags": [
         "javascript",
@@ -325,7 +1222,7 @@
           "link": "https://stackoverflow.com/users/4512005/razvan-zamfir"
         },
         "is_answered": false,
-        "view_count": 20,
+        "view_count": 28,
         "answer_count": 0,
         "score": 0,
         "last_activity_date": 1770486462,
@@ -1610,7 +2507,7 @@
       "metrics": {
         "upvotes": -1,
         "comments": 0,
-        "views": 34
+        "views": 35
       },
       "tags": [
         "javascript",
@@ -1631,7 +2528,7 @@
           "link": "https://stackoverflow.com/users/32330204/slobado"
         },
         "is_answered": false,
-        "view_count": 34,
+        "view_count": 35,
         "closed_date": 1770480369,
         "answer_count": 0,
         "score": -1,
@@ -1660,7 +2557,7 @@
       "metrics": {
         "upvotes": -1,
         "comments": 0,
-        "views": 24
+        "views": 28
       },
       "tags": [
         "javascript",
@@ -1685,7 +2582,7 @@
           "link": "https://stackoverflow.com/users/8103934/bustinout"
         },
         "is_answered": false,
-        "view_count": 24,
+        "view_count": 28,
         "answer_count": 0,
         "score": -1,
         "last_activity_date": 1770486800,
@@ -2156,7 +3053,7 @@
       "metrics": {
         "upvotes": 0,
         "comments": 0,
-        "views": 27
+        "views": 28
       },
       "tags": [
         "javascript",
@@ -2183,7 +3080,7 @@
           "link": "https://stackoverflow.com/users/15927992/literallycode"
         },
         "is_answered": false,
-        "view_count": 27,
+        "view_count": 28,
         "answer_count": 0,
         "score": 0,
         "last_activity_date": 1770471336,
@@ -2247,7 +3144,7 @@
       "metrics": {
         "upvotes": 0,
         "comments": 1,
-        "views": 21
+        "views": 22
       },
       "tags": [
         "javascript",
@@ -2270,7 +3167,7 @@
           "link": "https://stackoverflow.com/users/32328914/pauline"
         },
         "is_answered": false,
-        "view_count": 21,
+        "view_count": 22,
         "answer_count": 1,
         "score": 0,
         "last_activity_date": 1770469978,
@@ -2494,7 +3391,7 @@
       "metrics": {
         "upvotes": 1,
         "comments": 1,
-        "views": 28
+        "views": 30
       },
       "tags": [
         "typescript",
@@ -2516,7 +3413,7 @@
           "link": "https://stackoverflow.com/users/985454/qwerty"
         },
         "is_answered": false,
-        "view_count": 28,
+        "view_count": 30,
         "answer_count": 1,
         "score": 1,
         "last_activity_date": 1770444332,
@@ -2595,7 +3492,7 @@
       "metrics": {
         "upvotes": -1,
         "comments": 0,
-        "views": 43
+        "views": 44
       },
       "tags": [
         "typescript",
@@ -2616,7 +3513,7 @@
           "link": "https://stackoverflow.com/users/13349770/eziomercer"
         },
         "is_answered": false,
-        "view_count": 43,
+        "view_count": 44,
         "answer_count": 0,
         "score": -1,
         "last_activity_date": 1770414147,
@@ -2903,7 +3800,7 @@
       "metrics": {
         "upvotes": -1,
         "comments": 1,
-        "views": 70
+        "views": 71
       },
       "tags": [
         "reactjs",
@@ -2925,7 +3822,7 @@
           "link": "https://stackoverflow.com/users/1102726/justanothercoder894"
         },
         "is_answered": true,
-        "view_count": 70,
+        "view_count": 71,
         "answer_count": 1,
         "score": -1,
         "last_activity_date": 1770376328,
@@ -2996,5 +3893,5 @@
       }
     }
   ],
-  "lastUpdated": "2026-02-07T18:40:39.276Z"
+  "lastUpdated": "2026-02-07T19:27:58.992Z"
 }
