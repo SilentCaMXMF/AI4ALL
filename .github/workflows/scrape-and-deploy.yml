@@ -61,7 +61,7 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add data/aggregated-data.json
+          git -f add data/aggregated-data.json
           git diff --staged --quiet || (git commit -m "Update aggregated data [$(date +%Y-%m-%d_%H:%M)]" && git push)
 
   deploy:
