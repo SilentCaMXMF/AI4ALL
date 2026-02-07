@@ -1,0 +1,16 @@
+[Unit]
+Description=AI4ALL Dashboard Web Server
+After=network.target
+
+[Service]
+Type=simple
+User=pedroocalado
+WorkingDirectory=/home/pedroocalado/ai4all/AI4ALL
+ExecStart=/usr/bin/python3 -m http.server 8001
+Restart=always
+RestartSec=10
+StandardOutput=append:/home/pedroocalado/ai4all/AI4ALL/logs/web-server.log
+StandardError=append:/home/pedroocalado/ai4all/AI4ALL/logs/web-server-error.log
+
+[Install]
+WantedBy=multi-user.target

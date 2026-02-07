@@ -1,0 +1,16 @@
+[Unit]
+Description=AI4ALL File Watcher
+After=network.target
+
+[Service]
+Type=simple
+User=pedroocalado
+WorkingDirectory=/home/pedroocalado/ai4all/AI4ALL
+ExecStart=/home/pedroocalado/ai4all/AI4ALL/scripts/file-watcher.sh
+Restart=always
+RestartSec=10
+StandardOutput=append:/home/pedroocalado/ai4all/AI4ALL/logs/file-watcher.log
+StandardError=append:/home/pedroocalado/ai4all/AI4ALL/logs/file-watcher-error.log
+
+[Install]
+WantedBy=multi-user.target
