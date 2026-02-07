@@ -1158,7 +1158,7 @@
       "metrics": {
         "upvotes": -1,
         "comments": 0,
-        "views": 24
+        "views": 30
       },
       "tags": [
         "javascript",
@@ -1179,7 +1179,7 @@
           "link": "https://stackoverflow.com/users/32330204/slobado"
         },
         "is_answered": false,
-        "view_count": 24,
+        "view_count": 30,
         "closed_date": 1770480369,
         "answer_count": 0,
         "score": -1,
@@ -1208,7 +1208,7 @@
       "metrics": {
         "upvotes": 0,
         "comments": 0,
-        "views": 15
+        "views": 17
       },
       "tags": [
         "reactjs",
@@ -1231,7 +1231,7 @@
           "link": "https://stackoverflow.com/users/8103934/bustinout"
         },
         "is_answered": false,
-        "view_count": 15,
+        "view_count": 17,
         "answer_count": 0,
         "score": 0,
         "last_activity_date": 1770477025,
@@ -1701,7 +1701,7 @@
       "metrics": {
         "upvotes": 0,
         "comments": 0,
-        "views": 23
+        "views": 26
       },
       "tags": [
         "javascript",
@@ -1728,7 +1728,7 @@
           "link": "https://stackoverflow.com/users/15927992/literallycode"
         },
         "is_answered": false,
-        "view_count": 23,
+        "view_count": 26,
         "answer_count": 0,
         "score": 0,
         "last_activity_date": 1770471336,
@@ -1842,9 +1842,9 @@
       "timestamp": "2026-02-07T10:02:46.000Z",
       "url": "https://stackoverflow.com/questions/79884805/summernote-hint-feature-not-showing-options",
       "metrics": {
-        "upvotes": 1,
+        "upvotes": 0,
         "comments": 0,
-        "views": 9
+        "views": 11
       },
       "tags": [
         "javascript",
@@ -1859,7 +1859,7 @@
         ],
         "owner": {
           "account_id": 21851552,
-          "reputation": 31,
+          "reputation": 29,
           "user_id": 16143561,
           "user_type": "registered",
           "profile_image": "https://www.gravatar.com/avatar/4a00e4222dd78ef2fce1bbef21785b4c?s=256&d=identicon&r=PG&f=y&so-version=2",
@@ -1867,15 +1867,16 @@
           "link": "https://stackoverflow.com/users/16143561/jelle2005"
         },
         "is_answered": false,
-        "view_count": 9,
+        "view_count": 11,
+        "closed_date": 1770482735,
         "answer_count": 0,
-        "score": 1,
+        "score": 0,
         "last_activity_date": 1770458764,
         "creation_date": 1770458566,
         "last_edit_date": 1770458764,
         "question_id": 79884805,
-        "content_license": "CC BY-SA 4.0",
         "link": "https://stackoverflow.com/questions/79884805/summernote-hint-feature-not-showing-options",
+        "closed_reason": "Not suitable for this site",
         "title": "Summernote hint feature not showing options",
         "body": "<p>I am trying to implement a summernote wysiwyg editor with a mentioning feature for names of users. However, when I start typing with &quot;@&quot; the small dropdown/suggestion list does appear, but without any entries.</p>\n<p>I added a console.log to the <code>template</code> option, and I can see from the logs it fires once for each option found for the given &quot;@...&quot;. Also <code>item</code> is a string, so that should also be correct.</p>\n<p>Do you have a suggestion on what to try?</p>\n<pre><code>const userData = (window.PAGE_DATA?.users || []).map(u =&gt; ({\n    name: u.name,\n    id: u.id\n}));\n\n$(el).summernote({\n    height: 150,\n    placeholder: '@name...',\n    toolbar: [\n        ['style', ['bold', 'italic', 'underline']],\n        ['para', ['ul', 'ol']],\n        ['insert', ['link']],\n        ['view', ['codeview']]\n    ],\n    hint: [\n        {\n            match: /\\B@([\\w\\s]*)$/,\n            search: function (keyword, callback) {\n                const result = userData\n                    .filter(u =&gt;\n                        u.name.toLowerCase().includes(keyword.toLowerCase())\n                    )\n                    .map(u =&gt; u.name);\n\n                callback(result);\n            },\n            template: function (item) {\n                console.log(&quot;&lt;strong&gt;@&quot; + item + &quot;&lt;/strong&gt;&quot;);\n                return &quot;&lt;strong&gt;@&quot; + item + &quot;&lt;/strong&gt;&quot;;\n            },\n            content: function (item) {\n                return `&lt;span class=&quot;mention&quot; data-mention=&quot;${item}&quot;&gt;@${item}&lt;/span&gt;&amp;nbsp;`;\n            }\n        }\n    ]\n});\n</code></pre>\n<p><a href=\"https://i.sstatic.net/jWKdLoFd.png\" rel=\"nofollow noreferrer\"><img src=\"https://i.sstatic.net/jWKdLoFd.png\" alt=\"enter image description here\" /></a></p>\n"
       }
@@ -1896,18 +1897,18 @@
       "metrics": {
         "upvotes": -5,
         "comments": 0,
-        "views": 46
+        "views": 49
       },
       "tags": [
         "javascript",
         "php",
-        "xampp"
+        "apache"
       ],
       "raw": {
         "tags": [
           "javascript",
           "php",
-          "xampp"
+          "apache"
         ],
         "owner": {
           "account_id": 27972371,
@@ -1919,13 +1920,13 @@
           "link": "https://stackoverflow.com/users/21361864/user21361864"
         },
         "is_answered": false,
-        "view_count": 46,
+        "view_count": 49,
         "closed_date": 1770478508,
         "answer_count": 0,
         "score": -5,
-        "last_activity_date": 1770478031,
+        "last_activity_date": 1770483771,
         "creation_date": 1770457992,
-        "last_edit_date": 1770478031,
+        "last_edit_date": 1770483771,
         "question_id": 79884804,
         "link": "https://stackoverflow.com/questions/79884804/javascript-is-redirecting-me-to-html-file-not-php-file",
         "closed_reason": "Not suitable for this site",
@@ -2540,5 +2541,5 @@
       }
     }
   ],
-  "lastUpdated": "2026-02-07T16:36:00.462Z"
+  "lastUpdated": "2026-02-07T17:30:02.443Z"
 }
