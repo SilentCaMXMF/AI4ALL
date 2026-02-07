@@ -1,6 +1,313 @@
 {
   "items": [
     {
+      "id": "github-issue-3911335548",
+      "platform": "github",
+      "type": "issue",
+      "title": "kajji/issues #76: Config: keybind overrides",
+      "content": "Parent: #16\n\n## Scope\n\nAllow users to override default keybinds via config.\n\n### Config shape (tentative)\n\n```jsonc\n{\n  \"keybinds\": {\n    \"quit\": \"ctrl+q\",\n    \"jj_new\": \"n\"\n  }\n}\n```\n\nMerges over `DEFAULT_KEYBINDS` (63 keys currently defined in `src/keybind/types.ts`).\n\n### Open questions\n\n- **Conflict detection**: What happens when two commands bind to the same key? Warn? Error? Last wins?\n- **Per-context overrides**: Should users be able to bind different keys per context (e.g. `n` does different things in log vs bookmarks)? Current system uses shared keybind keys across contexts.\n- **Multi-key sequences**: Current parser supports comma-separated alternatives (`a,b` means either `a` or `b`). Should we support vim-style sequences (`g g`)?\n- **Discoverability**: How do overridden keybinds show in the help modal? Need to reflect actual bindings, not defaults.\n- **Reset to default**: Should there be a way to reset a single keybind vs all?\n- **Validation**: How strict? Reject unknown key names? Warn about modifier-only bindings?\n\n### Exploration needed\n\n- Review how lazygit handles keybind config (they have a similar system)\n- Review how OpenCode handles keybind config (Zod schema with defaults)\n- Determine minimum viable scope (simple override map vs full rebinding)\n\n## Acceptance\n\nTBD after exploration.\n\n## Depends on\n\n- Config foundation sub-issue of #16",
+      "author": {
+        "name": "eliaskc",
+        "url": "https://github.com/eliaskc",
+        "avatar": "https://avatars.githubusercontent.com/u/23519471?v=4"
+      },
+      "timestamp": "2026-02-07T21:49:40Z",
+      "url": "https://github.com/eliaskc/kajji/issues/76",
+      "metrics": {
+        "comments": 0
+      },
+      "tags": [
+        "feature",
+        "needs-exploration"
+      ],
+      "raw": {
+        "url": "https://api.github.com/repos/eliaskc/kajji/issues/76",
+        "repository_url": "https://api.github.com/repos/eliaskc/kajji",
+        "labels_url": "https://api.github.com/repos/eliaskc/kajji/issues/76/labels{/name}",
+        "comments_url": "https://api.github.com/repos/eliaskc/kajji/issues/76/comments",
+        "events_url": "https://api.github.com/repos/eliaskc/kajji/issues/76/events",
+        "html_url": "https://github.com/eliaskc/kajji/issues/76",
+        "id": 3911335548,
+        "node_id": "I_kwDOQxUrq87pIj58",
+        "number": 76,
+        "title": "Config: keybind overrides",
+        "user": {
+          "login": "eliaskc",
+          "id": 23519471,
+          "node_id": "MDQ6VXNlcjIzNTE5NDcx",
+          "avatar_url": "https://avatars.githubusercontent.com/u/23519471?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/eliaskc",
+          "html_url": "https://github.com/eliaskc",
+          "followers_url": "https://api.github.com/users/eliaskc/followers",
+          "following_url": "https://api.github.com/users/eliaskc/following{/other_user}",
+          "gists_url": "https://api.github.com/users/eliaskc/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/eliaskc/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/eliaskc/subscriptions",
+          "organizations_url": "https://api.github.com/users/eliaskc/orgs",
+          "repos_url": "https://api.github.com/users/eliaskc/repos",
+          "events_url": "https://api.github.com/users/eliaskc/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/eliaskc/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "labels": [
+          {
+            "id": 10108435006,
+            "node_id": "LA_kwDOQxUrq88AAAACWoJ6Pg",
+            "url": "https://api.github.com/repos/eliaskc/kajji/labels/feature",
+            "name": "feature",
+            "color": "0E8A16",
+            "default": false,
+            "description": "New feature"
+          },
+          {
+            "id": 10158422725,
+            "node_id": "LA_kwDOQxUrq88AAAACXX06xQ",
+            "url": "https://api.github.com/repos/eliaskc/kajji/labels/needs-exploration",
+            "name": "needs-exploration",
+            "color": "1D76DB",
+            "default": false,
+            "description": "Potential feature or idea that needs exploration before commitment"
+          }
+        ],
+        "state": "open",
+        "locked": false,
+        "assignee": null,
+        "assignees": [],
+        "milestone": null,
+        "comments": 0,
+        "created_at": "2026-02-07T21:49:40Z",
+        "updated_at": "2026-02-07T21:49:40Z",
+        "closed_at": null,
+        "author_association": "OWNER",
+        "active_lock_reason": null,
+        "sub_issues_summary": {
+          "total": 0,
+          "completed": 0,
+          "percent_completed": 0
+        },
+        "issue_dependencies_summary": {
+          "blocked_by": 0,
+          "total_blocked_by": 0,
+          "blocking": 0,
+          "total_blocking": 0
+        },
+        "body": "Parent: #16\n\n## Scope\n\nAllow users to override default keybinds via config.\n\n### Config shape (tentative)\n\n```jsonc\n{\n  \"keybinds\": {\n    \"quit\": \"ctrl+q\",\n    \"jj_new\": \"n\"\n  }\n}\n```\n\nMerges over `DEFAULT_KEYBINDS` (63 keys currently defined in `src/keybind/types.ts`).\n\n### Open questions\n\n- **Conflict detection**: What happens when two commands bind to the same key? Warn? Error? Last wins?\n- **Per-context overrides**: Should users be able to bind different keys per context (e.g. `n` does different things in log vs bookmarks)? Current system uses shared keybind keys across contexts.\n- **Multi-key sequences**: Current parser supports comma-separated alternatives (`a,b` means either `a` or `b`). Should we support vim-style sequences (`g g`)?\n- **Discoverability**: How do overridden keybinds show in the help modal? Need to reflect actual bindings, not defaults.\n- **Reset to default**: Should there be a way to reset a single keybind vs all?\n- **Validation**: How strict? Reject unknown key names? Warn about modifier-only bindings?\n\n### Exploration needed\n\n- Review how lazygit handles keybind config (they have a similar system)\n- Review how OpenCode handles keybind config (Zod schema with defaults)\n- Determine minimum viable scope (simple override map vs full rebinding)\n\n## Acceptance\n\nTBD after exploration.\n\n## Depends on\n\n- Config foundation sub-issue of #16",
+        "reactions": {
+          "url": "https://api.github.com/repos/eliaskc/kajji/issues/76/reactions",
+          "total_count": 0,
+          "+1": 0,
+          "-1": 0,
+          "laugh": 0,
+          "hooray": 0,
+          "confused": 0,
+          "heart": 0,
+          "rocket": 0,
+          "eyes": 0
+        },
+        "timeline_url": "https://api.github.com/repos/eliaskc/kajji/issues/76/timeline",
+        "performed_via_github_app": null,
+        "state_reason": null,
+        "score": 1
+      }
+    },
+    {
+      "id": "github-issue-3911334369",
+      "platform": "github",
+      "type": "issue",
+      "title": "kajji/issues #73: Config: theme selection",
+      "content": "Parent: #16\n\n## Scope\n\nWire `ui.theme` config key to the theme system. Currently hardcoded to `\"lazygit\"` in `src/context/theme.tsx`.\n\n### Config key\n\n```jsonc\n{\n  \"ui\": {\n    \"theme\": \"lazygit\" // default\n  }\n}\n```\n\n### Implementation\n\n- Read `ui.theme` from config in `ThemeProvider`\n- Resolve to a theme preset from `src/theme/presets/`\n- Fall back to `\"lazygit\"` if unset or invalid\n- Available options determined by existing presets (currently: `lazygit`, `opencode`)\n\n### Not in scope\n\nBroader theme system design (standardized layout, color-only themes, new themes) is tracked in #19. This issue is just config plumbing.\n\n## Acceptance\n\n- [ ] `ui.theme` in config switches the active theme\n- [ ] Invalid theme name falls back to default with warning\n- [ ] Zod schema includes `ui.theme` with enum of available presets\n\n## Depends on\n\n- Config foundation sub-issue of #16",
+      "author": {
+        "name": "eliaskc",
+        "url": "https://github.com/eliaskc",
+        "avatar": "https://avatars.githubusercontent.com/u/23519471?v=4"
+      },
+      "timestamp": "2026-02-07T21:49:10Z",
+      "url": "https://github.com/eliaskc/kajji/issues/73",
+      "metrics": {
+        "comments": 0
+      },
+      "tags": [
+        "feature"
+      ],
+      "raw": {
+        "url": "https://api.github.com/repos/eliaskc/kajji/issues/73",
+        "repository_url": "https://api.github.com/repos/eliaskc/kajji",
+        "labels_url": "https://api.github.com/repos/eliaskc/kajji/issues/73/labels{/name}",
+        "comments_url": "https://api.github.com/repos/eliaskc/kajji/issues/73/comments",
+        "events_url": "https://api.github.com/repos/eliaskc/kajji/issues/73/events",
+        "html_url": "https://github.com/eliaskc/kajji/issues/73",
+        "id": 3911334369,
+        "node_id": "I_kwDOQxUrq87pIjnh",
+        "number": 73,
+        "title": "Config: theme selection",
+        "user": {
+          "login": "eliaskc",
+          "id": 23519471,
+          "node_id": "MDQ6VXNlcjIzNTE5NDcx",
+          "avatar_url": "https://avatars.githubusercontent.com/u/23519471?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/eliaskc",
+          "html_url": "https://github.com/eliaskc",
+          "followers_url": "https://api.github.com/users/eliaskc/followers",
+          "following_url": "https://api.github.com/users/eliaskc/following{/other_user}",
+          "gists_url": "https://api.github.com/users/eliaskc/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/eliaskc/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/eliaskc/subscriptions",
+          "organizations_url": "https://api.github.com/users/eliaskc/orgs",
+          "repos_url": "https://api.github.com/users/eliaskc/repos",
+          "events_url": "https://api.github.com/users/eliaskc/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/eliaskc/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "labels": [
+          {
+            "id": 10108435006,
+            "node_id": "LA_kwDOQxUrq88AAAACWoJ6Pg",
+            "url": "https://api.github.com/repos/eliaskc/kajji/labels/feature",
+            "name": "feature",
+            "color": "0E8A16",
+            "default": false,
+            "description": "New feature"
+          }
+        ],
+        "state": "open",
+        "locked": false,
+        "assignee": null,
+        "assignees": [],
+        "milestone": null,
+        "comments": 0,
+        "created_at": "2026-02-07T21:49:10Z",
+        "updated_at": "2026-02-07T21:49:10Z",
+        "closed_at": null,
+        "author_association": "OWNER",
+        "active_lock_reason": null,
+        "sub_issues_summary": {
+          "total": 0,
+          "completed": 0,
+          "percent_completed": 0
+        },
+        "issue_dependencies_summary": {
+          "blocked_by": 0,
+          "total_blocked_by": 0,
+          "blocking": 0,
+          "total_blocking": 0
+        },
+        "body": "Parent: #16\n\n## Scope\n\nWire `ui.theme` config key to the theme system. Currently hardcoded to `\"lazygit\"` in `src/context/theme.tsx`.\n\n### Config key\n\n```jsonc\n{\n  \"ui\": {\n    \"theme\": \"lazygit\" // default\n  }\n}\n```\n\n### Implementation\n\n- Read `ui.theme` from config in `ThemeProvider`\n- Resolve to a theme preset from `src/theme/presets/`\n- Fall back to `\"lazygit\"` if unset or invalid\n- Available options determined by existing presets (currently: `lazygit`, `opencode`)\n\n### Not in scope\n\nBroader theme system design (standardized layout, color-only themes, new themes) is tracked in #19. This issue is just config plumbing.\n\n## Acceptance\n\n- [ ] `ui.theme` in config switches the active theme\n- [ ] Invalid theme name falls back to default with warning\n- [ ] Zod schema includes `ui.theme` with enum of available presets\n\n## Depends on\n\n- Config foundation sub-issue of #16",
+        "reactions": {
+          "url": "https://api.github.com/repos/eliaskc/kajji/issues/73/reactions",
+          "total_count": 0,
+          "+1": 0,
+          "-1": 0,
+          "laugh": 0,
+          "hooray": 0,
+          "confused": 0,
+          "heart": 0,
+          "rocket": 0,
+          "eyes": 0
+        },
+        "timeline_url": "https://api.github.com/repos/eliaskc/kajji/issues/73/timeline",
+        "performed_via_github_app": null,
+        "state_reason": null,
+        "score": 1
+      }
+    },
+    {
+      "id": "github-issue-3911329770",
+      "platform": "github",
+      "type": "issue",
+      "title": "opencode-plugins/issues #42: Improve evaluation testing for reflection.ts - plugin doesn't work as expected",
+      "content": "## Problem\n\nThe current `reflection.ts` plugin doesn't work as expected. Based on user feedback, the plugin simply doesn't trigger reliable evaluation or the evaluations are not useful.\n\n## Current Behavior\n\n1. **Toast-only mode**: Current implementation (lines 632-646) only shows toast notifications - it does NOT prompt the agent to continue\n2. **No agent intervention**: The plugin is \"READ-ONLY\" per the comments, meaning it evaluates but never pushes the agent to complete work\n3. **Complex judge evaluation**: The complex prompt (lines 548-586) may be returning inconsistent verdicts\n4. **Race conditions**: Despite fixes for Esc abort (Issue #18), there may still be timing issues\n\n## Evidence\n\n- User reports plugin \"simply doesn't work as expected\"\n- The current implementation explicitly avoids sending feedback to the agent (line 643: \"DO NOT send to agent\")\n- This is by design but may not be the expected behavior\n\n## Expected Behavior\n\nOptions to consider:\n1. **Option A (Current design)**: Toast-only notifications, user must manually continue\n2. **Option B (More proactive)**: Send feedback to agent to continue incomplete tasks (like the new `reflection-static.ts`)\n3. **Option C (Hybrid)**: Toast for complete tasks, prompt agent for incomplete tasks\n\n## Testing Gaps\n\nThe current test suite (`test/reflection.test.ts`) has 1137 lines but mostly tests:\n- JSON parsing\n- Config merging\n- Pattern matching\n- Unit-level logic\n\n**Missing E2E tests that verify:**\n- [ ] Plugin actually triggers on session.idle\n- [ ] Judge session creates and evaluates correctly\n- [ ] Toast notifications appear\n- [ ] Verdict JSON is saved to `.reflection/` directory\n- [ ] Plugin correctly skips judge sessions (no infinite loop)\n- [ ] Plugin respects `enabled: false` config\n\n## Proposed Solution\n\n1. **Add real E2E tests** that run the full plugin flow with a real OpenCode session\n2. **Add integration tests** that mock the SDK but test the full `runReflection()` flow\n3. **Consider behavior change**: If \"READ-ONLY\" is not the expected UX, change to push feedback to agent\n4. **Add debug telemetry**: Log when plugin triggers, what it evaluates, and what it decides\n\n## Related\n\n- The new `reflection-static.ts` provides an alternative simpler approach that DOES prompt the agent\n- May want to unify or choose one approach\n\n## Files to Review\n\n- `reflection.ts` - main plugin\n- `test/reflection.test.ts` - unit tests (mostly logic tests, not integration)\n- `test/e2e.test.ts` - existing E2E tests (may not cover reflection well)",
+      "author": {
+        "name": "dzianisv",
+        "url": "https://github.com/dzianisv",
+        "avatar": "https://avatars.githubusercontent.com/u/2119348?v=4"
+      },
+      "timestamp": "2026-02-07T21:47:09Z",
+      "url": "https://github.com/dzianisv/opencode-plugins/issues/42",
+      "metrics": {
+        "comments": 0
+      },
+      "tags": [],
+      "raw": {
+        "url": "https://api.github.com/repos/dzianisv/opencode-plugins/issues/42",
+        "repository_url": "https://api.github.com/repos/dzianisv/opencode-plugins",
+        "labels_url": "https://api.github.com/repos/dzianisv/opencode-plugins/issues/42/labels{/name}",
+        "comments_url": "https://api.github.com/repos/dzianisv/opencode-plugins/issues/42/comments",
+        "events_url": "https://api.github.com/repos/dzianisv/opencode-plugins/issues/42/events",
+        "html_url": "https://github.com/dzianisv/opencode-plugins/issues/42",
+        "id": 3911329770,
+        "node_id": "I_kwDOQlSXvs7pIifq",
+        "number": 42,
+        "title": "Improve evaluation testing for reflection.ts - plugin doesn't work as expected",
+        "user": {
+          "login": "dzianisv",
+          "id": 2119348,
+          "node_id": "MDQ6VXNlcjIxMTkzNDg=",
+          "avatar_url": "https://avatars.githubusercontent.com/u/2119348?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/dzianisv",
+          "html_url": "https://github.com/dzianisv",
+          "followers_url": "https://api.github.com/users/dzianisv/followers",
+          "following_url": "https://api.github.com/users/dzianisv/following{/other_user}",
+          "gists_url": "https://api.github.com/users/dzianisv/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/dzianisv/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/dzianisv/subscriptions",
+          "organizations_url": "https://api.github.com/users/dzianisv/orgs",
+          "repos_url": "https://api.github.com/users/dzianisv/repos",
+          "events_url": "https://api.github.com/users/dzianisv/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/dzianisv/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "labels": [],
+        "state": "open",
+        "locked": false,
+        "assignee": null,
+        "assignees": [],
+        "milestone": null,
+        "comments": 0,
+        "created_at": "2026-02-07T21:47:09Z",
+        "updated_at": "2026-02-07T21:47:09Z",
+        "closed_at": null,
+        "author_association": "OWNER",
+        "active_lock_reason": null,
+        "sub_issues_summary": {
+          "total": 0,
+          "completed": 0,
+          "percent_completed": 0
+        },
+        "issue_dependencies_summary": {
+          "blocked_by": 0,
+          "total_blocked_by": 0,
+          "blocking": 0,
+          "total_blocking": 0
+        },
+        "body": "## Problem\n\nThe current `reflection.ts` plugin doesn't work as expected. Based on user feedback, the plugin simply doesn't trigger reliable evaluation or the evaluations are not useful.\n\n## Current Behavior\n\n1. **Toast-only mode**: Current implementation (lines 632-646) only shows toast notifications - it does NOT prompt the agent to continue\n2. **No agent intervention**: The plugin is \"READ-ONLY\" per the comments, meaning it evaluates but never pushes the agent to complete work\n3. **Complex judge evaluation**: The complex prompt (lines 548-586) may be returning inconsistent verdicts\n4. **Race conditions**: Despite fixes for Esc abort (Issue #18), there may still be timing issues\n\n## Evidence\n\n- User reports plugin \"simply doesn't work as expected\"\n- The current implementation explicitly avoids sending feedback to the agent (line 643: \"DO NOT send to agent\")\n- This is by design but may not be the expected behavior\n\n## Expected Behavior\n\nOptions to consider:\n1. **Option A (Current design)**: Toast-only notifications, user must manually continue\n2. **Option B (More proactive)**: Send feedback to agent to continue incomplete tasks (like the new `reflection-static.ts`)\n3. **Option C (Hybrid)**: Toast for complete tasks, prompt agent for incomplete tasks\n\n## Testing Gaps\n\nThe current test suite (`test/reflection.test.ts`) has 1137 lines but mostly tests:\n- JSON parsing\n- Config merging\n- Pattern matching\n- Unit-level logic\n\n**Missing E2E tests that verify:**\n- [ ] Plugin actually triggers on session.idle\n- [ ] Judge session creates and evaluates correctly\n- [ ] Toast notifications appear\n- [ ] Verdict JSON is saved to `.reflection/` directory\n- [ ] Plugin correctly skips judge sessions (no infinite loop)\n- [ ] Plugin respects `enabled: false` config\n\n## Proposed Solution\n\n1. **Add real E2E tests** that run the full plugin flow with a real OpenCode session\n2. **Add integration tests** that mock the SDK but test the full `runReflection()` flow\n3. **Consider behavior change**: If \"READ-ONLY\" is not the expected UX, change to push feedback to agent\n4. **Add debug telemetry**: Log when plugin triggers, what it evaluates, and what it decides\n\n## Related\n\n- The new `reflection-static.ts` provides an alternative simpler approach that DOES prompt the agent\n- May want to unify or choose one approach\n\n## Files to Review\n\n- `reflection.ts` - main plugin\n- `test/reflection.test.ts` - unit tests (mostly logic tests, not integration)\n- `test/e2e.test.ts` - existing E2E tests (may not cover reflection well)",
+        "reactions": {
+          "url": "https://api.github.com/repos/dzianisv/opencode-plugins/issues/42/reactions",
+          "total_count": 0,
+          "+1": 0,
+          "-1": 0,
+          "laugh": 0,
+          "hooray": 0,
+          "confused": 0,
+          "heart": 0,
+          "rocket": 0,
+          "eyes": 0
+        },
+        "timeline_url": "https://api.github.com/repos/dzianisv/opencode-plugins/issues/42/timeline",
+        "performed_via_github_app": null,
+        "state_reason": null,
+        "score": 1
+      }
+    },
+    {
       "id": "github-issue-3911287537",
       "platform": "github",
       "type": "issue",
@@ -50,15 +357,15 @@
           "site_admin": false
         },
         "labels": [],
-        "state": "open",
+        "state": "closed",
         "locked": false,
         "assignee": null,
         "assignees": [],
         "milestone": null,
         "comments": 0,
         "created_at": "2026-02-07T21:28:01Z",
-        "updated_at": "2026-02-07T21:28:01Z",
-        "closed_at": null,
+        "updated_at": "2026-02-07T21:34:41Z",
+        "closed_at": "2026-02-07T21:34:41Z",
         "author_association": "NONE",
         "active_lock_reason": null,
         "sub_issues_summary": {
@@ -87,7 +394,7 @@
         },
         "timeline_url": "https://api.github.com/repos/joelhooks/swarm-tools/issues/174/timeline",
         "performed_via_github_app": null,
-        "state_reason": null,
+        "state_reason": "completed",
         "score": 1
       }
     },
@@ -197,9 +504,9 @@
       "timestamp": "2026-02-07T21:19:14.000Z",
       "url": "https://stackoverflow.com/questions/79885070/i-am-stucked-in-learning",
       "metrics": {
-        "upvotes": -4,
+        "upvotes": -5,
         "comments": 0,
-        "views": 21
+        "views": 33
       },
       "tags": [
         "javascript"
@@ -218,10 +525,10 @@
           "link": "https://stackoverflow.com/users/31944621/resad505"
         },
         "is_answered": false,
-        "view_count": 21,
+        "view_count": 33,
         "closed_date": 1770499742,
         "answer_count": 0,
-        "score": -4,
+        "score": -5,
         "last_activity_date": 1770499154,
         "creation_date": 1770499154,
         "question_id": 79885070,
@@ -520,7 +827,7 @@
       "metrics": {
         "upvotes": 0,
         "comments": 1,
-        "views": 6
+        "views": 10
       },
       "tags": [
         "typescript",
@@ -543,7 +850,7 @@
           "link": "https://stackoverflow.com/users/30343441/elliot-datsomor"
         },
         "is_answered": false,
-        "view_count": 6,
+        "view_count": 10,
         "answer_count": 1,
         "score": 0,
         "last_activity_date": 1770498633,
@@ -2351,7 +2658,7 @@
       "metrics": {
         "upvotes": 0,
         "comments": 0,
-        "views": 34
+        "views": 37
       },
       "tags": [
         "javascript",
@@ -2373,7 +2680,7 @@
           "link": "https://stackoverflow.com/users/4512005/razvan-zamfir"
         },
         "is_answered": false,
-        "view_count": 34,
+        "view_count": 37,
         "answer_count": 0,
         "score": 0,
         "last_activity_date": 1770486462,
@@ -3708,7 +4015,7 @@
       "metrics": {
         "upvotes": -1,
         "comments": 0,
-        "views": 31
+        "views": 34
       },
       "tags": [
         "javascript",
@@ -3733,7 +4040,7 @@
           "link": "https://stackoverflow.com/users/8103934/bustinout"
         },
         "is_answered": false,
-        "view_count": 31,
+        "view_count": 34,
         "answer_count": 0,
         "score": -1,
         "last_activity_date": 1770486800,
@@ -4643,7 +4950,7 @@
       "metrics": {
         "upvotes": -1,
         "comments": 0,
-        "views": 45
+        "views": 46
       },
       "tags": [
         "typescript",
@@ -4664,7 +4971,7 @@
           "link": "https://stackoverflow.com/users/13349770/eziomercer"
         },
         "is_answered": false,
-        "view_count": 45,
+        "view_count": 46,
         "answer_count": 0,
         "score": -1,
         "last_activity_date": 1770414147,
@@ -4692,7 +4999,7 @@
       "metrics": {
         "upvotes": 0,
         "comments": 0,
-        "views": 34
+        "views": 35
       },
       "tags": [
         "reactjs",
@@ -4717,7 +5024,7 @@
           "link": "https://stackoverflow.com/users/11830389/ian-kabaka"
         },
         "is_answered": false,
-        "view_count": 34,
+        "view_count": 35,
         "answer_count": 0,
         "score": 0,
         "last_activity_date": 1770401582,
@@ -5044,5 +5351,5 @@
       }
     }
   ],
-  "lastUpdated": "2026-02-07T21:30:26.344Z"
+  "lastUpdated": "2026-02-07T21:54:29.699Z"
 }
