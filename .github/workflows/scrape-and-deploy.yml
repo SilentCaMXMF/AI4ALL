@@ -47,7 +47,7 @@ jobs:
           if [ "$PLATFORMS" = "all" ]; then
             npx tsx src/scraper/index.ts
           else
-            npx tsx src/scraper/index.ts --platforms $PLATFORMS
+            npx tsx src/scraper/cli.ts --platforms $PLATFORMS
           fi
 
       - name: Upload scraped data
