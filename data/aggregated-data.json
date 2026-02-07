@@ -1,6 +1,293 @@
 {
   "items": [
     {
+      "id": "github-issue-3910912961",
+      "platform": "github",
+      "type": "issue",
+      "title": "clepho/issues #53: Daemon uses separate, divergent LLM implementation",
+      "content": "## Problem\n\n`daemon.rs:call_llm_for_description()` is a completely separate LLM implementation that bypasses the provider system:\n\n- **Only speaks OpenAI-compatible API** — ignores the provider config setting, so won't work with Anthropic or Ollama\n- **Sends raw file bytes without resize** — modern camera files can be 30MB+, resulting in huge base64 payloads\n- **Uses a different default prompt** that omits the `TAGS:` instruction\n- **Saves description only** — no tags, no embeddings (uses `save_photo_description_by_id` instead of `save_llm_result`)\n- **Processes sequentially** with a hardcoded 500ms sleep instead of using `LlmQueue`\n\n## Impact\n\nDaemon-processed photos are second-class citizens: no tags, no embeddings for semantic search, potentially enormous API payloads, and only works with OpenAI-compatible providers.\n\n## Suggested Fix\n\nRefactor the daemon to use `LlmClient`/`LlmQueue` with `describe_and_tag_image()`. This gives multi-provider support, image resize, tags, and embeddings for free.",
+      "author": {
+        "name": "barrulus",
+        "url": "https://github.com/barrulus",
+        "avatar": "https://avatars.githubusercontent.com/u/201146829?v=4"
+      },
+      "timestamp": "2026-02-07T18:33:17Z",
+      "url": "https://github.com/barrulus/clepho/issues/53",
+      "metrics": {
+        "comments": 0
+      },
+      "tags": [],
+      "raw": {
+        "url": "https://api.github.com/repos/barrulus/clepho/issues/53",
+        "repository_url": "https://api.github.com/repos/barrulus/clepho",
+        "labels_url": "https://api.github.com/repos/barrulus/clepho/issues/53/labels{/name}",
+        "comments_url": "https://api.github.com/repos/barrulus/clepho/issues/53/comments",
+        "events_url": "https://api.github.com/repos/barrulus/clepho/issues/53/events",
+        "html_url": "https://github.com/barrulus/clepho/issues/53",
+        "id": 3910912961,
+        "node_id": "I_kwDOQ74Uc87pG8vB",
+        "number": 53,
+        "title": "Daemon uses separate, divergent LLM implementation",
+        "user": {
+          "login": "barrulus",
+          "id": 201146829,
+          "node_id": "U_kgDOC_1BzQ",
+          "avatar_url": "https://avatars.githubusercontent.com/u/201146829?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/barrulus",
+          "html_url": "https://github.com/barrulus",
+          "followers_url": "https://api.github.com/users/barrulus/followers",
+          "following_url": "https://api.github.com/users/barrulus/following{/other_user}",
+          "gists_url": "https://api.github.com/users/barrulus/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/barrulus/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/barrulus/subscriptions",
+          "organizations_url": "https://api.github.com/users/barrulus/orgs",
+          "repos_url": "https://api.github.com/users/barrulus/repos",
+          "events_url": "https://api.github.com/users/barrulus/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/barrulus/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "labels": [],
+        "state": "open",
+        "locked": false,
+        "assignee": null,
+        "assignees": [],
+        "milestone": null,
+        "comments": 0,
+        "created_at": "2026-02-07T18:33:17Z",
+        "updated_at": "2026-02-07T18:33:17Z",
+        "closed_at": null,
+        "author_association": "OWNER",
+        "active_lock_reason": null,
+        "sub_issues_summary": {
+          "total": 0,
+          "completed": 0,
+          "percent_completed": 0
+        },
+        "issue_dependencies_summary": {
+          "blocked_by": 0,
+          "total_blocked_by": 0,
+          "blocking": 0,
+          "total_blocking": 0
+        },
+        "body": "## Problem\n\n`daemon.rs:call_llm_for_description()` is a completely separate LLM implementation that bypasses the provider system:\n\n- **Only speaks OpenAI-compatible API** — ignores the provider config setting, so won't work with Anthropic or Ollama\n- **Sends raw file bytes without resize** — modern camera files can be 30MB+, resulting in huge base64 payloads\n- **Uses a different default prompt** that omits the `TAGS:` instruction\n- **Saves description only** — no tags, no embeddings (uses `save_photo_description_by_id` instead of `save_llm_result`)\n- **Processes sequentially** with a hardcoded 500ms sleep instead of using `LlmQueue`\n\n## Impact\n\nDaemon-processed photos are second-class citizens: no tags, no embeddings for semantic search, potentially enormous API payloads, and only works with OpenAI-compatible providers.\n\n## Suggested Fix\n\nRefactor the daemon to use `LlmClient`/`LlmQueue` with `describe_and_tag_image()`. This gives multi-provider support, image resize, tags, and embeddings for free.",
+        "reactions": {
+          "url": "https://api.github.com/repos/barrulus/clepho/issues/53/reactions",
+          "total_count": 0,
+          "+1": 0,
+          "-1": 0,
+          "laugh": 0,
+          "hooray": 0,
+          "confused": 0,
+          "heart": 0,
+          "rocket": 0,
+          "eyes": 0
+        },
+        "timeline_url": "https://api.github.com/repos/barrulus/clepho/issues/53/timeline",
+        "performed_via_github_app": null,
+        "state_reason": null,
+        "score": 1
+      }
+    },
+    {
+      "id": "github-issue-3910911492",
+      "platform": "github",
+      "type": "issue",
+      "title": "openclaw/issues #11353: [Feature]: Add huggingface inference providers support",
+      "content": "## Summary\n\ninference providers are really expensive . huggingface has an inference providers' api that links to a ton of different inference providers and models. this is free and there is a paid plan for $9/month. the models available are many and it there is a open-ai compatible api for it .\n\n## Proposed solution\n\nthe first thing i do is always add hf provider support because that is simply my entrypoint .\n\nadding an optional huggingface inference provider support in the lllm client.\n\n## Alternatives considered\n\nadditional inference providers are less of a priority for me , but i have considered them all , yes.\n\n## Additional context\n\nhttps://huggingface.co/inference/models\n\n- [x] I am a 🙋🏻‍♂️human not a 🦞lobster.\n- [x] I am willing to make a pr for this issue",
+      "author": {
+        "name": "Josephrp",
+        "url": "https://github.com/Josephrp",
+        "avatar": "https://avatars.githubusercontent.com/u/18212928?v=4"
+      },
+      "timestamp": "2026-02-07T18:32:19Z",
+      "url": "https://github.com/openclaw/openclaw/issues/11353",
+      "metrics": {
+        "comments": 0
+      },
+      "tags": [
+        "enhancement"
+      ],
+      "raw": {
+        "url": "https://api.github.com/repos/openclaw/openclaw/issues/11353",
+        "repository_url": "https://api.github.com/repos/openclaw/openclaw",
+        "labels_url": "https://api.github.com/repos/openclaw/openclaw/issues/11353/labels{/name}",
+        "comments_url": "https://api.github.com/repos/openclaw/openclaw/issues/11353/comments",
+        "events_url": "https://api.github.com/repos/openclaw/openclaw/issues/11353/events",
+        "html_url": "https://github.com/openclaw/openclaw/issues/11353",
+        "id": 3910911492,
+        "node_id": "I_kwDOQb6kR87pG8YE",
+        "number": 11353,
+        "title": "[Feature]: Add huggingface inference providers support",
+        "user": {
+          "login": "Josephrp",
+          "id": 18212928,
+          "node_id": "MDQ6VXNlcjE4MjEyOTI4",
+          "avatar_url": "https://avatars.githubusercontent.com/u/18212928?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/Josephrp",
+          "html_url": "https://github.com/Josephrp",
+          "followers_url": "https://api.github.com/users/Josephrp/followers",
+          "following_url": "https://api.github.com/users/Josephrp/following{/other_user}",
+          "gists_url": "https://api.github.com/users/Josephrp/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/Josephrp/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/Josephrp/subscriptions",
+          "organizations_url": "https://api.github.com/users/Josephrp/orgs",
+          "repos_url": "https://api.github.com/users/Josephrp/repos",
+          "events_url": "https://api.github.com/users/Josephrp/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/Josephrp/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "labels": [
+          {
+            "id": 9706244996,
+            "node_id": "LA_kwDOQb6kR88AAAACQomLhA",
+            "url": "https://api.github.com/repos/openclaw/openclaw/labels/enhancement",
+            "name": "enhancement",
+            "color": "a2eeef",
+            "default": true,
+            "description": "New feature or request"
+          }
+        ],
+        "state": "open",
+        "locked": false,
+        "assignee": null,
+        "assignees": [],
+        "milestone": null,
+        "comments": 0,
+        "created_at": "2026-02-07T18:32:19Z",
+        "updated_at": "2026-02-07T18:32:19Z",
+        "closed_at": null,
+        "author_association": "NONE",
+        "type": null,
+        "active_lock_reason": null,
+        "sub_issues_summary": {
+          "total": 0,
+          "completed": 0,
+          "percent_completed": 0
+        },
+        "issue_dependencies_summary": {
+          "blocked_by": 0,
+          "total_blocked_by": 0,
+          "blocking": 0,
+          "total_blocking": 0
+        },
+        "body": "## Summary\n\ninference providers are really expensive . huggingface has an inference providers' api that links to a ton of different inference providers and models. this is free and there is a paid plan for $9/month. the models available are many and it there is a open-ai compatible api for it .\n\n## Proposed solution\n\nthe first thing i do is always add hf provider support because that is simply my entrypoint .\n\nadding an optional huggingface inference provider support in the lllm client.\n\n## Alternatives considered\n\nadditional inference providers are less of a priority for me , but i have considered them all , yes.\n\n## Additional context\n\nhttps://huggingface.co/inference/models\n\n- [x] I am a 🙋🏻‍♂️human not a 🦞lobster.\n- [x] I am willing to make a pr for this issue",
+        "reactions": {
+          "url": "https://api.github.com/repos/openclaw/openclaw/issues/11353/reactions",
+          "total_count": 0,
+          "+1": 0,
+          "-1": 0,
+          "laugh": 0,
+          "hooray": 0,
+          "confused": 0,
+          "heart": 0,
+          "rocket": 0,
+          "eyes": 0
+        },
+        "timeline_url": "https://api.github.com/repos/openclaw/openclaw/issues/11353/timeline",
+        "performed_via_github_app": null,
+        "state_reason": null,
+        "score": 1
+      }
+    },
+    {
+      "id": "github-issue-3910875745",
+      "platform": "github",
+      "type": "issue",
+      "title": "pulse-multi-agent-platform/issues #25: Unified API Hub for Free LLM Providers",
+      "content": "<html>\n<body>\n<!--StartFragment--><html><head></head><body><h1>🚀 Feature Request: Unified API Hub for Free LLM Providers</h1>\n<h2>📋 Summary</h2>\n<p>Build a centralized API hub that provides a single, unified interface to multiple free LLM providers with automatic failover when quota limits are reached.</p>\n<hr>\n<h2>🎯 Objectives</h2>\n<ul>\n<li><strong>Single API Interface</strong>: One endpoint to rule them all</li>\n<li><strong>Automatic Failover</strong>: Seamlessly switch providers when quotas are exhausted</li>\n<li><strong>Quota Management</strong>: Track and manage rate limits across all providers</li>\n<li><strong>Provider Agnostic</strong>: Abstract away provider-specific implementations</li>\n<li><strong>High Availability</strong>: Ensure continuous service through intelligent routing</li>\n</ul>\n<hr>\n<h2>🔍 Research &amp; Provider Analysis</h2>\n<h3>Target Free LLM Providers</h3>\n<ol>\n<li><strong>Groq</strong> - Fast inference, generous free tier</li>\n<li><strong>Together AI</strong> - Multiple open-source models, free tier available</li>\n<li><strong>Hugging Face Inference API</strong> - Various models, rate-limited free tier</li>\n<li><strong>Google Gemini</strong> - Free tier with good quotas</li>\n<li><strong>Cohere</strong> - Trial/free tier available</li>\n<li><strong>Anthropic Claude</strong> - Limited free tier via API</li>\n<li><strong>OpenRouter</strong> - Aggregator with some free models</li>\n<li><strong>Replicate</strong> - Pay-per-use with free credits</li>\n<li><strong>DeepInfra</strong> - Free tier for various models</li>\n<li><strong>Mistral AI</strong> - Free tier available</li>\n</ol>\n<h3>Key Challenges</h3>\n<ul>\n<li>❌ Different API formats (OpenAI-compatible vs proprietary)</li>\n<li>❌ Varying rate limits and quota structures</li>\n<li>❌ Different authentication mechanisms</li>\n<li>❌ Model capability differences</li>\n<li>❌ Response format inconsistencies</li>\n<li>❌ Complex error handling and failover logic</li>\n</ul>\n<hr>\n<h2>🏗️ Architecture Design</h2>\n<h3>System Components</h3>\n<pre><code>┌─────────────────────────────────────────────────────────┐\n│                     API Gateway Layer                    │\n│          (Single Unified Endpoint + Auth)               │\n└─────────────────────┬───────────────────────────────────┘\n                      │\n┌─────────────────────▼───────────────────────────────────┐\n│                  Intelligent Router                      │\n│        (Provider Selection + Failover Logic)            │\n└─────────────────────┬───────────────────────────────────┘\n                      │\n        ┌─────────────┼─────────────┐\n        │             │             │\n┌───────▼──────┐ ┌───▼──────┐ ┌───▼──────┐\n│   Quota      │ │ Request  │ │ Response │\n│  Manager     │ │Translator│ │Normalizer│\n└──────────────┘ └──────────┘ └──────────┘\n        │             │             │\n        └─────────────┼─────────────┘\n                      │\n        ┌─────────────┼─────────────┐\n        │             │             │\n┌───────▼──────┐ ┌───▼──────┐ ┌───▼──────┐\n│   Provider   │ │ Provider │ │ Provider │\n│      A       │ │     B    │ │     C    │\n│   (Groq)     │ │(Together)│ │ (Gemini) │\n└──────────────┘ └──────────┘ └──────────┘\n</code></pre>\n<h3>Core Components</h3>\n<h4>1. <strong>API Gateway Layer</strong></h4>\n<ul>\n<li>Single unified endpoint for clients</li>\n<li>Request authentication and validation</li>\n<li>Request routing to appropriate handler</li>\n<li>OpenAPI documentation</li>\n</ul>\n<h4>2. <strong>Model Registry/Configuration</strong></h4>\n<p>Database/config storing:</p>\n<ul>\n<li>Provider details (API keys, endpoints)</li>\n<li>Model capabilities and mappings</li>\n<li>Quota limits and current usage</li>\n<li>Priority/fallback order</li>\n<li>Health status</li>\n</ul>\n<h4>3. <strong>Quota Manager</strong></h4>\n<ul>\n<li>Tracks usage per provider (requests/min, tokens/day)</li>\n<li>Monitors rate limits in real-time</li>\n<li>Implements circuit breaker pattern</li>\n<li>Auto-resets counters based on provider windows</li>\n<li>Provides availability status to router</li>\n</ul>\n<h4>4. <strong>Intelligent Router</strong></h4>\n<p>Selects available provider based on:</p>\n<ul>\n<li>Current quota status</li>\n<li>Model availability/compatibility</li>\n<li>Provider priority configuration</li>\n<li>Response time/reliability metrics</li>\n<li>Implements fallback chain logic</li>\n</ul>\n<h4>5. <strong>Request Translator</strong></h4>\n<ul>\n<li>Converts unified API format to provider-specific format</li>\n<li>Maps model names to provider equivalents</li>\n<li>Handles provider-specific parameters</li>\n<li>Normalizes input across different schemas</li>\n</ul>\n<h4>6. <strong>Response Normalizer</strong></h4>\n<ul>\n<li>Standardizes responses from different providers</li>\n<li>Uniform error format</li>\n<li>Consistent streaming format (SSE)</li>\n<li>Token usage normalization</li>\n</ul>\n<h4>7. <strong>Monitoring &amp; Logging</strong></h4>\n<ul>\n<li>Track usage statistics per provider</li>\n<li>Log errors and fallback events</li>\n<li>Performance metrics and latency tracking</li>\n<li>Alert on quota thresholds</li>\n<li>Health check dashboard</li>\n</ul>\n<hr>\n<h2>💻 Technology Stack</h2>\n<h3>Backend Framework</h3>\n<p><strong>Primary: Python with FastAPI</strong></p>\n<ul>\n<li>✅ Async support for concurrent requests</li>\n<li>✅ Built-in OpenAPI documentation</li>\n<li>✅ Easy integration with LLM libraries</li>\n<li>✅ Type hints and validation with Pydantic</li>\n</ul>\n<p><strong>Alternative</strong>: Node.js with Express</p>\n<h3>Database &amp; Caching</h3>\n<p><strong>Redis</strong> for:</p>\n<ul>\n<li>Quota counters (fast atomic increments)</li>\n<li>Rate limiting (sliding window)</li>\n<li>Response caching</li>\n<li>Provider health status</li>\n</ul>\n<p><strong>PostgreSQL/SQLite</strong> for:</p>\n<ul>\n<li>Configuration storage</li>\n<li>API key management</li>\n<li>Usage history and analytics</li>\n<li>Audit logs</li>\n</ul>\n<h3>Queue System (Optional but Recommended)</h3>\n<ul>\n<li><strong>Celery</strong> or <strong>Redis Queue</strong></li>\n<li>Async processing and retry logic</li>\n<li>Request queuing when all providers rate-limited</li>\n</ul>\n<h3>Additional Libraries</h3>\n<pre><code class=\"language-python\"># Core dependencies\nfastapi&gt;=0.104.0\nuvicorn[standard]&gt;=0.24.0\npydantic&gt;=2.0.0\nhttpx&gt;=0.25.0  # Async HTTP client\n\n# Database &amp; Caching\nredis&gt;=5.0.0\nsqlalchemy&gt;=2.0.0\nalembic&gt;=1.12.0\n\n# LLM Integrations\nopenai&gt;=1.0.0\nanthropic&gt;=0.7.0\ngoogle-generativeai&gt;=0.3.0\ncohere&gt;=4.0.0\n\n# Monitoring\nprometheus-client&gt;=0.18.0\npython-json-logger&gt;=2.0.0\n</code></pre>\n<hr>\n<h2>🔌 Unified API Design</h2>\n<h3>Endpoint Structure</h3>\n<pre><code class=\"language-http\">POST /v1/chat/completions\nContent-Type: application/json\nAuthorization: Bearer YOUR_API_KEY\n</code></pre>\n<h3>Request Format</h3>\n<pre><code class=\"language-json\">{\n  \"model\": \"gpt-3.5-turbo-equivalent\",\n  \"messages\": [\n    {\"role\": \"system\", \"content\": \"You are a helpful assistant.\"},\n    {\"role\": \"user\", \"content\": \"Hello!\"}\n  ],\n  \"temperature\": 0.7,\n  \"max_tokens\": 1000,\n  \"stream\": false,\n  \"provider\": \"groq\"  // Optional: force specific provider\n}\n</code></pre>\n<h3>Response Format</h3>\n<pre><code class=\"language-json\">{\n  \"id\": \"chatcmpl-123\",\n  \"object\": \"chat.completion\",\n  \"created\": 1677652288,\n  \"model\": \"llama-3.1-70b\",\n  \"provider\": \"groq\",\n  \"choices\": [{\n    \"index\": 0,\n    \"message\": {\n      \"role\": \"assistant\",\n      \"content\": \"Hello! How can I help you today?\"\n    },\n    \"finish_reason\": \"stop\"\n  }],\n  \"usage\": {\n    \"prompt_tokens\": 10,\n    \"completion_tokens\": 9,\n    \"total_tokens\": 19\n  }\n}\n</code></pre>\n<hr>\n<h2>🔄 Failover Logic Flow</h2>\n<pre><code>1. Request received at API Gateway\n   ↓\n2. Authenticate &amp; validate request\n   ↓\n3. Check if specific provider requested\n   ↓\n4. If not → Consult Quota Manager for available providers\n   ↓\n5. Router selects provider based on:\n   - Quota availability ✓\n   - Priority order ✓\n   - Model compatibility ✓\n   - Recent performance ✓\n   ↓\n6. Attempt request to Provider A\n   ↓\n7. Response received?\n   ├─ YES → Normalize response → Return to client ✓\n   │\n   └─ NO → Check error type:\n       ├─ 429 (Quota exceeded) → Mark exhausted → Next provider\n       ├─ 5xx (Server error) → Increment failure count → Next provider\n       ├─ Network timeout → Next provider\n       └─ 4xx (Client error) → Return error to client ✗\n   ↓\n8. Retry with Provider B (repeat step 6-7)\n   ↓\n9. Continue until:\n   - Success ✓\n   - All providers exhausted ✗\n   ↓\n10. Return unified response or aggregated error\n</code></pre>\n<hr>\n<h2>⚙️ Configuration Example</h2>\n<h3>Provider Configuration (YAML)</h3>\n<pre><code class=\"language-yaml\">providers:\n  - name: groq\n    enabled: true\n    priority: 1\n    api_key: ${GROQ_API_KEY}\n    endpoint: https://api.groq.com/openai/v1/chat/completions\n    format: openai\n    timeout: 30\n    quotas:\n      requests_per_minute: 30\n      requests_per_day: 14400\n      tokens_per_minute: 7000\n      tokens_per_day: null\n    models:\n      - id: llama-3.1-70b\n        alias: gpt-3.5-turbo-equivalent\n        context_window: 8192\n      - id: mixtral-8x7b\n        alias: mixtral-medium\n        context_window: 32768\n    health_check:\n      enabled: true\n      interval: 300  # seconds\n      \n  - name: together\n    enabled: true\n    priority: 2\n    api_key: ${TOGETHER_API_KEY}\n    endpoint: https://api.together.xyz/v1/chat/completions\n    format: openai\n    timeout: 45\n    quotas:\n      requests_per_minute: 60\n      requests_per_day: null\n      tokens_per_minute: null\n      tokens_per_day: 1000000\n    models:\n      - id: meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo\n        alias: llama-70b\n        context_window: 8192\n      - id: mistralai/Mixtral-8x7B-Instruct-v0.1\n        alias: mixtral-medium\n        context_window: 32768\n        \n  - name: gemini\n    enabled: true\n    priority: 3\n    api_key: ${GOOGLE_API_KEY}\n    endpoint: https://generativelanguage.googleapis.com/v1beta\n    format: google\n    timeout: 60\n    quotas:\n      requests_per_minute: 60\n      requests_per_day: 1500\n      tokens_per_minute: 32000\n    models:\n      - id: gemini-1.5-flash\n        alias: gemini-flash\n        context_window: 1000000\n\n# Global settings\nsettings:\n  default_model: gpt-3.5-turbo-equivalent\n  max_retries: 3\n  retry_delay: 1.0  # seconds\n  circuit_breaker:\n    failure_threshold: 5\n    recovery_timeout: 60\n    half_open_requests: 3\n  cache:\n    enabled: true\n    ttl: 3600\n    max_size: 1000\n</code></pre>\n<hr>\n<h2>📊 Implementation Phases</h2>\n<h3>Phase 1: MVP (Weeks 1-2)</h3>\n<p><strong>Goal</strong>: Basic working prototype</p>\n<ul>\n<li>[ ] Set up FastAPI project structure</li>\n<li>[ ] Implement basic API gateway with authentication</li>\n<li>[ ] Integrate 2-3 providers (Groq, Together AI, Gemini)</li>\n<li>[ ] Simple round-robin failover logic</li>\n<li>[ ] In-memory quota tracking</li>\n<li>[ ] Basic error handling</li>\n<li>[ ] Unit tests for core components</li>\n</ul>\n<p><strong>Deliverables</strong>:</p>\n<ul>\n<li>Working API endpoint</li>\n<li>Basic provider adapters</li>\n<li>Simple configuration file</li>\n<li>README with setup instructions</li>\n</ul>\n<hr>\n<h3>Phase 2: Enhanced Features (Weeks 3-4)</h3>\n<p><strong>Goal</strong>: Production-ready quota management</p>\n<ul>\n<li>[ ] Redis integration for quota tracking</li>\n<li>[ ] PostgreSQL for configuration storage</li>\n<li>[ ] Intelligent routing based on model capabilities</li>\n<li>[ ] Add 3-4 more providers</li>\n<li>[ ] Implement circuit breaker pattern</li>\n<li>[ ] Request/Response normalization layer</li>\n<li>[ ] Comprehensive error mapping</li>\n<li>[ ] Integration tests</li>\n</ul>\n<p><strong>Deliverables</strong>:</p>\n<ul>\n<li>Redis-based quota manager</li>\n<li>Database schema and migrations</li>\n<li>Enhanced routing logic</li>\n<li>API documentation (OpenAPI)</li>\n</ul>\n<hr>\n<h3>Phase 3: Production Ready (Weeks 5-6)</h3>\n<p><strong>Goal</strong>: Deployment and monitoring</p>\n<ul>\n<li>[ ] Monitoring and analytics dashboard</li>\n<li>[ ] Rate limiting per client API key</li>\n<li>[ ] Response caching layer</li>\n<li>[ ] Admin panel for configuration</li>\n<li>[ ] Docker containerization</li>\n<li>[ ] Health check endpoints</li>\n<li>[ ] Logging and metrics (Prometheus)</li>\n<li>[ ] Load testing and optimization</li>\n</ul>\n<p><strong>Deliverables</strong>:</p>\n<ul>\n<li>Docker Compose setup</li>\n<li>Monitoring dashboard</li>\n<li>Admin interface</li>\n<li>Deployment documentation</li>\n<li>Performance benchmarks</li>\n</ul>\n<hr>\n<h3>Phase 4: Advanced Features (Weeks 7-8)</h3>\n<p><strong>Goal</strong>: Optimization and scaling</p>\n<ul>\n<li>[ ] Load balancing across provider instances</li>\n<li>[ ] A/B testing framework for providers</li>\n<li>[ ] Custom model routing rules</li>\n<li>[ ] Request queuing system</li>\n<li>[ ] API key rotation support</li>\n<li>[ ] Cost tracking and analytics</li>\n<li>[ ] Webhook notifications for quota alerts</li>\n<li>[ ] Multi-region deployment support</li>\n</ul>\n<p><strong>Deliverables</strong>:</p>\n<ul>\n<li>Advanced routing engine</li>\n<li>Analytics dashboard</li>\n<li>Cost optimization reports</li>\n<li>Scaling guide</li>\n</ul>\n<hr>\n<h2>✨ Key Features to Implement</h2>\n<h3>1. Health Checks</h3>\n<ul>\n<li>Periodic provider availability checks (every 5 minutes)</li>\n<li>Automatic provider disabling on consecutive failures</li>\n<li>Health status API endpoint</li>\n<li>Notification on provider downtime</li>\n</ul>\n<h3>2. Circuit Breaker</h3>\n<ul>\n<li>Temporarily disable failing providers</li>\n<li>Configurable failure threshold</li>\n<li>Automatic recovery attempts</li>\n<li>Half-open state for gradual recovery</li>\n</ul>\n<h3>3. Retry Logic</h3>\n<ul>\n<li>Exponential backoff for transient errors</li>\n<li>Configurable max retry attempts</li>\n<li>Different retry strategies per error type</li>\n<li>Request deduplication</li>\n</ul>\n<h3>4. Streaming Support</h3>\n<ul>\n<li>Handle Server-Sent Events (SSE) from multiple providers</li>\n<li>Unified streaming interface</li>\n<li>Stream buffering and error recovery</li>\n<li>Connection timeout handling</li>\n</ul>\n<h3>5. Request Queuing</h3>\n<ul>\n<li>Queue requests when all providers rate-limited</li>\n<li>Priority queue for different client tiers</li>\n<li>Queue size limits and overflow handling</li>\n<li>Estimated wait time calculation</li>\n</ul>\n<h3>6. API Key Rotation</h3>\n<ul>\n<li>Support multiple keys per provider</li>\n<li>Automatic rotation on quota exhaustion</li>\n<li>Key health tracking</li>\n<li>Secure key storage and encryption</li>\n</ul>\n<h3>7. Usage Analytics</h3>\n<ul>\n<li>Provider reliability metrics</li>\n<li>Response time tracking</li>\n<li>Cost per provider (if applicable)</li>\n<li>Model usage statistics</li>\n<li>Client usage patterns</li>\n</ul>\n<hr>\n<h2>⚠️ Challenges &amp; Solutions</h2>\n\nChallenge | Solution\n-- | --\nDifferent model capabilities | Implement model mapping/aliasing system with capability matrix\nInconsistent error codes | Create error normalization layer with unified error taxonomy\nProvider downtime | Health monitoring + automatic failover + circuit breaker\nQuota reset timing | Provider-specific reset tracking with timezone handling\nStreaming differences | Unified SSE wrapper with format translation\nCost tracking | Usage logging per provider with token counting\nAuthentication variations | Adapter pattern for each provider's auth mechanism\nRate limit headers | Parse and normalize rate limit info from response headers\nResponse time variance | Track latency metrics and adjust routing priorities\nModel context limits | Validate and truncate requests based on model capabilities\n\n\n<hr>\n<h2>🗂️ Project Structure</h2>\n<pre><code>api-hub/\n├── app/\n│   ├── __init__.py\n│   ├── main.py                 # FastAPI application\n│   ├── config.py               # Configuration management\n│   ├── models/\n│   │   ├── __init__.py\n│   │   ├── request.py          # Unified request models\n│   │   ├── response.py         # Unified response models\n│   │   └── provider.py         # Provider configuration models\n│   ├── providers/\n│   │   ├── __init__.py\n│   │   ├── base.py             # Base provider adapter\n│   │   ├── groq.py\n│   │   ├── together.py\n│   │   ├── gemini.py\n│   │   └── factory.py          # Provider factory\n│   ├── core/\n│   │   ├── __init__.py\n│   │   ├── quota_manager.py    # Quota tracking and management\n│   │   ├── router.py           # Intelligent routing logic\n│   │   ├── circuit_breaker.py  # Circuit breaker implementation\n│   │   └── cache.py            # Response caching\n│   ├── api/\n│   │   ├── __init__.py\n│   │   ├── v1/\n│   │   │   ├── __init__.py\n│   │   │   ├── chat.py         # Chat completions endpoint\n│   │   │   ├── health.py       # Health check endpoints\n│   │   │   └── admin.py        # Admin endpoints\n│   │   └── dependencies.py     # FastAPI dependencies\n│   ├── db/\n│   │   ├── __init__.py\n│   │   ├── models.py           # SQLAlchemy models\n│   │   ├── session.py          # Database session\n│   │   └── migrations/         # Alembic migrations\n│   └── utils/\n│       ├── __init__.py\n│       ├── logger.py           # Logging configuration\n│       ├── metrics.py          # Prometheus metrics\n│       └── errors.py           # Custom exceptions\n├── tests/\n│   ├── __init__.py\n│   ├── unit/\n│   ├── integration/\n│   └── conftest.py\n├── config/\n│   ├── providers.yaml          # Provider configuration\n│   └── settings.yaml           # Application settings\n├── docker/\n│   ├── Dockerfile\n│   └── docker-compose.yml\n├── scripts/\n│   ├── setup.sh\n│   └── seed_db.py\n├── docs/\n│   ├── API.md\n│   ├── DEPLOYMENT.md\n│   └── PROVIDERS.md\n├── .env.example\n├── .gitignore\n├── requirements.txt\n├── pyproject.toml\n└── README.md\n</code></pre>\n<hr>\n<h2>🚦 Acceptance Criteria</h2>\n<h3>Must Have (MVP)</h3>\n<ul>\n<li>[ ] Single unified API endpoint working</li>\n<li>[ ] At least 3 providers integrated</li>\n<li>[ ] Automatic failover on quota exhaustion</li>\n<li>[ ] Basic quota tracking (in-memory or Redis)</li>\n<li>[ ] OpenAPI documentation</li>\n<li>[ ] Docker deployment</li>\n<li>[ ] Unit test coverage &gt; 70%</li>\n</ul>\n<h3>Should Have (Enhanced)</h3>\n<ul>\n<li>[ ] 5+ providers integrated</li>\n<li>[ ] Redis-based quota management</li>\n<li>[ ] Circuit breaker implementation</li>\n<li>[ ] Health check system</li>\n<li>[ ] Response caching</li>\n<li>[ ] Admin configuration interface</li>\n<li>[ ] Monitoring dashboard</li>\n</ul>\n<h3>Nice to Have (Advanced)</h3>\n<ul>\n<li>[ ] Request queuing</li>\n<li>[ ] A/B testing framework</li>\n<li>[ ] Cost optimization</li>\n<li>[ ] Multi-region support</li>\n<li>[ ] Webhook notifications</li>\n<li>[ ] Advanced analytics</li>\n</ul>\n<hr>\n<h2>📝 Documentation Requirements</h2>\n<ol>\n<li>\n<p><strong>README.md</strong></p>\n<ul>\n<li>Quick start guide</li>\n<li>Installation instructions</li>\n<li>Configuration examples</li>\n<li>API usage examples</li>\n</ul>\n</li>\n<li>\n<p><strong>API Documentation</strong></p>\n<ul>\n<li>OpenAPI/Swagger specification</li>\n<li>Request/response examples</li>\n<li>Error code reference</li>\n<li>Rate limiting details</li>\n</ul>\n</li>\n<li>\n<p><strong>Provider Documentation</strong></p>\n<ul>\n<li>How to add new providers</li>\n<li>Provider adapter guide</li>\n<li>Configuration reference</li>\n<li>Quota limit specifications</li>\n</ul>\n</li>\n<li>\n<p><strong>Deployment Guide</strong></p>\n<ul>\n<li>Docker deployment</li>\n<li>Environment variables</li>\n<li>Scaling strategies</li>\n<li>Monitoring setup</li>\n</ul>\n</li>\n<li>\n<p><strong>Development Guide</strong></p>\n<ul>\n<li>Local setup</li>\n<li>Testing strategy</li>\n<li>Contribution guidelines</li>\n<li>Code style guide</li>\n</ul>\n</li>\n</ol>\n<hr>\n<h2>🎯 Success Metrics</h2>\n<ul>\n<li><strong>Availability</strong>: 99.5% uptime through failover</li>\n<li><strong>Response Time</strong>: &lt; 2s for 95th percentile</li>\n<li><strong>Failover Time</strong>: &lt; 500ms to switch providers</li>\n<li><strong>Provider Coverage</strong>: 8+ integrated providers</li>\n<li><strong>Test Coverage</strong>: &gt; 80% code coverage</li>\n<li><strong>Documentation</strong>: 100% API endpoints documented</li>\n</ul>\n<hr>\n<h2>📋 Next Steps &amp; Questions</h2>\n<h3>Questions for Stakeholders</h3>\n<ol>\n<li><strong>Provider Priorities</strong>: Which LLM providers should we prioritize first?</li>\n<li><strong>Streaming Support</strong>: Is real-time streaming a must-have for MVP?</li>\n<li><strong>Deployment Environment</strong>: Docker, Kubernetes, cloud-specific (AWS/GCP/Azure)?</li>\n<li><strong>Authentication</strong>: Should we support multiple API keys per provider?</li>\n<li><strong>Monitoring</strong>: Do we need a web dashboard or is logging sufficient for MVP?</li>\n<li><strong>Budget</strong>: Any budget for paid tiers as fallback when free quotas exhausted?</li>\n<li><strong>SLA</strong>: What's the target uptime and response time SLA?</li>\n<li><strong>Scale</strong>: Expected requests per day/month?</li>\n</ol>\n<h3>Awaiting Approval</h3>\n<p>Once approved, we can proceed with:</p>\n<ol>\n<li>✅ Create FastAPI project structure</li>\n<li>✅ Implement quota manager core logic</li>\n<li>✅ Build provider adapters (Groq, Together, Gemini)</li>\n<li>✅ Set up intelligent routing system</li>\n<li>✅ Create configuration templates</li>\n<li>✅ Write comprehensive tests</li>\n<li>✅ Deploy MVP to development environment</li>\n</ol>\n<hr>\n<h2>🏷️ Labels</h2>\n<p><code>enhancement</code> <code>feature</code> <code>architecture</code> <code>api</code> <code>llm</code> <code>high-priority</code> <code>needs-discussion</code></p>\n<hr>\n<h2>👥 Assignees</h2>\n<p>TBD</p>\n<hr>\n<h2>🔗 Related Issues</h2>\n<ul>\n<li>#TBD - Provider Integration: Groq</li>\n<li>#TBD - Provider Integration: Together AI</li>\n<li>#TBD - Quota Management System</li>\n<li>#TBD - Circuit Breaker Implementation</li>\n</ul>\n<hr>\n<p><strong>Created</strong>: [Date]<br>\n<strong>Last Updated</strong>: [Date]<br>\n<strong>Status</strong>: 🟡 Awaiting Approval</p></body></html><!--EndFragment-->\n</body>\n</html>",
+      "author": {
+        "name": "Abdulrahmann-Omar",
+        "url": "https://github.com/Abdulrahmann-Omar",
+        "avatar": "https://avatars.githubusercontent.com/u/143328877?v=4"
+      },
+      "timestamp": "2026-02-07T18:10:52Z",
+      "url": "https://github.com/pulse-mas/pulse-multi-agent-platform/issues/25",
+      "metrics": {
+        "comments": 0
+      },
+      "tags": [],
+      "raw": {
+        "url": "https://api.github.com/repos/pulse-mas/pulse-multi-agent-platform/issues/25",
+        "repository_url": "https://api.github.com/repos/pulse-mas/pulse-multi-agent-platform",
+        "labels_url": "https://api.github.com/repos/pulse-mas/pulse-multi-agent-platform/issues/25/labels{/name}",
+        "comments_url": "https://api.github.com/repos/pulse-mas/pulse-multi-agent-platform/issues/25/comments",
+        "events_url": "https://api.github.com/repos/pulse-mas/pulse-multi-agent-platform/issues/25/events",
+        "html_url": "https://github.com/pulse-mas/pulse-multi-agent-platform/issues/25",
+        "id": 3910875745,
+        "node_id": "I_kwDOQe2uIc7pGzph",
+        "number": 25,
+        "title": "Unified API Hub for Free LLM Providers",
+        "user": {
+          "login": "Abdulrahmann-Omar",
+          "id": 143328877,
+          "node_id": "U_kgDOCIsGbQ",
+          "avatar_url": "https://avatars.githubusercontent.com/u/143328877?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/Abdulrahmann-Omar",
+          "html_url": "https://github.com/Abdulrahmann-Omar",
+          "followers_url": "https://api.github.com/users/Abdulrahmann-Omar/followers",
+          "following_url": "https://api.github.com/users/Abdulrahmann-Omar/following{/other_user}",
+          "gists_url": "https://api.github.com/users/Abdulrahmann-Omar/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/Abdulrahmann-Omar/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/Abdulrahmann-Omar/subscriptions",
+          "organizations_url": "https://api.github.com/users/Abdulrahmann-Omar/orgs",
+          "repos_url": "https://api.github.com/users/Abdulrahmann-Omar/repos",
+          "events_url": "https://api.github.com/users/Abdulrahmann-Omar/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/Abdulrahmann-Omar/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "labels": [],
+        "state": "open",
+        "locked": false,
+        "assignee": null,
+        "assignees": [],
+        "milestone": null,
+        "comments": 0,
+        "created_at": "2026-02-07T18:10:52Z",
+        "updated_at": "2026-02-07T18:10:52Z",
+        "closed_at": null,
+        "author_association": "CONTRIBUTOR",
+        "type": null,
+        "active_lock_reason": null,
+        "sub_issues_summary": {
+          "total": 0,
+          "completed": 0,
+          "percent_completed": 0
+        },
+        "issue_dependencies_summary": {
+          "blocked_by": 0,
+          "total_blocked_by": 0,
+          "blocking": 0,
+          "total_blocking": 0
+        },
+        "body": "<html>\n<body>\n<!--StartFragment--><html><head></head><body><h1>🚀 Feature Request: Unified API Hub for Free LLM Providers</h1>\n<h2>📋 Summary</h2>\n<p>Build a centralized API hub that provides a single, unified interface to multiple free LLM providers with automatic failover when quota limits are reached.</p>\n<hr>\n<h2>🎯 Objectives</h2>\n<ul>\n<li><strong>Single API Interface</strong>: One endpoint to rule them all</li>\n<li><strong>Automatic Failover</strong>: Seamlessly switch providers when quotas are exhausted</li>\n<li><strong>Quota Management</strong>: Track and manage rate limits across all providers</li>\n<li><strong>Provider Agnostic</strong>: Abstract away provider-specific implementations</li>\n<li><strong>High Availability</strong>: Ensure continuous service through intelligent routing</li>\n</ul>\n<hr>\n<h2>🔍 Research &amp; Provider Analysis</h2>\n<h3>Target Free LLM Providers</h3>\n<ol>\n<li><strong>Groq</strong> - Fast inference, generous free tier</li>\n<li><strong>Together AI</strong> - Multiple open-source models, free tier available</li>\n<li><strong>Hugging Face Inference API</strong> - Various models, rate-limited free tier</li>\n<li><strong>Google Gemini</strong> - Free tier with good quotas</li>\n<li><strong>Cohere</strong> - Trial/free tier available</li>\n<li><strong>Anthropic Claude</strong> - Limited free tier via API</li>\n<li><strong>OpenRouter</strong> - Aggregator with some free models</li>\n<li><strong>Replicate</strong> - Pay-per-use with free credits</li>\n<li><strong>DeepInfra</strong> - Free tier for various models</li>\n<li><strong>Mistral AI</strong> - Free tier available</li>\n</ol>\n<h3>Key Challenges</h3>\n<ul>\n<li>❌ Different API formats (OpenAI-compatible vs proprietary)</li>\n<li>❌ Varying rate limits and quota structures</li>\n<li>❌ Different authentication mechanisms</li>\n<li>❌ Model capability differences</li>\n<li>❌ Response format inconsistencies</li>\n<li>❌ Complex error handling and failover logic</li>\n</ul>\n<hr>\n<h2>🏗️ Architecture Design</h2>\n<h3>System Components</h3>\n<pre><code>┌─────────────────────────────────────────────────────────┐\n│                     API Gateway Layer                    │\n│          (Single Unified Endpoint + Auth)               │\n└─────────────────────┬───────────────────────────────────┘\n                      │\n┌─────────────────────▼───────────────────────────────────┐\n│                  Intelligent Router                      │\n│        (Provider Selection + Failover Logic)            │\n└─────────────────────┬───────────────────────────────────┘\n                      │\n        ┌─────────────┼─────────────┐\n        │             │             │\n┌───────▼──────┐ ┌───▼──────┐ ┌───▼──────┐\n│   Quota      │ │ Request  │ │ Response │\n│  Manager     │ │Translator│ │Normalizer│\n└──────────────┘ └──────────┘ └──────────┘\n        │             │             │\n        └─────────────┼─────────────┘\n                      │\n        ┌─────────────┼─────────────┐\n        │             │             │\n┌───────▼──────┐ ┌───▼──────┐ ┌───▼──────┐\n│   Provider   │ │ Provider │ │ Provider │\n│      A       │ │     B    │ │     C    │\n│   (Groq)     │ │(Together)│ │ (Gemini) │\n└──────────────┘ └──────────┘ └──────────┘\n</code></pre>\n<h3>Core Components</h3>\n<h4>1. <strong>API Gateway Layer</strong></h4>\n<ul>\n<li>Single unified endpoint for clients</li>\n<li>Request authentication and validation</li>\n<li>Request routing to appropriate handler</li>\n<li>OpenAPI documentation</li>\n</ul>\n<h4>2. <strong>Model Registry/Configuration</strong></h4>\n<p>Database/config storing:</p>\n<ul>\n<li>Provider details (API keys, endpoints)</li>\n<li>Model capabilities and mappings</li>\n<li>Quota limits and current usage</li>\n<li>Priority/fallback order</li>\n<li>Health status</li>\n</ul>\n<h4>3. <strong>Quota Manager</strong></h4>\n<ul>\n<li>Tracks usage per provider (requests/min, tokens/day)</li>\n<li>Monitors rate limits in real-time</li>\n<li>Implements circuit breaker pattern</li>\n<li>Auto-resets counters based on provider windows</li>\n<li>Provides availability status to router</li>\n</ul>\n<h4>4. <strong>Intelligent Router</strong></h4>\n<p>Selects available provider based on:</p>\n<ul>\n<li>Current quota status</li>\n<li>Model availability/compatibility</li>\n<li>Provider priority configuration</li>\n<li>Response time/reliability metrics</li>\n<li>Implements fallback chain logic</li>\n</ul>\n<h4>5. <strong>Request Translator</strong></h4>\n<ul>\n<li>Converts unified API format to provider-specific format</li>\n<li>Maps model names to provider equivalents</li>\n<li>Handles provider-specific parameters</li>\n<li>Normalizes input across different schemas</li>\n</ul>\n<h4>6. <strong>Response Normalizer</strong></h4>\n<ul>\n<li>Standardizes responses from different providers</li>\n<li>Uniform error format</li>\n<li>Consistent streaming format (SSE)</li>\n<li>Token usage normalization</li>\n</ul>\n<h4>7. <strong>Monitoring &amp; Logging</strong></h4>\n<ul>\n<li>Track usage statistics per provider</li>\n<li>Log errors and fallback events</li>\n<li>Performance metrics and latency tracking</li>\n<li>Alert on quota thresholds</li>\n<li>Health check dashboard</li>\n</ul>\n<hr>\n<h2>💻 Technology Stack</h2>\n<h3>Backend Framework</h3>\n<p><strong>Primary: Python with FastAPI</strong></p>\n<ul>\n<li>✅ Async support for concurrent requests</li>\n<li>✅ Built-in OpenAPI documentation</li>\n<li>✅ Easy integration with LLM libraries</li>\n<li>✅ Type hints and validation with Pydantic</li>\n</ul>\n<p><strong>Alternative</strong>: Node.js with Express</p>\n<h3>Database &amp; Caching</h3>\n<p><strong>Redis</strong> for:</p>\n<ul>\n<li>Quota counters (fast atomic increments)</li>\n<li>Rate limiting (sliding window)</li>\n<li>Response caching</li>\n<li>Provider health status</li>\n</ul>\n<p><strong>PostgreSQL/SQLite</strong> for:</p>\n<ul>\n<li>Configuration storage</li>\n<li>API key management</li>\n<li>Usage history and analytics</li>\n<li>Audit logs</li>\n</ul>\n<h3>Queue System (Optional but Recommended)</h3>\n<ul>\n<li><strong>Celery</strong> or <strong>Redis Queue</strong></li>\n<li>Async processing and retry logic</li>\n<li>Request queuing when all providers rate-limited</li>\n</ul>\n<h3>Additional Libraries</h3>\n<pre><code class=\"language-python\"># Core dependencies\nfastapi&gt;=0.104.0\nuvicorn[standard]&gt;=0.24.0\npydantic&gt;=2.0.0\nhttpx&gt;=0.25.0  # Async HTTP client\n\n# Database &amp; Caching\nredis&gt;=5.0.0\nsqlalchemy&gt;=2.0.0\nalembic&gt;=1.12.0\n\n# LLM Integrations\nopenai&gt;=1.0.0\nanthropic&gt;=0.7.0\ngoogle-generativeai&gt;=0.3.0\ncohere&gt;=4.0.0\n\n# Monitoring\nprometheus-client&gt;=0.18.0\npython-json-logger&gt;=2.0.0\n</code></pre>\n<hr>\n<h2>🔌 Unified API Design</h2>\n<h3>Endpoint Structure</h3>\n<pre><code class=\"language-http\">POST /v1/chat/completions\nContent-Type: application/json\nAuthorization: Bearer YOUR_API_KEY\n</code></pre>\n<h3>Request Format</h3>\n<pre><code class=\"language-json\">{\n  \"model\": \"gpt-3.5-turbo-equivalent\",\n  \"messages\": [\n    {\"role\": \"system\", \"content\": \"You are a helpful assistant.\"},\n    {\"role\": \"user\", \"content\": \"Hello!\"}\n  ],\n  \"temperature\": 0.7,\n  \"max_tokens\": 1000,\n  \"stream\": false,\n  \"provider\": \"groq\"  // Optional: force specific provider\n}\n</code></pre>\n<h3>Response Format</h3>\n<pre><code class=\"language-json\">{\n  \"id\": \"chatcmpl-123\",\n  \"object\": \"chat.completion\",\n  \"created\": 1677652288,\n  \"model\": \"llama-3.1-70b\",\n  \"provider\": \"groq\",\n  \"choices\": [{\n    \"index\": 0,\n    \"message\": {\n      \"role\": \"assistant\",\n      \"content\": \"Hello! How can I help you today?\"\n    },\n    \"finish_reason\": \"stop\"\n  }],\n  \"usage\": {\n    \"prompt_tokens\": 10,\n    \"completion_tokens\": 9,\n    \"total_tokens\": 19\n  }\n}\n</code></pre>\n<hr>\n<h2>🔄 Failover Logic Flow</h2>\n<pre><code>1. Request received at API Gateway\n   ↓\n2. Authenticate &amp; validate request\n   ↓\n3. Check if specific provider requested\n   ↓\n4. If not → Consult Quota Manager for available providers\n   ↓\n5. Router selects provider based on:\n   - Quota availability ✓\n   - Priority order ✓\n   - Model compatibility ✓\n   - Recent performance ✓\n   ↓\n6. Attempt request to Provider A\n   ↓\n7. Response received?\n   ├─ YES → Normalize response → Return to client ✓\n   │\n   └─ NO → Check error type:\n       ├─ 429 (Quota exceeded) → Mark exhausted → Next provider\n       ├─ 5xx (Server error) → Increment failure count → Next provider\n       ├─ Network timeout → Next provider\n       └─ 4xx (Client error) → Return error to client ✗\n   ↓\n8. Retry with Provider B (repeat step 6-7)\n   ↓\n9. Continue until:\n   - Success ✓\n   - All providers exhausted ✗\n   ↓\n10. Return unified response or aggregated error\n</code></pre>\n<hr>\n<h2>⚙️ Configuration Example</h2>\n<h3>Provider Configuration (YAML)</h3>\n<pre><code class=\"language-yaml\">providers:\n  - name: groq\n    enabled: true\n    priority: 1\n    api_key: ${GROQ_API_KEY}\n    endpoint: https://api.groq.com/openai/v1/chat/completions\n    format: openai\n    timeout: 30\n    quotas:\n      requests_per_minute: 30\n      requests_per_day: 14400\n      tokens_per_minute: 7000\n      tokens_per_day: null\n    models:\n      - id: llama-3.1-70b\n        alias: gpt-3.5-turbo-equivalent\n        context_window: 8192\n      - id: mixtral-8x7b\n        alias: mixtral-medium\n        context_window: 32768\n    health_check:\n      enabled: true\n      interval: 300  # seconds\n      \n  - name: together\n    enabled: true\n    priority: 2\n    api_key: ${TOGETHER_API_KEY}\n    endpoint: https://api.together.xyz/v1/chat/completions\n    format: openai\n    timeout: 45\n    quotas:\n      requests_per_minute: 60\n      requests_per_day: null\n      tokens_per_minute: null\n      tokens_per_day: 1000000\n    models:\n      - id: meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo\n        alias: llama-70b\n        context_window: 8192\n      - id: mistralai/Mixtral-8x7B-Instruct-v0.1\n        alias: mixtral-medium\n        context_window: 32768\n        \n  - name: gemini\n    enabled: true\n    priority: 3\n    api_key: ${GOOGLE_API_KEY}\n    endpoint: https://generativelanguage.googleapis.com/v1beta\n    format: google\n    timeout: 60\n    quotas:\n      requests_per_minute: 60\n      requests_per_day: 1500\n      tokens_per_minute: 32000\n    models:\n      - id: gemini-1.5-flash\n        alias: gemini-flash\n        context_window: 1000000\n\n# Global settings\nsettings:\n  default_model: gpt-3.5-turbo-equivalent\n  max_retries: 3\n  retry_delay: 1.0  # seconds\n  circuit_breaker:\n    failure_threshold: 5\n    recovery_timeout: 60\n    half_open_requests: 3\n  cache:\n    enabled: true\n    ttl: 3600\n    max_size: 1000\n</code></pre>\n<hr>\n<h2>📊 Implementation Phases</h2>\n<h3>Phase 1: MVP (Weeks 1-2)</h3>\n<p><strong>Goal</strong>: Basic working prototype</p>\n<ul>\n<li>[ ] Set up FastAPI project structure</li>\n<li>[ ] Implement basic API gateway with authentication</li>\n<li>[ ] Integrate 2-3 providers (Groq, Together AI, Gemini)</li>\n<li>[ ] Simple round-robin failover logic</li>\n<li>[ ] In-memory quota tracking</li>\n<li>[ ] Basic error handling</li>\n<li>[ ] Unit tests for core components</li>\n</ul>\n<p><strong>Deliverables</strong>:</p>\n<ul>\n<li>Working API endpoint</li>\n<li>Basic provider adapters</li>\n<li>Simple configuration file</li>\n<li>README with setup instructions</li>\n</ul>\n<hr>\n<h3>Phase 2: Enhanced Features (Weeks 3-4)</h3>\n<p><strong>Goal</strong>: Production-ready quota management</p>\n<ul>\n<li>[ ] Redis integration for quota tracking</li>\n<li>[ ] PostgreSQL for configuration storage</li>\n<li>[ ] Intelligent routing based on model capabilities</li>\n<li>[ ] Add 3-4 more providers</li>\n<li>[ ] Implement circuit breaker pattern</li>\n<li>[ ] Request/Response normalization layer</li>\n<li>[ ] Comprehensive error mapping</li>\n<li>[ ] Integration tests</li>\n</ul>\n<p><strong>Deliverables</strong>:</p>\n<ul>\n<li>Redis-based quota manager</li>\n<li>Database schema and migrations</li>\n<li>Enhanced routing logic</li>\n<li>API documentation (OpenAPI)</li>\n</ul>\n<hr>\n<h3>Phase 3: Production Ready (Weeks 5-6)</h3>\n<p><strong>Goal</strong>: Deployment and monitoring</p>\n<ul>\n<li>[ ] Monitoring and analytics dashboard</li>\n<li>[ ] Rate limiting per client API key</li>\n<li>[ ] Response caching layer</li>\n<li>[ ] Admin panel for configuration</li>\n<li>[ ] Docker containerization</li>\n<li>[ ] Health check endpoints</li>\n<li>[ ] Logging and metrics (Prometheus)</li>\n<li>[ ] Load testing and optimization</li>\n</ul>\n<p><strong>Deliverables</strong>:</p>\n<ul>\n<li>Docker Compose setup</li>\n<li>Monitoring dashboard</li>\n<li>Admin interface</li>\n<li>Deployment documentation</li>\n<li>Performance benchmarks</li>\n</ul>\n<hr>\n<h3>Phase 4: Advanced Features (Weeks 7-8)</h3>\n<p><strong>Goal</strong>: Optimization and scaling</p>\n<ul>\n<li>[ ] Load balancing across provider instances</li>\n<li>[ ] A/B testing framework for providers</li>\n<li>[ ] Custom model routing rules</li>\n<li>[ ] Request queuing system</li>\n<li>[ ] API key rotation support</li>\n<li>[ ] Cost tracking and analytics</li>\n<li>[ ] Webhook notifications for quota alerts</li>\n<li>[ ] Multi-region deployment support</li>\n</ul>\n<p><strong>Deliverables</strong>:</p>\n<ul>\n<li>Advanced routing engine</li>\n<li>Analytics dashboard</li>\n<li>Cost optimization reports</li>\n<li>Scaling guide</li>\n</ul>\n<hr>\n<h2>✨ Key Features to Implement</h2>\n<h3>1. Health Checks</h3>\n<ul>\n<li>Periodic provider availability checks (every 5 minutes)</li>\n<li>Automatic provider disabling on consecutive failures</li>\n<li>Health status API endpoint</li>\n<li>Notification on provider downtime</li>\n</ul>\n<h3>2. Circuit Breaker</h3>\n<ul>\n<li>Temporarily disable failing providers</li>\n<li>Configurable failure threshold</li>\n<li>Automatic recovery attempts</li>\n<li>Half-open state for gradual recovery</li>\n</ul>\n<h3>3. Retry Logic</h3>\n<ul>\n<li>Exponential backoff for transient errors</li>\n<li>Configurable max retry attempts</li>\n<li>Different retry strategies per error type</li>\n<li>Request deduplication</li>\n</ul>\n<h3>4. Streaming Support</h3>\n<ul>\n<li>Handle Server-Sent Events (SSE) from multiple providers</li>\n<li>Unified streaming interface</li>\n<li>Stream buffering and error recovery</li>\n<li>Connection timeout handling</li>\n</ul>\n<h3>5. Request Queuing</h3>\n<ul>\n<li>Queue requests when all providers rate-limited</li>\n<li>Priority queue for different client tiers</li>\n<li>Queue size limits and overflow handling</li>\n<li>Estimated wait time calculation</li>\n</ul>\n<h3>6. API Key Rotation</h3>\n<ul>\n<li>Support multiple keys per provider</li>\n<li>Automatic rotation on quota exhaustion</li>\n<li>Key health tracking</li>\n<li>Secure key storage and encryption</li>\n</ul>\n<h3>7. Usage Analytics</h3>\n<ul>\n<li>Provider reliability metrics</li>\n<li>Response time tracking</li>\n<li>Cost per provider (if applicable)</li>\n<li>Model usage statistics</li>\n<li>Client usage patterns</li>\n</ul>\n<hr>\n<h2>⚠️ Challenges &amp; Solutions</h2>\n\nChallenge | Solution\n-- | --\nDifferent model capabilities | Implement model mapping/aliasing system with capability matrix\nInconsistent error codes | Create error normalization layer with unified error taxonomy\nProvider downtime | Health monitoring + automatic failover + circuit breaker\nQuota reset timing | Provider-specific reset tracking with timezone handling\nStreaming differences | Unified SSE wrapper with format translation\nCost tracking | Usage logging per provider with token counting\nAuthentication variations | Adapter pattern for each provider's auth mechanism\nRate limit headers | Parse and normalize rate limit info from response headers\nResponse time variance | Track latency metrics and adjust routing priorities\nModel context limits | Validate and truncate requests based on model capabilities\n\n\n<hr>\n<h2>🗂️ Project Structure</h2>\n<pre><code>api-hub/\n├── app/\n│   ├── __init__.py\n│   ├── main.py                 # FastAPI application\n│   ├── config.py               # Configuration management\n│   ├── models/\n│   │   ├── __init__.py\n│   │   ├── request.py          # Unified request models\n│   │   ├── response.py         # Unified response models\n│   │   └── provider.py         # Provider configuration models\n│   ├── providers/\n│   │   ├── __init__.py\n│   │   ├── base.py             # Base provider adapter\n│   │   ├── groq.py\n│   │   ├── together.py\n│   │   ├── gemini.py\n│   │   └── factory.py          # Provider factory\n│   ├── core/\n│   │   ├── __init__.py\n│   │   ├── quota_manager.py    # Quota tracking and management\n│   │   ├── router.py           # Intelligent routing logic\n│   │   ├── circuit_breaker.py  # Circuit breaker implementation\n│   │   └── cache.py            # Response caching\n│   ├── api/\n│   │   ├── __init__.py\n│   │   ├── v1/\n│   │   │   ├── __init__.py\n│   │   │   ├── chat.py         # Chat completions endpoint\n│   │   │   ├── health.py       # Health check endpoints\n│   │   │   └── admin.py        # Admin endpoints\n│   │   └── dependencies.py     # FastAPI dependencies\n│   ├── db/\n│   │   ├── __init__.py\n│   │   ├── models.py           # SQLAlchemy models\n│   │   ├── session.py          # Database session\n│   │   └── migrations/         # Alembic migrations\n│   └── utils/\n│       ├── __init__.py\n│       ├── logger.py           # Logging configuration\n│       ├── metrics.py          # Prometheus metrics\n│       └── errors.py           # Custom exceptions\n├── tests/\n│   ├── __init__.py\n│   ├── unit/\n│   ├── integration/\n│   └── conftest.py\n├── config/\n│   ├── providers.yaml          # Provider configuration\n│   └── settings.yaml           # Application settings\n├── docker/\n│   ├── Dockerfile\n│   └── docker-compose.yml\n├── scripts/\n│   ├── setup.sh\n│   └── seed_db.py\n├── docs/\n│   ├── API.md\n│   ├── DEPLOYMENT.md\n│   └── PROVIDERS.md\n├── .env.example\n├── .gitignore\n├── requirements.txt\n├── pyproject.toml\n└── README.md\n</code></pre>\n<hr>\n<h2>🚦 Acceptance Criteria</h2>\n<h3>Must Have (MVP)</h3>\n<ul>\n<li>[ ] Single unified API endpoint working</li>\n<li>[ ] At least 3 providers integrated</li>\n<li>[ ] Automatic failover on quota exhaustion</li>\n<li>[ ] Basic quota tracking (in-memory or Redis)</li>\n<li>[ ] OpenAPI documentation</li>\n<li>[ ] Docker deployment</li>\n<li>[ ] Unit test coverage &gt; 70%</li>\n</ul>\n<h3>Should Have (Enhanced)</h3>\n<ul>\n<li>[ ] 5+ providers integrated</li>\n<li>[ ] Redis-based quota management</li>\n<li>[ ] Circuit breaker implementation</li>\n<li>[ ] Health check system</li>\n<li>[ ] Response caching</li>\n<li>[ ] Admin configuration interface</li>\n<li>[ ] Monitoring dashboard</li>\n</ul>\n<h3>Nice to Have (Advanced)</h3>\n<ul>\n<li>[ ] Request queuing</li>\n<li>[ ] A/B testing framework</li>\n<li>[ ] Cost optimization</li>\n<li>[ ] Multi-region support</li>\n<li>[ ] Webhook notifications</li>\n<li>[ ] Advanced analytics</li>\n</ul>\n<hr>\n<h2>📝 Documentation Requirements</h2>\n<ol>\n<li>\n<p><strong>README.md</strong></p>\n<ul>\n<li>Quick start guide</li>\n<li>Installation instructions</li>\n<li>Configuration examples</li>\n<li>API usage examples</li>\n</ul>\n</li>\n<li>\n<p><strong>API Documentation</strong></p>\n<ul>\n<li>OpenAPI/Swagger specification</li>\n<li>Request/response examples</li>\n<li>Error code reference</li>\n<li>Rate limiting details</li>\n</ul>\n</li>\n<li>\n<p><strong>Provider Documentation</strong></p>\n<ul>\n<li>How to add new providers</li>\n<li>Provider adapter guide</li>\n<li>Configuration reference</li>\n<li>Quota limit specifications</li>\n</ul>\n</li>\n<li>\n<p><strong>Deployment Guide</strong></p>\n<ul>\n<li>Docker deployment</li>\n<li>Environment variables</li>\n<li>Scaling strategies</li>\n<li>Monitoring setup</li>\n</ul>\n</li>\n<li>\n<p><strong>Development Guide</strong></p>\n<ul>\n<li>Local setup</li>\n<li>Testing strategy</li>\n<li>Contribution guidelines</li>\n<li>Code style guide</li>\n</ul>\n</li>\n</ol>\n<hr>\n<h2>🎯 Success Metrics</h2>\n<ul>\n<li><strong>Availability</strong>: 99.5% uptime through failover</li>\n<li><strong>Response Time</strong>: &lt; 2s for 95th percentile</li>\n<li><strong>Failover Time</strong>: &lt; 500ms to switch providers</li>\n<li><strong>Provider Coverage</strong>: 8+ integrated providers</li>\n<li><strong>Test Coverage</strong>: &gt; 80% code coverage</li>\n<li><strong>Documentation</strong>: 100% API endpoints documented</li>\n</ul>\n<hr>\n<h2>📋 Next Steps &amp; Questions</h2>\n<h3>Questions for Stakeholders</h3>\n<ol>\n<li><strong>Provider Priorities</strong>: Which LLM providers should we prioritize first?</li>\n<li><strong>Streaming Support</strong>: Is real-time streaming a must-have for MVP?</li>\n<li><strong>Deployment Environment</strong>: Docker, Kubernetes, cloud-specific (AWS/GCP/Azure)?</li>\n<li><strong>Authentication</strong>: Should we support multiple API keys per provider?</li>\n<li><strong>Monitoring</strong>: Do we need a web dashboard or is logging sufficient for MVP?</li>\n<li><strong>Budget</strong>: Any budget for paid tiers as fallback when free quotas exhausted?</li>\n<li><strong>SLA</strong>: What's the target uptime and response time SLA?</li>\n<li><strong>Scale</strong>: Expected requests per day/month?</li>\n</ol>\n<h3>Awaiting Approval</h3>\n<p>Once approved, we can proceed with:</p>\n<ol>\n<li>✅ Create FastAPI project structure</li>\n<li>✅ Implement quota manager core logic</li>\n<li>✅ Build provider adapters (Groq, Together, Gemini)</li>\n<li>✅ Set up intelligent routing system</li>\n<li>✅ Create configuration templates</li>\n<li>✅ Write comprehensive tests</li>\n<li>✅ Deploy MVP to development environment</li>\n</ol>\n<hr>\n<h2>🏷️ Labels</h2>\n<p><code>enhancement</code> <code>feature</code> <code>architecture</code> <code>api</code> <code>llm</code> <code>high-priority</code> <code>needs-discussion</code></p>\n<hr>\n<h2>👥 Assignees</h2>\n<p>TBD</p>\n<hr>\n<h2>🔗 Related Issues</h2>\n<ul>\n<li>#TBD - Provider Integration: Groq</li>\n<li>#TBD - Provider Integration: Together AI</li>\n<li>#TBD - Quota Management System</li>\n<li>#TBD - Circuit Breaker Implementation</li>\n</ul>\n<hr>\n<p><strong>Created</strong>: [Date]<br>\n<strong>Last Updated</strong>: [Date]<br>\n<strong>Status</strong>: 🟡 Awaiting Approval</p></body></html><!--EndFragment-->\n</body>\n</html>",
+        "reactions": {
+          "url": "https://api.github.com/repos/pulse-mas/pulse-multi-agent-platform/issues/25/reactions",
+          "total_count": 0,
+          "+1": 0,
+          "-1": 0,
+          "laugh": 0,
+          "hooray": 0,
+          "confused": 0,
+          "heart": 0,
+          "rocket": 0,
+          "eyes": 0
+        },
+        "timeline_url": "https://api.github.com/repos/pulse-mas/pulse-multi-agent-platform/issues/25/timeline",
+        "performed_via_github_app": null,
+        "state_reason": null,
+        "score": 1
+      }
+    },
+    {
       "id": "stackoverflow-question-79884986",
       "platform": "stackoverflow",
       "type": "question",
@@ -16,7 +303,7 @@
       "metrics": {
         "upvotes": 0,
         "comments": 0,
-        "views": 8
+        "views": 20
       },
       "tags": [
         "javascript",
@@ -29,7 +316,7 @@
         ],
         "owner": {
           "account_id": 1811191,
-          "reputation": 4810,
+          "reputation": 4818,
           "user_id": 4512005,
           "user_type": "registered",
           "accept_rate": 92,
@@ -38,7 +325,7 @@
           "link": "https://stackoverflow.com/users/4512005/razvan-zamfir"
         },
         "is_answered": false,
-        "view_count": 8,
+        "view_count": 20,
         "answer_count": 0,
         "score": 0,
         "last_activity_date": 1770486462,
@@ -1323,7 +1610,7 @@
       "metrics": {
         "upvotes": -1,
         "comments": 0,
-        "views": 31
+        "views": 34
       },
       "tags": [
         "javascript",
@@ -1344,7 +1631,7 @@
           "link": "https://stackoverflow.com/users/32330204/slobado"
         },
         "is_answered": false,
-        "view_count": 31,
+        "view_count": 34,
         "closed_date": 1770480369,
         "answer_count": 0,
         "score": -1,
@@ -1373,7 +1660,7 @@
       "metrics": {
         "upvotes": -1,
         "comments": 0,
-        "views": 18
+        "views": 24
       },
       "tags": [
         "javascript",
@@ -1398,7 +1685,7 @@
           "link": "https://stackoverflow.com/users/8103934/bustinout"
         },
         "is_answered": false,
-        "view_count": 18,
+        "view_count": 24,
         "answer_count": 0,
         "score": -1,
         "last_activity_date": 1770486800,
@@ -1869,7 +2156,7 @@
       "metrics": {
         "upvotes": 0,
         "comments": 0,
-        "views": 26
+        "views": 27
       },
       "tags": [
         "javascript",
@@ -1896,7 +2183,7 @@
           "link": "https://stackoverflow.com/users/15927992/literallycode"
         },
         "is_answered": false,
-        "view_count": 26,
+        "view_count": 27,
         "answer_count": 0,
         "score": 0,
         "last_activity_date": 1770471336,
@@ -2458,8 +2745,8 @@
       "url": "https://stackoverflow.com/questions/79884439/direct-upload-to-s3-from-angular-failing-with-400-response",
       "metrics": {
         "upvotes": 1,
-        "comments": 1,
-        "views": 50
+        "comments": 2,
+        "views": 51
       },
       "tags": [
         "node.js",
@@ -2484,10 +2771,10 @@
           "link": "https://stackoverflow.com/users/2617144/mark-hill"
         },
         "is_answered": false,
-        "view_count": 50,
-        "answer_count": 1,
+        "view_count": 51,
+        "answer_count": 2,
         "score": 1,
-        "last_activity_date": 1770412283,
+        "last_activity_date": 1770488482,
         "creation_date": 1770392862,
         "question_id": 79884439,
         "content_license": "CC BY-SA 4.0",
@@ -2709,5 +2996,5 @@
       }
     }
   ],
-  "lastUpdated": "2026-02-07T17:54:23.238Z"
+  "lastUpdated": "2026-02-07T18:40:39.276Z"
 }
