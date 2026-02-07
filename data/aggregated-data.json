@@ -1,6 +1,61 @@
 {
   "items": [
     {
+      "id": "stackoverflow-question-79884886",
+      "platform": "stackoverflow",
+      "type": "question",
+      "title": "Selectively route keydown events to iframe or parent",
+      "content": "",
+      "author": {
+        "name": "LiterallyCode",
+        "url": "https://stackoverflow.com/users/15927992/literallycode",
+        "avatar": "https://www.gravatar.com/avatar/4758b824e4ab647aa0ffec7695a0f469?s=256&d=identicon&r=PG&f=y&so-version=2"
+      },
+      "timestamp": "2026-02-07T13:35:36.000Z",
+      "url": "https://stackoverflow.com/questions/79884886/selectively-route-keydown-events-to-iframe-or-parent",
+      "metrics": {
+        "upvotes": 0,
+        "comments": 0,
+        "views": 6
+      },
+      "tags": [
+        "javascript",
+        "google-chrome",
+        "iframe",
+        "event-handling",
+        "keydown"
+      ],
+      "raw": {
+        "tags": [
+          "javascript",
+          "google-chrome",
+          "iframe",
+          "event-handling",
+          "keydown"
+        ],
+        "owner": {
+          "account_id": 21599611,
+          "reputation": 166,
+          "user_id": 15927992,
+          "user_type": "registered",
+          "profile_image": "https://www.gravatar.com/avatar/4758b824e4ab647aa0ffec7695a0f469?s=256&d=identicon&r=PG&f=y&so-version=2",
+          "display_name": "LiterallyCode",
+          "link": "https://stackoverflow.com/users/15927992/literallycode"
+        },
+        "is_answered": false,
+        "view_count": 6,
+        "answer_count": 0,
+        "score": 0,
+        "last_activity_date": 1770471336,
+        "creation_date": 1770471336,
+        "question_id": 79884886,
+        "content_license": "CC BY-SA 4.0",
+        "link": "https://stackoverflow.com/questions/79884886/selectively-route-keydown-events-to-iframe-or-parent",
+        "title": "Selectively route keydown events to iframe or parent",
+        "body": "<p>I would like to capure some keydown events (e.g. SPACE) in the parent website and all the other keydown events in an iframe inside the parent.</p>\n<p>It seems, as soon as the iframe gets focus (which seems to happen after finishing loading), all keydown events go to the iframe only. Otherwise, all keydown events go to the parent page.</p>\n<p>My use case: Chromium-based kiosk system with keyboard, using SPACE (or any other key) to switch between different pages, each showing an iframe with an external app/website, e.g. different games. I have no control over the code of the iframe contents.</p>\n<p>In case routing of keydown events is not possible, how can I implement my use case?</p>\n"
+      }
+    },
+    {
       "id": "stackoverflow-answer-79884879",
       "platform": "stackoverflow",
       "type": "answer",
@@ -52,7 +107,7 @@
       "metrics": {
         "upvotes": 0,
         "comments": 1,
-        "views": 14
+        "views": 15
       },
       "tags": [
         "javascript",
@@ -75,7 +130,7 @@
           "link": "https://stackoverflow.com/users/32328914/pauline"
         },
         "is_answered": false,
-        "view_count": 14,
+        "view_count": 15,
         "answer_count": 1,
         "score": 0,
         "last_activity_date": 1770469978,
@@ -208,7 +263,7 @@
       "metrics": {
         "upvotes": 1,
         "comments": 1,
-        "views": 34
+        "views": 35
       },
       "tags": [
         "javascript",
@@ -231,7 +286,7 @@
           "link": "https://stackoverflow.com/users/10538358/xiaoshang"
         },
         "is_answered": true,
-        "view_count": 34,
+        "view_count": 35,
         "answer_count": 1,
         "score": 1,
         "last_activity_date": 1770470085,
@@ -398,7 +453,7 @@
       "metrics": {
         "upvotes": -1,
         "comments": 0,
-        "views": 36
+        "views": 38
       },
       "tags": [
         "typescript",
@@ -419,7 +474,7 @@
           "link": "https://stackoverflow.com/users/13349770/eziomercer"
         },
         "is_answered": false,
-        "view_count": 36,
+        "view_count": 38,
         "answer_count": 0,
         "score": -1,
         "last_activity_date": 1770414147,
@@ -602,7 +657,7 @@
       "metrics": {
         "upvotes": -7,
         "comments": 0,
-        "views": 58
+        "views": 59
       },
       "tags": [
         "css",
@@ -627,7 +682,7 @@
           "link": "https://stackoverflow.com/users/18954341/kenza-schuler"
         },
         "is_answered": false,
-        "view_count": 58,
+        "view_count": 59,
         "closed_date": 1770388236,
         "answer_count": 0,
         "score": -7,
@@ -799,5 +854,5 @@
       }
     }
   ],
-  "lastUpdated": "2026-02-07T13:35:20.381Z"
+  "lastUpdated": "2026-02-07T13:50:07.790Z"
 }
