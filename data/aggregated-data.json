@@ -1,6 +1,871 @@
 {
   "items": [
     {
+      "id": "github-issue-3910674098",
+      "platform": "github",
+      "type": "issue",
+      "title": "oh-my-opencode/issues #1628: [Bug]: start-work can spawn concurrent vitest workers causing memory exhaustion on 16GB machines",
+      "content": "### Prerequisites\n\n- [x] I will write this issue in English (see our [Language Policy](https://github.com/code-yeongyu/oh-my-opencode/blob/dev/CONTRIBUTING.md#language-policy))\n- [x] I have searched existing issues to avoid duplicates\n- [x] I am using the latest version of oh-my-opencode\n- [x] I have read the [documentation](https://github.com/code-yeongyu/oh-my-opencode#readme) or asked an AI coding agent with this project's GitHub URL loaded and couldn't find the answer\n\n### Bug Description\n\nTitle: start-work can spawn concurrent vitest workers causing memory exhaustion on 16GB machines\n\n## Summary\nRunning `/start-work` with parallel waves can spawn multiple `vitest` Node processes at the same time.\nOn a 16GB Mac, this leads to sustained memory pressure, swap growth, and unstable execution.\n\n## Impact\n- High memory usage (multiple `node (vitest N)` processes)\n- Significant swap growth\n- CI-like local validation becomes unreliable\n- Increased flaky behavior due to resource contention\n\n## Environment\n- OS: macOS (Apple Silicon)\n- RAM: 16GB\n- Branch: `dev`\n- Date observed: 2026-02-07\n- Repo: `oh-my-opencode`\n\n## Reproduction Steps\n1. Prepare a plan with parallel waves (including multiple test-related tasks).\n2. Run `/start-work` on that plan.\n3. Observe process list / Activity Monitor:\n   - Multiple `node (vitest X)` processes running concurrently.\n4. Observe memory/swap:\n   - Memory pressure stays high\n   - Swap keeps increasing\n\n## Expected Behavior\n- At most one `memory-heavy` test workload should run at a time.\n- `start-work` should avoid watch-mode semantics in automated execution.\n- When pressure threshold is exceeded, scheduler should stop dispatching new heavy tasks and degrade to serial mode.\n\n## Actual Behavior\n- Multiple memory-heavy test processes are dispatched concurrently.\n- No effective circuit-breaker or mutex for heavy workloads.\n- System enters swap pressure and execution quality degrades.\n\n## Evidence\n- Activity Monitor screenshot showing concurrent `node (vitest N)` processes and high memory use\n- Command logs from plan execution (can attach if needed)\n\n## Proposed Fix\n1. Add scheduler guardrails in `/start-work`:\n   - `max_parallel=2`\n   - `memory-heavy` mutex = 1\n2. Enforce non-watch test semantics in automation:\n   - use `vitest run` (not `vitest` watch)\n3. Add circuit breaker:\n   - trigger when `mem > 85%` or `swap > 25%`\n   - pause new heavy dispatch; queue in FIFO\n4. Add recovery condition:\n   - resume parallel only after `mem < 70%` sustained for 30s\n5. Add policy docs in:\n   - `AGENTS.md`\n   - `.sisyphus` plan/start-work templates\n\n## Acceptance Criteria\n- Reproduction scenario no longer causes multiple concurrent heavy test processes.\n- Under pressure, scheduler enters degraded serial mode automatically.\n- Recovery path is logged and auditable.\n\n\n### Steps to Reproduce\n\n1. Use a 16GB macOS machine and open this repository on branch `dev`.\n2. Prepare a work plan that contains parallel waves with multiple test-related tasks.\n3. Run `/start-work` with that plan.\n4. Observe Activity Monitor (or `ps`) during execution.\n5. Confirm multiple `node (vitest X)` processes are running at the same time.\n6. Observe memory pressure and swap usage increasing continuously.\n\n\n### Expected Behavior\n\n`/start-work` should enforce scheduling guardrails:\n- No watch-mode test process in automated execution.\n- At most one memory-heavy test workload at a time.\n- Circuit breaker pauses new heavy dispatch under memory pressure.\n- Scheduler degrades to serial mode until recovery conditions are met.\n\n\n### Actual Behavior\n\n`/start-work` dispatches multiple memory-heavy test workloads concurrently.\nThis spawns several `node (vitest X)` processes, causing high memory pressure and continuous swap growth on a 16GB machine.\n\n\n### Doctor Output\n\n```shell\n13 | - too many long flags`);throw Error(`${r}\n14 | - unrecognised flag format`)}if(u===void 0&&v===void 0)throw Error(`option creation failed due to no flags found in '${$}'.`);return{shortFlag:u,longFlag:v}}AG.Option=ZO;AG.DualOptions=gO});var LO=x$((_G)=>{function kG($,u){if(Math.abs($.length-u.length)>3)return Math.max($.length,u.length);let v=[];for(let U=0;U<=$.length;U++)v[U]=[U];for(let U=0;U<=u.length;U++)v[0][U]=U;for(let U=1;U<=u.length;U++)for(let b=1;b<=$.length;b++){let I=1;if($[b-1]===u[U-1])I=0;else I=1;if(v[b][U]=Math.min(v[b-1][U]+1,v[b][U-1]+1,v[b-1][U-1]+I),b>1&&U>1&&$[b-1]===u[U-2]&&$[b-2]===u[U-1])v[b][U]=Math.min(v[b][U],v[b-2][U-2]+1)}return v[$.length][u.length]}function cG($,u){if(!u||u.length===0)return\"\";u=Array.from(new Set(u));let v=$.startsWith(\"--\");if(v)$=$.slice(2),u=u.map((z)=>z.slice(2));let U=[],b=3,I=0.4;if(u.forEach((z)=>{if(z.length<=1)return;let r=kG($,z),O=Math.max($.length,z.length);if((O-r)/O>I){if(r<b)b=r,U=[z];else if(r===b)U.push(z)}}),U.sort((z,r)=>z.localeCompare(r)),v)U=U.map((z)=>`--${z}`);if(U.length>1)return | ... truncated\n15 | (Did you mean one of ${U.join(\", \")}?)`;if(U.length===1)return`\n16 | (Did you mean ${U[0]}?)`;return\"\"}_G.suggestSimilar=cG});var DO=x$((mG)=>{var KG=b$(\"events\").EventEmitter,E1=b$(\"child_process\"),o$=b$(\"path\"),m6=b$(\"fs\"),E=b$(\"process\"),{Argument:ZG,humanReadableArgName:gG}=T6(),{CommanderError:y1}=Y4(),{Help:LG,stripColor:FG}=n1(),{Option:FO,DualOptions:TG}=l1(),{suggestSimilar:TO}=LO();class C1 extends KG{constructor($){super();this.commands=[],this.options=[],this.parent=null,this._allowUnknownOption=!1,this._allowExcessArguments=!1,this.registeredArguments=[],this._args=this.registeredArguments,this.args=[],this.rawArgs=[],this.processedArgs=[],this._scriptPath=null,this._name=$||\"\",this._optionValues={},this._optionValueSources={},this._storeOptionsAsProperties=!1,this._actionHandler=null,this._executableHandler=!1,this._executableFile=null,this._executableDir=null,this._defaultCommandName=null,this._exitCallback=null,this._aliases=[],this._combineFlagAndOptionalValue=!0,this._description=\"\",this._summary=\"\",this._argsDescription=void 0,this._enablePositionalOptions=! | ... truncated\n17 | - specify the name in Command constructor or using .name()`);if(u=u||{},u.isDefault)this._defaultCommandName=$._name;if(u.noHelp||u.hidden)$._hidden=!0;return this._registerCommand($),$.parent=this,$._checkForBrokenPassThrough(),this}createArgument($,u){return new ZG($,u)}argument($,u,v,U){let b=this.createArgument($,u);if(typeof v===\"function\")b.default(U).argParser(v);else b.default(v);return this.addArgument(b),this}arguments($){return $.trim().split(/ +/).forEach((u)=>{this.argument(u)}),this}addArgument($){let u=this.registeredArguments.slice(-1)[0];if(u?.variadic)throw Error(`only the last argument can be variadic '${u.name()}'`);if($.required&&$.defaultValue!==void 0&&$.parseArg===void 0)throw Error(`a default value for a required argument is never used: '${$.name()}'`);return this.registeredArguments.push($),this}helpCommand($,u){if(typeof $===\"boolean\"){if(this._addImplicitHelpCommand=$,$&&this._defaultCommandGroup)this._initCommandGroup(this._getHelpCommand());return this}let v=$??\"help [command]\",[ | ... truncated\n18 | -  already used by option '${u.flags}'`)}this._initOptionGroup($),this.options.push($)}_registerCommand($){let u=(U)=>{return[U.name()].concat(U.aliases())},v=u($).find((U)=>this._findCommand(U));if(v){let U=u(this._findCommand(v)).join(\"|\"),b=u($).join(\"|\");throw Error(`cannot add command '${b}' as already have command '${U}'`)}this._initCommandGroup($),this.commands.push($)}addOption($){this._registerOption($);let u=$.name(),v=$.attributeName();if($.negate){let b=$.long.replace(/^--no-/,\"--\");if(!this._findOption(b))this.setOptionValueWithSource(v,$.defaultValue===void 0?!0:$.defaultValue,\"default\")}else if($.defaultValue!==void 0)this.setOptionValueWithSource(v,$.defaultValue,\"default\");let U=(b,I,z)=>{if(b==null&&$.presetArg!==void 0)b=$.presetArg;let r=this.getOptionValue(v);if(b!==null&&$.parseArg)b=this._callParseArg($,b,r,I);else if(b!==null&&$.variadic)b=$._collectValue(b,r);if(b==null)if($.negate)b=!1;else if($.isBoolean()||$.optional)b=!0;else b=\"\";this.setOptionValueWithSource(v,b,z)};if(this.on(\" | ... truncated\n\nerror: passThroughOptions cannot be used for 'run' without turning on enablePositionalOptions for parent command(s)\n      at _checkForBrokenPassThrough (/$bunfs/root/oh-my-opencode:18:2326)\n      at passThroughOptions (/$bunfs/root/oh-my-opencode:18:2198)\n      at /$bunfs/root/oh-my-opencode:208:320\n      at loadAndEvaluateModule (2:1)\n\nBun v1.3.8 (macOS arm64)\n```\n\n### Error Logs\n\n```shell\n\n```\n\n### Configuration\n\n```json\n\n```\n\n### Additional Context\n\n_No response_\n\n### Operating System\n\nmacOS\n\n### OpenCode Version\n\n v1.1.53",
+      "author": {
+        "name": "Joe-rq",
+        "url": "https://github.com/Joe-rq",
+        "avatar": "https://avatars.githubusercontent.com/u/77777313?v=4"
+      },
+      "timestamp": "2026-02-07T16:29:20Z",
+      "url": "https://github.com/code-yeongyu/oh-my-opencode/issues/1628",
+      "metrics": {
+        "comments": 0
+      },
+      "tags": [
+        "bug"
+      ],
+      "raw": {
+        "url": "https://api.github.com/repos/code-yeongyu/oh-my-opencode/issues/1628",
+        "repository_url": "https://api.github.com/repos/code-yeongyu/oh-my-opencode",
+        "labels_url": "https://api.github.com/repos/code-yeongyu/oh-my-opencode/issues/1628/labels{/name}",
+        "comments_url": "https://api.github.com/repos/code-yeongyu/oh-my-opencode/issues/1628/comments",
+        "events_url": "https://api.github.com/repos/code-yeongyu/oh-my-opencode/issues/1628/events",
+        "html_url": "https://github.com/code-yeongyu/oh-my-opencode/issues/1628",
+        "id": 3910674098,
+        "node_id": "I_kwDOQheEEc7pGCay",
+        "number": 1628,
+        "title": "[Bug]: start-work can spawn concurrent vitest workers causing memory exhaustion on 16GB machines",
+        "user": {
+          "login": "Joe-rq",
+          "id": 77777313,
+          "node_id": "MDQ6VXNlcjc3Nzc3MzEz",
+          "avatar_url": "https://avatars.githubusercontent.com/u/77777313?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/Joe-rq",
+          "html_url": "https://github.com/Joe-rq",
+          "followers_url": "https://api.github.com/users/Joe-rq/followers",
+          "following_url": "https://api.github.com/users/Joe-rq/following{/other_user}",
+          "gists_url": "https://api.github.com/users/Joe-rq/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/Joe-rq/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/Joe-rq/subscriptions",
+          "organizations_url": "https://api.github.com/users/Joe-rq/orgs",
+          "repos_url": "https://api.github.com/users/Joe-rq/repos",
+          "events_url": "https://api.github.com/users/Joe-rq/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/Joe-rq/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "labels": [
+          {
+            "id": 9759617515,
+            "node_id": "LA_kwDOQheEEc8AAAACRbfx6w",
+            "url": "https://api.github.com/repos/code-yeongyu/oh-my-opencode/labels/bug",
+            "name": "bug",
+            "color": "d73a4a",
+            "default": true,
+            "description": "Something isn't working"
+          }
+        ],
+        "state": "open",
+        "locked": false,
+        "assignee": null,
+        "assignees": [],
+        "milestone": null,
+        "comments": 0,
+        "created_at": "2026-02-07T16:29:20Z",
+        "updated_at": "2026-02-07T16:29:20Z",
+        "closed_at": null,
+        "author_association": "NONE",
+        "active_lock_reason": null,
+        "sub_issues_summary": {
+          "total": 0,
+          "completed": 0,
+          "percent_completed": 0
+        },
+        "issue_dependencies_summary": {
+          "blocked_by": 0,
+          "total_blocked_by": 0,
+          "blocking": 0,
+          "total_blocking": 0
+        },
+        "body": "### Prerequisites\n\n- [x] I will write this issue in English (see our [Language Policy](https://github.com/code-yeongyu/oh-my-opencode/blob/dev/CONTRIBUTING.md#language-policy))\n- [x] I have searched existing issues to avoid duplicates\n- [x] I am using the latest version of oh-my-opencode\n- [x] I have read the [documentation](https://github.com/code-yeongyu/oh-my-opencode#readme) or asked an AI coding agent with this project's GitHub URL loaded and couldn't find the answer\n\n### Bug Description\n\nTitle: start-work can spawn concurrent vitest workers causing memory exhaustion on 16GB machines\n\n## Summary\nRunning `/start-work` with parallel waves can spawn multiple `vitest` Node processes at the same time.\nOn a 16GB Mac, this leads to sustained memory pressure, swap growth, and unstable execution.\n\n## Impact\n- High memory usage (multiple `node (vitest N)` processes)\n- Significant swap growth\n- CI-like local validation becomes unreliable\n- Increased flaky behavior due to resource contention\n\n## Environment\n- OS: macOS (Apple Silicon)\n- RAM: 16GB\n- Branch: `dev`\n- Date observed: 2026-02-07\n- Repo: `oh-my-opencode`\n\n## Reproduction Steps\n1. Prepare a plan with parallel waves (including multiple test-related tasks).\n2. Run `/start-work` on that plan.\n3. Observe process list / Activity Monitor:\n   - Multiple `node (vitest X)` processes running concurrently.\n4. Observe memory/swap:\n   - Memory pressure stays high\n   - Swap keeps increasing\n\n## Expected Behavior\n- At most one `memory-heavy` test workload should run at a time.\n- `start-work` should avoid watch-mode semantics in automated execution.\n- When pressure threshold is exceeded, scheduler should stop dispatching new heavy tasks and degrade to serial mode.\n\n## Actual Behavior\n- Multiple memory-heavy test processes are dispatched concurrently.\n- No effective circuit-breaker or mutex for heavy workloads.\n- System enters swap pressure and execution quality degrades.\n\n## Evidence\n- Activity Monitor screenshot showing concurrent `node (vitest N)` processes and high memory use\n- Command logs from plan execution (can attach if needed)\n\n## Proposed Fix\n1. Add scheduler guardrails in `/start-work`:\n   - `max_parallel=2`\n   - `memory-heavy` mutex = 1\n2. Enforce non-watch test semantics in automation:\n   - use `vitest run` (not `vitest` watch)\n3. Add circuit breaker:\n   - trigger when `mem > 85%` or `swap > 25%`\n   - pause new heavy dispatch; queue in FIFO\n4. Add recovery condition:\n   - resume parallel only after `mem < 70%` sustained for 30s\n5. Add policy docs in:\n   - `AGENTS.md`\n   - `.sisyphus` plan/start-work templates\n\n## Acceptance Criteria\n- Reproduction scenario no longer causes multiple concurrent heavy test processes.\n- Under pressure, scheduler enters degraded serial mode automatically.\n- Recovery path is logged and auditable.\n\n\n### Steps to Reproduce\n\n1. Use a 16GB macOS machine and open this repository on branch `dev`.\n2. Prepare a work plan that contains parallel waves with multiple test-related tasks.\n3. Run `/start-work` with that plan.\n4. Observe Activity Monitor (or `ps`) during execution.\n5. Confirm multiple `node (vitest X)` processes are running at the same time.\n6. Observe memory pressure and swap usage increasing continuously.\n\n\n### Expected Behavior\n\n`/start-work` should enforce scheduling guardrails:\n- No watch-mode test process in automated execution.\n- At most one memory-heavy test workload at a time.\n- Circuit breaker pauses new heavy dispatch under memory pressure.\n- Scheduler degrades to serial mode until recovery conditions are met.\n\n\n### Actual Behavior\n\n`/start-work` dispatches multiple memory-heavy test workloads concurrently.\nThis spawns several `node (vitest X)` processes, causing high memory pressure and continuous swap growth on a 16GB machine.\n\n\n### Doctor Output\n\n```shell\n13 | - too many long flags`);throw Error(`${r}\n14 | - unrecognised flag format`)}if(u===void 0&&v===void 0)throw Error(`option creation failed due to no flags found in '${$}'.`);return{shortFlag:u,longFlag:v}}AG.Option=ZO;AG.DualOptions=gO});var LO=x$((_G)=>{function kG($,u){if(Math.abs($.length-u.length)>3)return Math.max($.length,u.length);let v=[];for(let U=0;U<=$.length;U++)v[U]=[U];for(let U=0;U<=u.length;U++)v[0][U]=U;for(let U=1;U<=u.length;U++)for(let b=1;b<=$.length;b++){let I=1;if($[b-1]===u[U-1])I=0;else I=1;if(v[b][U]=Math.min(v[b-1][U]+1,v[b][U-1]+1,v[b-1][U-1]+I),b>1&&U>1&&$[b-1]===u[U-2]&&$[b-2]===u[U-1])v[b][U]=Math.min(v[b][U],v[b-2][U-2]+1)}return v[$.length][u.length]}function cG($,u){if(!u||u.length===0)return\"\";u=Array.from(new Set(u));let v=$.startsWith(\"--\");if(v)$=$.slice(2),u=u.map((z)=>z.slice(2));let U=[],b=3,I=0.4;if(u.forEach((z)=>{if(z.length<=1)return;let r=kG($,z),O=Math.max($.length,z.length);if((O-r)/O>I){if(r<b)b=r,U=[z];else if(r===b)U.push(z)}}),U.sort((z,r)=>z.localeCompare(r)),v)U=U.map((z)=>`--${z}`);if(U.length>1)return | ... truncated\n15 | (Did you mean one of ${U.join(\", \")}?)`;if(U.length===1)return`\n16 | (Did you mean ${U[0]}?)`;return\"\"}_G.suggestSimilar=cG});var DO=x$((mG)=>{var KG=b$(\"events\").EventEmitter,E1=b$(\"child_process\"),o$=b$(\"path\"),m6=b$(\"fs\"),E=b$(\"process\"),{Argument:ZG,humanReadableArgName:gG}=T6(),{CommanderError:y1}=Y4(),{Help:LG,stripColor:FG}=n1(),{Option:FO,DualOptions:TG}=l1(),{suggestSimilar:TO}=LO();class C1 extends KG{constructor($){super();this.commands=[],this.options=[],this.parent=null,this._allowUnknownOption=!1,this._allowExcessArguments=!1,this.registeredArguments=[],this._args=this.registeredArguments,this.args=[],this.rawArgs=[],this.processedArgs=[],this._scriptPath=null,this._name=$||\"\",this._optionValues={},this._optionValueSources={},this._storeOptionsAsProperties=!1,this._actionHandler=null,this._executableHandler=!1,this._executableFile=null,this._executableDir=null,this._defaultCommandName=null,this._exitCallback=null,this._aliases=[],this._combineFlagAndOptionalValue=!0,this._description=\"\",this._summary=\"\",this._argsDescription=void 0,this._enablePositionalOptions=! | ... truncated\n17 | - specify the name in Command constructor or using .name()`);if(u=u||{},u.isDefault)this._defaultCommandName=$._name;if(u.noHelp||u.hidden)$._hidden=!0;return this._registerCommand($),$.parent=this,$._checkForBrokenPassThrough(),this}createArgument($,u){return new ZG($,u)}argument($,u,v,U){let b=this.createArgument($,u);if(typeof v===\"function\")b.default(U).argParser(v);else b.default(v);return this.addArgument(b),this}arguments($){return $.trim().split(/ +/).forEach((u)=>{this.argument(u)}),this}addArgument($){let u=this.registeredArguments.slice(-1)[0];if(u?.variadic)throw Error(`only the last argument can be variadic '${u.name()}'`);if($.required&&$.defaultValue!==void 0&&$.parseArg===void 0)throw Error(`a default value for a required argument is never used: '${$.name()}'`);return this.registeredArguments.push($),this}helpCommand($,u){if(typeof $===\"boolean\"){if(this._addImplicitHelpCommand=$,$&&this._defaultCommandGroup)this._initCommandGroup(this._getHelpCommand());return this}let v=$??\"help [command]\",[ | ... truncated\n18 | -  already used by option '${u.flags}'`)}this._initOptionGroup($),this.options.push($)}_registerCommand($){let u=(U)=>{return[U.name()].concat(U.aliases())},v=u($).find((U)=>this._findCommand(U));if(v){let U=u(this._findCommand(v)).join(\"|\"),b=u($).join(\"|\");throw Error(`cannot add command '${b}' as already have command '${U}'`)}this._initCommandGroup($),this.commands.push($)}addOption($){this._registerOption($);let u=$.name(),v=$.attributeName();if($.negate){let b=$.long.replace(/^--no-/,\"--\");if(!this._findOption(b))this.setOptionValueWithSource(v,$.defaultValue===void 0?!0:$.defaultValue,\"default\")}else if($.defaultValue!==void 0)this.setOptionValueWithSource(v,$.defaultValue,\"default\");let U=(b,I,z)=>{if(b==null&&$.presetArg!==void 0)b=$.presetArg;let r=this.getOptionValue(v);if(b!==null&&$.parseArg)b=this._callParseArg($,b,r,I);else if(b!==null&&$.variadic)b=$._collectValue(b,r);if(b==null)if($.negate)b=!1;else if($.isBoolean()||$.optional)b=!0;else b=\"\";this.setOptionValueWithSource(v,b,z)};if(this.on(\" | ... truncated\n\nerror: passThroughOptions cannot be used for 'run' without turning on enablePositionalOptions for parent command(s)\n      at _checkForBrokenPassThrough (/$bunfs/root/oh-my-opencode:18:2326)\n      at passThroughOptions (/$bunfs/root/oh-my-opencode:18:2198)\n      at /$bunfs/root/oh-my-opencode:208:320\n      at loadAndEvaluateModule (2:1)\n\nBun v1.3.8 (macOS arm64)\n```\n\n### Error Logs\n\n```shell\n\n```\n\n### Configuration\n\n```json\n\n```\n\n### Additional Context\n\n_No response_\n\n### Operating System\n\nmacOS\n\n### OpenCode Version\n\n v1.1.53",
+        "reactions": {
+          "url": "https://api.github.com/repos/code-yeongyu/oh-my-opencode/issues/1628/reactions",
+          "total_count": 0,
+          "+1": 0,
+          "-1": 0,
+          "laugh": 0,
+          "hooray": 0,
+          "confused": 0,
+          "heart": 0,
+          "rocket": 0,
+          "eyes": 0
+        },
+        "timeline_url": "https://api.github.com/repos/code-yeongyu/oh-my-opencode/issues/1628/timeline",
+        "performed_via_github_app": null,
+        "state_reason": null,
+        "score": 1
+      }
+    },
+    {
+      "id": "github-issue-3910664173",
+      "platform": "github",
+      "type": "issue",
+      "title": "kiro.rs/issues #65: 功能请求：oauth 登录流程",
+      "content": "现在手动录入 credentials 过于繁琐，希望可以在 admin ui 增加 oauth 登录流程。\n\n我有一份经 LLM 整理的流程细节文档，曾用 oh my opencode 在 python 项目中成功实现，希望可以有帮助。\n\nhttps://gist.github.com/uexp/8596baa29cc484ed3d3e7347e0670687",
+      "author": {
+        "name": "uexp",
+        "url": "https://github.com/uexp",
+        "avatar": "https://avatars.githubusercontent.com/u/124456953?v=4"
+      },
+      "timestamp": "2026-02-07T16:22:31Z",
+      "url": "https://github.com/hank9999/kiro.rs/issues/65",
+      "metrics": {
+        "comments": 1
+      },
+      "tags": [],
+      "raw": {
+        "url": "https://api.github.com/repos/hank9999/kiro.rs/issues/65",
+        "repository_url": "https://api.github.com/repos/hank9999/kiro.rs",
+        "labels_url": "https://api.github.com/repos/hank9999/kiro.rs/issues/65/labels{/name}",
+        "comments_url": "https://api.github.com/repos/hank9999/kiro.rs/issues/65/comments",
+        "events_url": "https://api.github.com/repos/hank9999/kiro.rs/issues/65/events",
+        "html_url": "https://github.com/hank9999/kiro.rs/issues/65",
+        "id": 3910664173,
+        "node_id": "I_kwDOQvcpxc7pF__t",
+        "number": 65,
+        "title": "功能请求：oauth 登录流程",
+        "user": {
+          "login": "uexp",
+          "id": 124456953,
+          "node_id": "U_kgDOB2sP-Q",
+          "avatar_url": "https://avatars.githubusercontent.com/u/124456953?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/uexp",
+          "html_url": "https://github.com/uexp",
+          "followers_url": "https://api.github.com/users/uexp/followers",
+          "following_url": "https://api.github.com/users/uexp/following{/other_user}",
+          "gists_url": "https://api.github.com/users/uexp/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/uexp/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/uexp/subscriptions",
+          "organizations_url": "https://api.github.com/users/uexp/orgs",
+          "repos_url": "https://api.github.com/users/uexp/repos",
+          "events_url": "https://api.github.com/users/uexp/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/uexp/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "labels": [],
+        "state": "open",
+        "locked": false,
+        "assignee": null,
+        "assignees": [],
+        "milestone": null,
+        "comments": 1,
+        "created_at": "2026-02-07T16:22:31Z",
+        "updated_at": "2026-02-07T16:35:33Z",
+        "closed_at": null,
+        "author_association": "NONE",
+        "active_lock_reason": null,
+        "sub_issues_summary": {
+          "total": 0,
+          "completed": 0,
+          "percent_completed": 0
+        },
+        "issue_dependencies_summary": {
+          "blocked_by": 0,
+          "total_blocked_by": 0,
+          "blocking": 0,
+          "total_blocking": 0
+        },
+        "body": "现在手动录入 credentials 过于繁琐，希望可以在 admin ui 增加 oauth 登录流程。\n\n我有一份经 LLM 整理的流程细节文档，曾用 oh my opencode 在 python 项目中成功实现，希望可以有帮助。\n\nhttps://gist.github.com/uexp/8596baa29cc484ed3d3e7347e0670687",
+        "reactions": {
+          "url": "https://api.github.com/repos/hank9999/kiro.rs/issues/65/reactions",
+          "total_count": 0,
+          "+1": 0,
+          "-1": 0,
+          "laugh": 0,
+          "hooray": 0,
+          "confused": 0,
+          "heart": 0,
+          "rocket": 0,
+          "eyes": 0
+        },
+        "timeline_url": "https://api.github.com/repos/hank9999/kiro.rs/issues/65/timeline",
+        "performed_via_github_app": null,
+        "state_reason": null,
+        "score": 1
+      }
+    },
+    {
+      "id": "github-issue-3910663321",
+      "platform": "github",
+      "type": "issue",
+      "title": "oh-my-opencode/issues #1627: [Bug]: EXA_API_KEY environment variable is not applied to Exa MCP URL, causing rate limit errors",
+      "content": "### Prerequisites\n\n- [x] I will write this issue in English (see our [Language Policy](https://github.com/code-yeongyu/oh-my-opencode/blob/dev/CONTRIBUTING.md#language-policy))\n- [x] I have searched existing issues to avoid duplicates\n- [x] I am using the latest version of oh-my-opencode\n- [x] I have read the [documentation](https://github.com/code-yeongyu/oh-my-opencode#readme) or asked an AI coding agent with this project's GitHub URL loaded and couldn't find the answer\n\n### Bug Description\n\nI have configured the `EXA_API_KEY` in my environment variables, but `oh-my-opencode` seems to ignore it when establishing the connection to the Exa MCP server.\n\nAs a result, I am receiving a \"free MCP rate limit\" error from Exa. According to the error message and the [Exa documentation](https://exa.ai/docs/reference/exa-mcp#api-key), the API key must be passed via the `exaApiKey` query parameter in the URL (e.g., `?exaApiKey=YOUR_EXA_API_KEY`), but the current implementation in `src/mcp/websearch.ts` does not seem to append this parameter automatically when the environment variable is present.\n\n### Steps to Reproduce\n\n1. Export a valid Exa API Key in the environment: `export EXA_API_KEY=your_key_here`.\n2. Run `opencode`.\n3. Perform a web search action that triggers the Exa MCP.\n4. (After sufficient usage) Observe that the request fails with a rate limit error, indicating the key was not used.\n\n### Expected Behavior\n\nWhen `EXA_API_KEY` is present in the environment, the application should automatically append `?exaApiKey=${process.env.EXA_API_KEY}` to the Exa MCP server URL so that the request is authenticated and uses the user's quota.\n\n### Actual Behavior\n\nThe application connects to the default Exa MCP URL without the API key, resulting in the following error:\n\n```json\nError: Streamable HTTP error: Error POSTing to endpoint: {\n  \"jsonrpc\": \"2.0\",\n  \"error\": {\n    \"code\": -32000,\n    \"message\": \"You've hit Exa's free MCP rate limit. To continue using without limits, create your own Exa API key.\\n\\nFix: Create API key at https://dashboard.exa.ai/api-keys , and then update Exa MCP URL to this https://mcp.exa.ai/mcp?exaApiKey=YOUR_EXA_API_KEY\"\n  },\n  \"id\": null\n}\n\n```\n\n### Doctor Output\n\n```shell\n$ bunx oh-my-opencode doctor\n\n oMoMoMoMo... Doctor\n\n\nInstallation\n────────────────────────────────────────\n  ✓ OpenCode Installation → 1.1.53\n  ✓ Plugin Registration → Registered (pinned: latest)\n\nConfiguration\n────────────────────────────────────────\n  ✓ Configuration Validity → Valid JSONC config\n  ✓ Model Resolution → 10 agents, 8 categories (18 overrides), 2449 available\n\nAuthentication\n────────────────────────────────────────\n  ✓ Anthropic (Claude) Auth → Auth plugin available\n  ○ OpenAI (ChatGPT) Auth → Auth plugin not installed\n  ○ Google (Gemini) Auth → Auth plugin not installed\n\nDependencies\n────────────────────────────────────────\n  ✓ AST-Grep CLI → installed\n  ✓ AST-Grep NAPI → installed\n  ⚠ Comment Checker → Not installed (optional)\n\nTools & Servers\n────────────────────────────────────────\n  ✓ GitHub CLI → 2.86.0 - authenticated as imbytecat\n  ⚠ LSP Servers → No LSP servers detected\n  ✓ Built-in MCP Servers → 2 built-in servers enabled\n  ○ User MCP Configuration → No user MCP configuration found\n  ○ MCP OAuth Tokens → No OAuth tokens configured\n\nUpdates\n────────────────────────────────────────\n  ⚠ Version Status → Update available: 3.2.3 -> 3.3.0\n\nSummary\n────────────────────────────────────────\n\n  9 passed, 0 failed, 3 warnings, 4 skipped\n  Total: 16 checks in 2355ms\n\n⚠ All systems operational with warnings.\n```\n\n### Error Logs\n\n```shell\n\n```\n\n### Configuration\n\n```json\n\n```\n\n### Additional Context\n\n* **Relevant Code:** [`src/mcp/websearch.ts`](https://www.google.com/search?q=%5Bhttps://github.com/code-yeongyu/oh-my-opencode/blob/dev/src/mcp/websearch.ts%5D(https://github.com/code-yeongyu/oh-my-opencode/blob/dev/src/mcp/websearch.ts))\n* **Reference:** [Exa MCP API Key Documentation](https://exa.ai/docs/reference/exa-mcp#api-key)\n\n### Operating System\n\nLinux\n\n### OpenCode Version\n\n1.1.53",
+      "author": {
+        "name": "imbytecat",
+        "url": "https://github.com/imbytecat",
+        "avatar": "https://avatars.githubusercontent.com/u/15844288?v=4"
+      },
+      "timestamp": "2026-02-07T16:21:53Z",
+      "url": "https://github.com/code-yeongyu/oh-my-opencode/issues/1627",
+      "metrics": {
+        "comments": 0
+      },
+      "tags": [
+        "bug"
+      ],
+      "raw": {
+        "url": "https://api.github.com/repos/code-yeongyu/oh-my-opencode/issues/1627",
+        "repository_url": "https://api.github.com/repos/code-yeongyu/oh-my-opencode",
+        "labels_url": "https://api.github.com/repos/code-yeongyu/oh-my-opencode/issues/1627/labels{/name}",
+        "comments_url": "https://api.github.com/repos/code-yeongyu/oh-my-opencode/issues/1627/comments",
+        "events_url": "https://api.github.com/repos/code-yeongyu/oh-my-opencode/issues/1627/events",
+        "html_url": "https://github.com/code-yeongyu/oh-my-opencode/issues/1627",
+        "id": 3910663321,
+        "node_id": "I_kwDOQheEEc7pF_yZ",
+        "number": 1627,
+        "title": "[Bug]: EXA_API_KEY environment variable is not applied to Exa MCP URL, causing rate limit errors",
+        "user": {
+          "login": "imbytecat",
+          "id": 15844288,
+          "node_id": "MDQ6VXNlcjE1ODQ0Mjg4",
+          "avatar_url": "https://avatars.githubusercontent.com/u/15844288?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/imbytecat",
+          "html_url": "https://github.com/imbytecat",
+          "followers_url": "https://api.github.com/users/imbytecat/followers",
+          "following_url": "https://api.github.com/users/imbytecat/following{/other_user}",
+          "gists_url": "https://api.github.com/users/imbytecat/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/imbytecat/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/imbytecat/subscriptions",
+          "organizations_url": "https://api.github.com/users/imbytecat/orgs",
+          "repos_url": "https://api.github.com/users/imbytecat/repos",
+          "events_url": "https://api.github.com/users/imbytecat/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/imbytecat/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "labels": [
+          {
+            "id": 9759617515,
+            "node_id": "LA_kwDOQheEEc8AAAACRbfx6w",
+            "url": "https://api.github.com/repos/code-yeongyu/oh-my-opencode/labels/bug",
+            "name": "bug",
+            "color": "d73a4a",
+            "default": true,
+            "description": "Something isn't working"
+          }
+        ],
+        "state": "open",
+        "locked": false,
+        "assignee": null,
+        "assignees": [],
+        "milestone": null,
+        "comments": 0,
+        "created_at": "2026-02-07T16:21:53Z",
+        "updated_at": "2026-02-07T16:21:53Z",
+        "closed_at": null,
+        "author_association": "NONE",
+        "active_lock_reason": null,
+        "sub_issues_summary": {
+          "total": 0,
+          "completed": 0,
+          "percent_completed": 0
+        },
+        "issue_dependencies_summary": {
+          "blocked_by": 0,
+          "total_blocked_by": 0,
+          "blocking": 0,
+          "total_blocking": 0
+        },
+        "body": "### Prerequisites\n\n- [x] I will write this issue in English (see our [Language Policy](https://github.com/code-yeongyu/oh-my-opencode/blob/dev/CONTRIBUTING.md#language-policy))\n- [x] I have searched existing issues to avoid duplicates\n- [x] I am using the latest version of oh-my-opencode\n- [x] I have read the [documentation](https://github.com/code-yeongyu/oh-my-opencode#readme) or asked an AI coding agent with this project's GitHub URL loaded and couldn't find the answer\n\n### Bug Description\n\nI have configured the `EXA_API_KEY` in my environment variables, but `oh-my-opencode` seems to ignore it when establishing the connection to the Exa MCP server.\n\nAs a result, I am receiving a \"free MCP rate limit\" error from Exa. According to the error message and the [Exa documentation](https://exa.ai/docs/reference/exa-mcp#api-key), the API key must be passed via the `exaApiKey` query parameter in the URL (e.g., `?exaApiKey=YOUR_EXA_API_KEY`), but the current implementation in `src/mcp/websearch.ts` does not seem to append this parameter automatically when the environment variable is present.\n\n### Steps to Reproduce\n\n1. Export a valid Exa API Key in the environment: `export EXA_API_KEY=your_key_here`.\n2. Run `opencode`.\n3. Perform a web search action that triggers the Exa MCP.\n4. (After sufficient usage) Observe that the request fails with a rate limit error, indicating the key was not used.\n\n### Expected Behavior\n\nWhen `EXA_API_KEY` is present in the environment, the application should automatically append `?exaApiKey=${process.env.EXA_API_KEY}` to the Exa MCP server URL so that the request is authenticated and uses the user's quota.\n\n### Actual Behavior\n\nThe application connects to the default Exa MCP URL without the API key, resulting in the following error:\n\n```json\nError: Streamable HTTP error: Error POSTing to endpoint: {\n  \"jsonrpc\": \"2.0\",\n  \"error\": {\n    \"code\": -32000,\n    \"message\": \"You've hit Exa's free MCP rate limit. To continue using without limits, create your own Exa API key.\\n\\nFix: Create API key at https://dashboard.exa.ai/api-keys , and then update Exa MCP URL to this https://mcp.exa.ai/mcp?exaApiKey=YOUR_EXA_API_KEY\"\n  },\n  \"id\": null\n}\n\n```\n\n### Doctor Output\n\n```shell\n$ bunx oh-my-opencode doctor\n\n oMoMoMoMo... Doctor\n\n\nInstallation\n────────────────────────────────────────\n  ✓ OpenCode Installation → 1.1.53\n  ✓ Plugin Registration → Registered (pinned: latest)\n\nConfiguration\n────────────────────────────────────────\n  ✓ Configuration Validity → Valid JSONC config\n  ✓ Model Resolution → 10 agents, 8 categories (18 overrides), 2449 available\n\nAuthentication\n────────────────────────────────────────\n  ✓ Anthropic (Claude) Auth → Auth plugin available\n  ○ OpenAI (ChatGPT) Auth → Auth plugin not installed\n  ○ Google (Gemini) Auth → Auth plugin not installed\n\nDependencies\n────────────────────────────────────────\n  ✓ AST-Grep CLI → installed\n  ✓ AST-Grep NAPI → installed\n  ⚠ Comment Checker → Not installed (optional)\n\nTools & Servers\n────────────────────────────────────────\n  ✓ GitHub CLI → 2.86.0 - authenticated as imbytecat\n  ⚠ LSP Servers → No LSP servers detected\n  ✓ Built-in MCP Servers → 2 built-in servers enabled\n  ○ User MCP Configuration → No user MCP configuration found\n  ○ MCP OAuth Tokens → No OAuth tokens configured\n\nUpdates\n────────────────────────────────────────\n  ⚠ Version Status → Update available: 3.2.3 -> 3.3.0\n\nSummary\n────────────────────────────────────────\n\n  9 passed, 0 failed, 3 warnings, 4 skipped\n  Total: 16 checks in 2355ms\n\n⚠ All systems operational with warnings.\n```\n\n### Error Logs\n\n```shell\n\n```\n\n### Configuration\n\n```json\n\n```\n\n### Additional Context\n\n* **Relevant Code:** [`src/mcp/websearch.ts`](https://www.google.com/search?q=%5Bhttps://github.com/code-yeongyu/oh-my-opencode/blob/dev/src/mcp/websearch.ts%5D(https://github.com/code-yeongyu/oh-my-opencode/blob/dev/src/mcp/websearch.ts))\n* **Reference:** [Exa MCP API Key Documentation](https://exa.ai/docs/reference/exa-mcp#api-key)\n\n### Operating System\n\nLinux\n\n### OpenCode Version\n\n1.1.53",
+        "reactions": {
+          "url": "https://api.github.com/repos/code-yeongyu/oh-my-opencode/issues/1627/reactions",
+          "total_count": 0,
+          "+1": 0,
+          "-1": 0,
+          "laugh": 0,
+          "hooray": 0,
+          "confused": 0,
+          "heart": 0,
+          "rocket": 0,
+          "eyes": 0
+        },
+        "timeline_url": "https://api.github.com/repos/code-yeongyu/oh-my-opencode/issues/1627/timeline",
+        "performed_via_github_app": null,
+        "state_reason": null,
+        "score": 1
+      }
+    },
+    {
+      "id": "github-issue-3910659651",
+      "platform": "github",
+      "type": "issue",
+      "title": "openchamber/issues #349: [Feature Request] Desktop: Multi-window support (each window can target a different server)",
+      "content": "### What should we add/change?\n\n#### Problem / Motivation\nRight now the desktop app effectively works as a single “workspace”: if I switch the connected server (local vs remote), it changes the context for the whole app. This makes it hard to work with *multiple OpenCode/OpenChamber backends at the same time*.\n\nI often run:\n- a local server (fast iteration)\n- a remote server (VPS / homelab)\nand I want to keep them open side-by-side without constantly switching the active server.\n\n#### Requested Feature\nAdd **multi-window support** to the desktop app so I can:\n- open a **new window**\n- select a different **server / instance** for that window\n- run sessions and terminals in parallel across multiple servers\n\nConcretely: I’d like to have Window A connected to Server A, and Window B connected to Server B (independent state and streams).\n\n#### UX Proposal\n- Menu item: **File → New Window** (and a shortcut like `⌘⇧N` or similar)\n- On new window open:\n  - either prompt to pick a server profile\n  - or open with last-used server and allow changing it from the header/settings\n- Show which server the window is connected to (window title or a small badge in the UI)\n\nOptional (nice-to-have, but not required):\n- “Duplicate Window” (same server as current window)\n- Remember last server per window across restarts\n\n#### Acceptance Criteria\n- [ ] I can open multiple desktop windows.\n- [ ] Each window can target a different server/instance independently.\n- [ ] Sessions list, chat, terminal, and streaming in one window do not interfere with the other window.\n- [ ] The UI makes it obvious which server a given window is connected to.\n\n#### Why this matters\nThis would enable a workflow similar to Terminal apps: multiple windows/tabs for different environments (local, staging, remote, etc.). It’s especially useful when comparing behavior, debugging remote-only issues, or just keeping long-running sessions on a remote server while iterating locally.\n\n\n### Extra context (optional)\n\n_No response_",
+      "author": {
+        "name": "nelsonPires5",
+        "url": "https://github.com/nelsonPires5",
+        "avatar": "https://avatars.githubusercontent.com/u/17963684?v=4"
+      },
+      "timestamp": "2026-02-07T16:19:46Z",
+      "url": "https://github.com/btriapitsyn/openchamber/issues/349",
+      "metrics": {
+        "comments": 0
+      },
+      "tags": [
+        "enhancement"
+      ],
+      "raw": {
+        "url": "https://api.github.com/repos/btriapitsyn/openchamber/issues/349",
+        "repository_url": "https://api.github.com/repos/btriapitsyn/openchamber",
+        "labels_url": "https://api.github.com/repos/btriapitsyn/openchamber/issues/349/labels{/name}",
+        "comments_url": "https://api.github.com/repos/btriapitsyn/openchamber/issues/349/comments",
+        "events_url": "https://api.github.com/repos/btriapitsyn/openchamber/issues/349/events",
+        "html_url": "https://github.com/btriapitsyn/openchamber/issues/349",
+        "id": 3910659651,
+        "node_id": "I_kwDOPt7VTc7pF-5D",
+        "number": 349,
+        "title": "[Feature Request] Desktop: Multi-window support (each window can target a different server)",
+        "user": {
+          "login": "nelsonPires5",
+          "id": 17963684,
+          "node_id": "MDQ6VXNlcjE3OTYzNjg0",
+          "avatar_url": "https://avatars.githubusercontent.com/u/17963684?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/nelsonPires5",
+          "html_url": "https://github.com/nelsonPires5",
+          "followers_url": "https://api.github.com/users/nelsonPires5/followers",
+          "following_url": "https://api.github.com/users/nelsonPires5/following{/other_user}",
+          "gists_url": "https://api.github.com/users/nelsonPires5/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/nelsonPires5/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/nelsonPires5/subscriptions",
+          "organizations_url": "https://api.github.com/users/nelsonPires5/orgs",
+          "repos_url": "https://api.github.com/users/nelsonPires5/repos",
+          "events_url": "https://api.github.com/users/nelsonPires5/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/nelsonPires5/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "labels": [
+          {
+            "id": 9264638305,
+            "node_id": "LA_kwDOPt7VTc8AAAACKDcpYQ",
+            "url": "https://api.github.com/repos/btriapitsyn/openchamber/labels/enhancement",
+            "name": "enhancement",
+            "color": "a2eeef",
+            "default": true,
+            "description": "New feature or request"
+          }
+        ],
+        "state": "open",
+        "locked": false,
+        "assignee": null,
+        "assignees": [],
+        "milestone": null,
+        "comments": 0,
+        "created_at": "2026-02-07T16:19:46Z",
+        "updated_at": "2026-02-07T16:19:46Z",
+        "closed_at": null,
+        "author_association": "CONTRIBUTOR",
+        "active_lock_reason": null,
+        "sub_issues_summary": {
+          "total": 0,
+          "completed": 0,
+          "percent_completed": 0
+        },
+        "issue_dependencies_summary": {
+          "blocked_by": 0,
+          "total_blocked_by": 0,
+          "blocking": 0,
+          "total_blocking": 0
+        },
+        "body": "### What should we add/change?\n\n#### Problem / Motivation\nRight now the desktop app effectively works as a single “workspace”: if I switch the connected server (local vs remote), it changes the context for the whole app. This makes it hard to work with *multiple OpenCode/OpenChamber backends at the same time*.\n\nI often run:\n- a local server (fast iteration)\n- a remote server (VPS / homelab)\nand I want to keep them open side-by-side without constantly switching the active server.\n\n#### Requested Feature\nAdd **multi-window support** to the desktop app so I can:\n- open a **new window**\n- select a different **server / instance** for that window\n- run sessions and terminals in parallel across multiple servers\n\nConcretely: I’d like to have Window A connected to Server A, and Window B connected to Server B (independent state and streams).\n\n#### UX Proposal\n- Menu item: **File → New Window** (and a shortcut like `⌘⇧N` or similar)\n- On new window open:\n  - either prompt to pick a server profile\n  - or open with last-used server and allow changing it from the header/settings\n- Show which server the window is connected to (window title or a small badge in the UI)\n\nOptional (nice-to-have, but not required):\n- “Duplicate Window” (same server as current window)\n- Remember last server per window across restarts\n\n#### Acceptance Criteria\n- [ ] I can open multiple desktop windows.\n- [ ] Each window can target a different server/instance independently.\n- [ ] Sessions list, chat, terminal, and streaming in one window do not interfere with the other window.\n- [ ] The UI makes it obvious which server a given window is connected to.\n\n#### Why this matters\nThis would enable a workflow similar to Terminal apps: multiple windows/tabs for different environments (local, staging, remote, etc.). It’s especially useful when comparing behavior, debugging remote-only issues, or just keeping long-running sessions on a remote server while iterating locally.\n\n\n### Extra context (optional)\n\n_No response_",
+        "reactions": {
+          "url": "https://api.github.com/repos/btriapitsyn/openchamber/issues/349/reactions",
+          "total_count": 0,
+          "+1": 0,
+          "-1": 0,
+          "laugh": 0,
+          "hooray": 0,
+          "confused": 0,
+          "heart": 0,
+          "rocket": 0,
+          "eyes": 0
+        },
+        "timeline_url": "https://api.github.com/repos/btriapitsyn/openchamber/issues/349/timeline",
+        "performed_via_github_app": null,
+        "state_reason": null,
+        "score": 1
+      }
+    },
+    {
+      "id": "github-issue-3910645533",
+      "platform": "github",
+      "type": "issue",
+      "title": "opencode/issues #12611: Desktop App: Focus visible styles not showing in almost all settings menus",
+      "content": "### Description\n\nIn the desktop settings menu almost no components have styles for when focus-visible should be showing - i.e keyboard navigation.\n\nIt seems this was potentially unintentional after a refactor of some focus styles. Some styles seem to have been added to specifically remove some focus styles when using the mouse, but it results in almost nothing being shown and no indication as to the active element when using keyboard.\n\n\n\n### Plugins\n\n_No response_\n\n### OpenCode version\n\nDesktop: 1.1.53\n\n### Steps to reproduce\n\nOpen the settings menu with the keyboard (cmd+,)\nUse the keyboard to navigate around with tab+navigate\nNo styles will be shown on almost anything including the following:\n- The tab navigation menu on the side\n- Switch components\n- Select components\n\n\n### Screenshot and/or share link\n\nIn the following gif you'll see I have keycastr running and am using the keyboard, but nothing shows a focus/active style.\n\n![Image](https://github.com/user-attachments/assets/2c3082b2-6152-414b-9637-0df52b8e9899)\n\n\n\n### Operating System\n\nmacOS\n\n### Terminal\n\n_No response_",
+      "author": {
+        "name": "jcampuza",
+        "url": "https://github.com/jcampuza",
+        "avatar": "https://avatars.githubusercontent.com/u/13089743?v=4"
+      },
+      "timestamp": "2026-02-07T16:14:26Z",
+      "url": "https://github.com/anomalyco/opencode/issues/12611",
+      "metrics": {
+        "comments": 0
+      },
+      "tags": [
+        "bug",
+        "web"
+      ],
+      "raw": {
+        "url": "https://api.github.com/repos/anomalyco/opencode/issues/12611",
+        "repository_url": "https://api.github.com/repos/anomalyco/opencode",
+        "labels_url": "https://api.github.com/repos/anomalyco/opencode/issues/12611/labels{/name}",
+        "comments_url": "https://api.github.com/repos/anomalyco/opencode/issues/12611/comments",
+        "events_url": "https://api.github.com/repos/anomalyco/opencode/issues/12611/events",
+        "html_url": "https://github.com/anomalyco/opencode/issues/12611",
+        "id": 3910645533,
+        "node_id": "I_kwDOOiiGL87pF7cd",
+        "number": 12611,
+        "title": "Desktop App: Focus visible styles not showing in almost all settings menus",
+        "user": {
+          "login": "jcampuza",
+          "id": 13089743,
+          "node_id": "MDQ6VXNlcjEzMDg5NzQz",
+          "avatar_url": "https://avatars.githubusercontent.com/u/13089743?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/jcampuza",
+          "html_url": "https://github.com/jcampuza",
+          "followers_url": "https://api.github.com/users/jcampuza/followers",
+          "following_url": "https://api.github.com/users/jcampuza/following{/other_user}",
+          "gists_url": "https://api.github.com/users/jcampuza/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/jcampuza/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/jcampuza/subscriptions",
+          "organizations_url": "https://api.github.com/users/jcampuza/orgs",
+          "repos_url": "https://api.github.com/users/jcampuza/repos",
+          "events_url": "https://api.github.com/users/jcampuza/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/jcampuza/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "labels": [
+          {
+            "id": 8542148739,
+            "node_id": "LA_kwDOOiiGL88AAAAB_SbYgw",
+            "url": "https://api.github.com/repos/anomalyco/opencode/labels/bug",
+            "name": "bug",
+            "color": "d73a4a",
+            "default": true,
+            "description": "Something isn't working"
+          },
+          {
+            "id": 9578754464,
+            "node_id": "LA_kwDOOiiGL88AAAACOvAxoA",
+            "url": "https://api.github.com/repos/anomalyco/opencode/labels/web",
+            "name": "web",
+            "color": "5fd4dc",
+            "default": false,
+            "description": "Relates to opencode on web / desktop"
+          }
+        ],
+        "state": "open",
+        "locked": false,
+        "assignee": {
+          "login": "adamdotdevin",
+          "id": 2363879,
+          "node_id": "MDQ6VXNlcjIzNjM4Nzk=",
+          "avatar_url": "https://avatars.githubusercontent.com/u/2363879?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/adamdotdevin",
+          "html_url": "https://github.com/adamdotdevin",
+          "followers_url": "https://api.github.com/users/adamdotdevin/followers",
+          "following_url": "https://api.github.com/users/adamdotdevin/following{/other_user}",
+          "gists_url": "https://api.github.com/users/adamdotdevin/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/adamdotdevin/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/adamdotdevin/subscriptions",
+          "organizations_url": "https://api.github.com/users/adamdotdevin/orgs",
+          "repos_url": "https://api.github.com/users/adamdotdevin/repos",
+          "events_url": "https://api.github.com/users/adamdotdevin/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/adamdotdevin/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "assignees": [
+          {
+            "login": "adamdotdevin",
+            "id": 2363879,
+            "node_id": "MDQ6VXNlcjIzNjM4Nzk=",
+            "avatar_url": "https://avatars.githubusercontent.com/u/2363879?v=4",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/adamdotdevin",
+            "html_url": "https://github.com/adamdotdevin",
+            "followers_url": "https://api.github.com/users/adamdotdevin/followers",
+            "following_url": "https://api.github.com/users/adamdotdevin/following{/other_user}",
+            "gists_url": "https://api.github.com/users/adamdotdevin/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/adamdotdevin/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/adamdotdevin/subscriptions",
+            "organizations_url": "https://api.github.com/users/adamdotdevin/orgs",
+            "repos_url": "https://api.github.com/users/adamdotdevin/repos",
+            "events_url": "https://api.github.com/users/adamdotdevin/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/adamdotdevin/received_events",
+            "type": "User",
+            "user_view_type": "public",
+            "site_admin": false
+          }
+        ],
+        "milestone": null,
+        "comments": 0,
+        "created_at": "2026-02-07T16:14:26Z",
+        "updated_at": "2026-02-07T16:15:00Z",
+        "closed_at": null,
+        "author_association": "CONTRIBUTOR",
+        "type": null,
+        "active_lock_reason": null,
+        "sub_issues_summary": {
+          "total": 0,
+          "completed": 0,
+          "percent_completed": 0
+        },
+        "issue_dependencies_summary": {
+          "blocked_by": 0,
+          "total_blocked_by": 0,
+          "blocking": 0,
+          "total_blocking": 0
+        },
+        "body": "### Description\n\nIn the desktop settings menu almost no components have styles for when focus-visible should be showing - i.e keyboard navigation.\n\nIt seems this was potentially unintentional after a refactor of some focus styles. Some styles seem to have been added to specifically remove some focus styles when using the mouse, but it results in almost nothing being shown and no indication as to the active element when using keyboard.\n\n\n\n### Plugins\n\n_No response_\n\n### OpenCode version\n\nDesktop: 1.1.53\n\n### Steps to reproduce\n\nOpen the settings menu with the keyboard (cmd+,)\nUse the keyboard to navigate around with tab+navigate\nNo styles will be shown on almost anything including the following:\n- The tab navigation menu on the side\n- Switch components\n- Select components\n\n\n### Screenshot and/or share link\n\nIn the following gif you'll see I have keycastr running and am using the keyboard, but nothing shows a focus/active style.\n\n![Image](https://github.com/user-attachments/assets/2c3082b2-6152-414b-9637-0df52b8e9899)\n\n\n\n### Operating System\n\nmacOS\n\n### Terminal\n\n_No response_",
+        "reactions": {
+          "url": "https://api.github.com/repos/anomalyco/opencode/issues/12611/reactions",
+          "total_count": 0,
+          "+1": 0,
+          "-1": 0,
+          "laugh": 0,
+          "hooray": 0,
+          "confused": 0,
+          "heart": 0,
+          "rocket": 0,
+          "eyes": 0
+        },
+        "timeline_url": "https://api.github.com/repos/anomalyco/opencode/issues/12611/timeline",
+        "performed_via_github_app": null,
+        "state_reason": null,
+        "score": 1
+      }
+    },
+    {
+      "id": "github-issue-3910641496",
+      "platform": "github",
+      "type": "issue",
+      "title": "oh-my-opencode/issues #1626: [Question]: How to turn off automatic model migration to the latest model?",
+      "content": "### Prerequisites\n\n- [x] I will write this issue in English (see our [Language Policy](https://github.com/code-yeongyu/oh-my-opencode/blob/dev/CONTRIBUTING.md#language-policy))\n- [x] I have searched existing issues and discussions\n- [x] I have read the [documentation](https://github.com/code-yeongyu/oh-my-opencode#readme) or asked an AI coding agent with this project's GitHub URL loaded and couldn't find the answer\n- [x] This is a question (not a bug report or feature request)\n\n### Question\n\nFollow, the migration is done automatically every time I start up, but the provider I'm on hasn't been updated to the latest model yet, so it's useless to me, and I can't even change it back, and I don't want to have to customize a channel for every model:\n\n```\n{\n  \"$schema\": \"https://raw.githubusercontent.com/code-yeongyu/oh-my-opencode/master/assets/oh-my-opencode.schema.json\",\n  \"google_auth\": false,\n  \"agents\": {\n    \"sisyphus\": {\n      \"model\": \"anthropic/claude-opus-4-6\"\n    },\n    \"prometheus\": {\n      \"model\": \"anthropic/claude-opus-4-6\"\n    },\n    \"librarian\": {\n      \"model\": \"llmtech/glm-4.7\"\n    },\n    \"explore\": {\n      \"model\": \"openai/gpt-5-nano\"\n    },\n    \"oracle\": {\n      \"model\": \"openai/gpt-5.2\"\n    },\n    \"multimodal-looker\": {\n      \"model\": \"google/gemini-3-flash-preview\"\n    },\n    \"atlas\": {\n      \"model\": \"anthropic/claude-sonnet-4-5\",\n      \"variant\": \"max\"\n    },\n    \"sisyphus-junior\": {\n      \"model\": \"anthropic/claude-sonnet-4-5\"\n    },\n    \"metis\": {\n      \"model\": \"anthropic/claude-opus-4-6\"\n    },\n    \"momus\": {\n      \"model\": \"openai/gpt-5.2\"\n    }\n  },\n  \"categories\": {\n    \"visual-engineering\": {\n      \"model\": \"google/gemini-3-pro-preview\"\n    },\n    \"artistry\": {\n      \"model\": \"google/gemini-3-pro-preview\",\n      \"variant\": \"max\"\n    },\n    \"writing\": {\n      \"model\": \"google/gemini-3-flash-preview\",\n      \"variant\": \"max\"\n    },\n    \"ultrabrain\": {\n      \"model\": \"openai/gpt-5.3-codex\",\n      \"variant\": \"xhigh\"\n    },\n    \"deep\": {\n      \"model\": \"openai/gpt-5.3-codex\",\n      \"variant\": \"medium\"\n    },\n    \"quick\": {\n      \"model\": \"openai/gpt-5-nano\"\n    },\n    \"unspecified-low\": {\n      \"model\": \"anthropic/claude-sonnet-4-5\"\n    },\n    \"unspecified-high\": {\n      \"model\": \"anthropic/claude-opus-4-6\"\n    }\n  },\n  \"_migrations\": [\n    \"model-version:anthropic/claude-opus-4-5->anthropic/claude-opus-4-6\",\n    \"model-version:anthropic/claude-opus-4-5->anthropic/claude-opus-4-6\",\n    \"model-version:anthropic/claude-opus-4-5->anthropic/claude-opus-4-6\",\n    \"model-version:openai/gpt-5.2-codex->openai/gpt-5.3-codex\",\n    \"model-version:openai/gpt-5.2-codex->openai/gpt-5.3-codex\",\n    \"model-version:anthropic/claude-opus-4-5->anthropic/claude-opus-4-6\"\n  ]\n}\n\n```\n\n### Context\n\n_No response_\n\n### Doctor Output (Optional)\n\n```shell\n\n```\n\n### Question Category\n\nConfiguration\n\n### Additional Information\n\n_No response_",
+      "author": {
+        "name": "pzyyll",
+        "url": "https://github.com/pzyyll",
+        "avatar": "https://avatars.githubusercontent.com/u/6948037?v=4"
+      },
+      "timestamp": "2026-02-07T16:12:58Z",
+      "url": "https://github.com/code-yeongyu/oh-my-opencode/issues/1626",
+      "metrics": {
+        "comments": 0
+      },
+      "tags": [
+        "question"
+      ],
+      "raw": {
+        "url": "https://api.github.com/repos/code-yeongyu/oh-my-opencode/issues/1626",
+        "repository_url": "https://api.github.com/repos/code-yeongyu/oh-my-opencode",
+        "labels_url": "https://api.github.com/repos/code-yeongyu/oh-my-opencode/issues/1626/labels{/name}",
+        "comments_url": "https://api.github.com/repos/code-yeongyu/oh-my-opencode/issues/1626/comments",
+        "events_url": "https://api.github.com/repos/code-yeongyu/oh-my-opencode/issues/1626/events",
+        "html_url": "https://github.com/code-yeongyu/oh-my-opencode/issues/1626",
+        "id": 3910641496,
+        "node_id": "I_kwDOQheEEc7pF6dY",
+        "number": 1626,
+        "title": "[Question]: How to turn off automatic model migration to the latest model?",
+        "user": {
+          "login": "pzyyll",
+          "id": 6948037,
+          "node_id": "MDQ6VXNlcjY5NDgwMzc=",
+          "avatar_url": "https://avatars.githubusercontent.com/u/6948037?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/pzyyll",
+          "html_url": "https://github.com/pzyyll",
+          "followers_url": "https://api.github.com/users/pzyyll/followers",
+          "following_url": "https://api.github.com/users/pzyyll/following{/other_user}",
+          "gists_url": "https://api.github.com/users/pzyyll/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/pzyyll/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/pzyyll/subscriptions",
+          "organizations_url": "https://api.github.com/users/pzyyll/orgs",
+          "repos_url": "https://api.github.com/users/pzyyll/repos",
+          "events_url": "https://api.github.com/users/pzyyll/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/pzyyll/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "labels": [
+          {
+            "id": 9759617555,
+            "node_id": "LA_kwDOQheEEc8AAAACRbfyEw",
+            "url": "https://api.github.com/repos/code-yeongyu/oh-my-opencode/labels/question",
+            "name": "question",
+            "color": "d876e3",
+            "default": true,
+            "description": "Further information is requested"
+          }
+        ],
+        "state": "open",
+        "locked": false,
+        "assignee": null,
+        "assignees": [],
+        "milestone": null,
+        "comments": 0,
+        "created_at": "2026-02-07T16:12:58Z",
+        "updated_at": "2026-02-07T16:12:58Z",
+        "closed_at": null,
+        "author_association": "NONE",
+        "active_lock_reason": null,
+        "sub_issues_summary": {
+          "total": 0,
+          "completed": 0,
+          "percent_completed": 0
+        },
+        "issue_dependencies_summary": {
+          "blocked_by": 0,
+          "total_blocked_by": 0,
+          "blocking": 0,
+          "total_blocking": 0
+        },
+        "body": "### Prerequisites\n\n- [x] I will write this issue in English (see our [Language Policy](https://github.com/code-yeongyu/oh-my-opencode/blob/dev/CONTRIBUTING.md#language-policy))\n- [x] I have searched existing issues and discussions\n- [x] I have read the [documentation](https://github.com/code-yeongyu/oh-my-opencode#readme) or asked an AI coding agent with this project's GitHub URL loaded and couldn't find the answer\n- [x] This is a question (not a bug report or feature request)\n\n### Question\n\nFollow, the migration is done automatically every time I start up, but the provider I'm on hasn't been updated to the latest model yet, so it's useless to me, and I can't even change it back, and I don't want to have to customize a channel for every model:\n\n```\n{\n  \"$schema\": \"https://raw.githubusercontent.com/code-yeongyu/oh-my-opencode/master/assets/oh-my-opencode.schema.json\",\n  \"google_auth\": false,\n  \"agents\": {\n    \"sisyphus\": {\n      \"model\": \"anthropic/claude-opus-4-6\"\n    },\n    \"prometheus\": {\n      \"model\": \"anthropic/claude-opus-4-6\"\n    },\n    \"librarian\": {\n      \"model\": \"llmtech/glm-4.7\"\n    },\n    \"explore\": {\n      \"model\": \"openai/gpt-5-nano\"\n    },\n    \"oracle\": {\n      \"model\": \"openai/gpt-5.2\"\n    },\n    \"multimodal-looker\": {\n      \"model\": \"google/gemini-3-flash-preview\"\n    },\n    \"atlas\": {\n      \"model\": \"anthropic/claude-sonnet-4-5\",\n      \"variant\": \"max\"\n    },\n    \"sisyphus-junior\": {\n      \"model\": \"anthropic/claude-sonnet-4-5\"\n    },\n    \"metis\": {\n      \"model\": \"anthropic/claude-opus-4-6\"\n    },\n    \"momus\": {\n      \"model\": \"openai/gpt-5.2\"\n    }\n  },\n  \"categories\": {\n    \"visual-engineering\": {\n      \"model\": \"google/gemini-3-pro-preview\"\n    },\n    \"artistry\": {\n      \"model\": \"google/gemini-3-pro-preview\",\n      \"variant\": \"max\"\n    },\n    \"writing\": {\n      \"model\": \"google/gemini-3-flash-preview\",\n      \"variant\": \"max\"\n    },\n    \"ultrabrain\": {\n      \"model\": \"openai/gpt-5.3-codex\",\n      \"variant\": \"xhigh\"\n    },\n    \"deep\": {\n      \"model\": \"openai/gpt-5.3-codex\",\n      \"variant\": \"medium\"\n    },\n    \"quick\": {\n      \"model\": \"openai/gpt-5-nano\"\n    },\n    \"unspecified-low\": {\n      \"model\": \"anthropic/claude-sonnet-4-5\"\n    },\n    \"unspecified-high\": {\n      \"model\": \"anthropic/claude-opus-4-6\"\n    }\n  },\n  \"_migrations\": [\n    \"model-version:anthropic/claude-opus-4-5->anthropic/claude-opus-4-6\",\n    \"model-version:anthropic/claude-opus-4-5->anthropic/claude-opus-4-6\",\n    \"model-version:anthropic/claude-opus-4-5->anthropic/claude-opus-4-6\",\n    \"model-version:openai/gpt-5.2-codex->openai/gpt-5.3-codex\",\n    \"model-version:openai/gpt-5.2-codex->openai/gpt-5.3-codex\",\n    \"model-version:anthropic/claude-opus-4-5->anthropic/claude-opus-4-6\"\n  ]\n}\n\n```\n\n### Context\n\n_No response_\n\n### Doctor Output (Optional)\n\n```shell\n\n```\n\n### Question Category\n\nConfiguration\n\n### Additional Information\n\n_No response_",
+        "reactions": {
+          "url": "https://api.github.com/repos/code-yeongyu/oh-my-opencode/issues/1626/reactions",
+          "total_count": 0,
+          "+1": 0,
+          "-1": 0,
+          "laugh": 0,
+          "hooray": 0,
+          "confused": 0,
+          "heart": 0,
+          "rocket": 0,
+          "eyes": 0
+        },
+        "timeline_url": "https://api.github.com/repos/code-yeongyu/oh-my-opencode/issues/1626/timeline",
+        "performed_via_github_app": null,
+        "state_reason": null,
+        "score": 1
+      }
+    },
+    {
+      "id": "github-issue-3910633425",
+      "platform": "github",
+      "type": "issue",
+      "title": "open-dispatch/issues #26: High: Test coverage gaps — 12+ source files untested",
+      "content": "## Description\nOnly 7 test files cover 19 source files. Missing tests for:\n- All bot entry points (bot.js, teams-bot.js, discord-bot.js, etc.)\n- Provider implementations (slack-provider.js, discord-provider.js, teams-provider.js)\n- Webhook server security (invalid token rejection, size limits)\n- Shell escape prevention in sprite-core.js\n- Sidecar output-relay.js (zero tests)\n- Claude-core.js and opencode-core.js\n\n## Priority areas\n1. Security: shell escape tests, webhook token validation\n2. Core: bot-engine command routing, provider message handling\n3. Sidecar: output-relay.js buffering behavior\n\n## Severity\nHigh — regressions won't be caught",
+      "author": {
+        "name": "bobum",
+        "url": "https://github.com/bobum",
+        "avatar": "https://avatars.githubusercontent.com/u/1641348?v=4"
+      },
+      "timestamp": "2026-02-07T16:09:43Z",
+      "url": "https://github.com/bobum/open-dispatch/issues/26",
+      "metrics": {
+        "comments": 0
+      },
+      "tags": [
+        "enhancement"
+      ],
+      "raw": {
+        "url": "https://api.github.com/repos/bobum/open-dispatch/issues/26",
+        "repository_url": "https://api.github.com/repos/bobum/open-dispatch",
+        "labels_url": "https://api.github.com/repos/bobum/open-dispatch/issues/26/labels{/name}",
+        "comments_url": "https://api.github.com/repos/bobum/open-dispatch/issues/26/comments",
+        "events_url": "https://api.github.com/repos/bobum/open-dispatch/issues/26/events",
+        "html_url": "https://github.com/bobum/open-dispatch/issues/26",
+        "id": 3910633425,
+        "node_id": "I_kwDOQ7sjEM7pF4fR",
+        "number": 26,
+        "title": "High: Test coverage gaps — 12+ source files untested",
+        "user": {
+          "login": "bobum",
+          "id": 1641348,
+          "node_id": "MDQ6VXNlcjE2NDEzNDg=",
+          "avatar_url": "https://avatars.githubusercontent.com/u/1641348?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/bobum",
+          "html_url": "https://github.com/bobum",
+          "followers_url": "https://api.github.com/users/bobum/followers",
+          "following_url": "https://api.github.com/users/bobum/following{/other_user}",
+          "gists_url": "https://api.github.com/users/bobum/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/bobum/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/bobum/subscriptions",
+          "organizations_url": "https://api.github.com/users/bobum/orgs",
+          "repos_url": "https://api.github.com/users/bobum/repos",
+          "events_url": "https://api.github.com/users/bobum/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/bobum/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "labels": [
+          {
+            "id": 10011537502,
+            "node_id": "LA_kwDOQ7sjEM8AAAACVLvwXg",
+            "url": "https://api.github.com/repos/bobum/open-dispatch/labels/enhancement",
+            "name": "enhancement",
+            "color": "a2eeef",
+            "default": true,
+            "description": "New feature or request"
+          }
+        ],
+        "state": "open",
+        "locked": false,
+        "assignee": null,
+        "assignees": [],
+        "milestone": null,
+        "comments": 0,
+        "created_at": "2026-02-07T16:09:43Z",
+        "updated_at": "2026-02-07T16:09:43Z",
+        "closed_at": null,
+        "author_association": "OWNER",
+        "active_lock_reason": null,
+        "sub_issues_summary": {
+          "total": 0,
+          "completed": 0,
+          "percent_completed": 0
+        },
+        "issue_dependencies_summary": {
+          "blocked_by": 0,
+          "total_blocked_by": 0,
+          "blocking": 0,
+          "total_blocking": 0
+        },
+        "body": "## Description\nOnly 7 test files cover 19 source files. Missing tests for:\n- All bot entry points (bot.js, teams-bot.js, discord-bot.js, etc.)\n- Provider implementations (slack-provider.js, discord-provider.js, teams-provider.js)\n- Webhook server security (invalid token rejection, size limits)\n- Shell escape prevention in sprite-core.js\n- Sidecar output-relay.js (zero tests)\n- Claude-core.js and opencode-core.js\n\n## Priority areas\n1. Security: shell escape tests, webhook token validation\n2. Core: bot-engine command routing, provider message handling\n3. Sidecar: output-relay.js buffering behavior\n\n## Severity\nHigh — regressions won't be caught",
+        "reactions": {
+          "url": "https://api.github.com/repos/bobum/open-dispatch/issues/26/reactions",
+          "total_count": 0,
+          "+1": 0,
+          "-1": 0,
+          "laugh": 0,
+          "hooray": 0,
+          "confused": 0,
+          "heart": 0,
+          "rocket": 0,
+          "eyes": 0
+        },
+        "timeline_url": "https://api.github.com/repos/bobum/open-dispatch/issues/26/timeline",
+        "performed_via_github_app": null,
+        "state_reason": null,
+        "score": 1
+      }
+    },
+    {
+      "id": "github-issue-3910633078",
+      "platform": "github",
+      "type": "issue",
+      "title": "open-dispatch/issues #24: High: Missing global unhandled rejection handlers",
+      "content": "## Description\nNone of the bot entry points have `process.on('unhandledRejection')` or `process.on('uncaughtException')` handlers. In Node.js 16+, unhandled rejections crash the process.\n\n## Fix\nAdd handlers to all entry points: `bot.js`, `opencode-bot.js`, `teams-bot.js`, `teams-opencode-bot.js`, `discord-bot.js`, `discord-opencode-bot.js`, `sprite-bot.js`.\n\n## Files\n- All `src/*-bot.js` entry points\n\n## Severity\nHigh — silent crashes",
+      "author": {
+        "name": "bobum",
+        "url": "https://github.com/bobum",
+        "avatar": "https://avatars.githubusercontent.com/u/1641348?v=4"
+      },
+      "timestamp": "2026-02-07T16:09:36Z",
+      "url": "https://github.com/bobum/open-dispatch/issues/24",
+      "metrics": {
+        "comments": 0
+      },
+      "tags": [
+        "bug"
+      ],
+      "raw": {
+        "url": "https://api.github.com/repos/bobum/open-dispatch/issues/24",
+        "repository_url": "https://api.github.com/repos/bobum/open-dispatch",
+        "labels_url": "https://api.github.com/repos/bobum/open-dispatch/issues/24/labels{/name}",
+        "comments_url": "https://api.github.com/repos/bobum/open-dispatch/issues/24/comments",
+        "events_url": "https://api.github.com/repos/bobum/open-dispatch/issues/24/events",
+        "html_url": "https://github.com/bobum/open-dispatch/issues/24",
+        "id": 3910633078,
+        "node_id": "I_kwDOQ7sjEM7pF4Z2",
+        "number": 24,
+        "title": "High: Missing global unhandled rejection handlers",
+        "user": {
+          "login": "bobum",
+          "id": 1641348,
+          "node_id": "MDQ6VXNlcjE2NDEzNDg=",
+          "avatar_url": "https://avatars.githubusercontent.com/u/1641348?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/bobum",
+          "html_url": "https://github.com/bobum",
+          "followers_url": "https://api.github.com/users/bobum/followers",
+          "following_url": "https://api.github.com/users/bobum/following{/other_user}",
+          "gists_url": "https://api.github.com/users/bobum/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/bobum/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/bobum/subscriptions",
+          "organizations_url": "https://api.github.com/users/bobum/orgs",
+          "repos_url": "https://api.github.com/users/bobum/repos",
+          "events_url": "https://api.github.com/users/bobum/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/bobum/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "labels": [
+          {
+            "id": 10011537492,
+            "node_id": "LA_kwDOQ7sjEM8AAAACVLvwVA",
+            "url": "https://api.github.com/repos/bobum/open-dispatch/labels/bug",
+            "name": "bug",
+            "color": "d73a4a",
+            "default": true,
+            "description": "Something isn't working"
+          }
+        ],
+        "state": "open",
+        "locked": false,
+        "assignee": null,
+        "assignees": [],
+        "milestone": null,
+        "comments": 0,
+        "created_at": "2026-02-07T16:09:36Z",
+        "updated_at": "2026-02-07T16:09:36Z",
+        "closed_at": null,
+        "author_association": "OWNER",
+        "active_lock_reason": null,
+        "sub_issues_summary": {
+          "total": 0,
+          "completed": 0,
+          "percent_completed": 0
+        },
+        "issue_dependencies_summary": {
+          "blocked_by": 0,
+          "total_blocked_by": 0,
+          "blocking": 0,
+          "total_blocking": 0
+        },
+        "body": "## Description\nNone of the bot entry points have `process.on('unhandledRejection')` or `process.on('uncaughtException')` handlers. In Node.js 16+, unhandled rejections crash the process.\n\n## Fix\nAdd handlers to all entry points: `bot.js`, `opencode-bot.js`, `teams-bot.js`, `teams-opencode-bot.js`, `discord-bot.js`, `discord-opencode-bot.js`, `sprite-bot.js`.\n\n## Files\n- All `src/*-bot.js` entry points\n\n## Severity\nHigh — silent crashes",
+        "reactions": {
+          "url": "https://api.github.com/repos/bobum/open-dispatch/issues/24/reactions",
+          "total_count": 0,
+          "+1": 0,
+          "-1": 0,
+          "laugh": 0,
+          "hooray": 0,
+          "confused": 0,
+          "heart": 0,
+          "rocket": 0,
+          "eyes": 0
+        },
+        "timeline_url": "https://api.github.com/repos/bobum/open-dispatch/issues/24/timeline",
+        "performed_via_github_app": null,
+        "state_reason": null,
+        "score": 1
+      }
+    },
+    {
       "id": "github-issue-3910554390",
       "platform": "github",
       "type": "issue",
@@ -291,9 +1156,9 @@
       "timestamp": "2026-02-07T15:24:13.000Z",
       "url": "https://stackoverflow.com/questions/79884932/js-tooltip-that-shows-up-when-you-over-an-image",
       "metrics": {
-        "upvotes": 0,
+        "upvotes": -1,
         "comments": 0,
-        "views": 17
+        "views": 24
       },
       "tags": [
         "javascript",
@@ -314,14 +1179,15 @@
           "link": "https://stackoverflow.com/users/32330204/slobado"
         },
         "is_answered": false,
-        "view_count": 17,
+        "view_count": 24,
+        "closed_date": 1770480369,
         "answer_count": 0,
-        "score": 0,
+        "score": -1,
         "last_activity_date": 1770477853,
         "creation_date": 1770477853,
         "question_id": 79884932,
-        "content_license": "CC BY-SA 4.0",
         "link": "https://stackoverflow.com/questions/79884932/js-tooltip-that-shows-up-when-you-over-an-image",
+        "closed_reason": "Not suitable for this site",
         "title": "js tooltip that shows up when you over an image?",
         "body": "<p>i'm looking for a js tooltip that shows when you hover over an image? like the title attribute in html, or for the lack of a better example, like the <a href=\"https://minecraft.wiki/w/Tooltip\" rel=\"nofollow noreferrer\">tooltip that shows up when you hover over an item in the minecraft inventory</a>, just customisable through css and follows the cursor. i've tried finding one posted somewhere but i can only find ones that only work with text only, which isn't what i'm looking for and doesn't work for me.</p>\n<p>i'm not skilled enough in js myself (i don't really know much js, i can do the css myself though), so any help is appreciated ^^;</p>\n"
       }
@@ -342,7 +1208,7 @@
       "metrics": {
         "upvotes": 0,
         "comments": 0,
-        "views": 12
+        "views": 15
       },
       "tags": [
         "reactjs",
@@ -365,7 +1231,7 @@
           "link": "https://stackoverflow.com/users/8103934/bustinout"
         },
         "is_answered": false,
-        "view_count": 12,
+        "view_count": 15,
         "answer_count": 0,
         "score": 0,
         "last_activity_date": 1770477025,
@@ -582,6 +1448,152 @@
       }
     },
     {
+      "id": "github-discussion-3910432676",
+      "platform": "github",
+      "type": "discussion",
+      "title": "[FEATURE]: configuration profiles (per‑context setups)",
+      "content": "### Feature hasn't been suggested before.\n\n- [x] I have verified this feature I'm about to request hasn't been suggested before.\n\n### Describe the enhancement you want to request\n\nI’d like profiles for full configuration sets, not just auth. Specifically, I have multiple ‎`oh-my-opencode` configs that I currently swap manually, and I want to switch between them as profiles.\n\nWhat I want ￼\n\n- Named profiles (e.g. Personal, Work, Client‑A, Client‑B) that each define:\n    1. Active configuration files / directories.\n    2. Enabled plugins / subagents / tools.\n    3. Default models and providers.\n    4. Per‑profile environment (env vars, project roots, workspace layout).\n- A fast way to switch profiles:\n    1. From the UI (visible selector).\n    2. Via a command / keybinding.\n- A clear indicator of the current profile so I don’t accidentally run the wrong config.\n\nWhy this is useful ￼\n\n- Different contexts (personal, work, different clients) need very different configurations and constraints.\n\n- Today, I have to:\n    1.  Manually swap configuration folders / files.\n    2.  Restart or reload things to pick up the new setup.\n    3.  Remember which config is currently active, which is error‑prone.\n\n- Profiles would:\n    1.  Make context switching fast and safe.\n    2.  Keep work and personal / client setups clearly separated.\n    3.  Encourage focused, minimal configs instead of one huge, overloaded configuration.\n\nExample use case ￼\n\n- One profile for personal hacking (my own tools, models, repos).\n- One profile per client / employer (their tools, providers, repos, security rules).\n- For example, I currently maintain multiple configurations (including ‎`oh-my-opencode`‑based setups) and have to juggle them manually; profiles would let me encode these as first‑class switches inside OpenCode itself.\n\nPossible implementation ￼\n\n- Introduce a Profile abstraction that:\n  - Points to a config root and optional overrides (models, tools, env).\n  - Is persisted and selectable from the UI and command palette.\n  - Reload active configuration when the profile changes, without needing manual file juggling.",
+      "author": {
+        "name": "bsreeram08",
+        "url": "https://github.com/bsreeram08",
+        "avatar": "https://avatars.githubusercontent.com/u/35658317?v=4"
+      },
+      "timestamp": "2026-02-07T14:42:18Z",
+      "url": "https://github.com/anomalyco/opencode/issues/12607",
+      "metrics": {
+        "comments": 1
+      },
+      "tags": [
+        "discussion"
+      ],
+      "raw": {
+        "url": "https://api.github.com/repos/anomalyco/opencode/issues/12607",
+        "repository_url": "https://api.github.com/repos/anomalyco/opencode",
+        "labels_url": "https://api.github.com/repos/anomalyco/opencode/issues/12607/labels{/name}",
+        "comments_url": "https://api.github.com/repos/anomalyco/opencode/issues/12607/comments",
+        "events_url": "https://api.github.com/repos/anomalyco/opencode/issues/12607/events",
+        "html_url": "https://github.com/anomalyco/opencode/issues/12607",
+        "id": 3910432676,
+        "node_id": "I_kwDOOiiGL87pFHek",
+        "number": 12607,
+        "title": "[FEATURE]: configuration profiles (per‑context setups)",
+        "user": {
+          "login": "bsreeram08",
+          "id": 35658317,
+          "node_id": "MDQ6VXNlcjM1NjU4MzE3",
+          "avatar_url": "https://avatars.githubusercontent.com/u/35658317?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/bsreeram08",
+          "html_url": "https://github.com/bsreeram08",
+          "followers_url": "https://api.github.com/users/bsreeram08/followers",
+          "following_url": "https://api.github.com/users/bsreeram08/following{/other_user}",
+          "gists_url": "https://api.github.com/users/bsreeram08/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/bsreeram08/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/bsreeram08/subscriptions",
+          "organizations_url": "https://api.github.com/users/bsreeram08/orgs",
+          "repos_url": "https://api.github.com/users/bsreeram08/repos",
+          "events_url": "https://api.github.com/users/bsreeram08/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/bsreeram08/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "labels": [
+          {
+            "id": 9496536813,
+            "node_id": "LA_kwDOOiiGL88AAAACNgmm7Q",
+            "url": "https://api.github.com/repos/anomalyco/opencode/labels/discussion",
+            "name": "discussion",
+            "color": "0e8a16",
+            "default": false,
+            "description": "Used for feature requests, proposals, ideas, etc.  Open discussion"
+          }
+        ],
+        "state": "open",
+        "locked": false,
+        "assignee": {
+          "login": "thdxr",
+          "id": 826656,
+          "node_id": "MDQ6VXNlcjgyNjY1Ng==",
+          "avatar_url": "https://avatars.githubusercontent.com/u/826656?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/thdxr",
+          "html_url": "https://github.com/thdxr",
+          "followers_url": "https://api.github.com/users/thdxr/followers",
+          "following_url": "https://api.github.com/users/thdxr/following{/other_user}",
+          "gists_url": "https://api.github.com/users/thdxr/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/thdxr/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/thdxr/subscriptions",
+          "organizations_url": "https://api.github.com/users/thdxr/orgs",
+          "repos_url": "https://api.github.com/users/thdxr/repos",
+          "events_url": "https://api.github.com/users/thdxr/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/thdxr/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "assignees": [
+          {
+            "login": "thdxr",
+            "id": 826656,
+            "node_id": "MDQ6VXNlcjgyNjY1Ng==",
+            "avatar_url": "https://avatars.githubusercontent.com/u/826656?v=4",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/thdxr",
+            "html_url": "https://github.com/thdxr",
+            "followers_url": "https://api.github.com/users/thdxr/followers",
+            "following_url": "https://api.github.com/users/thdxr/following{/other_user}",
+            "gists_url": "https://api.github.com/users/thdxr/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/thdxr/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/thdxr/subscriptions",
+            "organizations_url": "https://api.github.com/users/thdxr/orgs",
+            "repos_url": "https://api.github.com/users/thdxr/repos",
+            "events_url": "https://api.github.com/users/thdxr/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/thdxr/received_events",
+            "type": "User",
+            "user_view_type": "public",
+            "site_admin": false
+          }
+        ],
+        "milestone": null,
+        "comments": 1,
+        "created_at": "2026-02-07T14:42:18Z",
+        "updated_at": "2026-02-07T14:45:15Z",
+        "closed_at": null,
+        "author_association": "NONE",
+        "type": null,
+        "active_lock_reason": null,
+        "sub_issues_summary": {
+          "total": 0,
+          "completed": 0,
+          "percent_completed": 0
+        },
+        "issue_dependencies_summary": {
+          "blocked_by": 0,
+          "total_blocked_by": 0,
+          "blocking": 0,
+          "total_blocking": 0
+        },
+        "body": "### Feature hasn't been suggested before.\n\n- [x] I have verified this feature I'm about to request hasn't been suggested before.\n\n### Describe the enhancement you want to request\n\nI’d like profiles for full configuration sets, not just auth. Specifically, I have multiple ‎`oh-my-opencode` configs that I currently swap manually, and I want to switch between them as profiles.\n\nWhat I want ￼\n\n- Named profiles (e.g. Personal, Work, Client‑A, Client‑B) that each define:\n    1. Active configuration files / directories.\n    2. Enabled plugins / subagents / tools.\n    3. Default models and providers.\n    4. Per‑profile environment (env vars, project roots, workspace layout).\n- A fast way to switch profiles:\n    1. From the UI (visible selector).\n    2. Via a command / keybinding.\n- A clear indicator of the current profile so I don’t accidentally run the wrong config.\n\nWhy this is useful ￼\n\n- Different contexts (personal, work, different clients) need very different configurations and constraints.\n\n- Today, I have to:\n    1.  Manually swap configuration folders / files.\n    2.  Restart or reload things to pick up the new setup.\n    3.  Remember which config is currently active, which is error‑prone.\n\n- Profiles would:\n    1.  Make context switching fast and safe.\n    2.  Keep work and personal / client setups clearly separated.\n    3.  Encourage focused, minimal configs instead of one huge, overloaded configuration.\n\nExample use case ￼\n\n- One profile for personal hacking (my own tools, models, repos).\n- One profile per client / employer (their tools, providers, repos, security rules).\n- For example, I currently maintain multiple configurations (including ‎`oh-my-opencode`‑based setups) and have to juggle them manually; profiles would let me encode these as first‑class switches inside OpenCode itself.\n\nPossible implementation ￼\n\n- Introduce a Profile abstraction that:\n  - Points to a config root and optional overrides (models, tools, env).\n  - Is persisted and selectable from the UI and command palette.\n  - Reload active configuration when the profile changes, without needing manual file juggling.",
+        "reactions": {
+          "url": "https://api.github.com/repos/anomalyco/opencode/issues/12607/reactions",
+          "total_count": 0,
+          "+1": 0,
+          "-1": 0,
+          "laugh": 0,
+          "hooray": 0,
+          "confused": 0,
+          "heart": 0,
+          "rocket": 0,
+          "eyes": 0
+        },
+        "timeline_url": "https://api.github.com/repos/anomalyco/opencode/issues/12607/timeline",
+        "performed_via_github_app": null,
+        "state_reason": null,
+        "score": 1
+      }
+    },
+    {
       "id": "github-issue-3910347329",
       "platform": "github",
       "type": "issue",
@@ -689,7 +1701,7 @@
       "metrics": {
         "upvotes": 0,
         "comments": 0,
-        "views": 20
+        "views": 23
       },
       "tags": [
         "javascript",
@@ -716,7 +1728,7 @@
           "link": "https://stackoverflow.com/users/15927992/literallycode"
         },
         "is_answered": false,
-        "view_count": 20,
+        "view_count": 23,
         "answer_count": 0,
         "score": 0,
         "last_activity_date": 1770471336,
@@ -780,7 +1792,7 @@
       "metrics": {
         "upvotes": 0,
         "comments": 1,
-        "views": 18
+        "views": 21
       },
       "tags": [
         "javascript",
@@ -803,7 +1815,7 @@
           "link": "https://stackoverflow.com/users/32328914/pauline"
         },
         "is_answered": false,
-        "view_count": 18,
+        "view_count": 21,
         "answer_count": 1,
         "score": 0,
         "last_activity_date": 1770469978,
@@ -832,7 +1844,7 @@
       "metrics": {
         "upvotes": 1,
         "comments": 0,
-        "views": 7
+        "views": 9
       },
       "tags": [
         "javascript",
@@ -855,7 +1867,7 @@
           "link": "https://stackoverflow.com/users/16143561/jelle2005"
         },
         "is_answered": false,
-        "view_count": 7,
+        "view_count": 9,
         "answer_count": 0,
         "score": 1,
         "last_activity_date": 1770458764,
@@ -884,7 +1896,7 @@
       "metrics": {
         "upvotes": -5,
         "comments": 0,
-        "views": 43
+        "views": 46
       },
       "tags": [
         "javascript",
@@ -907,7 +1919,7 @@
           "link": "https://stackoverflow.com/users/21361864/user21361864"
         },
         "is_answered": false,
-        "view_count": 43,
+        "view_count": 46,
         "closed_date": 1770478508,
         "answer_count": 0,
         "score": -5,
@@ -1127,7 +2139,7 @@
       "metrics": {
         "upvotes": -1,
         "comments": 0,
-        "views": 42
+        "views": 43
       },
       "tags": [
         "typescript",
@@ -1148,7 +2160,7 @@
           "link": "https://stackoverflow.com/users/13349770/eziomercer"
         },
         "is_answered": false,
-        "view_count": 42,
+        "view_count": 43,
         "answer_count": 0,
         "score": -1,
         "last_activity_date": 1770414147,
@@ -1528,5 +2540,5 @@
       }
     }
   ],
-  "lastUpdated": "2026-02-07T15:52:34.994Z"
+  "lastUpdated": "2026-02-07T16:36:00.462Z"
 }
