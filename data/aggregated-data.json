@@ -1,6 +1,171 @@
 {
   "items": [
     {
+      "id": "stackoverflow-question-79884986",
+      "platform": "stackoverflow",
+      "type": "question",
+      "title": "What caues the failure to unblock a custom JavaScript video player by using the seeker?",
+      "content": "",
+      "author": {
+        "name": "Razvan Zamfir",
+        "url": "https://stackoverflow.com/users/4512005/razvan-zamfir",
+        "avatar": "https://i.sstatic.net/klCR6.jpg?s=256"
+      },
+      "timestamp": "2026-02-07T17:34:51.000Z",
+      "url": "https://stackoverflow.com/questions/79884986/what-caues-the-failure-to-unblock-a-custom-javascript-video-player-by-using-the",
+      "metrics": {
+        "upvotes": 0,
+        "comments": 0,
+        "views": 8
+      },
+      "tags": [
+        "javascript",
+        "html"
+      ],
+      "raw": {
+        "tags": [
+          "javascript",
+          "html"
+        ],
+        "owner": {
+          "account_id": 1811191,
+          "reputation": 4810,
+          "user_id": 4512005,
+          "user_type": "registered",
+          "accept_rate": 92,
+          "profile_image": "https://i.sstatic.net/klCR6.jpg?s=256",
+          "display_name": "Razvan Zamfir",
+          "link": "https://stackoverflow.com/users/4512005/razvan-zamfir"
+        },
+        "is_answered": false,
+        "view_count": 8,
+        "answer_count": 0,
+        "score": 0,
+        "last_activity_date": 1770486462,
+        "creation_date": 1770485691,
+        "last_edit_date": 1770486462,
+        "question_id": 79884986,
+        "content_license": "CC BY-SA 4.0",
+        "link": "https://stackoverflow.com/questions/79884986/what-caues-the-failure-to-unblock-a-custom-javascript-video-player-by-using-the",
+        "title": "What caues the failure to unblock a custom JavaScript video player by using the seeker?",
+        "body": "<p>I have been working on a JavaScript video player.</p>\n<p><div class=\"snippet\" data-lang=\"js\" data-hide=\"false\" data-console=\"true\" data-babel=\"false\" data-babel-preset-react=\"false\" data-babel-preset-ts=\"false\">\n<div class=\"snippet-code\">\n<pre class=\"snippet-code-js lang-js prettyprint-override\"><code>document.addEventListener('DOMContentLoaded', () =&gt; {\n\n  String.prototype.timeFormat = function() {\n    let sec = parseInt(this, 10);\n    let h = Math.floor(sec / 3600);\n    let m = Math.floor((sec % 3600) / 60);\n    let s = sec % 60;\n    if (h &lt; 10) h = '0' + h;\n    if (m &lt; 10) m = '0' + m;\n    if (s &lt; 10) s = '0' + s;\n    return h &gt; 0 ? `${h}:${m}:${s}` : `${m}:${s}`;\n  };\n\n  function toggleFullScreen(elem) {\n    if (!document.fullscreenElement) {\n      elem.requestFullscreen?.() || elem.webkitRequestFullscreen?.() || elem.msRequestFullscreen?.();\n    } else {\n      document.exitFullscreen?.() || document.webkitExitFullscreen?.() || document.msExitFullscreen?.();\n    }\n  }\n\n  document.querySelectorAll('.video-container').forEach(container =&gt; {\n    const video = container.querySelector('video');\n    const poster = container.querySelector('.poster');\n    const spinner = container.querySelector('.loading-spinner');\n    const playBtn = container.querySelector('input[name=\"play-pause\"]');\n    const progressBar = container.querySelector('.progress-bar');\n    const progress = container.querySelector('.progress');\n    const currentTimeEl = container.querySelector('.current-time');\n    const durationEl = container.querySelector('.duration');\n    const volumeSlider = container.querySelector('.volume-slider');\n    const muteToggle = container.querySelector('.mute-toggle');\n    const muteCheckbox = muteToggle.querySelector('input[type=\"checkbox\"]');\n    const rateDisplay = container.querySelector('.rate_display');\n    const fullscreenBtn = container.querySelector('input[name=\"screen-toggler\"]');\n    const rateOptions = container.querySelectorAll('.playback-rate ul li');\n\n    let manualPaused = false;\n    let isTryingToPlay = false;\n\n    function showSpinner() {\n      spinner.style.opacity = 1;\n    }\n\n    function hideSpinner() {\n      spinner.style.opacity = 0;\n    }\n\n    function updatePlayPause() {\n      if (video.paused) {\n        playBtn.value = 'Play';\n        playBtn.classList.add('play');\n        playBtn.classList.remove('pause');\n      } else {\n        playBtn.value = 'Pause';\n        playBtn.classList.remove('play');\n        playBtn.classList.add('pause');\n      }\n    }\n\n    function updateProgress() {\n      const dur = isFinite(video.duration) ? video.duration : 0;\n      const cur = isFinite(video.currentTime) ? video.currentTime : 0;\n      const percent = dur &gt; 0 ? (cur / dur) * 100 : 0;\n      progress.style.width = percent + '%';\n      currentTimeEl.textContent = Math.round(cur).toString().timeFormat();\n      durationEl.textContent = dur &gt; 0 ? Math.round(dur).toString().timeFormat() : '--:--';\n    }\n\n    async function attemptPlay() {\n      if (manualPaused || isTryingToPlay) return;\n      isTryingToPlay = true;\n      showSpinner();\n      try {\n        await video.play();\n      } catch {}\n      hideSpinner();\n      isTryingToPlay = false;\n      updatePlayPause();\n    }\n\n    playBtn.addEventListener('click', () =&gt; {\n      manualPaused = !video.paused;\n      if (!manualPaused) {\n        poster.style.display = 'none';\n        attemptPlay();\n      } else {\n        video.pause();\n      }\n    });\n\n    volumeSlider.addEventListener('input', () =&gt; {\n      video.volume = volumeSlider.value;\n      video.muted = video.volume === 0;\n      muteCheckbox.checked = video.muted;\n      muteToggle.classList.toggle('muted', video.muted);\n    });\n\n    muteToggle.addEventListener('click', () =&gt; {\n      video.muted = muteCheckbox.checked;\n      muteToggle.classList.toggle('muted', video.muted);\n    });\n\n    progressBar.addEventListener('click', e =&gt; {\n      const rect = progressBar.getBoundingClientRect();\n      const dur = isFinite(video.duration) &amp;&amp; video.duration &gt; 0 ? video.duration : 100;\n      video.currentTime = ((e.clientX - rect.left) / rect.width) * dur;\n      updateProgress();\n      attemptPlay();\n    });\n\n    fullscreenBtn.addEventListener('click', () =&gt; {\n      container.classList.toggle('fullscreen');\n      fullscreenBtn.classList.toggle('exit');\n      toggleFullScreen(document.body);\n    });\n\n    document.addEventListener('fullscreenchange', () =&gt; {\n      if (!document.fullscreenElement) {\n        container.classList.remove('fullscreen');\n        fullscreenBtn.classList.remove('exit');\n      }\n    });\n\n    rateOptions.forEach(opt =&gt; {\n      opt.addEventListener('click', () =&gt; {\n        video.playbackRate = parseFloat(opt.dataset.rate);\n        rateDisplay.textContent = video.playbackRate === 1 ? 'Normal' : video.playbackRate + 'x';\n      });\n    });\n\n    video.addEventListener('loadedmetadata', updateProgress);\n    video.addEventListener('timeupdate', updateProgress);\n    video.addEventListener('waiting', showSpinner);\n    video.addEventListener('stalled', showSpinner);\n    video.addEventListener('seeking', showSpinner);\n    video.addEventListener('playing', () =&gt; {\n      hideSpinner();\n      updatePlayPause();\n    });\n    video.addEventListener('canplay', () =&gt; {\n      hideSpinner();\n      updatePlayPause();\n    });\n    video.addEventListener('pause', updatePlayPause);\n    video.addEventListener('ended', updatePlayPause);\n    video.addEventListener('seeked', () =&gt; {\n      updateProgress();\n      if (!manualPaused) attemptPlay();\n      updatePlayPause();\n    });\n  });\n});</code></pre>\n<pre class=\"snippet-code-css lang-css prettyprint-override\"><code>.video-container {\n  font-family: Arial, sans-serif;\n  max-width: 960px;\n  margin: 0 auto;\n  position: relative;\n  overflow: hidden;\n  aspect-ratio: 16 / 9;\n}\n\n.video-container video,\n.video-container .poster {\n  width: 100%;\n  height: 100%;\n  object-fit: cover;\n  display: block;\n}\n\n/* Video loading indicator (spinner) */\n@keyframes spin {\n  to {\n    transform: rotate(360deg)\n  }\n}\n\n.loading-spinner {\n  position: absolute;\n  top: 0;\n  bottom: 0;\n  left: 0;\n  right: 0;\n  background: rgba(0, 0, 0, 0.6);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  z-index: 5;\n  pointer-events: none;\n  opacity: 0;\n  transition: opacity 0.2s ease;\n  pointer-events: none;\n}\n\n.video-container.loading .loading-spinner {\n  opacity: 1;\n}\n\n.spinner {\n  width: 48px;\n  height: 48px;\n  border: 4px solid rgba(255, 255, 255, 0.3);\n  border-top-color: #fff;\n  border-radius: 50%;\n  animation: spin 0.9s linear infinite;\n}\n\n.video-container:hover .controls-wrapper {\n  bottom: 0;\n}\n\n.video-container.fullscreen {\n  max-width: none;\n  position: fixed;\n  top: 0;\n  bottom: 0;\n  left: 0;\n  right: 0;\n  z-index: 1021;\n}\n\n.video-container.fullscreen video {\n  position: absolute;\n  top: 50%;\n  -webkit-transform: translateY(-50%);\n  -ms-transform: translateY(-50%);\n  transform: translateY(-50%);\n}\n\n.controls-wrapper {\n  position: absolute;\n  height: 50px;\n  bottom: -57px;\n  left: 0;\n  right: 0;\n  z-index: 10;\n  -webkit-transition: all 0.25s ease-in-out;\n  -moz-transition: all 0.25s ease-in-out;\n  transition: all 0.25s ease-in-out;\n}\n\n.controls-wrapper * {\n  cursor: pointer;\n}\n\n.controls-wrapper span {\n  cursor: default;\n  color: #fff;\n}\n\n.progress-bar {\n  height: 5px;\n  width: 100%;\n  background: #777;\n  cursor: pointer;\n}\n\n.progress {\n  height: 5px;\n  width: 0%;\n  max-width: 100%;\n  background: #c62129;\n}\n\n.video-controls {\n  list-style-type: none;\n  margin: 0;\n  padding: 0;\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  height: 45px;\n  background: linear-gradient(to top,\n      rgba(0, 0, 0, 0.4) 0,\n      rgba(0, 0, 0, 0) 100%);\n}\n\n.video-controls&gt;li {\n  font-size: 12px;\n  margin: 0 5px;\n}\n\n.video-controls li.fullscreen-container {\n  margin: 0 10px 0 auto;\n}\n\n.video-controls li input {\n  display: inline-block;\n  padding: 0 2px;\n  float: left;\n  height: 24px;\n  line-height: 24px;\n  cursor: pointer;\n  width: 20px;\n  overflow: hidden;\n  line-height: 999px;\n  margin: 0;\n  border: none;\n  background: transparent;\n  outline: none;\n  background: url(\"https://i.sstatic.net/Da9PZ5i4.png\") no-repeat top left;\n  width: 20px;\n  height: 20px;\n}\n\n.video-controls li span {\n  display: inline-block;\n  padding: 0 2px;\n  float: left;\n  height: 24px;\n  line-height: 24px;\n}\n\n.video-controls li a {\n  display: inline-block;\n  padding: 0 2px;\n  float: left;\n  height: 24px;\n  line-height: 24px;\n  cursor: pointer;\n  width: 20px;\n  overflow: hidden;\n  line-height: 999px;\n  margin: 0;\n  border: none;\n  background: transparent;\n  outline: none;\n  text-decoration: none;\n  background: url(\"https://i.sstatic.net/Da9PZ5i4.png\") no-repeat top left;\n  width: 20px;\n  height: 20px;\n}\n\n.video-controls li input[type=\"checkbox\"] {\n  opacity: 0;\n}\n\n.video-controls li input.volume-slider {\n  width: 100px;\n  background: #c62129;\n  height: 5px;\n}\n\n.video-controls li input.play {\n  background-position: 0 0;\n}\n\n.video-controls li input.pause {\n  background-position: 0 -30px;\n}\n\n.video-controls li .previous {\n  background-position: 0 -60px;\n}\n\n.video-controls li .next {\n  background-position: 0 -90px;\n}\n\n.video-controls li input.toggle-fullscreen {\n  background-position: 0 -180px;\n}\n\n.video-controls li input.toggle-fullscreen.exit {\n  background-position: 0 -210px;\n}\n\n.video-controls input[type=\"range\"] {\n  -webkit-appearance: none;\n  height: 4px;\n  background: #c62129;\n  opacity: 0.8;\n  padding: 0;\n  margin: 0;\n  outline: none;\n  overflow: visible;\n}\n\n.video-controls input[type=\"range\"]:focus {\n  -webkit-appearance: none;\n  height: 4px;\n  background: #c62129;\n  opacity: 0.8;\n  padding: 0;\n  margin: 0;\n  outline: none;\n  overflow: visible;\n}\n\n.video-controls input[type=\"range\"]::-webkit-slider-thumb {\n  -webkit-appearance: none;\n  height: 10px;\n  width: 10px;\n  border-radius: 50%;\n  background: #fff;\n  cursor: pointer;\n  margin-top: -1px;\n}\n\n.video-controls input[type=\"range\"]::-moz-range-thumb {\n  -webkit-appearance: none;\n  height: 10px;\n  width: 10px;\n  border-radius: 50%;\n  background: #fff;\n  cursor: pointer;\n  margin-top: -2px;\n}\n\n.video-controls li.mute-toggle {\n  background: url(\"https://i.sstatic.net/Da9PZ5i4.png\") no-repeat top left;\n  width: 20px;\n  height: 20px;\n}\n\n.video-controls li.unmuted {\n  background-position: 0 -120px;\n}\n\n.video-controls li.muted {\n  background-position: 0 -150px;\n}\n\n.playback-rate {\n  position: relative;\n}\n\n.playback-rate span {\n  width: 55px;\n  text-align: center;\n  color: #1c232c;\n  padding: 5px;\n  border-radius: 2px;\n  background: rgba(255, 255, 255, 0.7);\n  cursor: pointer;\n}\n\n.playback-rate .piker {\n  cursor: pointer;\n  transition: opacity 1s ease-in-out;\n  display: none;\n  position: absolute;\n  opacity: 0;\n  bottom: 0;\n  padding-bottom: 30px;\n  width: 55px;\n}\n\n.playback-rate:hover .piker {\n  display: block;\n  opacity: 1;\n  text-align: center;\n}\n\n.playback-rate ul {\n  padding: 0;\n  margin: 0;\n  overflow: hidden;\n  border-radius: 2px;\n  background: rgba(0, 0, 0, 0.75);\n  box-shadow: 0 1px 1px 0px rgba(0, 0, 0, 0.12);\n}\n\n.playback-rate ul li {\n  color: #fff;\n  text-align: right;\n  margin: 0;\n  display: block;\n  height: 20px;\n  line-height: 20px;\n  padding: 0 5px;\n}\n\n.playback-rate ul li:hover {\n  background: rgba(255, 255, 255, 0.1);\n}</code></pre>\n<pre class=\"snippet-code-html lang-html prettyprint-override\"><code>&lt;div class=\"video-container mb-3\"&gt;\n  &lt;img\n      src=\"https://fastly.picsum.photos/id/866/1200/800.jpg?hmac=cMZ0zQRwnCFQskIqM7bmp90xVm9-k6lHUAFEJZp3mw4\"\n      class=\"poster\"\n    /&gt;\n  &lt;div class=\"loading-spinner\"&gt;\n    &lt;div class=\"spinner\"&gt;&lt;/div&gt;\n  &lt;/div&gt;\n  &lt;video\n      src=\"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4\"\n      type=\"video/mp4\"\n    &gt;&lt;/video&gt;\n\n  &lt;div class=\"controls-wrapper\"&gt;\n    &lt;div class=\"progress-bar\"&gt;\n      &lt;div class=\"progress\"&gt;&lt;/div&gt;\n    &lt;/div&gt;\n    &lt;ul class=\"video-controls\"&gt;\n      &lt;li&gt;\n        &lt;input type=\"button\" name=\"play-pause\" value=\"Play\" class=\"play\" /&gt;\n      &lt;/li&gt;\n      &lt;li&gt;\n        &lt;a\n            href=\"https://larablog.com/show/enhancing-female-pleasure-techniques-for-deeper-intimacy\"\n            class=\"previous\"\n            title=\"Previous video: Whatever\"\n          &gt;\n            Previous\n          &lt;/a&gt;\n      &lt;/li&gt;\n      &lt;li&gt;&lt;/li&gt;\n      &lt;li class=\"mute-toggle unmuted\"&gt;\n        &lt;input type=\"checkbox\" name=\"mute\" /&gt;\n      &lt;/li&gt;\n      &lt;li&gt;\n        &lt;input type=\"range\" min=\"0\" max=\"1\" step=\"0.01\" class=\"volume-slider\" /&gt;\n      &lt;/li&gt;\n      &lt;li class=\"timer\"&gt;\n        &lt;span class=\"current-time\"&gt;&lt;/span&gt;&lt;span&gt;/&lt;/span&gt;&lt;span class=\"duration\"&gt;&lt;/span&gt;\n      &lt;/li&gt;\n      &lt;li class=\"playback-rate\"&gt;\n        &lt;span class=\"rate_display\"&gt;Normal&lt;/span&gt;\n        &lt;div class=\"piker\"&gt;\n          &lt;ul class=\"dropdown-content\" id=\"rate_selector\"&gt;\n            &lt;li data-rate=\"0.5\"&gt;0.5x&lt;/li&gt;\n            &lt;li data-rate=\"0.75\"&gt;0.75x&lt;/li&gt;\n            &lt;li data-rate=\"1\"&gt;Normal&lt;/li&gt;\n            &lt;li data-rate=\"1.125\"&gt;1.125x&lt;/li&gt;\n            &lt;li data-rate=\"1.5\"&gt;1.5x&lt;/li&gt;\n            &lt;li data-rate=\"2\"&gt;2x&lt;/li&gt;\n          &lt;/ul&gt;\n        &lt;/div&gt;\n      &lt;/li&gt;\n      &lt;li class=\"fullscreen-container\"&gt;\n        &lt;input\n            type=\"button\"\n            name=\"screen-toggler\"\n            value=\"Fullscreen\"\n            class=\"toggle-fullscreen\"\n          /&gt;\n      &lt;/li&gt;\n    &lt;/ul&gt;\n  &lt;/div&gt;\n&lt;/div&gt;</code></pre>\n</div>\n</div>\n</p>\n<p>The problem I am faced with is this: when the video is very big (100 MB or more), it gets blocked, and trying to unblock it by s<em>eeking an already buffered point on the timeline</em> fails to unblock it.</p>\n<p>What causes this bug?\nWhat is a reliable way to make it possible for the user to unblock a video by navigating back on the timeline?</p>\n"
+      }
+    },
+    {
+      "id": "github-issue-3910793397",
+      "platform": "github",
+      "type": "issue",
+      "title": "continue/issues #10320: Error: Gemini 2.5 Pro - Unknown error",
+      "content": "**Error Details**\n\nModel: Gemini 2.5 Pro\nProvider: gemini\nStatus Code: N/A\n\n**Error Output**\n```\n{\"error\":{\"message\":\"{\\n  \\\"error\\\": {\\n    \\\"code\\\": 429,\\n    \\\"message\\\": \\\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\\\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_input_token_count, limit: 0, model: gemini-2.5-pro\\\\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 0, model: gemini-2.5-pro\\\\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 0, model: gemini-2.5-pro\\\\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_input_token_count, limit: 0, model: gemini-2.5-pro\\\\nPlease retry in 22.570630775s.\\\",\\n    \\\"status\\\": \\\"RESOURCE_EXHAUSTED\\\",\\n    \\\"details\\\": [\\n      {\\n        \\\"@type\\\": \\\"type.googleapis.com/google.rpc.Help\\\",\\n        \\\"links\\\": [\\n          {\\n            \\\"description\\\": \\\"Learn more about Gemini API quotas\\\",\\n            \\\"url\\\": \\\"https://ai.google.dev/gemini-api/docs/rate-limits\\\"\\n          }\\n        ]\\n      },\\n      {\\n        \\\"@type\\\": \\\"type.googleapis.com/google.rpc.QuotaFailure\\\",\\n        \\\"violations\\\": [\\n          {\\n            \\\"quotaMetric\\\": \\\"generativelanguage.googleapis.com/generate_content_free_tier_input_token_count\\\",\\n            \\\"quotaId\\\": \\\"GenerateContentInputTokensPerModelPerMinute-FreeTier\\\",\\n            \\\"quotaDimensions\\\": {\\n              \\\"location\\\": \\\"global\\\",\\n              \\\"model\\\": \\\"gemini-2.5-pro\\\"\\n            }\\n          },\\n          {\\n            \\\"quotaMetric\\\": \\\"generativelanguage.googleapis.com/generate_content_free_tier_requests\\\",\\n            \\\"quotaId\\\": \\\"GenerateRequestsPerMinutePerProjectPerModel-FreeTier\\\",\\n            \\\"quotaDimensions\\\": {\\n              \\\"location\\\": \\\"global\\\",\\n              \\\"model\\\": \\\"gemini-2.5-pro\\\"\\n            }\\n          },\\n          {\\n            \\\"quotaMetric\\\": \\\"generativelanguage.googleapis.com/generate_content_free_tier_requests\\\",\\n            \\\"quotaId\\\": \\\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\\\",\\n            \\\"quotaDimensions\\\": {\\n              \\\"location\\\": \\\"global\\\",\\n              \\\"model\\\": \\\"gemini-2.5-pro\\\"\\n            }\\n          },\\n          {\\n            \\\"quotaMetric\\\": \\\"generativelanguage.googleapis.com/generate_content_free_tier_input_token_count\\\",\\n            \\\"quotaId\\\": \\\"GenerateContentInputTokensPerModelPerDay-FreeTier\\\",\\n            \\\"quotaDimensions\\\": {\\n              \\\"location\\\": \\\"global\\\",\\n              \\\"model\\\": \\\"gemini-2.5-pro\\\"\\n            }\\n          }\\n        ]\\n      },\\n      {\\n        \\\"@type\\\": \\\"type.googleapis.com/google.rpc.RetryInfo\\\",\\n        \\\"retryDelay\\\": \\\"22s\\\"\\n      }\\n    ]\\n  }\\n}\\n\",\"code\":429,\"status\":\"Too Many Requests\"}}\n```\n\n**Additional Context**\nPlease add any additional context about the error here\n",
+      "author": {
+        "name": "vglazunov605-beep",
+        "url": "https://github.com/vglazunov605-beep",
+        "avatar": "https://avatars.githubusercontent.com/u/258646186?v=4"
+      },
+      "timestamp": "2026-02-07T17:29:12Z",
+      "url": "https://github.com/continuedev/continue/issues/10320",
+      "metrics": {
+        "comments": 1
+      },
+      "tags": [
+        "kind:bug",
+        "area:integration"
+      ],
+      "raw": {
+        "url": "https://api.github.com/repos/continuedev/continue/issues/10320",
+        "repository_url": "https://api.github.com/repos/continuedev/continue",
+        "labels_url": "https://api.github.com/repos/continuedev/continue/issues/10320/labels{/name}",
+        "comments_url": "https://api.github.com/repos/continuedev/continue/issues/10320/comments",
+        "events_url": "https://api.github.com/repos/continuedev/continue/issues/10320/events",
+        "html_url": "https://github.com/continuedev/continue/issues/10320",
+        "id": 3910793397,
+        "node_id": "I_kwDOJm0kOc7pGfi1",
+        "number": 10320,
+        "title": "Error: Gemini 2.5 Pro - Unknown error",
+        "user": {
+          "login": "vglazunov605-beep",
+          "id": 258646186,
+          "node_id": "U_kgDOD2qgqg",
+          "avatar_url": "https://avatars.githubusercontent.com/u/258646186?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/vglazunov605-beep",
+          "html_url": "https://github.com/vglazunov605-beep",
+          "followers_url": "https://api.github.com/users/vglazunov605-beep/followers",
+          "following_url": "https://api.github.com/users/vglazunov605-beep/following{/other_user}",
+          "gists_url": "https://api.github.com/users/vglazunov605-beep/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/vglazunov605-beep/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/vglazunov605-beep/subscriptions",
+          "organizations_url": "https://api.github.com/users/vglazunov605-beep/orgs",
+          "repos_url": "https://api.github.com/users/vglazunov605-beep/repos",
+          "events_url": "https://api.github.com/users/vglazunov605-beep/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/vglazunov605-beep/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "labels": [
+          {
+            "id": 7177611717,
+            "node_id": "LA_kwDOJm0kOc8AAAABq9GpxQ",
+            "url": "https://api.github.com/repos/continuedev/continue/labels/kind:bug",
+            "name": "kind:bug",
+            "color": "fa9999",
+            "default": false,
+            "description": "Indicates an unexpected problem or unintended behavior"
+          },
+          {
+            "id": 7684241268,
+            "node_id": "LA_kwDOJm0kOc8AAAABygQ3dA",
+            "url": "https://api.github.com/repos/continuedev/continue/labels/area:integration",
+            "name": "area:integration",
+            "color": "fef2c0",
+            "default": false,
+            "description": "Integrations (context providers, model providers, etc.)"
+          }
+        ],
+        "state": "open",
+        "locked": false,
+        "assignee": null,
+        "assignees": [],
+        "milestone": null,
+        "comments": 1,
+        "created_at": "2026-02-07T17:29:12Z",
+        "updated_at": "2026-02-07T17:31:40Z",
+        "closed_at": null,
+        "author_association": "NONE",
+        "type": null,
+        "active_lock_reason": null,
+        "sub_issues_summary": {
+          "total": 0,
+          "completed": 0,
+          "percent_completed": 0
+        },
+        "issue_dependencies_summary": {
+          "blocked_by": 0,
+          "total_blocked_by": 0,
+          "blocking": 0,
+          "total_blocking": 0
+        },
+        "body": "**Error Details**\n\nModel: Gemini 2.5 Pro\nProvider: gemini\nStatus Code: N/A\n\n**Error Output**\n```\n{\"error\":{\"message\":\"{\\n  \\\"error\\\": {\\n    \\\"code\\\": 429,\\n    \\\"message\\\": \\\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\\\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_input_token_count, limit: 0, model: gemini-2.5-pro\\\\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 0, model: gemini-2.5-pro\\\\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 0, model: gemini-2.5-pro\\\\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_input_token_count, limit: 0, model: gemini-2.5-pro\\\\nPlease retry in 22.570630775s.\\\",\\n    \\\"status\\\": \\\"RESOURCE_EXHAUSTED\\\",\\n    \\\"details\\\": [\\n      {\\n        \\\"@type\\\": \\\"type.googleapis.com/google.rpc.Help\\\",\\n        \\\"links\\\": [\\n          {\\n            \\\"description\\\": \\\"Learn more about Gemini API quotas\\\",\\n            \\\"url\\\": \\\"https://ai.google.dev/gemini-api/docs/rate-limits\\\"\\n          }\\n        ]\\n      },\\n      {\\n        \\\"@type\\\": \\\"type.googleapis.com/google.rpc.QuotaFailure\\\",\\n        \\\"violations\\\": [\\n          {\\n            \\\"quotaMetric\\\": \\\"generativelanguage.googleapis.com/generate_content_free_tier_input_token_count\\\",\\n            \\\"quotaId\\\": \\\"GenerateContentInputTokensPerModelPerMinute-FreeTier\\\",\\n            \\\"quotaDimensions\\\": {\\n              \\\"location\\\": \\\"global\\\",\\n              \\\"model\\\": \\\"gemini-2.5-pro\\\"\\n            }\\n          },\\n          {\\n            \\\"quotaMetric\\\": \\\"generativelanguage.googleapis.com/generate_content_free_tier_requests\\\",\\n            \\\"quotaId\\\": \\\"GenerateRequestsPerMinutePerProjectPerModel-FreeTier\\\",\\n            \\\"quotaDimensions\\\": {\\n              \\\"location\\\": \\\"global\\\",\\n              \\\"model\\\": \\\"gemini-2.5-pro\\\"\\n            }\\n          },\\n          {\\n            \\\"quotaMetric\\\": \\\"generativelanguage.googleapis.com/generate_content_free_tier_requests\\\",\\n            \\\"quotaId\\\": \\\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\\\",\\n            \\\"quotaDimensions\\\": {\\n              \\\"location\\\": \\\"global\\\",\\n              \\\"model\\\": \\\"gemini-2.5-pro\\\"\\n            }\\n          },\\n          {\\n            \\\"quotaMetric\\\": \\\"generativelanguage.googleapis.com/generate_content_free_tier_input_token_count\\\",\\n            \\\"quotaId\\\": \\\"GenerateContentInputTokensPerModelPerDay-FreeTier\\\",\\n            \\\"quotaDimensions\\\": {\\n              \\\"location\\\": \\\"global\\\",\\n              \\\"model\\\": \\\"gemini-2.5-pro\\\"\\n            }\\n          }\\n        ]\\n      },\\n      {\\n        \\\"@type\\\": \\\"type.googleapis.com/google.rpc.RetryInfo\\\",\\n        \\\"retryDelay\\\": \\\"22s\\\"\\n      }\\n    ]\\n  }\\n}\\n\",\"code\":429,\"status\":\"Too Many Requests\"}}\n```\n\n**Additional Context**\nPlease add any additional context about the error here\n",
+        "reactions": {
+          "url": "https://api.github.com/repos/continuedev/continue/issues/10320/reactions",
+          "total_count": 0,
+          "+1": 0,
+          "-1": 0,
+          "laugh": 0,
+          "hooray": 0,
+          "confused": 0,
+          "heart": 0,
+          "rocket": 0,
+          "eyes": 0
+        },
+        "timeline_url": "https://api.github.com/repos/continuedev/continue/issues/10320/timeline",
+        "performed_via_github_app": null,
+        "state_reason": null,
+        "score": 1
+      }
+    },
+    {
       "id": "github-issue-3910674098",
       "platform": "github",
       "type": "issue",
@@ -1158,7 +1323,7 @@
       "metrics": {
         "upvotes": -1,
         "comments": 0,
-        "views": 30
+        "views": 31
       },
       "tags": [
         "javascript",
@@ -1179,7 +1344,7 @@
           "link": "https://stackoverflow.com/users/32330204/slobado"
         },
         "is_answered": false,
-        "view_count": 30,
+        "view_count": 31,
         "closed_date": 1770480369,
         "answer_count": 0,
         "score": -1,
@@ -1206,17 +1371,19 @@
       "timestamp": "2026-02-07T15:10:25.000Z",
       "url": "https://stackoverflow.com/questions/79884925/unwanted-pixel-gap-in-react-native-flex-box",
       "metrics": {
-        "upvotes": 0,
+        "upvotes": -1,
         "comments": 0,
-        "views": 17
+        "views": 18
       },
       "tags": [
+        "javascript",
         "reactjs",
         "react-native",
         "flexbox"
       ],
       "raw": {
         "tags": [
+          "javascript",
           "reactjs",
           "react-native",
           "flexbox"
@@ -1231,16 +1398,17 @@
           "link": "https://stackoverflow.com/users/8103934/bustinout"
         },
         "is_answered": false,
-        "view_count": 17,
+        "view_count": 18,
         "answer_count": 0,
-        "score": 0,
-        "last_activity_date": 1770477025,
+        "score": -1,
+        "last_activity_date": 1770486800,
         "creation_date": 1770477025,
+        "last_edit_date": 1770486800,
         "question_id": 79884925,
         "content_license": "CC BY-SA 4.0",
         "link": "https://stackoverflow.com/questions/79884925/unwanted-pixel-gap-in-react-native-flex-box",
         "title": "Unwanted pixel gap in react native flex box",
-        "body": "<p><a href=\"https://i.sstatic.net/AA35dR8J.jpg\" rel=\"nofollow noreferrer\">unwanted gap</a></p>\n<p>There is an unwanted gap of approximately a pixel in between the child components (I colored the background red so it's easier to see). Anyone know how to get rid of it? Thanks.</p>\n<pre><code>&lt;View\n    style={{\n        flexDirection: 'row',\n        backgroundColor: 'red',\n    }}\n&gt;\n    &lt;View\n        style={{\n            backgroundColor: 'dodgerblue',\n            width: 30,\n            height: 30,\n        }}\n    /&gt;\n    &lt;View\n        style={{\n            backgroundColor: 'dodgerblue',\n            width: 30,\n            height: 30,\n        }}\n    /&gt;\n    &lt;View\n        style={{\n            backgroundColor: 'dodgerblue',\n            width: 30,\n            height: 30,\n        }}\n    /&gt;\n&lt;/View&gt;\n</code></pre>\n"
+        "body": "<p><a href=\"https://i.sstatic.net/AA35dR8J.jpg\" rel=\"nofollow noreferrer\"><img src=\"https://i.sstatic.net/AA35dR8J.jpg\" alt=\"unwanted gap\" /></a></p>\n<p>There is an unwanted gap of approximately a pixel in between the child components (I colored the background red so it's easier to see). Anyone know how to get rid of it?</p>\n<pre class=\"lang-js prettyprint-override\"><code>&lt;View\n    style={{\n        flexDirection: 'row',\n        backgroundColor: 'red',\n    }}\n&gt;\n    &lt;View\n        style={{\n            backgroundColor: 'dodgerblue',\n            width: 30,\n            height: 30,\n        }}\n    /&gt;\n    &lt;View\n        style={{\n            backgroundColor: 'dodgerblue',\n            width: 30,\n            height: 30,\n        }}\n    /&gt;\n    &lt;View\n        style={{\n            backgroundColor: 'dodgerblue',\n            width: 30,\n            height: 30,\n        }}\n    /&gt;\n&lt;/View&gt;\n</code></pre>\n"
       }
     },
     {
@@ -1844,7 +2012,7 @@
       "metrics": {
         "upvotes": 0,
         "comments": 0,
-        "views": 11
+        "views": 12
       },
       "tags": [
         "javascript",
@@ -1867,7 +2035,7 @@
           "link": "https://stackoverflow.com/users/16143561/jelle2005"
         },
         "is_answered": false,
-        "view_count": 11,
+        "view_count": 12,
         "closed_date": 1770482735,
         "answer_count": 0,
         "score": 0,
@@ -2291,7 +2459,7 @@
       "metrics": {
         "upvotes": 1,
         "comments": 1,
-        "views": 49
+        "views": 50
       },
       "tags": [
         "node.js",
@@ -2316,7 +2484,7 @@
           "link": "https://stackoverflow.com/users/2617144/mark-hill"
         },
         "is_answered": false,
-        "view_count": 49,
+        "view_count": 50,
         "answer_count": 1,
         "score": 1,
         "last_activity_date": 1770412283,
@@ -2541,5 +2709,5 @@
       }
     }
   ],
-  "lastUpdated": "2026-02-07T17:30:02.443Z"
+  "lastUpdated": "2026-02-07T17:54:23.238Z"
 }
