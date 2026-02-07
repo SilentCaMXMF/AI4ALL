@@ -1,6 +1,561 @@
 {
   "items": [
     {
+      "id": "github-issue-3911287537",
+      "platform": "github",
+      "type": "issue",
+      "title": "swarm-tools/issues #174: Not falling back to default",
+      "content": "if swarm tools does not find a cloude or other model, it should fall back to the one that with /model was defined in opencode.\n\n<img width=\"565\" height=\"484\" alt=\"Image\" src=\"https://github.com/user-attachments/assets/7e84fa23-d72c-4378-b20d-25345ebbea62\" />",
+      "author": {
+        "name": "suse-coder",
+        "url": "https://github.com/suse-coder",
+        "avatar": "https://avatars.githubusercontent.com/u/190763341?v=4"
+      },
+      "timestamp": "2026-02-07T21:28:01Z",
+      "url": "https://github.com/joelhooks/swarm-tools/issues/174",
+      "metrics": {
+        "comments": 0
+      },
+      "tags": [],
+      "raw": {
+        "url": "https://api.github.com/repos/joelhooks/swarm-tools/issues/174",
+        "repository_url": "https://api.github.com/repos/joelhooks/swarm-tools",
+        "labels_url": "https://api.github.com/repos/joelhooks/swarm-tools/issues/174/labels{/name}",
+        "comments_url": "https://api.github.com/repos/joelhooks/swarm-tools/issues/174/comments",
+        "events_url": "https://api.github.com/repos/joelhooks/swarm-tools/issues/174/events",
+        "html_url": "https://github.com/joelhooks/swarm-tools/issues/174",
+        "id": 3911287537,
+        "node_id": "I_kwDOQkgA1c7pIYLx",
+        "number": 174,
+        "title": "Not falling back to default",
+        "user": {
+          "login": "suse-coder",
+          "id": 190763341,
+          "node_id": "U_kgDOC17RTQ",
+          "avatar_url": "https://avatars.githubusercontent.com/u/190763341?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/suse-coder",
+          "html_url": "https://github.com/suse-coder",
+          "followers_url": "https://api.github.com/users/suse-coder/followers",
+          "following_url": "https://api.github.com/users/suse-coder/following{/other_user}",
+          "gists_url": "https://api.github.com/users/suse-coder/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/suse-coder/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/suse-coder/subscriptions",
+          "organizations_url": "https://api.github.com/users/suse-coder/orgs",
+          "repos_url": "https://api.github.com/users/suse-coder/repos",
+          "events_url": "https://api.github.com/users/suse-coder/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/suse-coder/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "labels": [],
+        "state": "open",
+        "locked": false,
+        "assignee": null,
+        "assignees": [],
+        "milestone": null,
+        "comments": 0,
+        "created_at": "2026-02-07T21:28:01Z",
+        "updated_at": "2026-02-07T21:28:01Z",
+        "closed_at": null,
+        "author_association": "NONE",
+        "active_lock_reason": null,
+        "sub_issues_summary": {
+          "total": 0,
+          "completed": 0,
+          "percent_completed": 0
+        },
+        "issue_dependencies_summary": {
+          "blocked_by": 0,
+          "total_blocked_by": 0,
+          "blocking": 0,
+          "total_blocking": 0
+        },
+        "body": "if swarm tools does not find a cloude or other model, it should fall back to the one that with /model was defined in opencode.\n\n<img width=\"565\" height=\"484\" alt=\"Image\" src=\"https://github.com/user-attachments/assets/7e84fa23-d72c-4378-b20d-25345ebbea62\" />",
+        "reactions": {
+          "url": "https://api.github.com/repos/joelhooks/swarm-tools/issues/174/reactions",
+          "total_count": 0,
+          "+1": 0,
+          "-1": 0,
+          "laugh": 0,
+          "hooray": 0,
+          "confused": 0,
+          "heart": 0,
+          "rocket": 0,
+          "eyes": 0
+        },
+        "timeline_url": "https://api.github.com/repos/joelhooks/swarm-tools/issues/174/timeline",
+        "performed_via_github_app": null,
+        "state_reason": null,
+        "score": 1
+      }
+    },
+    {
+      "id": "github-issue-3911274485",
+      "platform": "github",
+      "type": "issue",
+      "title": "sandbox-agent/issues #143: feat(opencode): allow changing model mid-session",
+      "content": "## Problem\n\nWhen an OpenCode session is created and the first message is sent, the agent/provider/model is locked into the session runtime context. Subsequent messages cannot change the provider or model because the runtime is only set on the first message:\n\n```rust\nstate.opencode.update_runtime(session_id, |runtime| {\n    if runtime.session_agent_id.is_none() {\n        runtime.session_agent_id = Some(agent);\n        runtime.session_provider_id = Some(provider_id);\n        runtime.session_model_id = Some(model_id);\n    }\n});\n```\n\nWhile `SessionMessageRequest` accepts a `model` field on every message, the resolved model from the first message is reused for all subsequent messages. The `set_session_overrides()` function can update the `SessionState`, but the OpenCode runtime context does not reflect the change.\n\nThis means users cannot switch models mid-conversation (e.g., start with a fast model for simple tasks, then switch to a more capable model for complex reasoning).\n\n## Expected Behavior\n\nUsers should be able to change the model on any message within an existing session. When a `model` field is provided in `SessionMessageRequest`, it should override the session-level model for that message and update the session runtime accordingly.\n\n## Proposed Approach\n\n1. In `resolve_session_agent()` (`opencode_compat.rs`), update the runtime even when `session_agent_id` is already set, if the incoming message specifies a different model.\n2. When the model changes mid-session, terminate the existing backing agent process and start a new one with the updated model, or pass the model switch through to agents that support it natively.\n3. Emit a synthetic event (e.g., `session.model_changed`) so the frontend can reflect the model switch.\n4. Consider whether changing the agent (not just the model within the same agent) mid-session should also be supported, or scoped out for now.\n\n## Considerations\n\n- Some agents may not support model switching natively — the daemon may need to restart the backing process.\n- The `PATCH /opencode/session/{sessionID}` endpoint could also be extended to accept model changes, giving the frontend an explicit way to switch before sending the next message.\n- Need to decide how model changes interact with conversation history — the new model should still receive the full conversation context.",
+      "author": {
+        "name": "NathanFlurry",
+        "url": "https://github.com/NathanFlurry",
+        "avatar": "https://avatars.githubusercontent.com/u/3322446?v=4"
+      },
+      "timestamp": "2026-02-07T21:21:31Z",
+      "url": "https://github.com/rivet-dev/sandbox-agent/issues/143",
+      "metrics": {
+        "comments": 0
+      },
+      "tags": [],
+      "raw": {
+        "url": "https://api.github.com/repos/rivet-dev/sandbox-agent/issues/143",
+        "repository_url": "https://api.github.com/repos/rivet-dev/sandbox-agent",
+        "labels_url": "https://api.github.com/repos/rivet-dev/sandbox-agent/issues/143/labels{/name}",
+        "comments_url": "https://api.github.com/repos/rivet-dev/sandbox-agent/issues/143/comments",
+        "events_url": "https://api.github.com/repos/rivet-dev/sandbox-agent/issues/143/events",
+        "html_url": "https://github.com/rivet-dev/sandbox-agent/issues/143",
+        "id": 3911274485,
+        "node_id": "I_kwDORA1Ehc7pIU_1",
+        "number": 143,
+        "title": "feat(opencode): allow changing model mid-session",
+        "user": {
+          "login": "NathanFlurry",
+          "id": 3322446,
+          "node_id": "MDQ6VXNlcjMzMjI0NDY=",
+          "avatar_url": "https://avatars.githubusercontent.com/u/3322446?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/NathanFlurry",
+          "html_url": "https://github.com/NathanFlurry",
+          "followers_url": "https://api.github.com/users/NathanFlurry/followers",
+          "following_url": "https://api.github.com/users/NathanFlurry/following{/other_user}",
+          "gists_url": "https://api.github.com/users/NathanFlurry/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/NathanFlurry/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/NathanFlurry/subscriptions",
+          "organizations_url": "https://api.github.com/users/NathanFlurry/orgs",
+          "repos_url": "https://api.github.com/users/NathanFlurry/repos",
+          "events_url": "https://api.github.com/users/NathanFlurry/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/NathanFlurry/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "labels": [],
+        "state": "open",
+        "locked": false,
+        "assignee": null,
+        "assignees": [],
+        "milestone": null,
+        "comments": 0,
+        "created_at": "2026-02-07T21:21:31Z",
+        "updated_at": "2026-02-07T21:21:31Z",
+        "closed_at": null,
+        "author_association": "MEMBER",
+        "type": null,
+        "active_lock_reason": null,
+        "sub_issues_summary": {
+          "total": 0,
+          "completed": 0,
+          "percent_completed": 0
+        },
+        "issue_dependencies_summary": {
+          "blocked_by": 0,
+          "total_blocked_by": 0,
+          "blocking": 0,
+          "total_blocking": 0
+        },
+        "body": "## Problem\n\nWhen an OpenCode session is created and the first message is sent, the agent/provider/model is locked into the session runtime context. Subsequent messages cannot change the provider or model because the runtime is only set on the first message:\n\n```rust\nstate.opencode.update_runtime(session_id, |runtime| {\n    if runtime.session_agent_id.is_none() {\n        runtime.session_agent_id = Some(agent);\n        runtime.session_provider_id = Some(provider_id);\n        runtime.session_model_id = Some(model_id);\n    }\n});\n```\n\nWhile `SessionMessageRequest` accepts a `model` field on every message, the resolved model from the first message is reused for all subsequent messages. The `set_session_overrides()` function can update the `SessionState`, but the OpenCode runtime context does not reflect the change.\n\nThis means users cannot switch models mid-conversation (e.g., start with a fast model for simple tasks, then switch to a more capable model for complex reasoning).\n\n## Expected Behavior\n\nUsers should be able to change the model on any message within an existing session. When a `model` field is provided in `SessionMessageRequest`, it should override the session-level model for that message and update the session runtime accordingly.\n\n## Proposed Approach\n\n1. In `resolve_session_agent()` (`opencode_compat.rs`), update the runtime even when `session_agent_id` is already set, if the incoming message specifies a different model.\n2. When the model changes mid-session, terminate the existing backing agent process and start a new one with the updated model, or pass the model switch through to agents that support it natively.\n3. Emit a synthetic event (e.g., `session.model_changed`) so the frontend can reflect the model switch.\n4. Consider whether changing the agent (not just the model within the same agent) mid-session should also be supported, or scoped out for now.\n\n## Considerations\n\n- Some agents may not support model switching natively — the daemon may need to restart the backing process.\n- The `PATCH /opencode/session/{sessionID}` endpoint could also be extended to accept model changes, giving the frontend an explicit way to switch before sending the next message.\n- Need to decide how model changes interact with conversation history — the new model should still receive the full conversation context.",
+        "reactions": {
+          "url": "https://api.github.com/repos/rivet-dev/sandbox-agent/issues/143/reactions",
+          "total_count": 0,
+          "+1": 0,
+          "-1": 0,
+          "laugh": 0,
+          "hooray": 0,
+          "confused": 0,
+          "heart": 0,
+          "rocket": 0,
+          "eyes": 0
+        },
+        "timeline_url": "https://api.github.com/repos/rivet-dev/sandbox-agent/issues/143/timeline",
+        "performed_via_github_app": null,
+        "state_reason": null,
+        "score": 1
+      }
+    },
+    {
+      "id": "stackoverflow-question-79885070",
+      "platform": "stackoverflow",
+      "type": "question",
+      "title": "I am stucked in learning",
+      "content": "",
+      "author": {
+        "name": "resad505",
+        "url": "https://stackoverflow.com/users/31944621/resad505",
+        "avatar": "https://i.sstatic.net/TxPmF7Jj.jpg?s=256"
+      },
+      "timestamp": "2026-02-07T21:19:14.000Z",
+      "url": "https://stackoverflow.com/questions/79885070/i-am-stucked-in-learning",
+      "metrics": {
+        "upvotes": -4,
+        "comments": 0,
+        "views": 21
+      },
+      "tags": [
+        "javascript"
+      ],
+      "raw": {
+        "tags": [
+          "javascript"
+        ],
+        "owner": {
+          "account_id": 44804578,
+          "reputation": 1,
+          "user_id": 31944621,
+          "user_type": "registered",
+          "profile_image": "https://i.sstatic.net/TxPmF7Jj.jpg?s=256",
+          "display_name": "resad505",
+          "link": "https://stackoverflow.com/users/31944621/resad505"
+        },
+        "is_answered": false,
+        "view_count": 21,
+        "closed_date": 1770499742,
+        "answer_count": 0,
+        "score": -4,
+        "last_activity_date": 1770499154,
+        "creation_date": 1770499154,
+        "question_id": 79885070,
+        "link": "https://stackoverflow.com/questions/79885070/i-am-stucked-in-learning",
+        "closed_reason": "Needs more focus",
+        "title": "I am stucked in learning",
+        "body": "<p>Hi everyone I am a junior front end developer. I need a little help in Javascript</p>\n<p>I am at the beginning in Javascript .My problem is I can understand code i can read it but when I try to create smth from 0 I cannot create I just stop and look at the lines.</p>\n<p>I also have another problem with roadmap I can't decide among Javascript developer, Web developer, full stack developer.</p>\n<p>Thank you for reading.</p>\n"
+      }
+    },
+    {
+      "id": "github-issue-3911267409",
+      "platform": "github",
+      "type": "issue",
+      "title": "sandbox-agent/issues #142: feat: expose all OpenCode built-in commands via /opencode/command endpoint",
+      "content": "## Problem\n\nThe `GET /opencode/command` endpoint currently only returns custom/user-defined commands (source: `command`, `mcp`, `skill`). Built-in TUI commands like `/compact`, `/clear`, `/undo`, etc. are hardcoded in the OpenCode TUI client and not discoverable via any API endpoint.\n\nThis means Gigacode has no way to expose or list the full set of available commands to users or frontends.\n\n## Built-in TUI commands that need coverage\n\nThese are the commands defined in OpenCode's `EventTuiCommandExecute` enum, currently only executable via `POST /tui/execute-command`:\n\n- `session.compact` — compact/summarize context\n- `session.list` — list sessions\n- `session.new` — create new session\n- `session.share` — share session\n- `session.interrupt` — interrupt current generation\n- `prompt.clear` — clear prompt input\n- `prompt.submit` — submit prompt\n- `agent.cycle` — cycle between agents\n- `session.page.up` / `session.page.down` — scroll page\n- `session.line.up` / `session.line.down` — scroll line\n- `session.half.page.up` / `session.half.page.down` — scroll half page\n- `session.first` / `session.last` — jump to first/last\n\n## Current behavior\n\n- `GET /opencode/command` proxies to native OpenCode (returns custom commands like `/init`, `/review`, skills) or returns `[]` if no proxy is configured\n- `POST /tui/execute-command` accepts built-in command strings but there's no listing endpoint\n- No single endpoint returns the full set of available commands (custom + built-in)\n\n## Expected behavior\n\nThe `GET /opencode/command` endpoint (or a supplementary mechanism) should return **all** available commands, including built-in TUI commands, so that:\n\n1. Frontends can render a complete command palette\n2. Users can discover all available commands\n3. Gigacode doesn't depend on the native OpenCode proxy just to list built-in commands\n\n## Relevant code\n\n- `oc_command_list` handler: `server/packages/sandbox-agent/src/opencode_compat.rs`\n- `oc_tui_execute_command` handler: `server/packages/sandbox-agent/src/opencode_compat.rs`\n- OpenCode OpenAPI spec: `resources/agent-schemas/artifacts/openapi/opencode.json`\n- Command stub spec: `research/specs/command-shell-exec.md`",
+      "author": {
+        "name": "NathanFlurry",
+        "url": "https://github.com/NathanFlurry",
+        "avatar": "https://avatars.githubusercontent.com/u/3322446?v=4"
+      },
+      "timestamp": "2026-02-07T21:17:52Z",
+      "url": "https://github.com/rivet-dev/sandbox-agent/issues/142",
+      "metrics": {
+        "comments": 0
+      },
+      "tags": [],
+      "raw": {
+        "url": "https://api.github.com/repos/rivet-dev/sandbox-agent/issues/142",
+        "repository_url": "https://api.github.com/repos/rivet-dev/sandbox-agent",
+        "labels_url": "https://api.github.com/repos/rivet-dev/sandbox-agent/issues/142/labels{/name}",
+        "comments_url": "https://api.github.com/repos/rivet-dev/sandbox-agent/issues/142/comments",
+        "events_url": "https://api.github.com/repos/rivet-dev/sandbox-agent/issues/142/events",
+        "html_url": "https://github.com/rivet-dev/sandbox-agent/issues/142",
+        "id": 3911267409,
+        "node_id": "I_kwDORA1Ehc7pITRR",
+        "number": 142,
+        "title": "feat: expose all OpenCode built-in commands via /opencode/command endpoint",
+        "user": {
+          "login": "NathanFlurry",
+          "id": 3322446,
+          "node_id": "MDQ6VXNlcjMzMjI0NDY=",
+          "avatar_url": "https://avatars.githubusercontent.com/u/3322446?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/NathanFlurry",
+          "html_url": "https://github.com/NathanFlurry",
+          "followers_url": "https://api.github.com/users/NathanFlurry/followers",
+          "following_url": "https://api.github.com/users/NathanFlurry/following{/other_user}",
+          "gists_url": "https://api.github.com/users/NathanFlurry/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/NathanFlurry/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/NathanFlurry/subscriptions",
+          "organizations_url": "https://api.github.com/users/NathanFlurry/orgs",
+          "repos_url": "https://api.github.com/users/NathanFlurry/repos",
+          "events_url": "https://api.github.com/users/NathanFlurry/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/NathanFlurry/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "labels": [],
+        "state": "open",
+        "locked": false,
+        "assignee": null,
+        "assignees": [],
+        "milestone": null,
+        "comments": 0,
+        "created_at": "2026-02-07T21:17:52Z",
+        "updated_at": "2026-02-07T21:17:52Z",
+        "closed_at": null,
+        "author_association": "MEMBER",
+        "type": null,
+        "active_lock_reason": null,
+        "sub_issues_summary": {
+          "total": 0,
+          "completed": 0,
+          "percent_completed": 0
+        },
+        "issue_dependencies_summary": {
+          "blocked_by": 0,
+          "total_blocked_by": 0,
+          "blocking": 0,
+          "total_blocking": 0
+        },
+        "body": "## Problem\n\nThe `GET /opencode/command` endpoint currently only returns custom/user-defined commands (source: `command`, `mcp`, `skill`). Built-in TUI commands like `/compact`, `/clear`, `/undo`, etc. are hardcoded in the OpenCode TUI client and not discoverable via any API endpoint.\n\nThis means Gigacode has no way to expose or list the full set of available commands to users or frontends.\n\n## Built-in TUI commands that need coverage\n\nThese are the commands defined in OpenCode's `EventTuiCommandExecute` enum, currently only executable via `POST /tui/execute-command`:\n\n- `session.compact` — compact/summarize context\n- `session.list` — list sessions\n- `session.new` — create new session\n- `session.share` — share session\n- `session.interrupt` — interrupt current generation\n- `prompt.clear` — clear prompt input\n- `prompt.submit` — submit prompt\n- `agent.cycle` — cycle between agents\n- `session.page.up` / `session.page.down` — scroll page\n- `session.line.up` / `session.line.down` — scroll line\n- `session.half.page.up` / `session.half.page.down` — scroll half page\n- `session.first` / `session.last` — jump to first/last\n\n## Current behavior\n\n- `GET /opencode/command` proxies to native OpenCode (returns custom commands like `/init`, `/review`, skills) or returns `[]` if no proxy is configured\n- `POST /tui/execute-command` accepts built-in command strings but there's no listing endpoint\n- No single endpoint returns the full set of available commands (custom + built-in)\n\n## Expected behavior\n\nThe `GET /opencode/command` endpoint (or a supplementary mechanism) should return **all** available commands, including built-in TUI commands, so that:\n\n1. Frontends can render a complete command palette\n2. Users can discover all available commands\n3. Gigacode doesn't depend on the native OpenCode proxy just to list built-in commands\n\n## Relevant code\n\n- `oc_command_list` handler: `server/packages/sandbox-agent/src/opencode_compat.rs`\n- `oc_tui_execute_command` handler: `server/packages/sandbox-agent/src/opencode_compat.rs`\n- OpenCode OpenAPI spec: `resources/agent-schemas/artifacts/openapi/opencode.json`\n- Command stub spec: `research/specs/command-shell-exec.md`",
+        "reactions": {
+          "url": "https://api.github.com/repos/rivet-dev/sandbox-agent/issues/142/reactions",
+          "total_count": 0,
+          "+1": 0,
+          "-1": 0,
+          "laugh": 0,
+          "hooray": 0,
+          "confused": 0,
+          "heart": 0,
+          "rocket": 0,
+          "eyes": 0
+        },
+        "timeline_url": "https://api.github.com/repos/rivet-dev/sandbox-agent/issues/142/timeline",
+        "performed_via_github_app": null,
+        "state_reason": null,
+        "score": 1
+      }
+    },
+    {
+      "id": "github-issue-3911262476",
+      "platform": "github",
+      "type": "issue",
+      "title": "MegaMemory/issues #1: Reading out nodes with embeddings can be of wrong type.",
+      "content": "Attempting to create a MegaMemory backend for GSD-Opencode, I ran into this.\n\nI can create a PR if you'd rather want that, but this way the fix is available until I get around to produce a PR. :)\n\n```diff\ndiff --git a/src/db.ts b/src/db.ts\nindex 0e5a4ec..8be2761 100644\n--- a/src/db.ts\n+++ b/src/db.ts\n@@ -269,13 +269,16 @@ export class KnowledgeDB {\n   getAllActiveNodesWithEmbeddings(): Array<\n     Pick<NodeRow, \"id\" | \"name\" | \"kind\" | \"summary\" | \"embedding\">\n   > {\n-    return this.db\n+    const rows = this.db\n       .prepare(\n         \"SELECT id, name, kind, summary, embedding FROM nodes WHERE removed_at IS NULL AND embedding IS NOT NULL\"\n       )\n-      .all() as Array<\n-      Pick<NodeRow, \"id\" | \"name\" | \"kind\" | \"summary\" | \"embedding\">\n-    >;\n+      .all() as Array<any>;\n+\n+    return rows.map((row) => ({\n+      ...row,\n+      embedding: row.embedding ? Buffer.from(row.embedding) : null\n+    })) as Array<Pick<NodeRow, \"id\" | \"name\" | \"kind\" | \"summary\" | \"embedding\">>;\n   }\n\n   nodeExists(id: string): boolean {\n```\n\nAlso, make sure embedding is correct:\n\n```diff\ndiff --git a/src/embeddings.ts b/src/embeddings.ts\nindex fc52ab4..677941c 100644\n--- a/src/embeddings.ts\n+++ b/src/embeddings.ts\n@@ -18,14 +18,28 @@ async function getExtractor(): Promise<FeatureExtractionPipeline> {\n }\n\n /**\n- * Generate an embedding vector for the given text.\n+ * Generate an embedding vector for given text.\n  * Returns a Buffer containing float32 values.\n  */\n export async function embed(text: string): Promise<Buffer> {\n+  // Validate input text\n+  if (!text || text.trim().length === 0) {\n+    throw new Error(`Cannot embed empty text`);\n+  }\n+\n   const ext = await getExtractor();\n   const output = await ext(text, { pooling: \"mean\", normalize: true });\n   const data = output.data as Float32Array;\n-  return Buffer.from(data.buffer, data.byteOffset, data.byteLength);\n+  const buffer = Buffer.from(data.buffer, data.byteOffset, data.byteLength);\n+\n+  // Validate embedding has correct dimensions\n+  if (buffer.length !== EMBEDDING_DIM * Float32Array.BYTES_PER_ELEMENT) {\n+    throw new Error(\n+      `Invalid embedding dimension: expected ${EMBEDDING_DIM} floats (${EMBEDDING_DIM * Float32Array.BYTES_PER_ELEMENT} bytes), got ${data.length} floats (${buffer.length} bytes). Text: \"${text.substring(0, 50)}...\"`\n+    );\n+  }\n+\n+  return buffer;\n }\n\n /**\n@@ -91,7 +105,7 @@ export function findTopK(\n   topK: number\n ): Array<{ id: string; similarity: number }> {\n   const scored = candidates\n-    .filter((c) => c.embedding !== null)\n+    .filter((c) => c.embedding !== null && c.embedding.length > 0)\n     .map((c) => ({\n       id: c.id,\n       similarity: cosineSimilarity(queryEmbedding, c.embedding!),\n```",
+      "author": {
+        "name": "mikaelj",
+        "url": "https://github.com/mikaelj",
+        "avatar": "https://avatars.githubusercontent.com/u/116260?v=4"
+      },
+      "timestamp": "2026-02-07T21:15:47Z",
+      "url": "https://github.com/0xK3vin/MegaMemory/issues/1",
+      "metrics": {
+        "comments": 1
+      },
+      "tags": [
+        "bug"
+      ],
+      "raw": {
+        "url": "https://api.github.com/repos/0xK3vin/MegaMemory/issues/1",
+        "repository_url": "https://api.github.com/repos/0xK3vin/MegaMemory",
+        "labels_url": "https://api.github.com/repos/0xK3vin/MegaMemory/issues/1/labels{/name}",
+        "comments_url": "https://api.github.com/repos/0xK3vin/MegaMemory/issues/1/comments",
+        "events_url": "https://api.github.com/repos/0xK3vin/MegaMemory/issues/1/events",
+        "html_url": "https://github.com/0xK3vin/MegaMemory/issues/1",
+        "id": 3911262476,
+        "node_id": "I_kwDORJ5APs7pISEM",
+        "number": 1,
+        "title": "Reading out nodes with embeddings can be of wrong type.",
+        "user": {
+          "login": "mikaelj",
+          "id": 116260,
+          "node_id": "MDQ6VXNlcjExNjI2MA==",
+          "avatar_url": "https://avatars.githubusercontent.com/u/116260?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/mikaelj",
+          "html_url": "https://github.com/mikaelj",
+          "followers_url": "https://api.github.com/users/mikaelj/followers",
+          "following_url": "https://api.github.com/users/mikaelj/following{/other_user}",
+          "gists_url": "https://api.github.com/users/mikaelj/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/mikaelj/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/mikaelj/subscriptions",
+          "organizations_url": "https://api.github.com/users/mikaelj/orgs",
+          "repos_url": "https://api.github.com/users/mikaelj/repos",
+          "events_url": "https://api.github.com/users/mikaelj/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/mikaelj/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "labels": [
+          {
+            "id": 10147508359,
+            "node_id": "LA_kwDORJ5APs8AAAACXNawhw",
+            "url": "https://api.github.com/repos/0xK3vin/MegaMemory/labels/bug",
+            "name": "bug",
+            "color": "d73a4a",
+            "default": true,
+            "description": "Something isn't working"
+          }
+        ],
+        "state": "open",
+        "locked": false,
+        "assignee": {
+          "login": "0xK3vin",
+          "id": 17069304,
+          "node_id": "MDQ6VXNlcjE3MDY5MzA0",
+          "avatar_url": "https://avatars.githubusercontent.com/u/17069304?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/0xK3vin",
+          "html_url": "https://github.com/0xK3vin",
+          "followers_url": "https://api.github.com/users/0xK3vin/followers",
+          "following_url": "https://api.github.com/users/0xK3vin/following{/other_user}",
+          "gists_url": "https://api.github.com/users/0xK3vin/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/0xK3vin/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/0xK3vin/subscriptions",
+          "organizations_url": "https://api.github.com/users/0xK3vin/orgs",
+          "repos_url": "https://api.github.com/users/0xK3vin/repos",
+          "events_url": "https://api.github.com/users/0xK3vin/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/0xK3vin/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "assignees": [
+          {
+            "login": "0xK3vin",
+            "id": 17069304,
+            "node_id": "MDQ6VXNlcjE3MDY5MzA0",
+            "avatar_url": "https://avatars.githubusercontent.com/u/17069304?v=4",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/0xK3vin",
+            "html_url": "https://github.com/0xK3vin",
+            "followers_url": "https://api.github.com/users/0xK3vin/followers",
+            "following_url": "https://api.github.com/users/0xK3vin/following{/other_user}",
+            "gists_url": "https://api.github.com/users/0xK3vin/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/0xK3vin/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/0xK3vin/subscriptions",
+            "organizations_url": "https://api.github.com/users/0xK3vin/orgs",
+            "repos_url": "https://api.github.com/users/0xK3vin/repos",
+            "events_url": "https://api.github.com/users/0xK3vin/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/0xK3vin/received_events",
+            "type": "User",
+            "user_view_type": "public",
+            "site_admin": false
+          }
+        ],
+        "milestone": null,
+        "comments": 1,
+        "created_at": "2026-02-07T21:15:47Z",
+        "updated_at": "2026-02-07T21:27:04Z",
+        "closed_at": null,
+        "author_association": "NONE",
+        "active_lock_reason": null,
+        "sub_issues_summary": {
+          "total": 0,
+          "completed": 0,
+          "percent_completed": 0
+        },
+        "issue_dependencies_summary": {
+          "blocked_by": 0,
+          "total_blocked_by": 0,
+          "blocking": 0,
+          "total_blocking": 0
+        },
+        "body": "Attempting to create a MegaMemory backend for GSD-Opencode, I ran into this.\n\nI can create a PR if you'd rather want that, but this way the fix is available until I get around to produce a PR. :)\n\n```diff\ndiff --git a/src/db.ts b/src/db.ts\nindex 0e5a4ec..8be2761 100644\n--- a/src/db.ts\n+++ b/src/db.ts\n@@ -269,13 +269,16 @@ export class KnowledgeDB {\n   getAllActiveNodesWithEmbeddings(): Array<\n     Pick<NodeRow, \"id\" | \"name\" | \"kind\" | \"summary\" | \"embedding\">\n   > {\n-    return this.db\n+    const rows = this.db\n       .prepare(\n         \"SELECT id, name, kind, summary, embedding FROM nodes WHERE removed_at IS NULL AND embedding IS NOT NULL\"\n       )\n-      .all() as Array<\n-      Pick<NodeRow, \"id\" | \"name\" | \"kind\" | \"summary\" | \"embedding\">\n-    >;\n+      .all() as Array<any>;\n+\n+    return rows.map((row) => ({\n+      ...row,\n+      embedding: row.embedding ? Buffer.from(row.embedding) : null\n+    })) as Array<Pick<NodeRow, \"id\" | \"name\" | \"kind\" | \"summary\" | \"embedding\">>;\n   }\n\n   nodeExists(id: string): boolean {\n```\n\nAlso, make sure embedding is correct:\n\n```diff\ndiff --git a/src/embeddings.ts b/src/embeddings.ts\nindex fc52ab4..677941c 100644\n--- a/src/embeddings.ts\n+++ b/src/embeddings.ts\n@@ -18,14 +18,28 @@ async function getExtractor(): Promise<FeatureExtractionPipeline> {\n }\n\n /**\n- * Generate an embedding vector for the given text.\n+ * Generate an embedding vector for given text.\n  * Returns a Buffer containing float32 values.\n  */\n export async function embed(text: string): Promise<Buffer> {\n+  // Validate input text\n+  if (!text || text.trim().length === 0) {\n+    throw new Error(`Cannot embed empty text`);\n+  }\n+\n   const ext = await getExtractor();\n   const output = await ext(text, { pooling: \"mean\", normalize: true });\n   const data = output.data as Float32Array;\n-  return Buffer.from(data.buffer, data.byteOffset, data.byteLength);\n+  const buffer = Buffer.from(data.buffer, data.byteOffset, data.byteLength);\n+\n+  // Validate embedding has correct dimensions\n+  if (buffer.length !== EMBEDDING_DIM * Float32Array.BYTES_PER_ELEMENT) {\n+    throw new Error(\n+      `Invalid embedding dimension: expected ${EMBEDDING_DIM} floats (${EMBEDDING_DIM * Float32Array.BYTES_PER_ELEMENT} bytes), got ${data.length} floats (${buffer.length} bytes). Text: \"${text.substring(0, 50)}...\"`\n+    );\n+  }\n+\n+  return buffer;\n }\n\n /**\n@@ -91,7 +105,7 @@ export function findTopK(\n   topK: number\n ): Array<{ id: string; similarity: number }> {\n   const scored = candidates\n-    .filter((c) => c.embedding !== null)\n+    .filter((c) => c.embedding !== null && c.embedding.length > 0)\n     .map((c) => ({\n       id: c.id,\n       similarity: cosineSimilarity(queryEmbedding, c.embedding!),\n```",
+        "reactions": {
+          "url": "https://api.github.com/repos/0xK3vin/MegaMemory/issues/1/reactions",
+          "total_count": 0,
+          "+1": 0,
+          "-1": 0,
+          "laugh": 0,
+          "hooray": 0,
+          "confused": 0,
+          "heart": 0,
+          "rocket": 0,
+          "eyes": 0
+        },
+        "timeline_url": "https://api.github.com/repos/0xK3vin/MegaMemory/issues/1/timeline",
+        "performed_via_github_app": null,
+        "state_reason": null,
+        "score": 1
+      }
+    },
+    {
+      "id": "stackoverflow-answer-79885064",
+      "platform": "stackoverflow",
+      "type": "answer",
+      "title": "Answer to: Nx / TypeScript monorepo: Cannot find module &#39;@scope/package&#39; even though the folder exists",
+      "content": "",
+      "author": {
+        "name": "Elliot Datsomor",
+        "url": "https://stackoverflow.com/users/30343441/elliot-datsomor",
+        "avatar": "https://www.gravatar.com/avatar/acc0b83083e1674db325176df2dd21ab?s=256&d=identicon&r=PG&f=y&so-version=2"
+      },
+      "timestamp": "2026-02-07T21:10:33.000Z",
+      "metrics": {
+        "upvotes": 0
+      },
+      "tags": [],
+      "raw": {
+        "owner": {
+          "account_id": 37757615,
+          "reputation": 1,
+          "user_id": 30343441,
+          "user_type": "registered",
+          "profile_image": "https://www.gravatar.com/avatar/acc0b83083e1674db325176df2dd21ab?s=256&d=identicon&r=PG&f=y&so-version=2",
+          "display_name": "Elliot Datsomor",
+          "link": "https://stackoverflow.com/users/30343441/elliot-datsomor"
+        },
+        "is_accepted": false,
+        "score": 0,
+        "last_activity_date": 1770498633,
+        "creation_date": 1770498633,
+        "answer_id": 79885064,
+        "question_id": 79885061,
+        "content_license": "CC BY-SA 4.0",
+        "body": "<h2>Root cause</h2>\n<p>In a TypeScript/Nx monorepo, <strong>folders are not packages by default</strong>.</p>\n<p>Even if a folder exists and contains TypeScript files, it cannot be imported like:</p>\n<pre><code>import { something } from &quot;@scope/package&quot;;\n</code></pre>\n<p>unless it is:</p>\n<ul>\n<li><p>structured as a package</p>\n</li>\n<li><p>given a clear compilation boundary</p>\n</li>\n<li><p>registered with the workspace</p>\n</li>\n</ul>\n<p>One internal package (<code>@datlep/database</code>) worked because it already followed this pattern.<br />\nThe failing one (<code>@datlep/utils</code>) did not.</p>\n<hr />\n<h2>The real fix (order matters)</h2>\n<h3>1. Structure the folder as a real package</h3>\n<p>The most important step was fixing the structure:</p>\n<pre><code>packages/utils/\n  src/\n    index.ts\n  dist/\n  tsconfig.json\n  tsconfig.lib.json\n  package.json\n</code></pre>\n<p><code>src/index.ts</code> is the <strong>single public entry point</strong> and re-exports everything.</p>\n<hr />\n<h3>2. Define a strict package boundary</h3>\n<p>In <code>tsconfig.lib.json</code>:</p>\n<pre><code>{\n  &quot;compilerOptions&quot;: {\n    &quot;rootDir&quot;: &quot;src&quot;,\n    &quot;outDir&quot;: &quot;dist&quot;\n  },\n  &quot;include&quot;: [&quot;src/**/*.ts&quot;]\n}\n</code></pre>\n<p>This prevents the common error:</p>\n<pre><code>File is not under 'rootDir'\n</code></pre>\n<hr />\n<h3>3. Give the package an identity</h3>\n<p>In <code>packages/utils/package.json</code>:</p>\n<pre><code>{\n  &quot;name&quot;: &quot;@datlep/utils&quot;,\n  &quot;private&quot;: true\n}\n</code></pre>\n<p>Without this, TypeScript has nothing to resolve.</p>\n<hr />\n<h3>4. Register the package with the workspace</h3>\n<p>In the <strong>root</strong> <code>package.json</code>:</p>\n<pre><code>{\n  &quot;private&quot;: true,\n  &quot;workspaces&quot;: [\n    &quot;database&quot;,\n    &quot;packages/*&quot;\n  ]\n}\n</code></pre>\n<p>Then reinstall dependencies:</p>\n<pre><code>npm install\n</code></pre>\n<p>This step creates the workspace symlink so the package becomes resolvable.</p>\n<hr />\n<h2>Why this works</h2>\n<ul>\n<li><p>TypeScript resolves <strong>packages</strong>, not folders</p>\n</li>\n<li><p>A package needs:</p>\n<ul>\n<li><p><code>src/index.ts</code></p>\n</li>\n<li><p>its own <code>rootDir</code></p>\n</li>\n<li><p>a <code>package.json</code> with a name</p>\n</li>\n<li><p>workspace registration</p>\n</li>\n</ul>\n</li>\n<li><p>Once all of these align, imports work as expected:</p>\n</li>\n</ul>\n<pre><code>import { something } from &quot;@datlep/utils&quot;;\n</code></pre>\n<hr />\n<h2>Key takeaway</h2>\n<blockquote>\n<p>The folder existed, but it was not structured as a package.<br />\nOnce the structure was correct, adding it to workspaces and reinstalling dependencies made the module resolvable.</p>\n</blockquote>\n"
+      }
+    },
+    {
+      "id": "stackoverflow-question-79885061",
+      "platform": "stackoverflow",
+      "type": "question",
+      "title": "Nx / TypeScript monorepo: Cannot find module &#39;@scope/package&#39; even though the folder exists",
+      "content": "",
+      "author": {
+        "name": "Elliot Datsomor",
+        "url": "https://stackoverflow.com/users/30343441/elliot-datsomor",
+        "avatar": "https://www.gravatar.com/avatar/acc0b83083e1674db325176df2dd21ab?s=256&d=identicon&r=PG&f=y&so-version=2"
+      },
+      "timestamp": "2026-02-07T21:04:58.000Z",
+      "url": "https://stackoverflow.com/questions/79885061/nx-typescript-monorepo-cannot-find-module-scope-package-even-though-the-fo",
+      "metrics": {
+        "upvotes": 0,
+        "comments": 1,
+        "views": 6
+      },
+      "tags": [
+        "typescript",
+        "monorepo",
+        "nx-monorepo"
+      ],
+      "raw": {
+        "tags": [
+          "typescript",
+          "monorepo",
+          "nx-monorepo"
+        ],
+        "owner": {
+          "account_id": 37757615,
+          "reputation": 1,
+          "user_id": 30343441,
+          "user_type": "registered",
+          "profile_image": "https://www.gravatar.com/avatar/acc0b83083e1674db325176df2dd21ab?s=256&d=identicon&r=PG&f=y&so-version=2",
+          "display_name": "Elliot Datsomor",
+          "link": "https://stackoverflow.com/users/30343441/elliot-datsomor"
+        },
+        "is_answered": false,
+        "view_count": 6,
+        "answer_count": 1,
+        "score": 0,
+        "last_activity_date": 1770498633,
+        "creation_date": 1770498298,
+        "question_id": 79885061,
+        "content_license": "CC BY-SA 4.0",
+        "link": "https://stackoverflow.com/questions/79885061/nx-typescript-monorepo-cannot-find-module-scope-package-even-though-the-fo",
+        "title": "Nx / TypeScript monorepo: Cannot find module &#39;@scope/package&#39; even though the folder exists",
+        "body": "<p>I have an Nx + TypeScript monorepo with multiple internal packages.</p>\n<p>One package (`@datlep/database`) imports correctly:</p>\n<p>import { User } from &quot;@datlep/database&quot;;</p>\n<p>But another package (`@datlep/utils`) fails with:</p>\n<p>Cannot find module '@datlep/utils' or its corresponding type declarations.</p>\n<p>The folder exists, has src/index.ts, and exports are defined.</p>\n<p>However, TypeScript and Node cannot resolve it.</p>\n<p>What causes this and how can it be fixed?</p>\n"
+      }
+    },
+    {
       "id": "github-issue-3911097593",
       "platform": "github",
       "type": "issue",
@@ -1796,7 +2351,7 @@
       "metrics": {
         "upvotes": 0,
         "comments": 0,
-        "views": 29
+        "views": 34
       },
       "tags": [
         "javascript",
@@ -1818,7 +2373,7 @@
           "link": "https://stackoverflow.com/users/4512005/razvan-zamfir"
         },
         "is_answered": false,
-        "view_count": 29,
+        "view_count": 34,
         "answer_count": 0,
         "score": 0,
         "last_activity_date": 1770486462,
@@ -3103,7 +3658,7 @@
       "metrics": {
         "upvotes": -1,
         "comments": 0,
-        "views": 35
+        "views": 37
       },
       "tags": [
         "javascript",
@@ -3124,7 +3679,7 @@
           "link": "https://stackoverflow.com/users/32330204/slobado"
         },
         "is_answered": false,
-        "view_count": 35,
+        "view_count": 37,
         "closed_date": 1770480369,
         "answer_count": 0,
         "score": -1,
@@ -3153,7 +3708,7 @@
       "metrics": {
         "upvotes": -1,
         "comments": 0,
-        "views": 29
+        "views": 31
       },
       "tags": [
         "javascript",
@@ -3178,7 +3733,7 @@
           "link": "https://stackoverflow.com/users/8103934/bustinout"
         },
         "is_answered": false,
-        "view_count": 29,
+        "view_count": 31,
         "answer_count": 0,
         "score": -1,
         "last_activity_date": 1770486800,
@@ -4396,7 +4951,7 @@
       "metrics": {
         "upvotes": -1,
         "comments": 1,
-        "views": 71
+        "views": 72
       },
       "tags": [
         "reactjs",
@@ -4418,7 +4973,7 @@
           "link": "https://stackoverflow.com/users/1102726/justanothercoder894"
         },
         "is_answered": true,
-        "view_count": 71,
+        "view_count": 72,
         "answer_count": 1,
         "score": -1,
         "last_activity_date": 1770376328,
@@ -4489,5 +5044,5 @@
       }
     }
   ],
-  "lastUpdated": "2026-02-07T20:33:16.640Z"
+  "lastUpdated": "2026-02-07T21:30:26.344Z"
 }
