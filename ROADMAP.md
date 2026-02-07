@@ -76,58 +76,101 @@
 
 ---
 
-## 🎯 Phase 7: Next.js Deployment Setup (NEW - February 7, 2026)
+## 🎯 Phase 7: Local Hosting Setup (February 7, 2026)
 
 ### Overview
-The scraper is fully operational, but deployment is failing because Next.js requires an `app/` directory structure for static site generation.
+The scraper is fully operational. This phase sets up local hosting on the Raspberry Pi instead of GitHub Pages, allowing the site to be served directly from this device.
 
 ### Todo List
 
 #### High Priority
-- [ ] **DEPLOY-001:** Create Next.js App Router structure
+- [ ] **LOCAL-001:** Create Next.js App Router structure
   - Create `src/app/layout.tsx` with root layout
   - Create `src/app/page.tsx` as dashboard
   - Create `src/app/globals.css` for global styles
   
-- [ ] **DEPLOY-002:** Build dashboard page to display scraped data
+- [ ] **LOCAL-002:** Build dashboard page to display scraped data
   - Import and display `data/aggregated-data.json`
   - Show platform statistics
   - Display recent items with filtering
   - Responsive design with dark/light mode
   
-- [ ] **DEPLOY-003:** Add API route for serving data
-  - Create `src/app/api/data/route.ts`
-  - Serve aggregated data as JSON endpoint
-  - Handle file reading with error boundaries
-  
-- [ ] **DEPLOY-004:** Configure Next.js for static export
+- [ ] **LOCAL-003:** Configure Next.js for static export
   - Update `next.config.cjs` with `output: 'export'`
-  - Set `distDir: 'out'` for GitHub Pages
+  - Set `distDir: 'out'` for static files
   - Configure images for static export
   
-- [ ] **DEPLOY-005:** Verify GitHub Actions deployment
-  - Ensure deploy job completes successfully
-  - Verify site deploys to GitHub Pages
-  - Test live site functionality
+- [ ] **LOCAL-004:** Build static site locally
+  - Run `npm run build` successfully
+  - Verify `out/` directory generated with all assets
+  - Test built site with Python HTTP server
+  
+- [ ] **LOCAL-005:** Set up local web server
+  - Install and configure nginx (recommended) OR
+  - Use Python HTTP server for quick testing
+  - Configure to serve from `out/` directory
+  - Set up service to auto-start on boot
 
 #### Medium Priority
-- [ ] **DEPLOY-006:** Test build process locally
-  - Run `npm run build` successfully
-  - Verify `out/` directory generated
-  - Check for build warnings/errors
+- [ ] **LOCAL-006:** Configure auto-rebuild on data updates
+  - Create script to rebuild site when data changes
+  - Set up file watcher or cron job
+  - Restart web server after rebuild
   
-- [ ] **DEPLOY-007:** Add error handling for missing data
+- [ ] **LOCAL-007:** Add error handling for missing data
   - Handle case when `data/aggregated-data.json` doesn't exist
   - Show loading states
   - Display appropriate error messages
+  
+- [ ] **LOCAL-008:** Configure network access (optional)
+  - Set up local IP or hostname
+  - Configure firewall if needed
+  - Document access URL
+
+### Local Hosting Architecture
+
+```
+Raspberry Pi (This Device)
+├── Scraper runs every 30 minutes via cron
+│   └── Updates data/aggregated-data.json
+├── Next.js static site in out/ directory
+│   └── Built via npm run build
+└── Web Server (nginx/Python)
+    └── Serves out/ directory on local network
+        └── Access via http://<pi-ip>:8000
+```
 
 ### Success Criteria
 - [ ] `npm run build` completes without errors
-- [ ] GitHub Actions deploy job succeeds
-- [ ] Site visible on GitHub Pages
+- [ ] Static site generated in `out/` directory
+- [ ] Web server serves site on local network
 - [ ] Dashboard displays scraped data correctly
-- [ ] Dark/light mode toggle works
-- [ ] Mobile responsive design
+- [ ] Site accessible from other devices on network
+- [ ] Auto-rebuild works when data updates
+
+### Quick Start - Local Hosting
+
+```bash
+# 1. Create Next.js app structure (tasks LOCAL-001 to 003)
+mkdir -p src/app
+# Create layout.tsx, page.tsx, globals.css
+
+# 2. Build static site (task LOCAL-004)
+npm run build
+# Output goes to out/ directory
+
+# 3. Start local server (task LOCAL-005)
+# Option A: Python HTTP server (quick)
+cd out && python3 -m http.server 8000
+
+# Option B: nginx (production)
+sudo apt install nginx
+# Configure nginx to serve out/ directory
+
+# 4. Access site
+# From this device: http://localhost:8000
+# From network: http://<raspberry-pi-ip>:8000
+```
 
 ---
 
@@ -230,9 +273,9 @@ The scraper is fully operational, but deployment is failing because Next.js requ
   - `.github/workflows/scrape-and-deploy.yml` - 30-minute cron job
     - ✅ Scrape job: SUCCESS
     - ✅ Data commit: SUCCESS
-    - ⏳ Deploy job: Pending (needs Next.js app/ directory)
+    - ℹ️ Deploy job: Not needed (local hosting instead)
   - `.github/workflows/test.yml` - CI/CD pipeline
-  - **Status: Scraper operational, deployment pending**
+  - **Status: Scraper operational, data commits working**
 
 ### Phase 6: Optimization (Pending)
 - Enhanced Static Site
@@ -292,11 +335,12 @@ The scraper is fully operational, but deployment is failing because Next.js requ
 
 | Component | Cost | Status |
 |-----------|------|--------|
-| Hosting (GitHub Pages) | $0 | ✅ Free |
-| GitHub Actions | $0 | ⚠️ Free tier (2000 min/month) |
+| Hosting (Local Raspberry Pi) | $0 | ✅ Uses existing hardware |
+| GitHub Actions | $0 | ✅ Free tier (scraper only) |
 | API calls | $0 | ✅ Free tiers sufficient |
-| Domain (optional) | $10-15 | ⏳ Optional |
-| **Total** | **$0-15** | ✅ Cost-effective |
+| Domain (optional) | $0-15 | ⏳ Optional (local network free) |
+| Power (Pi running 24/7) | ~$5 | ⚡ Estimated |
+| **Total** | **$0-20** | ✅ Very cost-effective |
 
 ---
 
@@ -430,29 +474,48 @@ Monitor `.github/workflows/test.yml` and `.github/workflows/scrape-and-deploy.ym
 
 ---
 
-## Quick Start: Next Phase
+## Quick Start: Local Hosting Setup
 
-To complete the deployment:
+To set up local hosting on this Raspberry Pi:
 
 ```bash
-# Create Next.js app structure
+# 1. Create Next.js app structure
 mkdir -p src/app
 
-# Create layout.tsx
-# Create page.tsx (dashboard)
-# Create globals.css
+# 2. Create required files
+# - src/app/layout.tsx (root layout)
+# - src/app/page.tsx (dashboard)
+# - src/app/globals.css (styles)
+# - src/app/api/data/route.ts (API endpoint)
 
-# Test build
+# 3. Update next.config.cjs for static export
+# Add: output: 'export', distDir: 'out'
+
+# 4. Build static site
 npm run build
 
-# Deploy
-# GitHub Actions will automatically deploy on next run
+# 5. Serve locally
+# Option A: Python HTTP server
+cd out && python3 -m http.server 8000
+
+# Option B: Install nginx for production hosting
+sudo apt update && sudo apt install nginx
+# Configure /etc/nginx/sites-available/default to point to out/
+
+# 6. Access site
+# Local: http://localhost:8000
+# Network: http://<raspberry-pi-ip>:8000
 ```
+
+### Current Device Info
+- **Platform:** Raspberry Pi (ARM64)
+- **Local Access:** http://localhost:8000
+- **Network Access:** Check `hostname -I` for IP address
 
 ---
 
 **Last Updated:** February 7, 2026  
 **Status:** 
-- ✅ **SCRAPER:** Production Ready
-- 🔄 **DEPLOYMENT:** Next.js app/ directory needed
-- ⏳ **DASHBOARD:** Pending creation
+- ✅ **SCRAPER:** Production Ready (Run #51+)
+- 🔄 **LOCAL HOSTING:** Next.js app/ setup needed
+- ⏳ **DASHBOARD:** Static site creation pending
