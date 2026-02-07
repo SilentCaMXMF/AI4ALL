@@ -1,6 +1,602 @@
 {
   "items": [
     {
+      "id": "github-issue-3911097593",
+      "platform": "github",
+      "type": "issue",
+      "title": "ai-portainer-dashboard/issues #326: Feature: AI-Powered Packet Capture Analysis",
+      "content": "## Problem Statement\r\n\r\nThe Packet Capture page currently lets users capture network traffic from containers and download the resulting PCAP file, but provides **zero insight into what was captured**. Users must download the file and open it in an external tool like Wireshark to understand what happened -- defeating the purpose of an integrated monitoring dashboard.\r\n\r\nThis gap is especially painful during incident investigation. A user capturing traffic on a misbehaving container gets a raw binary file and no immediate feedback. They have to context-switch to another tool, apply filters manually, and correlate findings back to the dashboard. Meanwhile, the LLM infrastructure (Ollama integration, streaming, tool calling) already exists and is battle-tested for log analysis and root-cause investigations -- but it has no awareness of packet captures.\r\n\r\n## Proposed Solution\r\n\r\nAdd an AI analysis pipeline that processes completed packet captures and surfaces actionable network insights directly in the dashboard. The analysis runs server-side by parsing PCAP metadata (via `tcpdump -r` or a lightweight parser) and feeding a structured summary to the LLM for interpretation.\r\n\r\n### Phase 1: PCAP Summary Extraction\r\n\r\nRun `tcpdump -r <file> -q -n` (or equivalent) on the stored PCAP to extract a machine-readable summary without shipping the raw binary to the LLM.\r\n\r\n| Data Point | Source | Example |\r\n|-----------|--------|---------|\r\n| **Total packets** | Packet count | 1,247 |\r\n| **Duration** | First/last timestamp delta | 58.3s |\r\n| **Protocol breakdown** | TCP/UDP/ICMP/ARP counts | TCP: 892, UDP: 310, ICMP: 45 |\r\n| **Top talkers** | Source/dest IP frequency | 172.18.0.5 -> 172.18.0.1 (634 pkts) |\r\n| **Port distribution** | Dest port frequency | :443 (520), :80 (312), :53 (98) |\r\n| **TCP anomalies** | RST/retransmit/zero-window counts | 23 RSTs, 8 retransmissions |\r\n| **DNS queries** | Resolved hostnames | api.example.com, cdn.example.com |\r\n| **Error indicators** | ICMP unreachable, TCP RSTs to specific ports | 12 ICMP port-unreachable to :8080 |\r\n\r\n### Phase 2: LLM Analysis\r\n\r\nFeed the structured summary to the LLM with a network-analysis system prompt. The LLM evaluates the capture for:\r\n\r\n1. **Health assessment** -- Is this traffic pattern normal or problematic?\r\n2. **Anomaly detection** -- Unusual protocols, unexpected destinations, excessive retransmissions, connection failures\r\n3. **Security concerns** -- Unencrypted traffic on sensitive ports, suspicious DNS queries, port scanning patterns\r\n4. **Performance issues** -- High retransmission rates, TCP zero-windows, DNS latency\r\n5. **Actionable recommendations** -- Specific steps to resolve identified issues\r\n\r\n**LLM Response Schema:**\r\n\r\n```json\r\n{\r\n  \"health_status\": \"healthy | degraded | critical\",\r\n  \"summary\": \"Human-readable 2-3 sentence overview\",\r\n  \"findings\": [\r\n    {\r\n      \"category\": \"anomaly | security | performance | informational\",\r\n      \"severity\": \"critical | warning | info\",\r\n      \"title\": \"High TCP retransmission rate\",\r\n      \"description\": \"8.2% of TCP packets are retransmissions, indicating network congestion or packet loss\",\r\n      \"evidence\": \"103 retransmissions out of 1,247 total packets\",\r\n      \"recommendation\": \"Check network interface errors and MTU settings on the container bridge network\"\r\n    }\r\n  ],\r\n  \"confidence_score\": 0.85\r\n}\r\n```\r\n\r\n### Phase 3: Frontend Integration\r\n\r\n```\r\n+-- Capture History -------------------------------------------------------+\r\n|                                                                           |\r\n|  Container       Status     Filter    Size      Created   Actions         |\r\n|  ------------------------------------------------------------------------+\r\n|  nginx-proxy     * Complete  port 80  2.4 MB   2m ago    DL Analyze Del  |\r\n|                                                                           |\r\n|  +-- AI Analysis -----------------------------------------------+        |\r\n|  |  [!] Degraded  *  Confidence: 85%                            |        |\r\n|  |                                                               |        |\r\n|  |  Summary: Capture shows elevated TCP retransmissions          |        |\r\n|  |  (8.2%) and 23 connection resets to port 8080, suggesting     |        |\r\n|  |  the upstream service is rejecting connections.               |        |\r\n|  |                                                               |        |\r\n|  |  Warning: High retransmission rate (8.2%)                     |        |\r\n|  |    -> Check MTU settings on bridge network                    |        |\r\n|  |                                                               |        |\r\n|  |  Warning: 23 TCP RSTs to :8080                                |        |\r\n|  |    -> Verify upstream service is running and accepting        |        |\r\n|  |       connections on port 8080                                |        |\r\n|  |                                                               |        |\r\n|  |  Info: DNS queries to 3 external domains                      |        |\r\n|  |    -> api.example.com, cdn.example.com, metrics.example.com   |        |\r\n|  |                                                               |        |\r\n|  |  [Re-analyze]  [Export Report]                                |        |\r\n|  +---------------------------------------------------------------+        |\r\n|                                                                           |\r\n|  redis-cache     * Complete  tcp      1.1 MB   15m ago   DL Analyze Del  |\r\n|  api-server      * Failed    --       --       22m ago          Del      |\r\n+---------------------------------------------------------------------------+\r\n```\r\n\r\nThe Analyze button triggers analysis. Results expand inline below the capture row. A \"Re-analyze\" button allows re-running with updated LLM context.\r\n\r\n## Use Cases\r\n\r\n1. **Incident triage**: A user captures traffic on a failing `api-server` container. Instead of downloading the PCAP and opening Wireshark, they click \"Analyze\" and immediately see that 40% of outbound connections to the database port are being RST'd -- pointing to a connection pool exhaustion issue.\r\n\r\n2. **Security audit**: A DevOps engineer captures traffic on a container suspected of data exfiltration. The AI flags unencrypted HTTP traffic to an unexpected external IP on port 9090, along with DNS queries to a domain not in the organization's allowlist.\r\n\r\n3. **Performance debugging**: A container is experiencing intermittent latency. The capture analysis reveals a 12% TCP retransmission rate and multiple zero-window events, indicating the container's receive buffer is saturated under load.\r\n\r\n4. **Network verification**: After deploying a new service, a user captures traffic to verify it's communicating only over expected ports and protocols. The AI confirms healthy traffic patterns and flags no anomalies -- providing confidence in the deployment.\r\n\r\n## Acceptance Criteria\r\n\r\n- [ ] Backend: New `analyzeCaptureFile(captureId)` function in pcap-service that extracts summary statistics from a completed PCAP file\r\n- [ ] Backend: New `POST /api/pcap/captures/:id/analyze` endpoint that triggers LLM analysis on a completed capture\r\n- [ ] Backend: PCAP summary extraction uses `tcpdump -r` (executed locally on stored file, not inside containers) or a JS-based PCAP parser\r\n- [ ] Backend: LLM analysis uses the existing `chatStream()` infrastructure with a dedicated network-analysis system prompt\r\n- [ ] Backend: Analysis results stored in `pcap_captures` table (new `analysis_result` TEXT column) or a separate `pcap_analyses` table\r\n- [ ] Backend: Analysis is idempotent -- re-analyzing overwrites previous results\r\n- [ ] Frontend: \"Analyze\" button appears on completed/succeeded captures in the history table\r\n- [ ] Frontend: Analysis results display inline in an expandable panel below the capture row\r\n- [ ] Frontend: Loading state with skeleton while analysis is in progress\r\n- [ ] Frontend: Health status badge (green/yellow/red) visible at a glance in the capture row\r\n- [ ] Frontend: Individual findings displayed with severity icons, descriptions, and recommendations\r\n- [ ] Frontend: \"Re-analyze\" button to re-run analysis on demand\r\n- [ ] Tests: Backend unit tests for PCAP summary extraction logic\r\n- [ ] Tests: Backend integration tests for the analyze endpoint\r\n- [ ] Tests: Frontend component tests for the analysis UI panel\r\n- [ ] Observer-only: Analysis is read-only -- no container mutations triggered by findings\r\n- [ ] Respects `PCAP_ENABLED` feature flag -- analysis unavailable when captures are disabled\r\n\r\n## Technical Considerations\r\n\r\n- **PCAP parsing**: Two approaches -- (a) shell out to `tcpdump -r` on the stored file in `PCAP_STORAGE_DIR` (simple, requires tcpdump installed in the backend container), or (b) use a JS PCAP parser library like `pcap-parser`. Option (a) is simpler since the backend Docker image can include tcpdump. This is a key design decision.\r\n- **LLM context size**: Raw PCAP data must never be sent to the LLM. Only the structured summary (protocol counts, top talkers, anomaly indicators) should be included. This keeps token usage manageable (~500-1000 tokens for the summary).\r\n- **Affected files**: `backend/src/services/pcap-service.ts`, `backend/src/routes/pcap.ts`, `backend/src/models/pcap.ts`, `frontend/src/pages/packet-capture.tsx`, `frontend/src/hooks/use-pcap.ts`\r\n- **New migration**: If using a separate table, add `backend/src/db/migrations/0XX_pcap_analyses.sql`\r\n- **Existing patterns**: Follow the `investigation-service.ts` pattern for LLM analysis with structured JSON response parsing and confidence scoring\r\n- **Performance**: Analysis is on-demand (user-triggered), not automatic. This avoids unnecessary LLM calls on captures the user doesn't care about.\r\n- **Storage**: The PCAP file is already stored locally in `PCAP_STORAGE_DIR`. The analysis runs against this local file -- no need to re-fetch from the container.\r\n- **Error handling**: If `tcpdump -r` fails or the LLM returns unparseable output, store the error and show a user-friendly message. Follow the investigation service's fallback pattern (confidence_score: 0.3).\r\n\r\n**Effort Estimate:** Medium\r\n**Impact Estimate:** High\r\n**Priority Score:** 7.5/10\r\n\r\n> **Needs Refinement**: Should analysis be triggered automatically when a capture completes, or only on-demand? Should the PCAP parsing use `tcpdump -r` (requires tcpdump in the backend container) or a JS library? Should findings be stored in a new column on `pcap_captures` or a separate table? Should the feature integrate with the existing LLM chat so users can ask follow-up questions about a specific capture?\r\n",
+      "author": {
+        "name": "kenhaesler",
+        "url": "https://github.com/kenhaesler",
+        "avatar": "https://avatars.githubusercontent.com/u/50946664?v=4"
+      },
+      "timestamp": "2026-02-07T20:01:28Z",
+      "url": "https://github.com/kenhaesler/ai-portainer-dashboard/issues/326",
+      "metrics": {
+        "comments": 0
+      },
+      "tags": [
+        "enhancement",
+        "needs-refinement"
+      ],
+      "raw": {
+        "url": "https://api.github.com/repos/kenhaesler/ai-portainer-dashboard/issues/326",
+        "repository_url": "https://api.github.com/repos/kenhaesler/ai-portainer-dashboard",
+        "labels_url": "https://api.github.com/repos/kenhaesler/ai-portainer-dashboard/issues/326/labels{/name}",
+        "comments_url": "https://api.github.com/repos/kenhaesler/ai-portainer-dashboard/issues/326/comments",
+        "events_url": "https://api.github.com/repos/kenhaesler/ai-portainer-dashboard/issues/326/events",
+        "html_url": "https://github.com/kenhaesler/ai-portainer-dashboard/issues/326",
+        "id": 3911097593,
+        "node_id": "I_kwDORFqveM7pHpz5",
+        "number": 326,
+        "title": "Feature: AI-Powered Packet Capture Analysis",
+        "user": {
+          "login": "kenhaesler",
+          "id": 50946664,
+          "node_id": "MDQ6VXNlcjUwOTQ2NjY0",
+          "avatar_url": "https://avatars.githubusercontent.com/u/50946664?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/kenhaesler",
+          "html_url": "https://github.com/kenhaesler",
+          "followers_url": "https://api.github.com/users/kenhaesler/followers",
+          "following_url": "https://api.github.com/users/kenhaesler/following{/other_user}",
+          "gists_url": "https://api.github.com/users/kenhaesler/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/kenhaesler/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/kenhaesler/subscriptions",
+          "organizations_url": "https://api.github.com/users/kenhaesler/orgs",
+          "repos_url": "https://api.github.com/users/kenhaesler/repos",
+          "events_url": "https://api.github.com/users/kenhaesler/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/kenhaesler/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "labels": [
+          {
+            "id": 10106979752,
+            "node_id": "LA_kwDORFqveM8AAAACWmxFqA",
+            "url": "https://api.github.com/repos/kenhaesler/ai-portainer-dashboard/labels/enhancement",
+            "name": "enhancement",
+            "color": "a2eeef",
+            "default": true,
+            "description": "New feature or request"
+          },
+          {
+            "id": 10143884969,
+            "node_id": "LA_kwDORFqveM8AAAACXJ9mqQ",
+            "url": "https://api.github.com/repos/kenhaesler/ai-portainer-dashboard/labels/needs-refinement",
+            "name": "needs-refinement",
+            "color": "deeaca",
+            "default": false,
+            "description": ""
+          }
+        ],
+        "state": "open",
+        "locked": false,
+        "assignee": null,
+        "assignees": [],
+        "milestone": null,
+        "comments": 0,
+        "created_at": "2026-02-07T20:01:28Z",
+        "updated_at": "2026-02-07T20:01:28Z",
+        "closed_at": null,
+        "author_association": "OWNER",
+        "active_lock_reason": null,
+        "sub_issues_summary": {
+          "total": 0,
+          "completed": 0,
+          "percent_completed": 0
+        },
+        "issue_dependencies_summary": {
+          "blocked_by": 0,
+          "total_blocked_by": 0,
+          "blocking": 0,
+          "total_blocking": 0
+        },
+        "body": "## Problem Statement\r\n\r\nThe Packet Capture page currently lets users capture network traffic from containers and download the resulting PCAP file, but provides **zero insight into what was captured**. Users must download the file and open it in an external tool like Wireshark to understand what happened -- defeating the purpose of an integrated monitoring dashboard.\r\n\r\nThis gap is especially painful during incident investigation. A user capturing traffic on a misbehaving container gets a raw binary file and no immediate feedback. They have to context-switch to another tool, apply filters manually, and correlate findings back to the dashboard. Meanwhile, the LLM infrastructure (Ollama integration, streaming, tool calling) already exists and is battle-tested for log analysis and root-cause investigations -- but it has no awareness of packet captures.\r\n\r\n## Proposed Solution\r\n\r\nAdd an AI analysis pipeline that processes completed packet captures and surfaces actionable network insights directly in the dashboard. The analysis runs server-side by parsing PCAP metadata (via `tcpdump -r` or a lightweight parser) and feeding a structured summary to the LLM for interpretation.\r\n\r\n### Phase 1: PCAP Summary Extraction\r\n\r\nRun `tcpdump -r <file> -q -n` (or equivalent) on the stored PCAP to extract a machine-readable summary without shipping the raw binary to the LLM.\r\n\r\n| Data Point | Source | Example |\r\n|-----------|--------|---------|\r\n| **Total packets** | Packet count | 1,247 |\r\n| **Duration** | First/last timestamp delta | 58.3s |\r\n| **Protocol breakdown** | TCP/UDP/ICMP/ARP counts | TCP: 892, UDP: 310, ICMP: 45 |\r\n| **Top talkers** | Source/dest IP frequency | 172.18.0.5 -> 172.18.0.1 (634 pkts) |\r\n| **Port distribution** | Dest port frequency | :443 (520), :80 (312), :53 (98) |\r\n| **TCP anomalies** | RST/retransmit/zero-window counts | 23 RSTs, 8 retransmissions |\r\n| **DNS queries** | Resolved hostnames | api.example.com, cdn.example.com |\r\n| **Error indicators** | ICMP unreachable, TCP RSTs to specific ports | 12 ICMP port-unreachable to :8080 |\r\n\r\n### Phase 2: LLM Analysis\r\n\r\nFeed the structured summary to the LLM with a network-analysis system prompt. The LLM evaluates the capture for:\r\n\r\n1. **Health assessment** -- Is this traffic pattern normal or problematic?\r\n2. **Anomaly detection** -- Unusual protocols, unexpected destinations, excessive retransmissions, connection failures\r\n3. **Security concerns** -- Unencrypted traffic on sensitive ports, suspicious DNS queries, port scanning patterns\r\n4. **Performance issues** -- High retransmission rates, TCP zero-windows, DNS latency\r\n5. **Actionable recommendations** -- Specific steps to resolve identified issues\r\n\r\n**LLM Response Schema:**\r\n\r\n```json\r\n{\r\n  \"health_status\": \"healthy | degraded | critical\",\r\n  \"summary\": \"Human-readable 2-3 sentence overview\",\r\n  \"findings\": [\r\n    {\r\n      \"category\": \"anomaly | security | performance | informational\",\r\n      \"severity\": \"critical | warning | info\",\r\n      \"title\": \"High TCP retransmission rate\",\r\n      \"description\": \"8.2% of TCP packets are retransmissions, indicating network congestion or packet loss\",\r\n      \"evidence\": \"103 retransmissions out of 1,247 total packets\",\r\n      \"recommendation\": \"Check network interface errors and MTU settings on the container bridge network\"\r\n    }\r\n  ],\r\n  \"confidence_score\": 0.85\r\n}\r\n```\r\n\r\n### Phase 3: Frontend Integration\r\n\r\n```\r\n+-- Capture History -------------------------------------------------------+\r\n|                                                                           |\r\n|  Container       Status     Filter    Size      Created   Actions         |\r\n|  ------------------------------------------------------------------------+\r\n|  nginx-proxy     * Complete  port 80  2.4 MB   2m ago    DL Analyze Del  |\r\n|                                                                           |\r\n|  +-- AI Analysis -----------------------------------------------+        |\r\n|  |  [!] Degraded  *  Confidence: 85%                            |        |\r\n|  |                                                               |        |\r\n|  |  Summary: Capture shows elevated TCP retransmissions          |        |\r\n|  |  (8.2%) and 23 connection resets to port 8080, suggesting     |        |\r\n|  |  the upstream service is rejecting connections.               |        |\r\n|  |                                                               |        |\r\n|  |  Warning: High retransmission rate (8.2%)                     |        |\r\n|  |    -> Check MTU settings on bridge network                    |        |\r\n|  |                                                               |        |\r\n|  |  Warning: 23 TCP RSTs to :8080                                |        |\r\n|  |    -> Verify upstream service is running and accepting        |        |\r\n|  |       connections on port 8080                                |        |\r\n|  |                                                               |        |\r\n|  |  Info: DNS queries to 3 external domains                      |        |\r\n|  |    -> api.example.com, cdn.example.com, metrics.example.com   |        |\r\n|  |                                                               |        |\r\n|  |  [Re-analyze]  [Export Report]                                |        |\r\n|  +---------------------------------------------------------------+        |\r\n|                                                                           |\r\n|  redis-cache     * Complete  tcp      1.1 MB   15m ago   DL Analyze Del  |\r\n|  api-server      * Failed    --       --       22m ago          Del      |\r\n+---------------------------------------------------------------------------+\r\n```\r\n\r\nThe Analyze button triggers analysis. Results expand inline below the capture row. A \"Re-analyze\" button allows re-running with updated LLM context.\r\n\r\n## Use Cases\r\n\r\n1. **Incident triage**: A user captures traffic on a failing `api-server` container. Instead of downloading the PCAP and opening Wireshark, they click \"Analyze\" and immediately see that 40% of outbound connections to the database port are being RST'd -- pointing to a connection pool exhaustion issue.\r\n\r\n2. **Security audit**: A DevOps engineer captures traffic on a container suspected of data exfiltration. The AI flags unencrypted HTTP traffic to an unexpected external IP on port 9090, along with DNS queries to a domain not in the organization's allowlist.\r\n\r\n3. **Performance debugging**: A container is experiencing intermittent latency. The capture analysis reveals a 12% TCP retransmission rate and multiple zero-window events, indicating the container's receive buffer is saturated under load.\r\n\r\n4. **Network verification**: After deploying a new service, a user captures traffic to verify it's communicating only over expected ports and protocols. The AI confirms healthy traffic patterns and flags no anomalies -- providing confidence in the deployment.\r\n\r\n## Acceptance Criteria\r\n\r\n- [ ] Backend: New `analyzeCaptureFile(captureId)` function in pcap-service that extracts summary statistics from a completed PCAP file\r\n- [ ] Backend: New `POST /api/pcap/captures/:id/analyze` endpoint that triggers LLM analysis on a completed capture\r\n- [ ] Backend: PCAP summary extraction uses `tcpdump -r` (executed locally on stored file, not inside containers) or a JS-based PCAP parser\r\n- [ ] Backend: LLM analysis uses the existing `chatStream()` infrastructure with a dedicated network-analysis system prompt\r\n- [ ] Backend: Analysis results stored in `pcap_captures` table (new `analysis_result` TEXT column) or a separate `pcap_analyses` table\r\n- [ ] Backend: Analysis is idempotent -- re-analyzing overwrites previous results\r\n- [ ] Frontend: \"Analyze\" button appears on completed/succeeded captures in the history table\r\n- [ ] Frontend: Analysis results display inline in an expandable panel below the capture row\r\n- [ ] Frontend: Loading state with skeleton while analysis is in progress\r\n- [ ] Frontend: Health status badge (green/yellow/red) visible at a glance in the capture row\r\n- [ ] Frontend: Individual findings displayed with severity icons, descriptions, and recommendations\r\n- [ ] Frontend: \"Re-analyze\" button to re-run analysis on demand\r\n- [ ] Tests: Backend unit tests for PCAP summary extraction logic\r\n- [ ] Tests: Backend integration tests for the analyze endpoint\r\n- [ ] Tests: Frontend component tests for the analysis UI panel\r\n- [ ] Observer-only: Analysis is read-only -- no container mutations triggered by findings\r\n- [ ] Respects `PCAP_ENABLED` feature flag -- analysis unavailable when captures are disabled\r\n\r\n## Technical Considerations\r\n\r\n- **PCAP parsing**: Two approaches -- (a) shell out to `tcpdump -r` on the stored file in `PCAP_STORAGE_DIR` (simple, requires tcpdump installed in the backend container), or (b) use a JS PCAP parser library like `pcap-parser`. Option (a) is simpler since the backend Docker image can include tcpdump. This is a key design decision.\r\n- **LLM context size**: Raw PCAP data must never be sent to the LLM. Only the structured summary (protocol counts, top talkers, anomaly indicators) should be included. This keeps token usage manageable (~500-1000 tokens for the summary).\r\n- **Affected files**: `backend/src/services/pcap-service.ts`, `backend/src/routes/pcap.ts`, `backend/src/models/pcap.ts`, `frontend/src/pages/packet-capture.tsx`, `frontend/src/hooks/use-pcap.ts`\r\n- **New migration**: If using a separate table, add `backend/src/db/migrations/0XX_pcap_analyses.sql`\r\n- **Existing patterns**: Follow the `investigation-service.ts` pattern for LLM analysis with structured JSON response parsing and confidence scoring\r\n- **Performance**: Analysis is on-demand (user-triggered), not automatic. This avoids unnecessary LLM calls on captures the user doesn't care about.\r\n- **Storage**: The PCAP file is already stored locally in `PCAP_STORAGE_DIR`. The analysis runs against this local file -- no need to re-fetch from the container.\r\n- **Error handling**: If `tcpdump -r` fails or the LLM returns unparseable output, store the error and show a user-friendly message. Follow the investigation service's fallback pattern (confidence_score: 0.3).\r\n\r\n**Effort Estimate:** Medium\r\n**Impact Estimate:** High\r\n**Priority Score:** 7.5/10\r\n\r\n> **Needs Refinement**: Should analysis be triggered automatically when a capture completes, or only on-demand? Should the PCAP parsing use `tcpdump -r` (requires tcpdump in the backend container) or a JS library? Should findings be stored in a new column on `pcap_captures` or a separate table? Should the feature integrate with the existing LLM chat so users can ask follow-up questions about a specific capture?\r\n",
+        "reactions": {
+          "url": "https://api.github.com/repos/kenhaesler/ai-portainer-dashboard/issues/326/reactions",
+          "total_count": 0,
+          "+1": 0,
+          "-1": 0,
+          "laugh": 0,
+          "hooray": 0,
+          "confused": 0,
+          "heart": 0,
+          "rocket": 0,
+          "eyes": 0
+        },
+        "timeline_url": "https://api.github.com/repos/kenhaesler/ai-portainer-dashboard/issues/326/timeline",
+        "performed_via_github_app": null,
+        "state_reason": null,
+        "score": 1
+      }
+    },
+    {
+      "id": "github-issue-3911090172",
+      "platform": "github",
+      "type": "issue",
+      "title": "hive/issues #4027: [Integration]: Kilo Code CLI as an alternative coding surface",
+      "content": "## Service\n\n**Name:** Kilo Code CLI\n\n**Description:**  \nKilo Code CLI is an open-source, terminal-based coding agent that can read project-level `SKILL.md` definitions and execute workflows interactively, similar to Claude Code and Cursor.\n\nIntegrating Kilo Code CLI enables Hive users to:\n- Use an alternative CLI-based coding surface\n- Reuse existing Hive skills without modification\n- Access **a wide range of LLM providers**, including **local-hosted models** and **low-cost APIs**\n\n---\n\n## Credential Identity\n\n**N/A — no new credentials required**\n\nThis integration does **not** introduce a new credential type managed by Hive.\n\n- Kilo Code manages its own provider configuration globally (`~/.kilocode/config.json`)\n- Hive continues to rely on existing LLM provider credentials where applicable\n- No changes to `quickstart.sh` or Hive credential handling are required\n\n---\n\n## Tools\n\n**N/A — no new tool functions**\n\nThis integration does not add new tools.  \nIt reuses existing Hive skills (`SKILL.md`) exactly as-is.\n\n---\n\n## Auth Methods\n\n- **Direct API key supported:** N/A  \n- **Aden OAuth supported:** N/A  \n\nAuthentication is handled entirely by Kilo Code CLI outside of Hive.\n\n---\n\n## How to Get the Credential\n\n**N/A**\n\nNo Hive-managed credential is introduced.\n\nUsers configure providers directly inside Kilo Code CLI using its `/connect` command.  \nThis includes:\n- Cloud-hosted APIs\n- **Local-hosted LLMs**\n- **Low-cost third-party providers**\n\n---\n\n## Health Check\n\n**N/A**\n\nKilo Code CLI manages provider validation internally.  \nHive does not need to perform any additional health checks.\n\n---\n\n## Credential Group\n\n- [x] No, single credential  \n*(No Hive credential involved)*\n\n---\n\n## Additional Context\n\n**Why this integration is valuable:**\n\n- Kilo Code CLI automatically discovers skills under `.kilo/skills/**/SKILL.md`\n- Existing Hive skills from `.claude/skills` / `.cursor/skills` can be reused verbatim\n- Verified behavior:\n  - `kilo` → `/skills` correctly lists Hive skills\n  - `/hive-create`, `/hive-test`, `/hive-debugger` work without modification\n- No changes required to:\n  - `quickstart.sh`\n  - Hive framework code\n  - Skill definitions\n\n**Additional advantages Kilo brings:**\n\n- **Support for local-hosted LLMs** (useful for offline, private, or cost-sensitive setups)\n- **Access to a large set of low-cost and alternative models**, including providers such as:\n  - GLM-4.7\n  - Other non-OpenAI / non-Anthropic options\n- Enables users to choose:\n  - Claude / Cursor for premium workflows\n  - **Kilo for cost-efficient or local-first workflows**\n\nThis integration mirrors the existing Cursor integration pattern while expanding Hive’s compatibility with **cheaper, local, and self-hosted LLM ecosystems**.\n\nRelevant docs:\n- https://kilo.ai/docs/code-with-ai/platforms/cli\n",
+      "author": {
+        "name": "SharayuChoudhari",
+        "url": "https://github.com/SharayuChoudhari",
+        "avatar": "https://avatars.githubusercontent.com/u/60516689?v=4"
+      },
+      "timestamp": "2026-02-07T19:58:29Z",
+      "url": "https://github.com/adenhq/hive/issues/4027",
+      "metrics": {
+        "comments": 1
+      },
+      "tags": [
+        "enhancement",
+        "size: medium"
+      ],
+      "raw": {
+        "url": "https://api.github.com/repos/adenhq/hive/issues/4027",
+        "repository_url": "https://api.github.com/repos/adenhq/hive",
+        "labels_url": "https://api.github.com/repos/adenhq/hive/issues/4027/labels{/name}",
+        "comments_url": "https://api.github.com/repos/adenhq/hive/issues/4027/comments",
+        "events_url": "https://api.github.com/repos/adenhq/hive/issues/4027/events",
+        "html_url": "https://github.com/adenhq/hive/issues/4027",
+        "id": 3911090172,
+        "node_id": "I_kwDOQ3-Kf87pHn_8",
+        "number": 4027,
+        "title": "[Integration]: Kilo Code CLI as an alternative coding surface",
+        "user": {
+          "login": "SharayuChoudhari",
+          "id": 60516689,
+          "node_id": "MDQ6VXNlcjYwNTE2Njg5",
+          "avatar_url": "https://avatars.githubusercontent.com/u/60516689?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/SharayuChoudhari",
+          "html_url": "https://github.com/SharayuChoudhari",
+          "followers_url": "https://api.github.com/users/SharayuChoudhari/followers",
+          "following_url": "https://api.github.com/users/SharayuChoudhari/following{/other_user}",
+          "gists_url": "https://api.github.com/users/SharayuChoudhari/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/SharayuChoudhari/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/SharayuChoudhari/subscriptions",
+          "organizations_url": "https://api.github.com/users/SharayuChoudhari/orgs",
+          "repos_url": "https://api.github.com/users/SharayuChoudhari/repos",
+          "events_url": "https://api.github.com/users/SharayuChoudhari/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/SharayuChoudhari/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "labels": [
+          {
+            "id": 9975712995,
+            "node_id": "LA_kwDOQ3-Kf88AAAACUplM4w",
+            "url": "https://api.github.com/repos/adenhq/hive/labels/enhancement",
+            "name": "enhancement",
+            "color": "a2eeef",
+            "default": true,
+            "description": "New feature or request"
+          },
+          {
+            "id": 10122603238,
+            "node_id": "LA_kwDOQ3-Kf88AAAACW1qq5g",
+            "url": "https://api.github.com/repos/adenhq/hive/labels/size:%20medium",
+            "name": "size: medium",
+            "color": "ededed",
+            "default": false,
+            "description": null
+          }
+        ],
+        "state": "open",
+        "locked": false,
+        "assignee": null,
+        "assignees": [],
+        "milestone": null,
+        "comments": 1,
+        "created_at": "2026-02-07T19:58:29Z",
+        "updated_at": "2026-02-07T20:07:09Z",
+        "closed_at": null,
+        "author_association": "NONE",
+        "active_lock_reason": null,
+        "sub_issues_summary": {
+          "total": 0,
+          "completed": 0,
+          "percent_completed": 0
+        },
+        "issue_dependencies_summary": {
+          "blocked_by": 0,
+          "total_blocked_by": 0,
+          "blocking": 0,
+          "total_blocking": 0
+        },
+        "body": "## Service\n\n**Name:** Kilo Code CLI\n\n**Description:**  \nKilo Code CLI is an open-source, terminal-based coding agent that can read project-level `SKILL.md` definitions and execute workflows interactively, similar to Claude Code and Cursor.\n\nIntegrating Kilo Code CLI enables Hive users to:\n- Use an alternative CLI-based coding surface\n- Reuse existing Hive skills without modification\n- Access **a wide range of LLM providers**, including **local-hosted models** and **low-cost APIs**\n\n---\n\n## Credential Identity\n\n**N/A — no new credentials required**\n\nThis integration does **not** introduce a new credential type managed by Hive.\n\n- Kilo Code manages its own provider configuration globally (`~/.kilocode/config.json`)\n- Hive continues to rely on existing LLM provider credentials where applicable\n- No changes to `quickstart.sh` or Hive credential handling are required\n\n---\n\n## Tools\n\n**N/A — no new tool functions**\n\nThis integration does not add new tools.  \nIt reuses existing Hive skills (`SKILL.md`) exactly as-is.\n\n---\n\n## Auth Methods\n\n- **Direct API key supported:** N/A  \n- **Aden OAuth supported:** N/A  \n\nAuthentication is handled entirely by Kilo Code CLI outside of Hive.\n\n---\n\n## How to Get the Credential\n\n**N/A**\n\nNo Hive-managed credential is introduced.\n\nUsers configure providers directly inside Kilo Code CLI using its `/connect` command.  \nThis includes:\n- Cloud-hosted APIs\n- **Local-hosted LLMs**\n- **Low-cost third-party providers**\n\n---\n\n## Health Check\n\n**N/A**\n\nKilo Code CLI manages provider validation internally.  \nHive does not need to perform any additional health checks.\n\n---\n\n## Credential Group\n\n- [x] No, single credential  \n*(No Hive credential involved)*\n\n---\n\n## Additional Context\n\n**Why this integration is valuable:**\n\n- Kilo Code CLI automatically discovers skills under `.kilo/skills/**/SKILL.md`\n- Existing Hive skills from `.claude/skills` / `.cursor/skills` can be reused verbatim\n- Verified behavior:\n  - `kilo` → `/skills` correctly lists Hive skills\n  - `/hive-create`, `/hive-test`, `/hive-debugger` work without modification\n- No changes required to:\n  - `quickstart.sh`\n  - Hive framework code\n  - Skill definitions\n\n**Additional advantages Kilo brings:**\n\n- **Support for local-hosted LLMs** (useful for offline, private, or cost-sensitive setups)\n- **Access to a large set of low-cost and alternative models**, including providers such as:\n  - GLM-4.7\n  - Other non-OpenAI / non-Anthropic options\n- Enables users to choose:\n  - Claude / Cursor for premium workflows\n  - **Kilo for cost-efficient or local-first workflows**\n\nThis integration mirrors the existing Cursor integration pattern while expanding Hive’s compatibility with **cheaper, local, and self-hosted LLM ecosystems**.\n\nRelevant docs:\n- https://kilo.ai/docs/code-with-ai/platforms/cli\n",
+        "reactions": {
+          "url": "https://api.github.com/repos/adenhq/hive/issues/4027/reactions",
+          "total_count": 0,
+          "+1": 0,
+          "-1": 0,
+          "laugh": 0,
+          "hooray": 0,
+          "confused": 0,
+          "heart": 0,
+          "rocket": 0,
+          "eyes": 0
+        },
+        "timeline_url": "https://api.github.com/repos/adenhq/hive/issues/4027/timeline",
+        "performed_via_github_app": null,
+        "state_reason": null,
+        "score": 1
+      }
+    },
+    {
+      "id": "github-issue-3911071085",
+      "platform": "github",
+      "type": "issue",
+      "title": "Trend_Model_Project/issues #4785: [Follow-up] Refactor the _build_nl_chain() function signature  (PR #4780)",
+      "content": "# Enforce Strict 5-Parameter Chain Builder Contract with Deterministic Caching\n\n## Why\nPR #4780 addressed issue #4778, but verification returned a **CONCERNS** verdict. This follow-up closes the remaining gaps by enforcing a strict 5-parameter `_build_nl_chain()` contract, ensuring Streamlit caching is keyed deterministically only on those five inputs (with a signature-driven cached wrapper), updating call sites and tests accordingly, and replacing session-state cache bookkeeping with observable logging tied to actual cache execution.\n\n## Source\n- Original PR: #4780\n- Parent issue: #4778\n\n## Tasks\n\n### Refactor `_build_nl_chain()` Signature\n- [ ] Update the function signature of `_build_nl_chain()` in `streamlit_app/pages/2_Model.py` to accept exactly five parameters: provider, model, base_url, org, and temperature\n- [ ] Remove all additional parameters from `_build_nl_chain()` including cache_signature, timeout, max_retries, api_key_secret, and extra_payload\n- [ ] Create a separate internal configuration builder function `_build_chain_config()` in `streamlit_app/pages/2_Model.py` to handle timeout, max_retries, and extra_payload settings outside the cached chain builder\n\n### Implement Cache Signature and Wrapper\n- [ ] Implement a `_derive_cache_signature()` helper function in `streamlit_app/pages/2_Model.py` that accepts provider, model, base_url, org, and temperature and returns a deterministic string signature\n- [ ] Create a thin cached wrapper function `get_nl_chain()` in `streamlit_app/pages/2_Model.py` decorated with `@st.cache_resource` that accepts the cache signature as its first parameter\n- [ ] Configure the cached wrapper to delegate to `_build_nl_chain()` with the five required parameters after cache lookup\n\n### Update Call Sites and Tests\n- [ ] Update all chain-construction call sites within `streamlit_app/pages/2_Model.py` to call the cached wrapper entrypoint with the derived signature\n- [ ] Revise `tests/app/test_model_page_helpers.py` to remove any test that calls `_build_nl_chain()` with zero arguments\n- [ ] Update tests in `tests/app/test_model_page_helpers.py` to call `_build_nl_chain(provider, model, base_url, org, temperature)` with exactly five arguments\n\n### Replace Session State with Logging\n- [ ] Remove all session-state-based cache hit/miss tracking code from `streamlit_app/pages/2_Model.py` including any keys like cache_hit, cache_miss, or nl_chain_cache_*\n- [ ] Add a lookup log statement at INFO level before each call to the cached wrapper that includes the derived cache signature\n- [ ] Add a miss/build log statement at INFO level inside the cached wrapper body that includes the cache signature and elapsed build time in milliseconds\n\n### Add Cache Behavior Tests\n- [ ] Add a test in `tests/app/test_model_page_helpers.py` that verifies calling the caching entrypoint twice with identical inputs results in only one execution of `_build_nl_chain()` using a monkeypatch counter\n- [ ] Add a test in `tests/app/test_model_page_helpers.py` that verifies changing any one of the five inputs changes the cache signature and triggers a second build execution\n- [ ] Add a test in `tests/app/test_model_page_helpers.py` that verifies signature determinism by calling `_derive_cache_signature()` twice with identical inputs and asserting the returned strings are equal\n- [ ] Add a test in `tests/app/test_model_page_helpers.py` that verifies signature sensitivity by calling `_derive_cache_signature()` with each of the five inputs changed individually and asserting each produces a different signature\n\n## Acceptance Criteria\n\n### Function Signature Requirements\n- [ ] `streamlit_app/pages/2_Model.py` defines `_build_nl_chain(provider, model, base_url, org, temperature)` with exactly 5 parameters (no `*args`/`**kwargs`, no defaults added to accept fewer args, and no additional named parameters such as `cache_signature`, `timeout`, `max_retries`, `api_key_secret`, `extra_payload`)\n- [ ] `_build_nl_chain` is not decorated with `st.cache_resource` (caching is applied only to a thin wrapper that is keyed primarily by the derived signature)\n\n### Cache Signature Requirements\n- [ ] `streamlit_app/pages/2_Model.py` contains a helper `_derive_cache_signature(provider, model, base_url, org, temperature)` that returns the same string for repeated calls with identical values, and a different string when any one of the five values differs (including temperature changes such as `0.0` vs `0.1`)\n- [ ] The `@st.cache_resource`-decorated wrapper function accepts cache_signature as its first parameter, and calling the wrapper twice with identical signatures returns the same object instance (verified via `id()` comparison or equivalent identity check)\n- [ ] The cached wrapper does not accept secrets or non-deterministic inputs as parameters\n\n### Call Site Requirements\n- [ ] All chain-construction call sites within `streamlit_app/pages/2_Model.py` call either the cached wrapper entrypoint or `_build_nl_chain(provider, model, base_url, org, temperature)` with exactly five positional/keyword arguments\n- [ ] There are zero remaining call sites in `streamlit_app/pages/2_Model.py` that pass removed parameters (`cache_signature`, `timeout`, `max_retries`, `api_key_secret`, `extra_payload`) to `_build_nl_chain`\n\n### Test Requirements\n- [ ] `tests/app/test_model_page_helpers.py` contains no test that calls `_build_nl_chain()` with zero arguments\n- [ ] All direct invocations of `_build_nl_chain` in `tests/app/test_model_page_helpers.py` supply exactly `(provider, model, base_url, org, temperature)`\n- [ ] A test verifies that calling the caching entrypoint twice with identical `(provider, model, base_url, org, temperature)` results in the underlying builder executing only once (cache hit on second call), using log capture or a spy/monkeypatch counter on `_build_nl_chain`\n- [ ] A test verifies that changing any one of the five inputs changes the cache signature and triggers a second underlying build execution (i.e., two distinct signatures produce two builds)\n- [ ] A test verifies that `_derive_cache_signature()` returns identical strings for identical inputs across multiple calls\n- [ ] A test verifies that `_derive_cache_signature()` returns different strings when each of the five inputs is changed individually\n\n### Logging Requirements\n- [ ] Session-state-based cache hit/miss bookkeeping is removed: `streamlit_app/pages/2_Model.py` does not read/write `st.session_state` for cache hit/miss tracking (no keys like `cache_hit`, `cache_miss`, `nl_chain_cache_*` used for determining cache outcomes)\n- [ ] For each chain retrieval attempt, logs at INFO level or higher include: (1) a lookup log containing the substring \"cache signature:\" followed by the signature value, emitted before calling the cached wrapper, and (2) a miss/build log containing both the signature and a numeric elapsed time value (with units), emitted only during cache wrapper execution\n- [ ] A test verifies that two calls to the caching entrypoint with identical inputs produce two \"lookup\" log entries but only one \"miss/build\" log entry\n\n## Implementation Notes\n\n### Primary Files\n- `streamlit_app/pages/2_Model.py`\n- `tests/app/test_model_page_helpers.py`\n\n### Recommended Structure for `streamlit_app/pages/2_Model.py`\n\n**Pure Builder Function**\n- Keep `_build_nl_chain(provider, model, base_url, org, temperature)` as the pure builder (no caching decorator; no secrets in signature)\n\n**Cache Signature Helper**\n- Add `_derive_cache_signature(provider, model, base_url, org, temperature) -> str` that uses only those five values\n- Ensure temperature is encoded deterministically (e.g., normalized string/JSON encoding) so `0.0` and `0.1` produce different signatures\n\n**Cached Wrapper**\n- Add a thin `@st.cache_resource` wrapper that is keyed primarily by the signature (e.g., wrapper signature starts with `cache_signature: str`, and does not accept secrets)\n- The wrapper should delegate to `_build_nl_chain(...)` using the same five inputs (either passed through or captured via wrapper parameters, but do not introduce extra parameters to `_build_nl_chain`)\n\n**Logging Implementation**\n- Add \"lookup\" log immediately before calling the cached wrapper, including the derived signature\n- Add \"miss/build\" log inside the cached wrapper body (so it appears only on cache misses), including the same signature and elapsed build time\n\n### Test Strategy for `tests/app/test_model_page_helpers.py`\n\n**Signature Tests**\n- Stop calling `_build_nl_chain()` with zero args\n- Add/adjust tests for signature determinism and sensitivity (each of the five inputs changes signature)\n\n**Cache Behavior Tests**\n- Verify cache hit behavior by monkeypatching/spying `_build_nl_chain` and calling the caching entrypoint twice with identical inputs (expect one execution)\n- Verify cache miss on changed inputs (expect two executions) and that signatures differ\n\n**Logging Tests**\n- Verify logs: two \"lookup\" entries for two attempts, and only one \"miss/build\" entry when inputs are identical\n\n<details>\n<summary>Background (previous attempt context)</summary>\n\n**Anti-pattern: Using additional parameters beyond the five required**\n- What happened: Extra parameters like `cache_signature`, `timeout`, `max_retries`, `api_key_secret`, and `extra_payload` were added to `_build_nl_chain()`\n- Why it failed: Extra parameters conflict with strict acceptance criteria and complicate `st.cache_resource` integration; tests expecting a five-parameter signature fail\n- What to do instead: Keep `_build_nl_chain` strictly five parameters; move extra configuration to a separate helper/config object (not part of the cached identity)\n\n**Anti-pattern: Relying on a custom stub for `st.cache_resource`**\n- What happened: Tests used a custom caching stub that hashes all `args/kwargs`\n- Why it failed: May not match Streamlit's real caching semantics (key hashing, resource lifecycle, mutation behavior)\n- What to do instead: In tests, simulate cache behavior in a way that closely mimics `st.cache_resource`, or clearly isolate/document any test-only caching behavior\n\n</details>",
+      "author": {
+        "name": "stranske",
+        "url": "https://github.com/stranske",
+        "avatar": "https://avatars.githubusercontent.com/u/23046322?v=4"
+      },
+      "timestamp": "2026-02-07T19:48:51Z",
+      "url": "https://github.com/stranske/Trend_Model_Project/issues/4785",
+      "metrics": {
+        "comments": 9
+      },
+      "tags": [
+        "agent:codex",
+        "status:in-progress",
+        "agents:apply-suggestions",
+        "agents:formatted",
+        "follow-up"
+      ],
+      "raw": {
+        "url": "https://api.github.com/repos/stranske/Trend_Model_Project/issues/4785",
+        "repository_url": "https://api.github.com/repos/stranske/Trend_Model_Project",
+        "labels_url": "https://api.github.com/repos/stranske/Trend_Model_Project/issues/4785/labels{/name}",
+        "comments_url": "https://api.github.com/repos/stranske/Trend_Model_Project/issues/4785/comments",
+        "events_url": "https://api.github.com/repos/stranske/Trend_Model_Project/issues/4785/events",
+        "html_url": "https://github.com/stranske/Trend_Model_Project/issues/4785",
+        "id": 3911071085,
+        "node_id": "I_kwDOO0LrSc7pHjVt",
+        "number": 4785,
+        "title": "[Follow-up] Refactor the _build_nl_chain() function signature  (PR #4780)",
+        "user": {
+          "login": "stranske",
+          "id": 23046322,
+          "node_id": "MDQ6VXNlcjIzMDQ2MzIy",
+          "avatar_url": "https://avatars.githubusercontent.com/u/23046322?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/stranske",
+          "html_url": "https://github.com/stranske",
+          "followers_url": "https://api.github.com/users/stranske/followers",
+          "following_url": "https://api.github.com/users/stranske/following{/other_user}",
+          "gists_url": "https://api.github.com/users/stranske/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/stranske/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/stranske/subscriptions",
+          "organizations_url": "https://api.github.com/users/stranske/orgs",
+          "repos_url": "https://api.github.com/users/stranske/repos",
+          "events_url": "https://api.github.com/users/stranske/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/stranske/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "labels": [
+          {
+            "id": 9238958862,
+            "node_id": "LA_kwDOO0LrSc8AAAACJq9TDg",
+            "url": "https://api.github.com/repos/stranske/Trend_Model_Project/labels/agent:codex",
+            "name": "agent:codex",
+            "color": "1d76db",
+            "default": false,
+            "description": "Agent-created issues from Codex"
+          },
+          {
+            "id": 9566545089,
+            "node_id": "LA_kwDOO0LrSc8AAAACOjXkwQ",
+            "url": "https://api.github.com/repos/stranske/Trend_Model_Project/labels/status:in-progress",
+            "name": "status:in-progress",
+            "color": "ededed",
+            "default": false,
+            "description": null
+          },
+          {
+            "id": 9940213943,
+            "node_id": "LA_kwDOO0LrSc8AAAACUHugtw",
+            "url": "https://api.github.com/repos/stranske/Trend_Model_Project/labels/agents:apply-suggestions",
+            "name": "agents:apply-suggestions",
+            "color": "0E8A16",
+            "default": false,
+            "description": "Applies optimization suggestions from agents:optimize"
+          },
+          {
+            "id": 9940213957,
+            "node_id": "LA_kwDOO0LrSc8AAAACUHugxQ",
+            "url": "https://api.github.com/repos/stranske/Trend_Model_Project/labels/agents:formatted",
+            "name": "agents:formatted",
+            "color": "1D76DB",
+            "default": false,
+            "description": "Issue has been formatted to AGENT_ISSUE_TEMPLATE"
+          },
+          {
+            "id": 9956989224,
+            "node_id": "LA_kwDOO0LrSc8AAAACUXuZKA",
+            "url": "https://api.github.com/repos/stranske/Trend_Model_Project/labels/follow-up",
+            "name": "follow-up",
+            "color": "ededed",
+            "default": false,
+            "description": null
+          }
+        ],
+        "state": "open",
+        "locked": false,
+        "assignee": {
+          "login": "stranske-automation-bot",
+          "id": 231602290,
+          "node_id": "U_kgDODc34cg",
+          "avatar_url": "https://avatars.githubusercontent.com/u/231602290?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/stranske-automation-bot",
+          "html_url": "https://github.com/stranske-automation-bot",
+          "followers_url": "https://api.github.com/users/stranske-automation-bot/followers",
+          "following_url": "https://api.github.com/users/stranske-automation-bot/following{/other_user}",
+          "gists_url": "https://api.github.com/users/stranske-automation-bot/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/stranske-automation-bot/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/stranske-automation-bot/subscriptions",
+          "organizations_url": "https://api.github.com/users/stranske-automation-bot/orgs",
+          "repos_url": "https://api.github.com/users/stranske-automation-bot/repos",
+          "events_url": "https://api.github.com/users/stranske-automation-bot/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/stranske-automation-bot/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "assignees": [
+          {
+            "login": "stranske-automation-bot",
+            "id": 231602290,
+            "node_id": "U_kgDODc34cg",
+            "avatar_url": "https://avatars.githubusercontent.com/u/231602290?v=4",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/stranske-automation-bot",
+            "html_url": "https://github.com/stranske-automation-bot",
+            "followers_url": "https://api.github.com/users/stranske-automation-bot/followers",
+            "following_url": "https://api.github.com/users/stranske-automation-bot/following{/other_user}",
+            "gists_url": "https://api.github.com/users/stranske-automation-bot/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/stranske-automation-bot/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/stranske-automation-bot/subscriptions",
+            "organizations_url": "https://api.github.com/users/stranske-automation-bot/orgs",
+            "repos_url": "https://api.github.com/users/stranske-automation-bot/repos",
+            "events_url": "https://api.github.com/users/stranske-automation-bot/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/stranske-automation-bot/received_events",
+            "type": "User",
+            "user_view_type": "public",
+            "site_admin": false
+          }
+        ],
+        "milestone": null,
+        "comments": 9,
+        "created_at": "2026-02-07T19:48:51Z",
+        "updated_at": "2026-02-07T19:55:10Z",
+        "closed_at": null,
+        "author_association": "OWNER",
+        "active_lock_reason": null,
+        "sub_issues_summary": {
+          "total": 0,
+          "completed": 0,
+          "percent_completed": 0
+        },
+        "issue_dependencies_summary": {
+          "blocked_by": 0,
+          "total_blocked_by": 0,
+          "blocking": 0,
+          "total_blocking": 0
+        },
+        "body": "# Enforce Strict 5-Parameter Chain Builder Contract with Deterministic Caching\n\n## Why\nPR #4780 addressed issue #4778, but verification returned a **CONCERNS** verdict. This follow-up closes the remaining gaps by enforcing a strict 5-parameter `_build_nl_chain()` contract, ensuring Streamlit caching is keyed deterministically only on those five inputs (with a signature-driven cached wrapper), updating call sites and tests accordingly, and replacing session-state cache bookkeeping with observable logging tied to actual cache execution.\n\n## Source\n- Original PR: #4780\n- Parent issue: #4778\n\n## Tasks\n\n### Refactor `_build_nl_chain()` Signature\n- [ ] Update the function signature of `_build_nl_chain()` in `streamlit_app/pages/2_Model.py` to accept exactly five parameters: provider, model, base_url, org, and temperature\n- [ ] Remove all additional parameters from `_build_nl_chain()` including cache_signature, timeout, max_retries, api_key_secret, and extra_payload\n- [ ] Create a separate internal configuration builder function `_build_chain_config()` in `streamlit_app/pages/2_Model.py` to handle timeout, max_retries, and extra_payload settings outside the cached chain builder\n\n### Implement Cache Signature and Wrapper\n- [ ] Implement a `_derive_cache_signature()` helper function in `streamlit_app/pages/2_Model.py` that accepts provider, model, base_url, org, and temperature and returns a deterministic string signature\n- [ ] Create a thin cached wrapper function `get_nl_chain()` in `streamlit_app/pages/2_Model.py` decorated with `@st.cache_resource` that accepts the cache signature as its first parameter\n- [ ] Configure the cached wrapper to delegate to `_build_nl_chain()` with the five required parameters after cache lookup\n\n### Update Call Sites and Tests\n- [ ] Update all chain-construction call sites within `streamlit_app/pages/2_Model.py` to call the cached wrapper entrypoint with the derived signature\n- [ ] Revise `tests/app/test_model_page_helpers.py` to remove any test that calls `_build_nl_chain()` with zero arguments\n- [ ] Update tests in `tests/app/test_model_page_helpers.py` to call `_build_nl_chain(provider, model, base_url, org, temperature)` with exactly five arguments\n\n### Replace Session State with Logging\n- [ ] Remove all session-state-based cache hit/miss tracking code from `streamlit_app/pages/2_Model.py` including any keys like cache_hit, cache_miss, or nl_chain_cache_*\n- [ ] Add a lookup log statement at INFO level before each call to the cached wrapper that includes the derived cache signature\n- [ ] Add a miss/build log statement at INFO level inside the cached wrapper body that includes the cache signature and elapsed build time in milliseconds\n\n### Add Cache Behavior Tests\n- [ ] Add a test in `tests/app/test_model_page_helpers.py` that verifies calling the caching entrypoint twice with identical inputs results in only one execution of `_build_nl_chain()` using a monkeypatch counter\n- [ ] Add a test in `tests/app/test_model_page_helpers.py` that verifies changing any one of the five inputs changes the cache signature and triggers a second build execution\n- [ ] Add a test in `tests/app/test_model_page_helpers.py` that verifies signature determinism by calling `_derive_cache_signature()` twice with identical inputs and asserting the returned strings are equal\n- [ ] Add a test in `tests/app/test_model_page_helpers.py` that verifies signature sensitivity by calling `_derive_cache_signature()` with each of the five inputs changed individually and asserting each produces a different signature\n\n## Acceptance Criteria\n\n### Function Signature Requirements\n- [ ] `streamlit_app/pages/2_Model.py` defines `_build_nl_chain(provider, model, base_url, org, temperature)` with exactly 5 parameters (no `*args`/`**kwargs`, no defaults added to accept fewer args, and no additional named parameters such as `cache_signature`, `timeout`, `max_retries`, `api_key_secret`, `extra_payload`)\n- [ ] `_build_nl_chain` is not decorated with `st.cache_resource` (caching is applied only to a thin wrapper that is keyed primarily by the derived signature)\n\n### Cache Signature Requirements\n- [ ] `streamlit_app/pages/2_Model.py` contains a helper `_derive_cache_signature(provider, model, base_url, org, temperature)` that returns the same string for repeated calls with identical values, and a different string when any one of the five values differs (including temperature changes such as `0.0` vs `0.1`)\n- [ ] The `@st.cache_resource`-decorated wrapper function accepts cache_signature as its first parameter, and calling the wrapper twice with identical signatures returns the same object instance (verified via `id()` comparison or equivalent identity check)\n- [ ] The cached wrapper does not accept secrets or non-deterministic inputs as parameters\n\n### Call Site Requirements\n- [ ] All chain-construction call sites within `streamlit_app/pages/2_Model.py` call either the cached wrapper entrypoint or `_build_nl_chain(provider, model, base_url, org, temperature)` with exactly five positional/keyword arguments\n- [ ] There are zero remaining call sites in `streamlit_app/pages/2_Model.py` that pass removed parameters (`cache_signature`, `timeout`, `max_retries`, `api_key_secret`, `extra_payload`) to `_build_nl_chain`\n\n### Test Requirements\n- [ ] `tests/app/test_model_page_helpers.py` contains no test that calls `_build_nl_chain()` with zero arguments\n- [ ] All direct invocations of `_build_nl_chain` in `tests/app/test_model_page_helpers.py` supply exactly `(provider, model, base_url, org, temperature)`\n- [ ] A test verifies that calling the caching entrypoint twice with identical `(provider, model, base_url, org, temperature)` results in the underlying builder executing only once (cache hit on second call), using log capture or a spy/monkeypatch counter on `_build_nl_chain`\n- [ ] A test verifies that changing any one of the five inputs changes the cache signature and triggers a second underlying build execution (i.e., two distinct signatures produce two builds)\n- [ ] A test verifies that `_derive_cache_signature()` returns identical strings for identical inputs across multiple calls\n- [ ] A test verifies that `_derive_cache_signature()` returns different strings when each of the five inputs is changed individually\n\n### Logging Requirements\n- [ ] Session-state-based cache hit/miss bookkeeping is removed: `streamlit_app/pages/2_Model.py` does not read/write `st.session_state` for cache hit/miss tracking (no keys like `cache_hit`, `cache_miss`, `nl_chain_cache_*` used for determining cache outcomes)\n- [ ] For each chain retrieval attempt, logs at INFO level or higher include: (1) a lookup log containing the substring \"cache signature:\" followed by the signature value, emitted before calling the cached wrapper, and (2) a miss/build log containing both the signature and a numeric elapsed time value (with units), emitted only during cache wrapper execution\n- [ ] A test verifies that two calls to the caching entrypoint with identical inputs produce two \"lookup\" log entries but only one \"miss/build\" log entry\n\n## Implementation Notes\n\n### Primary Files\n- `streamlit_app/pages/2_Model.py`\n- `tests/app/test_model_page_helpers.py`\n\n### Recommended Structure for `streamlit_app/pages/2_Model.py`\n\n**Pure Builder Function**\n- Keep `_build_nl_chain(provider, model, base_url, org, temperature)` as the pure builder (no caching decorator; no secrets in signature)\n\n**Cache Signature Helper**\n- Add `_derive_cache_signature(provider, model, base_url, org, temperature) -> str` that uses only those five values\n- Ensure temperature is encoded deterministically (e.g., normalized string/JSON encoding) so `0.0` and `0.1` produce different signatures\n\n**Cached Wrapper**\n- Add a thin `@st.cache_resource` wrapper that is keyed primarily by the signature (e.g., wrapper signature starts with `cache_signature: str`, and does not accept secrets)\n- The wrapper should delegate to `_build_nl_chain(...)` using the same five inputs (either passed through or captured via wrapper parameters, but do not introduce extra parameters to `_build_nl_chain`)\n\n**Logging Implementation**\n- Add \"lookup\" log immediately before calling the cached wrapper, including the derived signature\n- Add \"miss/build\" log inside the cached wrapper body (so it appears only on cache misses), including the same signature and elapsed build time\n\n### Test Strategy for `tests/app/test_model_page_helpers.py`\n\n**Signature Tests**\n- Stop calling `_build_nl_chain()` with zero args\n- Add/adjust tests for signature determinism and sensitivity (each of the five inputs changes signature)\n\n**Cache Behavior Tests**\n- Verify cache hit behavior by monkeypatching/spying `_build_nl_chain` and calling the caching entrypoint twice with identical inputs (expect one execution)\n- Verify cache miss on changed inputs (expect two executions) and that signatures differ\n\n**Logging Tests**\n- Verify logs: two \"lookup\" entries for two attempts, and only one \"miss/build\" entry when inputs are identical\n\n<details>\n<summary>Background (previous attempt context)</summary>\n\n**Anti-pattern: Using additional parameters beyond the five required**\n- What happened: Extra parameters like `cache_signature`, `timeout`, `max_retries`, `api_key_secret`, and `extra_payload` were added to `_build_nl_chain()`\n- Why it failed: Extra parameters conflict with strict acceptance criteria and complicate `st.cache_resource` integration; tests expecting a five-parameter signature fail\n- What to do instead: Keep `_build_nl_chain` strictly five parameters; move extra configuration to a separate helper/config object (not part of the cached identity)\n\n**Anti-pattern: Relying on a custom stub for `st.cache_resource`**\n- What happened: Tests used a custom caching stub that hashes all `args/kwargs`\n- Why it failed: May not match Streamlit's real caching semantics (key hashing, resource lifecycle, mutation behavior)\n- What to do instead: In tests, simulate cache behavior in a way that closely mimics `st.cache_resource`, or clearly isolate/document any test-only caching behavior\n\n</details>",
+        "reactions": {
+          "url": "https://api.github.com/repos/stranske/Trend_Model_Project/issues/4785/reactions",
+          "total_count": 0,
+          "+1": 0,
+          "-1": 0,
+          "laugh": 0,
+          "hooray": 0,
+          "confused": 0,
+          "heart": 0,
+          "rocket": 0,
+          "eyes": 0
+        },
+        "timeline_url": "https://api.github.com/repos/stranske/Trend_Model_Project/issues/4785/timeline",
+        "performed_via_github_app": null,
+        "state_reason": null,
+        "score": 1
+      }
+    },
+    {
+      "id": "github-issue-3911067859",
+      "platform": "github",
+      "type": "issue",
+      "title": "Trend_Model_Project/issues #4784: [Follow-up] Update the warning logic in _render_llm_status_pan (PR #4782)",
+      "content": "# Fix LLM Status Panel Environment Variable Warnings and Display Source\n\n## Why\nPR #4782 addressed issue #4679, but verification reported **CONCERNS**. The status panel still (1) fails to warn when only *some* required env vars are missing, (2) can display provider/model values that lag behind the user's current sidebar selection, and (3) treats unknown providers as if they require no configuration. This follow-up closes those gaps with clear UI behavior and regression tests, including protections against leaking secret env var values into the UI.\n\n## Source\n- Original PR: #4782\n- Parent issue: #4679\n\n## Tasks\n\n### Missing Environment Variable Warning Logic\n- [ ] Implement the missing environment variable computation logic that creates `required_vars` from `_llm_required_env_vars(selected_provider)` and filters to `missing_vars` using `_llm_env_var_present(v)` checks\n- [ ] Update the warning display logic to call `st.warning()` exactly once when `missing_vars` is non-empty with a formatted message containing all missing variable names\n\n### Status Panel Display Source of Truth\n- [ ] Update status panel provider/model sourcing to read `st.session_state.selected_provider` and `st.session_state.selected_model` (with safe defaults) for display values\n- [ ] Ensure `_resolve_llm_provider_config()` is used only for backend instantiation, not for status panel display values\n- [ ] Update sidebar selection code to write current selection to `st.session_state.selected_provider` and `st.session_state.selected_model` on change\n\n### Unknown Provider Handling\n- [ ] Update `_llm_required_env_vars()` to log a warning and return `None` (or raise a controlled exception) when provider is not recognized\n- [ ] Update `_render_llm_status_panel()` to render an \"Unknown provider\" message when `_llm_required_env_vars()` returns sentinel/raises controlled exception\n\n### Unit Tests: Environment Variable Warning Behavior\n- [ ] Write a unit test that mocks missing environment variables and asserts `st.warning()` is called exactly once with all missing variable names in the warning text\n- [ ] Write a unit test that mocks all required environment variables as present and asserts `st.warning()` is never called\n- [ ] Write a unit test that verifies partial environment variable configuration triggers a warning containing only the missing variable names\n\n### Unit Tests: Status Panel Display Source\n- [ ] Create a test fixture that sets up `st.session_state.selected_provider` and `st.session_state.selected_model` with known test values\n- [ ] Write a unit test that verifies the status panel renders the provider value from `st.session_state.selected_provider` by inspecting Streamlit render call arguments\n- [ ] Write a unit test that verifies the status panel renders the model value from `st.session_state.selected_model` by inspecting Streamlit render call arguments\n- [ ] Write a unit test that confirms the status panel does not use values from `_resolve_llm_provider_config()` for display purposes\n\n### Unit Tests: Secret Value Leakage Prevention\n- [ ] Create a test fixture that seeds fake API key values into `os.environ` for secret leakage detection tests\n- [ ] Write a unit test that captures all Streamlit UI calls and asserts seeded secret values never appear in any positional arguments\n- [ ] Write a unit test that captures all Streamlit UI calls and asserts seeded secret values never appear in any keyword arguments like `value`, `placeholder`, `help`, or `label`\n- [ ] Write a unit test that verifies environment variable NAMES are allowed to appear in UI calls while VALUES are prohibited\n\n## Acceptance Criteria\n- [ ] `_render_llm_status_panel()` computes missing env vars using: `required_vars = _llm_required_env_vars(selected_provider)` and `missing_vars = [v for v in required_vars if not _llm_env_var_present(v)]`, and if `missing_vars` is non-empty it calls `st.warning()` exactly once with a message that contains every missing var name (each name appears as a substring in the warning text)\n- [ ] When all required env vars are present for the selected provider, `_render_llm_status_panel()` does not call `st.warning()`\n- [ ] If one or more required env vars are missing, the warning text lists ALL missing names in a single warning (no multiple warnings)\n- [ ] The status panel displays provider and model from `st.session_state.selected_provider` and `st.session_state.selected_model` (or defined safe defaults when absent) and does not use `_resolve_llm_provider_config()` output values for the displayed provider/model text\n- [ ] The sidebar selection code writes the current selection to `st.session_state.selected_provider` and `st.session_state.selected_model` on change, and these keys are the sole source-of-truth for what the status panel displays\n- [ ] `_llm_required_env_vars(provider)` does not return an empty list for an unrecognized provider; instead it logs a warning and returns a sentinel (`None`) OR raises a controlled exception that is handled by the UI\n- [ ] When the selected provider is unknown (as determined by `_llm_required_env_vars` returning sentinel/raising controlled exception), `_render_llm_status_panel()` renders an \"Unknown provider\" message and does not render a \"no env vars required\" state for that provider\n- [ ] No Streamlit UI call made during `_render_llm_status_panel()` includes any environment variable VALUES (e.g., API keys) in any positional args or kwargs such as `value`/`placeholder`/`help`/`label`; only env var NAMES may appear\n- [ ] The env-var warning message contains env var NAMES only and does not contain env var VALUES even when those env vars are set in `os.environ`\n- [ ] All new unit tests pass and achieve coverage of the modified code paths\n\n## Implementation Notes\n\n**Code Changes:**\n- Status panel rendering: Implement missing-var computation, single-warning rendering, unknown-provider UI, and session_state-based display\n- Sidebar selection: Ensure explicit assignments to `st.session_state.selected_provider` and `st.session_state.selected_model` on change\n- `_llm_required_env_vars()`: Change unknown-provider behavior to log a warning and return sentinel (`None`) or raise controlled exception; ensure UI handles it explicitly\n\n**Test Infrastructure:**\n- Add/extend test files to provide Streamlit mock/harness that captures calls (`st.warning`, `st.write`, `st.markdown`, `st.caption`, `st.text_input`, etc.)\n- For env var checks, patch helper functions (`_llm_required_env_vars`, `_llm_env_var_present`) to make tests deterministic\n- For secret leakage tests, seed `os.environ` with fake values and collect all captured Streamlit calls' args/kwargs, stringifying them to assert seeded secret values are absent\n- Align unknown-provider behavior (return `None` vs raise) with repo conventions; ensure tests match the chosen behavior\n\n<details>\n<summary>Background (previous attempt context)</summary>\n\n**Failure to avoid: Using the condition `if not any(status.values())` to determine missing environment variables**\n- Why it failed: This only triggers when *all* expected environment variables are missing; partial misconfiguration (some missing) incorrectly appears valid\n- What to do instead: Iterate over required env vars; if any are missing, compile the full missing list and call `st.warning()` once with all missing names\n\n**Failure to avoid: Relying solely on the resolved provider from `_resolve_llm_provider_config()` for the status panel**\n- Why it failed: Can mismatch the user's current sidebar selection due to resolution logic differences/lag\n- What to do instead: Display provider/model directly from `st.session_state.selected_provider` / `st.session_state.selected_model` (with safe defaults), using resolution only for backend instantiation\n\n</details>",
+      "author": {
+        "name": "stranske",
+        "url": "https://github.com/stranske",
+        "avatar": "https://avatars.githubusercontent.com/u/23046322?v=4"
+      },
+      "timestamp": "2026-02-07T19:47:28Z",
+      "url": "https://github.com/stranske/Trend_Model_Project/issues/4784",
+      "metrics": {
+        "comments": 9
+      },
+      "tags": [
+        "agent:codex",
+        "status:in-progress",
+        "agents:apply-suggestions",
+        "agents:formatted",
+        "follow-up"
+      ],
+      "raw": {
+        "url": "https://api.github.com/repos/stranske/Trend_Model_Project/issues/4784",
+        "repository_url": "https://api.github.com/repos/stranske/Trend_Model_Project",
+        "labels_url": "https://api.github.com/repos/stranske/Trend_Model_Project/issues/4784/labels{/name}",
+        "comments_url": "https://api.github.com/repos/stranske/Trend_Model_Project/issues/4784/comments",
+        "events_url": "https://api.github.com/repos/stranske/Trend_Model_Project/issues/4784/events",
+        "html_url": "https://github.com/stranske/Trend_Model_Project/issues/4784",
+        "id": 3911067859,
+        "node_id": "I_kwDOO0LrSc7pHijT",
+        "number": 4784,
+        "title": "[Follow-up] Update the warning logic in _render_llm_status_pan (PR #4782)",
+        "user": {
+          "login": "stranske",
+          "id": 23046322,
+          "node_id": "MDQ6VXNlcjIzMDQ2MzIy",
+          "avatar_url": "https://avatars.githubusercontent.com/u/23046322?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/stranske",
+          "html_url": "https://github.com/stranske",
+          "followers_url": "https://api.github.com/users/stranske/followers",
+          "following_url": "https://api.github.com/users/stranske/following{/other_user}",
+          "gists_url": "https://api.github.com/users/stranske/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/stranske/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/stranske/subscriptions",
+          "organizations_url": "https://api.github.com/users/stranske/orgs",
+          "repos_url": "https://api.github.com/users/stranske/repos",
+          "events_url": "https://api.github.com/users/stranske/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/stranske/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "labels": [
+          {
+            "id": 9238958862,
+            "node_id": "LA_kwDOO0LrSc8AAAACJq9TDg",
+            "url": "https://api.github.com/repos/stranske/Trend_Model_Project/labels/agent:codex",
+            "name": "agent:codex",
+            "color": "1d76db",
+            "default": false,
+            "description": "Agent-created issues from Codex"
+          },
+          {
+            "id": 9566545089,
+            "node_id": "LA_kwDOO0LrSc8AAAACOjXkwQ",
+            "url": "https://api.github.com/repos/stranske/Trend_Model_Project/labels/status:in-progress",
+            "name": "status:in-progress",
+            "color": "ededed",
+            "default": false,
+            "description": null
+          },
+          {
+            "id": 9940213943,
+            "node_id": "LA_kwDOO0LrSc8AAAACUHugtw",
+            "url": "https://api.github.com/repos/stranske/Trend_Model_Project/labels/agents:apply-suggestions",
+            "name": "agents:apply-suggestions",
+            "color": "0E8A16",
+            "default": false,
+            "description": "Applies optimization suggestions from agents:optimize"
+          },
+          {
+            "id": 9940213957,
+            "node_id": "LA_kwDOO0LrSc8AAAACUHugxQ",
+            "url": "https://api.github.com/repos/stranske/Trend_Model_Project/labels/agents:formatted",
+            "name": "agents:formatted",
+            "color": "1D76DB",
+            "default": false,
+            "description": "Issue has been formatted to AGENT_ISSUE_TEMPLATE"
+          },
+          {
+            "id": 9956989224,
+            "node_id": "LA_kwDOO0LrSc8AAAACUXuZKA",
+            "url": "https://api.github.com/repos/stranske/Trend_Model_Project/labels/follow-up",
+            "name": "follow-up",
+            "color": "ededed",
+            "default": false,
+            "description": null
+          }
+        ],
+        "state": "open",
+        "locked": false,
+        "assignee": {
+          "login": "stranske-automation-bot",
+          "id": 231602290,
+          "node_id": "U_kgDODc34cg",
+          "avatar_url": "https://avatars.githubusercontent.com/u/231602290?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/stranske-automation-bot",
+          "html_url": "https://github.com/stranske-automation-bot",
+          "followers_url": "https://api.github.com/users/stranske-automation-bot/followers",
+          "following_url": "https://api.github.com/users/stranske-automation-bot/following{/other_user}",
+          "gists_url": "https://api.github.com/users/stranske-automation-bot/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/stranske-automation-bot/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/stranske-automation-bot/subscriptions",
+          "organizations_url": "https://api.github.com/users/stranske-automation-bot/orgs",
+          "repos_url": "https://api.github.com/users/stranske-automation-bot/repos",
+          "events_url": "https://api.github.com/users/stranske-automation-bot/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/stranske-automation-bot/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "assignees": [
+          {
+            "login": "stranske-automation-bot",
+            "id": 231602290,
+            "node_id": "U_kgDODc34cg",
+            "avatar_url": "https://avatars.githubusercontent.com/u/231602290?v=4",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/stranske-automation-bot",
+            "html_url": "https://github.com/stranske-automation-bot",
+            "followers_url": "https://api.github.com/users/stranske-automation-bot/followers",
+            "following_url": "https://api.github.com/users/stranske-automation-bot/following{/other_user}",
+            "gists_url": "https://api.github.com/users/stranske-automation-bot/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/stranske-automation-bot/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/stranske-automation-bot/subscriptions",
+            "organizations_url": "https://api.github.com/users/stranske-automation-bot/orgs",
+            "repos_url": "https://api.github.com/users/stranske-automation-bot/repos",
+            "events_url": "https://api.github.com/users/stranske-automation-bot/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/stranske-automation-bot/received_events",
+            "type": "User",
+            "user_view_type": "public",
+            "site_admin": false
+          }
+        ],
+        "milestone": null,
+        "comments": 9,
+        "created_at": "2026-02-07T19:47:28Z",
+        "updated_at": "2026-02-07T19:53:26Z",
+        "closed_at": null,
+        "author_association": "OWNER",
+        "active_lock_reason": null,
+        "sub_issues_summary": {
+          "total": 0,
+          "completed": 0,
+          "percent_completed": 0
+        },
+        "issue_dependencies_summary": {
+          "blocked_by": 0,
+          "total_blocked_by": 0,
+          "blocking": 0,
+          "total_blocking": 0
+        },
+        "body": "# Fix LLM Status Panel Environment Variable Warnings and Display Source\n\n## Why\nPR #4782 addressed issue #4679, but verification reported **CONCERNS**. The status panel still (1) fails to warn when only *some* required env vars are missing, (2) can display provider/model values that lag behind the user's current sidebar selection, and (3) treats unknown providers as if they require no configuration. This follow-up closes those gaps with clear UI behavior and regression tests, including protections against leaking secret env var values into the UI.\n\n## Source\n- Original PR: #4782\n- Parent issue: #4679\n\n## Tasks\n\n### Missing Environment Variable Warning Logic\n- [ ] Implement the missing environment variable computation logic that creates `required_vars` from `_llm_required_env_vars(selected_provider)` and filters to `missing_vars` using `_llm_env_var_present(v)` checks\n- [ ] Update the warning display logic to call `st.warning()` exactly once when `missing_vars` is non-empty with a formatted message containing all missing variable names\n\n### Status Panel Display Source of Truth\n- [ ] Update status panel provider/model sourcing to read `st.session_state.selected_provider` and `st.session_state.selected_model` (with safe defaults) for display values\n- [ ] Ensure `_resolve_llm_provider_config()` is used only for backend instantiation, not for status panel display values\n- [ ] Update sidebar selection code to write current selection to `st.session_state.selected_provider` and `st.session_state.selected_model` on change\n\n### Unknown Provider Handling\n- [ ] Update `_llm_required_env_vars()` to log a warning and return `None` (or raise a controlled exception) when provider is not recognized\n- [ ] Update `_render_llm_status_panel()` to render an \"Unknown provider\" message when `_llm_required_env_vars()` returns sentinel/raises controlled exception\n\n### Unit Tests: Environment Variable Warning Behavior\n- [ ] Write a unit test that mocks missing environment variables and asserts `st.warning()` is called exactly once with all missing variable names in the warning text\n- [ ] Write a unit test that mocks all required environment variables as present and asserts `st.warning()` is never called\n- [ ] Write a unit test that verifies partial environment variable configuration triggers a warning containing only the missing variable names\n\n### Unit Tests: Status Panel Display Source\n- [ ] Create a test fixture that sets up `st.session_state.selected_provider` and `st.session_state.selected_model` with known test values\n- [ ] Write a unit test that verifies the status panel renders the provider value from `st.session_state.selected_provider` by inspecting Streamlit render call arguments\n- [ ] Write a unit test that verifies the status panel renders the model value from `st.session_state.selected_model` by inspecting Streamlit render call arguments\n- [ ] Write a unit test that confirms the status panel does not use values from `_resolve_llm_provider_config()` for display purposes\n\n### Unit Tests: Secret Value Leakage Prevention\n- [ ] Create a test fixture that seeds fake API key values into `os.environ` for secret leakage detection tests\n- [ ] Write a unit test that captures all Streamlit UI calls and asserts seeded secret values never appear in any positional arguments\n- [ ] Write a unit test that captures all Streamlit UI calls and asserts seeded secret values never appear in any keyword arguments like `value`, `placeholder`, `help`, or `label`\n- [ ] Write a unit test that verifies environment variable NAMES are allowed to appear in UI calls while VALUES are prohibited\n\n## Acceptance Criteria\n- [ ] `_render_llm_status_panel()` computes missing env vars using: `required_vars = _llm_required_env_vars(selected_provider)` and `missing_vars = [v for v in required_vars if not _llm_env_var_present(v)]`, and if `missing_vars` is non-empty it calls `st.warning()` exactly once with a message that contains every missing var name (each name appears as a substring in the warning text)\n- [ ] When all required env vars are present for the selected provider, `_render_llm_status_panel()` does not call `st.warning()`\n- [ ] If one or more required env vars are missing, the warning text lists ALL missing names in a single warning (no multiple warnings)\n- [ ] The status panel displays provider and model from `st.session_state.selected_provider` and `st.session_state.selected_model` (or defined safe defaults when absent) and does not use `_resolve_llm_provider_config()` output values for the displayed provider/model text\n- [ ] The sidebar selection code writes the current selection to `st.session_state.selected_provider` and `st.session_state.selected_model` on change, and these keys are the sole source-of-truth for what the status panel displays\n- [ ] `_llm_required_env_vars(provider)` does not return an empty list for an unrecognized provider; instead it logs a warning and returns a sentinel (`None`) OR raises a controlled exception that is handled by the UI\n- [ ] When the selected provider is unknown (as determined by `_llm_required_env_vars` returning sentinel/raising controlled exception), `_render_llm_status_panel()` renders an \"Unknown provider\" message and does not render a \"no env vars required\" state for that provider\n- [ ] No Streamlit UI call made during `_render_llm_status_panel()` includes any environment variable VALUES (e.g., API keys) in any positional args or kwargs such as `value`/`placeholder`/`help`/`label`; only env var NAMES may appear\n- [ ] The env-var warning message contains env var NAMES only and does not contain env var VALUES even when those env vars are set in `os.environ`\n- [ ] All new unit tests pass and achieve coverage of the modified code paths\n\n## Implementation Notes\n\n**Code Changes:**\n- Status panel rendering: Implement missing-var computation, single-warning rendering, unknown-provider UI, and session_state-based display\n- Sidebar selection: Ensure explicit assignments to `st.session_state.selected_provider` and `st.session_state.selected_model` on change\n- `_llm_required_env_vars()`: Change unknown-provider behavior to log a warning and return sentinel (`None`) or raise controlled exception; ensure UI handles it explicitly\n\n**Test Infrastructure:**\n- Add/extend test files to provide Streamlit mock/harness that captures calls (`st.warning`, `st.write`, `st.markdown`, `st.caption`, `st.text_input`, etc.)\n- For env var checks, patch helper functions (`_llm_required_env_vars`, `_llm_env_var_present`) to make tests deterministic\n- For secret leakage tests, seed `os.environ` with fake values and collect all captured Streamlit calls' args/kwargs, stringifying them to assert seeded secret values are absent\n- Align unknown-provider behavior (return `None` vs raise) with repo conventions; ensure tests match the chosen behavior\n\n<details>\n<summary>Background (previous attempt context)</summary>\n\n**Failure to avoid: Using the condition `if not any(status.values())` to determine missing environment variables**\n- Why it failed: This only triggers when *all* expected environment variables are missing; partial misconfiguration (some missing) incorrectly appears valid\n- What to do instead: Iterate over required env vars; if any are missing, compile the full missing list and call `st.warning()` once with all missing names\n\n**Failure to avoid: Relying solely on the resolved provider from `_resolve_llm_provider_config()` for the status panel**\n- Why it failed: Can mismatch the user's current sidebar selection due to resolution logic differences/lag\n- What to do instead: Display provider/model directly from `st.session_state.selected_provider` / `st.session_state.selected_model` (with safe defaults), using resolution only for backend instantiation\n\n</details>",
+        "reactions": {
+          "url": "https://api.github.com/repos/stranske/Trend_Model_Project/issues/4784/reactions",
+          "total_count": 0,
+          "+1": 0,
+          "-1": 0,
+          "laugh": 0,
+          "hooray": 0,
+          "confused": 0,
+          "heart": 0,
+          "rocket": 0,
+          "eyes": 0
+        },
+        "timeline_url": "https://api.github.com/repos/stranske/Trend_Model_Project/issues/4784/timeline",
+        "performed_via_github_app": null,
+        "state_reason": null,
+        "score": 1
+      }
+    },
+    {
       "id": "github-issue-3911013017",
       "platform": "github",
       "type": "issue",
@@ -1200,7 +1796,7 @@
       "metrics": {
         "upvotes": 0,
         "comments": 0,
-        "views": 28
+        "views": 29
       },
       "tags": [
         "javascript",
@@ -1222,7 +1818,7 @@
           "link": "https://stackoverflow.com/users/4512005/razvan-zamfir"
         },
         "is_answered": false,
-        "view_count": 28,
+        "view_count": 29,
         "answer_count": 0,
         "score": 0,
         "last_activity_date": 1770486462,
@@ -2557,7 +3153,7 @@
       "metrics": {
         "upvotes": -1,
         "comments": 0,
-        "views": 28
+        "views": 29
       },
       "tags": [
         "javascript",
@@ -2582,7 +3178,7 @@
           "link": "https://stackoverflow.com/users/8103934/bustinout"
         },
         "is_answered": false,
-        "view_count": 28,
+        "view_count": 29,
         "answer_count": 0,
         "score": -1,
         "last_activity_date": 1770486800,
@@ -3053,7 +3649,7 @@
       "metrics": {
         "upvotes": 0,
         "comments": 0,
-        "views": 28
+        "views": 29
       },
       "tags": [
         "javascript",
@@ -3080,7 +3676,7 @@
           "link": "https://stackoverflow.com/users/15927992/literallycode"
         },
         "is_answered": false,
-        "view_count": 28,
+        "view_count": 29,
         "answer_count": 0,
         "score": 0,
         "last_activity_date": 1770471336,
@@ -3643,7 +4239,7 @@
       "metrics": {
         "upvotes": 1,
         "comments": 2,
-        "views": 51
+        "views": 53
       },
       "tags": [
         "node.js",
@@ -3668,7 +4264,7 @@
           "link": "https://stackoverflow.com/users/2617144/mark-hill"
         },
         "is_answered": false,
-        "view_count": 51,
+        "view_count": 53,
         "answer_count": 2,
         "score": 1,
         "last_activity_date": 1770488482,
@@ -3893,5 +4489,5 @@
       }
     }
   ],
-  "lastUpdated": "2026-02-07T19:47:55.455Z"
+  "lastUpdated": "2026-02-07T20:33:16.640Z"
 }
