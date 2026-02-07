@@ -97,7 +97,7 @@ export class DataStore {
     };
   }
 
-  private async persist(): Promise<void> {
+  async persist(): Promise<void> {
     const data: DataStoreState = {
       items: this.getAll(),
       lastUpdated: new Date().toISOString()
