@@ -45,7 +45,7 @@ jobs:
           PLATFORMS: ${{ github.event.inputs.platforms || 'all' }}
         run: |
           if [ "$PLATFORMS" = "all" ]; then
-            npx tsx src/scraper/index.ts
+            npx tsx src/scraper/cli.ts
           else
             npx tsx src/scraper/cli.ts --platforms $PLATFORMS
           fi
