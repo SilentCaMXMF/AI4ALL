@@ -89,6 +89,40 @@ function sleep(ms: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+// Feedback item from any platform about a model
+export interface ModelFeedback {
+  id: string;
+  platform: Platform;
+  type: ContentType;
+  title: string;
+  content: string;
+  author: {
+    name: string;
+    url?: string;
+    avatar?: string;
+  };
+  timestamp: string;
+  url: string;
+  metrics: PlatformMetrics;
+  tags: string[];
+  sentiment?: 'positive' | 'negative' | 'neutral';
+  relevance: number; // 0-1 score of how relevant to the model
+}
+
+// Extended model data with cross-platform feedback
+export interface ModelWithFeedback extends AggregatedItem {
+  feedback: ModelFeedback[];
+  feedbackSummary: {
+    total: number;
+    positive: number;
+    negative: number;
+    neutral: number;
+    lastMention: string;
+    availabilityStatus: 'confirmed' | 'questioned' | 'unknown';
+    commonIssues: string[];
+  };
+}
+
 // Platform-specific configuration
 export interface PlatformConfig {
   github?: {

@@ -1,4 +1,4 @@
-name: Scrape Free AI Models
+name: Scrape Free AI Models with Feedback
 
 on:
   schedule:
@@ -31,7 +31,20 @@ jobs:
       - name: Create data directory
         run: mkdir -p data
 
-      - name: Run scraper (fetch free AI models)
+      - name: Run scraper (fetch free AI models with cross-platform feedback)
+        env:
+          # GitHub API for searching issues/discussions
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_USERNAME: ${{ secrets.GITHUB_USERNAME }}
+          
+          # Reddit API for community feedback
+          REDDIT_CLIENT_ID: ${{ secrets.REDDIT_CLIENT_ID }}
+          REDDIT_CLIENT_SECRET: ${{ secrets.REDDIT_CLIENT_SECRET }}
+          REDDIT_USERNAME: ${{ secrets.REDDIT_USERNAME }}
+          REDDIT_PASSWORD: ${{ secrets.REDDIT_PASSWORD }}
+          
+          # Stack Overflow (optional key)
+          STACKOVERFLOW_KEY: ${{ secrets.STACKOVERFLOW_KEY }}
         run: npx tsx src/scraper/cli.ts
 
       - name: Upload scraped data
@@ -46,7 +59,7 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add -f data/aggregated-data.json
-          git diff --staged --quiet || (git commit -m "Update free AI models data [$(date +%Y-%m-%d_%H:%M)]" && git push)
+          git diff --staged --quiet || (git commit -m "Update free AI models with feedback [$(date +%Y-%m-%d_%H:%M)]" && git push)
 
   notify:
     needs: scrape
@@ -56,7 +69,7 @@ jobs:
     steps:
       - name: Notify on success
         if: needs.scrape.result == 'success'
-        run: echo "✅ Free AI models data updated successfully!"
+        run: echo "✅ Free AI models data updated successfully with cross-platform feedback!"
 
       - name: Notify on failure
         if: needs.scrape.result == 'failure'

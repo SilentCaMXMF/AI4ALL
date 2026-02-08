@@ -272,6 +272,78 @@
             margin-left: auto;
         }
 
+        /* Feedback Section */
+        .feedback-section {
+            background: rgba(15, 23, 42, 0.5);
+            border-radius: 8px;
+            padding: 0.75rem;
+            margin-top: 0.5rem;
+            border: 1px solid rgba(148, 163, 184, 0.1);
+        }
+
+        .availability-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.625rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+
+        .status-confirmed {
+            background: rgba(16, 185, 129, 0.2);
+            color: #34d399;
+        }
+
+        .status-questioned {
+            background: rgba(245, 158, 11, 0.2);
+            color: #fbbf24;
+        }
+
+        .status-unknown {
+            background: rgba(148, 163, 184, 0.2);
+            color: #94a3b8;
+        }
+
+        .feedback-stats {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.75rem;
+            color: #94a3b8;
+            margin-bottom: 0.5rem;
+        }
+
+        .sentiment-positive {
+            color: #34d399;
+        }
+
+        .sentiment-negative {
+            color: #f87171;
+        }
+
+        .common-issues {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            font-size: 0.7rem;
+        }
+
+        .issues-label {
+            color: #fbbf24;
+        }
+
+        .issue-tag {
+            background: rgba(245, 158, 11, 0.1);
+            color: #fbbf24;
+            padding: 0.125rem 0.375rem;
+            border-radius: 4px;
+        }
+
         /* Footer */
         footer {
             text-align: center;
@@ -441,8 +513,8 @@
 
         <footer>
             <p>Last updated: <span id="last-updated">-</span></p>
-            <p style="margin-top: 0.5rem;">Data sourced from <a href="https://models.dev" target="_blank">models.dev</a> API</p>
-            <p style="margin-top: 0.5rem; font-size: 0.75rem;">Showing only models with free tier (input and output cost = $0)</p>
+            <p style="margin-top: 0.5rem;">Data sourced from <a href="https://models.dev" target="_blank">models.dev</a> API with cross-platform feedback validation</p>
+            <p style="margin-top: 0.5rem; font-size: 0.75rem;">Showing free AI models validated against GitHub, Reddit, and Stack Overflow discussions</p>
         </footer>
     </div>
 
@@ -564,8 +636,39 @@
                 return `<span class="tag ${isCapability ? 'capability' : ''}">${tag}</span>`;
             }).join('');
             
+            // Feedback data
+            let feedbackHtml = '';
+            if (item.feedbackSummary && item.feedbackSummary.total > 0) {
+                const summary = item.feedbackSummary;
+                const statusClass = summary.availabilityStatus === 'confirmed' ? 'status-confirmed' : 
+                                   summary.availabilityStatus === 'questioned' ? 'status-questioned' : 'status-unknown';
+                const statusIcon = summary.availabilityStatus === 'confirmed' ? '✓' : 
+                                  summary.availabilityStatus === 'questioned' ? '?' : '−';
+                
+                feedbackHtml = `
+                    <div class="feedback-section">
+                        <div class="availability-status ${statusClass}">
+                            <span class="status-icon">${statusIcon}</span>
+                            <span class="status-text">${summary.availabilityStatus.toUpperCase()}</span>
+                        </div>
+                        <div class="feedback-stats">
+                            <span class="feedback-count" title="Total feedback items">💬 ${summary.total}</span>
+                            <span class="sentiment-positive" title="Positive mentions">👍 ${summary.positive}</span>
+                            <span class="sentiment-negative" title="Negative mentions">👎 ${summary.negative}</span>
+                            <span class="last-mention" title="Last community mention">🕐 ${getTimeAgo(new Date(summary.lastMention))}</span>
+                        </div>
+                        ${summary.commonIssues.length > 0 ? `
+                            <div class="common-issues">
+                                <span class="issues-label">⚠️ Issues:</span>
+                                ${summary.commonIssues.map(issue => `<span class="issue-tag">${issue}</span>`).join('')}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }
+            
             return `
-                <article class="card">
+                <article class="card" data-model-id="${item.id}">
                     <div class="card-header">
                         <div class="free-badge">FREE</div>
                         <div class="card-title">
@@ -577,6 +680,8 @@
                     <div class="card-content">
                         ${infoLines.map(line => `<div>${escapeHtml(line)}</div>`).join('')}
                     </div>
+                    
+                    ${feedbackHtml}
                     
                     <div class="card-meta">
                         <div class="tags">
