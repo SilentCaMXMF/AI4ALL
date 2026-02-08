@@ -3,9 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Free AI Models - Aggregated from models.dev</title>
+    
+    <!-- Primary Meta Tags -->
+    <title>Free AI Models Directory | 450+ Free LLMs & AI APIs</title>
+    <meta name="title" content="Free AI Models Directory | 450+ Free LLMs & AI APIs">
+    <meta name="description" content="Discover 450+ free AI models and LLMs. Search by provider, capabilities, and pricing. Aggregated from models.dev with community feedback validation.">
+    <meta name="keywords" content="free AI models, free LLM, open source AI, free API, GPT alternatives, AI providers, machine learning models, LLM comparison">
+    <meta name="author" content="Free AI Models Aggregator">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://freeai4all.duckdns.org/dashboard.html">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://freeai4all.duckdns.org/dashboard.html">
+    <meta property="og:title" content="Free AI Models Directory | 450+ Free LLMs & AI APIs">
+    <meta property="og:description" content="Discover 450+ free AI models and LLMs. Search by provider, capabilities, and pricing. Aggregated from models.dev.">
+    <meta property="og:image" content="https://freeai4all.duckdns.org/og-image.png">
+    <meta property="og:site_name" content="Free AI Models Directory">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://freeai4all.duckdns.org/dashboard.html">
+    <meta property="twitter:title" content="Free AI Models Directory | 450+ Free LLMs & AI APIs">
+    <meta property="twitter:description" content="Discover 450+ free AI models and LLMs. Search by provider, capabilities, and pricing.">
+    <meta property="twitter:image" content="https://freeai4all.duckdns.org/og-image.png">
+    
+    <!-- Favicon -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🤖</text></svg>">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    
+    <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "Free AI Models Directory",
+        "url": "https://freeai4all.duckdns.org",
+        "description": "Comprehensive directory of 450+ free AI models and LLMs aggregated from models.dev",
+        "potentialAction": {
+            "@type": "SearchAction",
+            "target": "https://freeai4all.duckdns.org/dashboard.html?q={search_term_string}",
+            "query-input": "required name=search_term_string"
+        }
+    }
+    </script>
+    
+    <!-- Google Analytics 4 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'GA_MEASUREMENT_ID');
+    </script>
     <style>
         * {
             margin: 0;
@@ -749,6 +804,66 @@
 
         // Load data on page load
         loadData();
+        
+        // Analytics Tracking
+        (function() {
+            // Track page view
+            gtag('event', 'page_view', {
+                'page_title': document.title,
+                'page_location': window.location.href,
+                'page_path': window.location.pathname
+            });
+            
+            // Track search queries
+            let searchTimeout;
+            document.getElementById('search-input').addEventListener('input', (e) => {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => {
+                    if (e.target.value.length > 2) {
+                        gtag('event', 'search', {
+                            'search_term': e.target.value
+                        });
+                    }
+                }, 1000);
+            });
+            
+            // Track provider filter clicks
+            document.getElementById('provider-list').addEventListener('click', (e) => {
+                if (e.target.classList.contains('provider-chip')) {
+                    gtag('event', 'filter', {
+                        'filter_type': 'provider',
+                        'filter_value': e.target.dataset.provider
+                    });
+                }
+            });
+            
+            // Track model link clicks
+            document.getElementById('cards-container').addEventListener('click', (e) => {
+                const link = e.target.closest('a');
+                if (link && link.href) {
+                    const card = link.closest('.card');
+                    const modelId = card?.dataset.modelId;
+                    const modelTitle = card?.querySelector('h3')?.textContent;
+                    
+                    gtag('event', 'model_click', {
+                        'model_id': modelId,
+                        'model_name': modelTitle,
+                        'destination': link.href,
+                        'transport_type': 'beacon'
+                    });
+                }
+            });
+            
+            // Track time on page
+            let startTime = Date.now();
+            window.addEventListener('beforeunload', () => {
+                const timeSpent = Math.round((Date.now() - startTime) / 1000);
+                gtag('event', 'time_on_page', {
+                    'value': timeSpent,
+                    'event_category': 'engagement'
+                });
+            });
+        })();
     </script>
 </body>
 </html>
