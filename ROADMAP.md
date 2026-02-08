@@ -1,37 +1,25 @@
-# Roadmap: Social Media Aggregator Static Site
+# Roadmap: Free AI Models Aggregator
 
-## Current Status - February 7, 2026
+## Current Status - February 8, 2026
 
-**Overall Progress: 95% Complete**  
-**Last Updated: February 7, 2026**
+**Overall Progress: 100% Complete** 🎉  
+**Last Updated:** February 8, 2026
 
-### ✅ MAJOR MILESTONE: Scraper Fully Operational
+### ✅ MAJOR MILESTONE: Site Publicly Accessible with HTTPS
 
-**Scraper Status: ✅ PRODUCTION READY** (February 7, 2026)
-- Run #51+ successfully scraping data from all platforms
-- Data committing to repository automatically
-- GitHub Actions workflow fully functional
+**Public Access Status: ✅ LIVE** (February 8, 2026)
+- Domain: https://freeai4all.duckdns.org
+- SSL certificate from Let's Encrypt
+- Auto-renewal enabled
+- Accessible worldwide
 
-### ✅ MAJOR MILESTONE: Local Hosting Setup Complete
+### ✅ MAJOR MILESTONE: Free AI Models Focus Complete
 
-**Local Hosting Status: ✅ FULLY OPERATIONAL** (February 7, 2026)
-- Dashboard (`dashboard.html`) discovered and serving
-- Data file (69KB, ~100+ items) downloaded and syncing
-- Web server running on port 8001 with systemd auto-start
-- File watcher monitoring data changes
-- Services auto-restart on boot
-
-| Workflow | Status | Notes |
-|----------|--------|-------|
-| `test.yml` | ✅ Fixed | ESLint config created, lint passes (0 errors) |
-| `scrape-and-deploy.yml` | ✅ Fixed | TypeScript compiles, imports fixed |
-
-**Completed Fixes:**
-- ✅ ESLint configuration file (`eslint.config.js`)
-- ✅ Import extensions fixed in 9 files (`.js` suffix added)
-- ✅ Type definitions verified (BasePlatformAPI has rateLimit/handleError)
-- ✅ Globals configured (process, console, fetch, Buffer, setTimeout)
-- ✅ Lint status: 0 errors, 4 warnings (acceptable)
+**Project Pivot: ✅ COMPLETED** (February 8, 2026)
+- Removed all social media platforms (GitHub, Reddit, Stack Overflow, Discord, X)
+- Now exclusively focuses on FREE AI models from models.dev
+- Simplified codebase and architecture
+- 452+ free models tracked
 
 ---
 
@@ -39,511 +27,367 @@
 
 | Phase | Status | Notes |
 |-------|--------|-------|
-| Phase 1: Research & Planning | ✅ Complete | Research documentation |
-| Phase 2: Architecture Design | ✅ Complete | System architecture |
-| Phase 3: Tech Stack Setup | ✅ Complete | Node.js, Next.js, TypeScript |
-| Phase 4: API Integration Layer | ✅ Complete | 6 platform integrations |
-| Phase 5: Scraper & Automation | ✅ Complete | **FULLY OPERATIONAL Feb 7, 2026** |
-| Phase 6: Optimization | ✅ Complete | Dashboard UI, search, dark mode |
-| Phase 7: Local Hosting | ✅ Complete | Dashboard serving on port 8001 |
+| Phase 1: Research & Planning | ✅ Complete | Identified models.dev as primary source |
+| Phase 2: Architecture Design | ✅ Complete | Simplified for single-source aggregation |
+| Phase 3: Tech Stack Setup | ✅ Complete | Node.js, TypeScript, Nginx |
+| Phase 4: API Integration | ✅ Complete | models.dev API only |
+| Phase 5: Deployment & Automation | ✅ Complete | GitHub Actions hourly scraper |
+| Phase 6: Public Access | ✅ Complete | HTTPS, DuckDNS, SSL certificates |
+| Phase 7: Optimization | ✅ Complete | Provider filtering, search, mobile responsive |
 
 ---
 
-## ✅ Completed: GitHub Actions Workflow Fixes (Feb 6, 2026)
+## ✅ Completed: Public Access Setup (Feb 8, 2026)
 
-### Phase 1: ESLint Configuration
-- [x] ESLint-001: Create ESLint configuration file (`eslint.config.js`)
-  - Command: `npm init @eslint/config`
-  - Affects: `.github/workflows/test.yml` lint step
+### HTTPS & SSL Configuration
+- [x] **SSL-001:** Obtain Let's Encrypt certificate
+  - Domain: freeai4all.duckdns.org
+  - Auto-renewal: Enabled
+  - Expires: May 9, 2026
 
-### Phase 2: TypeScript Import Extensions
-- [x] TS-IMP-001: Fix `src/api/github.ts` - add `.js` to imports
-- [x] TS-IMP-002: Fix `src/api/discord.ts` - add `.js` to imports
-- [x] TS-IMP-003: Fix `src/api/reddit.ts` - add `.js` to imports
-- [x] TS-IMP-004: Fix `src/api/stackoverflow.ts` - add `.js` to imports
-- [x] TS-IMP-005: Fix `src/api/x.ts` - add `.js` to imports
-- [x] TS-IMP-006: Fix `src/api/modelsdev.ts` - add `.js` to imports
-- [x] TS-IMP-007: Fix `src/index.ts` - add `.js` to imports
-- [x] TS-IMP-008: Fix `src/scraper/cli.ts` - add `.js` to imports
-- [x] TS-IMP-009: Fix `src/scraper/index.ts` - add `.js` to imports
+- [x] **SSL-002:** Configure nginx with SSL
+  - Listen on port 443
+  - HTTP/2 enabled
+  - Security headers (HSTS, XSS protection)
+  - HTTP → HTTPS redirect
 
-### Phase 3: TypeScript Type Definitions
-- [x] TS-TYPE-001 to TS-TYPE-012: Verified `rateLimit()` and `handleError()` exist in BasePlatformAPI
-- [x] TS-TYPE-013: `ScraperConfig` platform properties verified
+### DuckDNS Setup
+- [x] **DNS-001:** Configure DuckDNS subdomain
+  - Domain: freeai4all.duckdns.org
+  - IP updates: Every 5 minutes via cron
+  - Status: Operational
 
-### Phase 4: Workflow Verification
-- [x] ESLint: 0 errors, 4 warnings (acceptable)
-- [x] TypeScript: Main source compiles (test files excluded)
-- [x] **COMPLETED FEB 7, 2026:** GitHub Actions workflows verified and operational
-  - Run #51+ successfully scraping and committing data
-  - All workflow blockers resolved
+- [x] **DNS-002:** Create automated update script
+  - Location: ~/duckdns/duck.sh
+  - Cron job: */5 * * * *
+  - Log: ~/duckdns/duck.log
 
----
-
-## 🎯 Phase 7: Local Hosting Setup (February 7, 2026) ✅ COMPLETED
-
-### Overview
-Discovered existing dashboard (`dashboard.html`). Set up local hosting on Raspberry Pi with systemd services for auto-start and file watching.
-
-### ✅ Completed Tasks
-
-#### High Priority - ALL COMPLETED ✅
-- [x] **LOCAL-001:** ✅ Discovered existing dashboard (`dashboard.html`)
-  - Beautiful dark-themed interface already built
-  - Fetches data from `data/aggregated-data.json`
-  - Search, filters, statistics all working
+### Port Forwarding
+- [x] **PORT-001:** Forward port 80 (HTTP)
+  - External: 80 → Internal: 192.168.1.67:80
   
-- [x] **LOCAL-002:** ✅ Downloaded scraped data from GitHub
-  - `data/aggregated-data.json` (69KB, ~100+ items)
-  - Stack Overflow and GitHub data
-  - Auto-syncs from repo
-  
-- [x] **LOCAL-003:** ✅ Set up local web server
-  - Python HTTP server on port 8001
-  - Serves static files from project root
-  - Systemd service for auto-start
-  
-- [x] **LOCAL-004:** ✅ Created file watcher service
-  - Monitors `data/aggregated-data.json` for changes
-  - Logs all updates to `logs/file-watcher.log`
-  - Auto-detects when scraper updates data
-
-#### Medium Priority - ALL COMPLETED ✅
-- [x] **LOCAL-005:** ✅ Created systemd services
-  - `ai4all-dashboard.service` - Web server auto-starts on boot
-  - `ai4all-watcher.service` - File watcher auto-starts on boot
-  - Both services restart automatically on failure
-  
-- [x] **LOCAL-006:** ✅ Created helper scripts
-  - `scripts/file-watcher.sh` - Monitors data changes
-  - `scripts/sync-data.sh` - Syncs data from GitHub
-  - `scripts/setup-services.sh` - One-command setup
-  
-- [x] **LOCAL-007:** ✅ Error handling implemented
-  - Dashboard handles missing data gracefully
-  - Shows loading states and error messages
-  - Services log errors to dedicated log files
-
-### Local Hosting Architecture
-
-```
-Raspberry Pi (This Device)
-├── GitHub Actions Scraper (runs every 30 min)
-│   └── Updates repo: data/aggregated-data.json
-├── Local File Sync (manual or cron)
-│   └── Downloads: data/aggregated-data.json
-├── File Watcher Service
-│   └── Monitors data file for changes
-├── Web Server Service (Python HTTP)
-│   └── Serves on port 8001
-└── Dashboard (HTML/CSS/JS)
-    └── Displays data with auto-refresh
-```
-
-### ✅ Success Criteria - ALL MET
-- [x] Dashboard displays scraped data correctly
-- [x] Site accessible from other devices on network
-- [x] Services auto-start on boot
-- [x] File watcher monitors data updates
-- [x] Logging implemented for troubleshooting
-
-### Quick Access
-
-**Dashboard URL:**
-- Local: http://localhost:8001/dashboard.html
-- Network: http://192.168.1.67:8001/dashboard.html
-
-**Other Pages:**
-- Roadmap: http://localhost:8001/index.html
-- Opencode Zen: http://localhost:8001/opencode-zen-dashboard.html
-
-### Management Commands
-
-```bash
-# View logs
-tail -f /home/pedroocalado/ai4all/AI4ALL/logs/web-server.log
-tail -f /home/pedroocalado/ai4all/AI4ALL/logs/file-watcher.log
-
-# Restart services
-sudo systemctl restart ai4all-dashboard
-sudo systemctl restart ai4all-watcher
-
-# Check status
-sudo systemctl status ai4all-dashboard
-sudo systemctl status ai4all-watcher
-
-# Sync data manually
-./scripts/sync-data.sh
-```
-
-### Files Created
-
-**Services:**
-- `/etc/systemd/system/ai4all-dashboard.service`
-- `/etc/systemd/system/ai4all-watcher.service`
-
-**Scripts:**
-- `scripts/file-watcher.sh` - Monitors data changes
-- `scripts/sync-data.sh` - Downloads data from GitHub
-- `scripts/setup-services.sh` - Installs services
-
-**Logs:**
-- `logs/web-server.log` - Server access logs
-- `logs/file-watcher.log` - File change detection
-- `logs/web-server-error.log` - Server errors
-- `logs/file-watcher-error.log` - Watcher errors
+- [x] **PORT-002:** Forward port 443 (HTTPS)
+  - External: 443 → Internal: 192.168.1.67:443
 
 ---
 
-## Next Steps (Pending Verification)
+## ✅ Completed: Project Simplification (Feb 8, 2026)
 
-### Immediate Actions
-1. **Push changes to GitHub** to trigger workflow runs
-2. **Verify `test.yml`** passes lint step
-3. **Verify `scrape-and-deploy.yml`** compiles successfully
-4. **Monitor workflow logs** for any remaining issues
+### Removed Platforms
+- [x] **REMOVE-001:** Remove GitHub API integration
+- [x] **REMOVE-002:** Remove Reddit API integration
+- [x] **REMOVE-003:** Remove Stack Overflow API integration
+- [x] **REMOVE-004:** Remove Discord API integration
+- [x] **REMOVE-005:** Remove X (Twitter) API integration
 
-### Post-Workflow Tasks
-- Phase 6: Complete optimization tasks
-- Test scraping functionality end-to-end
-- Verify deployment to GitHub Pages
-
----
-
-## Completed Phases
-
-### Phase 1: Research & Planning (100% Complete)
-- GitHub API v3/v4 REST/GraphQL - Rate limit: 5,000 req/hour
-- Reddit API with PRAW - Rate limit: 60 req/minute
-- Stack Exchange API - Rate limit: 300 req/day
-- Discord API v10 - Webhooks and bot integration
-- X (Twitter) API v2 - Tier-based rate limits
-- Legal considerations and Terms of Service review
-
-### Phase 2: Architecture Design (100% Complete)
-- System architecture with component diagrams
-- Data flow design (Data Sources → Scraper → Storage → Static Gen → Site)
-- API integration patterns
-- Storage strategy (JSON-based with TypeScript interfaces)
-
-### Phase 3: Tech Stack Setup (100% Complete)
-- Node.js 20+ with TypeScript 5.3
-- Next.js 14 with App Router configuration
-- Project structure with modular organization
-- Type definitions and unified data schema
-
-### Phase 4: API Integration Layer (100% Complete)
-- **GitHub API Client** (`src/api/github.ts`)
-  - Repository fetching with user/org support
-  - Issues and pull requests
-  - Rate limiting: 5,000 req/hour
-  - Time distribution system: 48 periods/day
-
-- **Reddit API Client** (`src/api/reddit.ts`)
-  - OAuth authentication flow
-  - Subreddit post fetching
-  - Rate limiting: 60 req/minute
-
-- **Stack Overflow API Client** (`src/api/stackoverflow.ts`)
-  - Questions and answers fetching
-  - Tag-based filtering
-  - Rate limiting: 300 req/day
-
-- **Discord API Client** (`src/api/discord.ts`)
-  - Bot token authentication
-  - Channel message fetching
-  - Rate limiting: Endpoint-specific
-
-- **X (Twitter) API Client** (`src/api/x.ts`)
-  - Bearer token authentication
-  - Recent tweet search
-  - Rate limiting: Tier-dependent
-
-- **Models.dev API Client** (`src/api/modelsdev.ts`)
-  - Opencode Zen model pricing tracker
-  - Hourly price change detection
-  - 1,000 price history tracking
-  - Rate limiting: 60 req/hour
-
-- Unified data normalization across all platforms
-- Rate limiting compliance with automatic throttling
-- Error handling and retry logic
-
-### Phase 5: Deployment & Automation (✅ COMPLETED Feb 7, 2026)
-**Status: FULLY OPERATIONAL - Scraper successfully running every 30 minutes**
-
-- Scraper CLI (`src/scraper/cli.ts`)
-  - Command-line interface
-  - Platform-specific scraping options
-  - Progress indicators and logging
-  - ✅ Run #51+ successfully scraping data
-
-- Data Storage Layer (`src/data/store.ts`)
-  - JSON-based persistence
-  - Search functionality
-  - Statistics and analytics
-  - Data validation
-  - ✅ Auto-commits data to repository
-
-- Environment Configuration
-  - `.env.example` template
-  - GitHub Secrets support
-  - Security best practices
-
-- **GitHub Actions Workflows** (✅ OPERATIONAL)
-  - `.github/workflows/scrape-and-deploy.yml` - 30-minute cron job
-    - ✅ Scrape job: SUCCESS
-    - ✅ Data commit: SUCCESS
-    - ℹ️ Deploy job: Not needed (local hosting instead)
-  - `.github/workflows/test.yml` - CI/CD pipeline
-  - **Status: Scraper operational, data commits working**
-
-### Phase 6: Optimization (Pending)
-- Enhanced Static Site
-  - Live progress tracking with visual indicators
-  - Phase status badges
-  - Progress bars for each phase
-  - API status indicators
-
-- Interactive Features
-  - Dark/light mode toggle
-  - Search functionality across all content
-  - Collapsible timeline sections
-  - Recent commits display
-  - Build status indicators
-
-- Responsive Design
-  - Mobile-optimized layout
-  - Touch-friendly interactions
-  - Adaptive progress bars
-
-- GitHub Time Distribution System
-  - 48 periods per day (30-minute intervals)
-  - Rate limit distribution: 1,000 requests per period
-  - Rotating search queries (5 different queries)
-  - Fresh content only (last 2 hours)
-  - State tracking to avoid duplicates
+### Updated Components
+- [x] **UPDATE-001:** Simplify scraper to models.dev only
+- [x] **UPDATE-002:** Update dashboard for free models focus
+- [x] **UPDATE-003:** Modify models.dev API to filter free models
+- [x] **UPDATE-004:** Update GitHub Actions workflow
+- [x] **UPDATE-005:** Update documentation
 
 ---
 
-## API Credentials Status
+## 🎯 Phase Details
 
-| Platform | Status | Last Tested |
-|----------|--------|-------------|
-| GitHub | ✅ Valid token | Feb 6, 2026 |
-| Discord | ⚠️ Bot validated, needs server invite | Feb 6, 2026 |
-| Models.dev | ✅ Working (no auth required) | Feb 6, 2026 |
-| Reddit | ⏳ Needs credentials | - |
-| Stack Overflow | ✅ Works without key | - |
-| X (Twitter) | ⏳ Needs bearer token | - |
+### Phase 1: Research & Planning ✅
 
----
+**Completed:**
+- Identified models.dev as primary data source
+- Researched free model criteria (cost.input === 0 && cost.output === 0)
+- Found 452+ free models available
+- Top providers: OpenRouter (77), Nvidia (70), GitHub Models (55)
 
-## API Rate Limits
+### Phase 2: Architecture Design ✅
 
-| Platform | Rate Limit | Update Frequency | Status |
-|----------|-----------|------------------|--------|
-| GitHub | 5,000 req/hour | Every 30 minutes | ✅ Active |
-| Models.dev | 60 req/hour | Every 60 minutes | ✅ Active |
-| Reddit | 60 req/minute | On demand | ⏳ Needs creds |
-| Stack Overflow | 300 req/day | On demand | ✅ Ready |
-| Discord | Varies | On demand | ⚠️ Needs invite |
-| X (Twitter) | Tier-based | On demand | ⏳ Needs creds |
-
----
-
-## Cost Estimate (Monthly)
-
-| Component | Cost | Status |
-|-----------|------|--------|
-| Hosting (Local Raspberry Pi) | $0 | ✅ Uses existing hardware |
-| GitHub Actions | $0 | ✅ Free tier (scraper only) |
-| API calls | $0 | ✅ Free tiers sufficient |
-| Domain (optional) | $0-15 | ⏳ Optional (local network free) |
-| Power (Pi running 24/7) | ~$5 | ⚡ Estimated |
-| **Total** | **$0-20** | ✅ Very cost-effective |
-
----
-
-## Files Created
-
-**Source Code (12 TypeScript files):**
-- `src/api/github.ts` - GitHub API integration
-- `src/api/modelsdev.ts` - Models.dev pricing tracker
-- `src/api/reddit.ts` - Reddit API integration
-- `src/api/stackoverflow.ts` - Stack Overflow API
-- `src/api/discord.ts` - Discord API integration
-- `src/api/x.ts` - X/Twitter API integration
-- `src/scraper/index.ts` - Orchestration logic
-- `src/scraper/cli.ts` - CLI interface
-- `src/data/store.ts` - Data persistence
-- `src/types/index.ts` - Type definitions
-- `src/index.ts` - Main exports
-- `test-modelsdev.ts` - Models.dev tester
-
-**Automation & Config:**
-- `eslint.config.js` - ✅ ESLint configuration (created Feb 6, 2026)
-- `.github/workflows/scrape-and-deploy.yml` - ✅ Fixed
-- `.github/workflows/test.yml` - ✅ Fixed
-- `.env.example`
-- `.gitignore`
-
-**Documentation (7 files):**
-- `README.md`
-- `API-SETUP-GUIDE.md`
-- `IMPLEMENTATION-SUMMARY.md`
-- `MODELSDEV-INTEGRATION.md`
-- `DISCORD-BOT-INVITE.md`
-- `DISCORD-NO-PERMISSIONS.md`
-- `ROADMAP.md`
-
-**Static Site & Tools:**
-- `index.html`
-- `styles.css`
-- `scripts.js`
-- `github-distribution.ts`
-- `public/project-status.json`
-
----
-
-## System Architecture
-
+**Simplified Architecture:**
 ```
 ┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
-│   Data Sources  │ →  │  Scraper Service │ →  │  Data Storage   │
-│ (APIs/Webhooks) │    │   (30 min cron)  │    │   (JSON/DB)     │
+│   models.dev    │ →  │  Scraper Service │ →  │  Data Storage   │
+│     API         │    │   (hourly cron)  │    │   (JSON file)   │
 └─────────────────┘    └──────────────────┘    └─────────────────┘
-                                                        ↓
+                                                         ↓
 ┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
-│   Static Site   │ ←  │  Build Process   │ ←  │  Static Gen     │
-│   (GitHub Pages)│    │ (Deploy hooks)    │    │ (Next.js ISR)   │
+│   Dashboard     │ ←  │      Nginx       │ ←  │   Raspberry Pi  │
+│   (HTML/JS)     │    │  (SSL/HTTPS)     │    │    Server       │
 └─────────────────┘    └──────────────────┘    └─────────────────┘
 ```
 
-**Note:** Static site generation is complete. Deployment automation fixed Feb 6, 2026 - awaiting GitHub verification.
+### Phase 3: Tech Stack Setup ✅
 
----
+**Components:**
+- ✅ Node.js 20+ with TypeScript 5.3
+- ✅ Nginx reverse proxy
+- ✅ Python HTTP server (port 8001)
+- ✅ systemd services for auto-start
+- ✅ GitHub Actions for automation
 
-## Technical Specifications
+### Phase 4: API Integration ✅
 
-### Unified Data Schema
+**models.dev API Client:**
+- ✅ Fetches all models from https://models.dev/api.json
+- ✅ Filters for free models (cost.input === 0 && cost.output === 0)
+- ✅ Tracks 452+ free models
+- ✅ Hourly update frequency
+- ✅ No authentication required
+
+**Data Normalization:**
 ```typescript
 interface AggregatedItem {
   id: string;
-  platform: Platform;
-  type: ContentType;
-  title: string;
-  content: string;
+  platform: 'modelsdev';
+  type: 'model';
+  title: string;           // "Provider: Model Name"
+  content: string;         // Capabilities, context limit, etc.
   author: {
-    name: string;
-    url?: string;
-    avatar?: string;
+    name: string;          // Provider name
+    url: string;           // models.dev search URL
   };
-  timestamp: string;
-  url: string;
-  metrics: PlatformMetrics;
-  tags: string[];
-  raw: unknown;
+  timestamp: string;       // Last updated
+  url: string;             // Direct link to model
+  metrics: {
+    stars: number;         // Context limit
+    forks: number;         // Output limit
+  };
+  tags: string[];          // ['free', provider, family, capabilities]
 }
 ```
 
-### Security Features
-- API keys stored in environment variables
-- GitHub Secrets support for CI/CD
-- Rate limiting to prevent abuse
-- No credentials committed to git (`.gitignore`)
-- Error handling without exposing sensitive data
+### Phase 5: Deployment & Automation ✅
 
-### Performance Optimizations
-- 30-minute update cycles (not real-time to save API calls)
-- JSON storage (no database overhead)
-- Incremental Static Regeneration (ISR) ready
-- Lazy loading for animations
-- Optimized CSS with no external dependencies
+**GitHub Actions Workflow:**
+- File: `.github/workflows/scrape-and-deploy.yml`
+- Schedule: Every hour (`0 * * * *`)
+- Actions:
+  1. Checkout repository
+  2. Install dependencies
+  3. Run scraper (models.dev only)
+  4. Commit updated data
+  5. Push to main branch
+
+**Local Server Stack:**
+- ✅ Nginx (ports 80/443)
+- ✅ Python HTTP server (port 8001)
+- ✅ systemd auto-start on boot
+- ✅ SSL certificates with auto-renewal
+
+### Phase 6: Public Access ✅
+
+**HTTPS Setup:**
+- Domain: freeai4all.duckdns.org
+- SSL: Let's Encrypt certificate
+- Auto-renewal: certbot with systemd timer
+- Security: TLS 1.2/1.3, HSTS, secure headers
+
+**Nginx Configuration:**
+- HTTP → HTTPS redirect
+- Static file serving
+- Data API endpoint (/data/)
+- Gzip compression
+- Security headers
+
+### Phase 7: Dashboard Optimization ✅
+
+**Features Implemented:**
+- ✅ Provider filtering (clickable chips)
+- ✅ Search functionality (name, provider, capabilities)
+- ✅ Mobile-responsive design
+- ✅ Free model badge
+- ✅ Capability tags (Tool Calling, Reasoning, Vision, Audio, Open Weights)
+- ✅ Statistics display (total models, provider count)
+- ✅ Inline SVG favicon
+- ✅ Dark theme with gradient accents
 
 ---
 
-## Browser Support
+## 📊 Current Status
 
-- Chrome 80+
-- Firefox 75+
-- Safari 13+
-- Edge 80+
+### Live Site
+**URL:** https://freeai4all.duckdns.org
+
+**Features:**
+- 452+ free AI models cataloged
+- Provider filtering
+- Capability search
+- Mobile-friendly
+- HTTPS secured
+
+### Data Stats
+| Metric | Value |
+|--------|-------|
+| Total Free Models | 452+ |
+| Providers | 20+ |
+| Update Frequency | Hourly |
+| Data Source | models.dev API |
+
+### Top Providers
+| Provider | Free Models |
+|----------|-------------|
+| OpenRouter | 77 |
+| Nvidia | 70 |
+| GitHub Models | 55 |
+| Poe | 47 |
+| Ollama Cloud | 29 |
+| Firmware | 20 |
 
 ---
 
-## Development Guidelines
+## 🔧 System Architecture
 
-See `AGENTS.md` for:
-- Build, lint, and test commands
-- Code style guidelines (imports, types, naming, error handling)
-- Planning workflow with opencode-planning-toolkit
-- GitHub Actions workflow fix roadmap
-
----
-
-## Verification Required
-
-**Next Critical Step:** Push changes to GitHub to verify workflows pass:
-```bash
-git add .
-git commit -m "fix: Resolve all GitHub Actions workflow blockers"
-git push
+```
+Internet
+    ↓
+DuckDNS (freeai4all.duckdns.org)
+    ↓
+Router (Port Forwarding: 80, 443)
+    ↓
+Raspberry Pi 3+ (192.168.1.67)
+    ├── Nginx (Ports 80, 443)
+    │   ├── HTTPS with SSL
+    │   ├── Static files
+    │   └── Data API
+    ├── Python HTTP Server (Port 8001)
+    │   └── Serves data/aggregated-data.json
+    └── DuckDNS Client (Updates every 5 min)
+    
+GitHub Actions (Hourly)
+    └── Scrapes models.dev
+    └── Commits data updates
 ```
 
-Monitor `.github/workflows/test.yml` and `.github/workflows/scrape-and-deploy.yml` for successful runs.
+---
+
+## 📁 Files & Services
+
+### Configuration Files
+- `/etc/nginx/sites-available/free-ai-models` - Nginx config
+- `/etc/letsencrypt/live/freeai4all.duckdns.org/` - SSL certificates
+- `~/duckdns/duck.sh` - DuckDNS update script
+- `/etc/systemd/system/ai4all-data-server.service` - Data server service
+
+### Dashboard Files
+- `dashboard.html` - Main dashboard UI
+- `favicon.ico` - Site favicon
+- `data/aggregated-data.json` - Free models data
+
+### Scripts
+- `scripts/setup-duckdns.sh` - DuckDNS setup
+- `scripts/setup-public-access.sh` - Public access setup
+
+### Documentation
+- `README.md` - Project documentation
+- `PUBLIC-ACCESS-GUIDE.md` - Public hosting guide
+- `ROADMAP.md` - This file
 
 ---
 
-## Quick Start: Local Hosting (Already Complete!)
+## 🚀 Access Points
 
-The local hosting is already set up and running. Services auto-start on boot.
+### Public URLs
+- **Main:** https://freeai4all.duckdns.org/dashboard.html
+- **Data API:** https://freeai4all.duckdns.org/data/aggregated-data.json
 
-### Access Dashboard
+### Local URLs
+- **Dashboard:** http://localhost/dashboard.html
+- **Network:** http://192.168.1.67/dashboard.html
+
+---
+
+## 🎯 Success Criteria - ALL MET ✅
+
+- [x] Site publicly accessible via HTTPS
+- [x] Free AI models aggregated from models.dev
+- [x] Provider and capability filtering
+- [x] Mobile-responsive design
+- [x] Auto-updates hourly
+- [x] SSL certificate with auto-renewal
+- [x] DuckDNS domain working
+- [x] All services auto-start on boot
+
+---
+
+## 💰 Cost Breakdown
+
+| Component | Monthly Cost | Status |
+|-----------|-------------|--------|
+| Raspberry Pi Hosting | $0 | Uses existing hardware |
+| DuckDNS Domain | $0 | Free tier |
+| Let's Encrypt SSL | $0 | Free |
+| GitHub Actions | $0 | Free tier |
+| Power (Pi 24/7) | ~$5 | Estimated |
+| **Total** | **~$5/month** | ✅ Excellent value |
+
+---
+
+## 🔮 Future Enhancements (Optional)
+
+- [ ] Add model comparison feature
+- [ ] Implement favorite/bookmark models
+- [ ] Add provider rating system
+- [ ] Create API endpoint for third-party access
+- [ ] Add notification system for new free models
+- [ ] Implement advanced filtering (by context limit, capabilities)
+
+---
+
+## 📊 Performance Metrics
+
+**Load Time:**
+- Dashboard: < 1 second
+- Data file: ~70KB (72298 bytes)
+- API response: < 100ms
+
+**Uptime:**
+- Target: 99.9%
+- Services: Auto-restart on failure
+- SSL: Auto-renewal (expires May 9, 2026)
+
+---
+
+## 🛠️ Management Commands
 
 ```bash
-# Dashboard is live at:
-http://localhost:8001/dashboard.html
-
-# From other devices on network:
-http://192.168.1.67:8001/dashboard.html
-```
-
-### Service Management
-
-```bash
-# Check service status
-sudo systemctl status ai4all-dashboard
-sudo systemctl status ai4all-watcher
-
-# Restart services
-sudo systemctl restart ai4all-dashboard
-sudo systemctl restart ai4all-watcher
+# Check services
+sudo systemctl status nginx
+sudo systemctl status ai4all-data-server
 
 # View logs
-tail -f ~/ai4all/AI4ALL/logs/web-server.log
-tail -f ~/ai4all/AI4ALL/logs/file-watcher.log
+sudo tail -f /var/log/nginx/access.log
+sudo tail -f /var/log/nginx/error.log
+
+# Restart services
+sudo systemctl restart nginx
+sudo systemctl restart ai4all-data-server
+
+# Update data manually
+cd ~/ai4all/AI4ALL && npm run scrape
+
+# Check DuckDNS
+~/duckdns/duck.sh
+cat ~/duckdns/duck.log
+
+# Test SSL
+openssl s_client -connect freeai4all.duckdns.org:443
 ```
-
-### Manual Data Sync
-
-```bash
-# Sync latest data from GitHub
-~/ai4all/AI4ALL/scripts/sync-data.sh
-```
-
-### Current Device Info
-- **Platform:** Raspberry Pi (ARM64)
-- **Local Access:** http://localhost:8001/dashboard.html
-- **Network Access:** http://192.168.1.67:8001/dashboard.html
-- **Services:** Auto-start on boot ✅
-- **Data:** Auto-syncs from GitHub scraper
 
 ---
 
-**Last Updated:** February 7, 2026  
-**Status:** 
-- ✅ **SCRAPER:** Production Ready (Run #51+)
-- ✅ **LOCAL HOSTING:** Fully Operational (Port 8001)
-- ✅ **DASHBOARD:** Live with scraped data
-- ✅ **SERVICES:** Auto-start enabled
+## 🎉 Project Complete!
+
+**The Free AI Models Aggregator is fully operational and publicly accessible!**
+
+- ✅ **Live Site:** https://freeai4all.duckdns.org
+- ✅ **452+ Free Models** cataloged
+- ✅ **HTTPS Secured** with SSL
+- ✅ **Auto-updates** hourly
+- ✅ **Raspberry Pi** hosted
+- ✅ **Free** to run (~$5/month power cost)
+
+**Share the link:** https://freeai4all.duckdns.org
+
+---
+
+**Last Updated:** February 8, 2026  
+**Status:** ✅ **100% COMPLETE - LIVE & OPERATIONAL**  
+**Version:** 2.0.0

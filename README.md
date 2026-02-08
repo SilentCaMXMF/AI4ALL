@@ -1,82 +1,75 @@
-# Social Media Aggregator
+# Free AI Models Aggregator
 
-A unified platform that aggregates content from GitHub, Reddit, Stack Overflow, Discord, and X (Twitter) into a single, automatically-updating static site.
+A curated directory of **free AI models** aggregated from [models.dev](https://models.dev). Discover free LLMs, their providers, capabilities, and pricing (all free!) in one searchable dashboard.
 
-**🎉 Status: Production Ready (85% Complete) - February 6, 2026**
+**🎉 Status: Production Ready - February 8, 2026**
 
-## 🚀 What's New
+## 🌐 Live Site
 
-### ✅ Recently Completed (Feb 6, 2026)
-- **API Credentials Tested & Validated**
-  - GitHub API: ✅ Fully operational (4,992/5,000 rate limit remaining)
-  - Discord Bot: ✅ Token valid, awaiting server invitation
-  - Successfully found 19+ repositories and 461+ discussions about free AI models
-- **Enhanced Documentation**
-  - Comprehensive API setup guide (`API-SETUP-GUIDE.md`)
-  - Step-by-step credential acquisition for all 5 platforms
-  - Troubleshooting guide included
-- **Production Automation**
-  - GitHub Actions workflows configured
-  - 30-minute automated scraping ready
-  - Static site deployment pipeline complete
+**🔗 https://freeai4all.duckdns.org**
+
+Your Free AI Models dashboard is publicly accessible with HTTPS encryption!
+
+## 🎯 What's New
+
+### ✅ Recently Completed (Feb 8, 2026)
+- **Public HTTPS Access**
+  - Domain: freeai4all.duckdns.org
+  - SSL certificate from Let's Encrypt
+  - Auto-renewal enabled
+- **Simplified Focus**
+  - Now only aggregates FREE AI models from models.dev
+  - Removed all other platforms (GitHub, Reddit, Stack Overflow, Discord, X)
+  - Clean, focused interface
+- **Local Hosting on Raspberry Pi**
+  - Running on Raspberry Pi 3+
+  - Nginx reverse proxy with SSL
+  - DuckDNS for dynamic DNS
+  - Auto-updates hourly via GitHub Actions
 
 ## Overview
 
-This project automatically collects and displays content from multiple social media platforms, updating every 30 minutes via automated GitHub Actions workflows. Perfect for tracking discussions about AI models, open source projects, and developer communities.
+This project automatically discovers and catalogs **free AI models** from various providers. The data is fetched hourly from models.dev API and displayed in a beautiful, searchable dashboard.
 
-## Live Roadmap Site
+### Key Features
 
-Visit `index.html` for a beautiful, interactive roadmap showing:
-- **Live Implementation Progress**: Real-time progress tracking for all 6 phases (85% complete!)
-- **API Integration Status**: Which platforms are active and tested
-- **Recent Commits**: Latest development activity
-- **Build Status**: Test results and deployment status
-- **Visual Timeline**: Interactive timeline with collapsible phases
-- **Search**: Find content across all phases
-- **Dark/Light Mode**: Toggle themes
+- **452+ Free Models**: Automatically discovers free AI models (input & output cost = $0)
+- **Provider Filtering**: Browse by provider (OpenRouter, Nvidia, GitHub Models, etc.)
+- **Capability Tags**: Filter by features (Tool Calling, Reasoning, Vision, Audio, Open Weights)
+- **Real-time Updates**: Data refreshes hourly via automated GitHub Actions
+- **Mobile-Friendly**: Responsive design works on all devices
+- **HTTPS Secured**: SSL certificate with auto-renewal
 
-### Roadmap Site Features
-- Modern dark theme with gradient accents
-- Responsive timeline layout
-- Interactive elements with hover effects
-- Progress bars and status indicators
-- Dark/light mode toggle with localStorage persistence
-- Search functionality across all content
-- Mobile-first responsive design
+## 🌐 Live Site
 
-## Project Features
+**Access your dashboard:**
+- **Public URL**: https://freeai4all.duckdns.org
+- **Local**: http://localhost/dashboard.html
+- **Network**: http://192.168.1.67/dashboard.html
 
-- **Multi-Platform Support**: Aggregates content from:
-  - ✅ **GitHub** (repositories, issues, pull requests) - TESTED & WORKING
-  - ✅ **Models.dev** (opencode/zen model pricing) - Hourly price tracking
-  - ⏳ **Reddit** (posts from configured subreddits) - Ready for credentials
-  - ⏳ **Stack Overflow** (questions and answers) - Ready for credentials
-  - ⚠️ **Discord** (messages from configured channels) - Bot valid, needs invite
-  - ⏳ **X/Twitter** (recent tweets by search query) - Ready for credentials
+## Project Architecture
 
-- **Automated Updates**: GitHub Actions cron job runs every 30 minutes
-- **Static Site Generation**: Next.js with ISR for optimal performance
-- **Unified Data Format**: All content normalized to common schema
-- **Rate Limit Compliance**: Respects platform API limits with automatic throttling
-- **Error Handling**: Comprehensive error handling and retry logic
-- **Search & Filter**: Built-in search across all content
-- **Dark Mode**: Toggle between light and dark themes
-- **Responsive Design**: Mobile-optimized interface
+```
+Raspberry Pi 3+ (Your Device)
+├── Nginx (Port 80/443)
+│   ├── HTTPS with Let's Encrypt SSL
+│   ├── Static file serving
+│   └── Data API endpoint
+├── GitHub Actions (Hourly)
+│   └── Scrapes free models from models.dev
+│   └── Commits to data/aggregated-data.json
+└── DuckDNS Client (Every 5 min)
+    └── Updates DNS with your public IP
+```
 
 ## Quick Start
 
-### Prerequisites
-
-- Node.js 18+ 
-- npm or yarn
-- API keys for platforms you want to use (see [API Setup Guide](API-SETUP-GUIDE.md))
-
-### Installation
+### Local Development
 
 1. Clone the repository:
 ```bash
-git clone <repository-url>
-cd social-media-aggregator
+git clone https://github.com/SilentCaMXMF/AI4ALL.git
+cd AI4ALL
 ```
 
 2. Install dependencies:
@@ -84,274 +77,79 @@ cd social-media-aggregator
 npm install
 ```
 
-3. Configure environment variables:
-```bash
-cp .env.example .env
-# Edit .env with your API credentials
-# See API-SETUP-GUIDE.md for detailed instructions
-```
-
-4. Test your credentials:
-```bash
-npx ts-node test-credentials.ts
-```
-
-5. Run the scraper locally:
+3. Run the scraper to populate data:
 ```bash
 npm run scrape
 ```
 
-6. Start the development server:
+4. Serve locally:
 ```bash
-npm run dev
+python3 -m http.server 8080
+# Visit http://localhost:8080/dashboard.html
 ```
 
-### Viewing the Roadmap Site
+### Viewing the Dashboard
 
-Simply open `index.html` in any modern web browser:
-
-```bash
-# Option 1: Open directly
-open index.html
-
-# Option 2: Serve locally with Python
-python -m http.server 8000
-# Then visit http://localhost:8000
-
-# Option 3: Use VS Code Live Server extension
-```
-
-## Configuration
-
-### API Credentials Status
-
-| Platform | Status | Credentials Required | Guide |
-|----------|--------|---------------------|-------|
-| **GitHub** | ✅ Active | Token (5 min setup) | See API-SETUP-GUIDE.md |
-| **Discord** | ⚠️ Needs Invite | Bot token + invite (10 min) | See API-SETUP-GUIDE.md |
-| Reddit | ⏳ Ready | Client ID, Secret, Login (10 min) | See API-SETUP-GUIDE.md |
-| Stack Overflow | ⏳ Ready | Optional key (5 min) | See API-SETUP-GUIDE.md |
-| X (Twitter) | ⏳ Ready | Bearer token (may need approval) | See API-SETUP-GUIDE.md |
-
-### Quick Credential Setup
-
-**GitHub (Easiest - 5 minutes):**
-1. Go to https://github.com/settings/tokens
-2. Generate new token with `repo` and `read:user` scopes
-3. Add to `.env`: `GITHUB_TOKEN=ghp_xxxxxxxx`
-
-**Discord (10 minutes):**
-1. Go to https://discord.com/developers/applications
-2. Create application → Add Bot
-3. Enable "MESSAGE CONTENT INTENT"
-4. Copy token to `.env`: `DISCORD_TOKEN=MTxxxxx`
-5. Generate OAuth2 URL and invite bot to server
-6. Add channel IDs: `DISCORD_CHANNELS=1234567890`
-
-See `API-SETUP-GUIDE.md` for complete step-by-step instructions with screenshots.
-
-## API Integration Details
-
-### Rate Limits
-
-| Platform | Rate Limit | Status | Last Tested |
-|----------|-----------|--------|-------------|
-| GitHub | 5,000 req/hour | ✅ Active | Feb 6, 2026 |
-| Models.dev | 60 req/hour | ✅ Active | Hourly pricing |
-| Reddit | 60 req/minute | ✅ Ready | - |
-| Stack Overflow | 300 req/day | ✅ Ready | - |
-| Discord | Varies by endpoint | ⚠️ Needs Setup | Feb 6, 2026 |
-| X (Twitter) | Depends on tier | ✅ Ready | - |
-
-### Models.dev - Opencode Zen Pricing Tracker
-
-A dedicated integration for tracking AI model pricing from [Models.dev](https://models.dev), specifically focused on **OpenCode Zen** provider models.
-
-#### 🎯 What It Tracks
-
-- **Model Specifications**: Context limits, capabilities (tool calling, reasoning)
-- **Pricing Data**: Input cost, output cost, reasoning cost per 1M tokens
-- **Price Changes**: Automatic detection when pricing is updated
-- **Search Terms**: Filters for "opencode" and "zen" related models
-
-#### ⏰ Update Frequency
-
-- **Hourly Intervals**: Fetches fresh data every hour
-- **Smart Caching**: Skips fetches if less than 1 hour has passed
-- **Change Detection**: Compares with previous fetch to detect price changes
-- **History Tracking**: Maintains history of last 1,000 price changes
-
-#### 📊 Data Structure
-
-```typescript
-interface ModelsDevModel {
-  id: string;
-  name: string;
-  provider: string;      // e.g., "OpenCode Zen"
-  providerId: string;    // e.g., "opencode"
-  modelId: string;       // e.g., "claude-sonnet-4-5"
-  inputCost?: number;    // Cost per 1M input tokens
-  outputCost?: number;   // Cost per 1M output tokens
-  contextLimit?: number; // Max context window
-  toolCall?: boolean;    // Supports tool calling
-  reasoning?: boolean;   // Supports reasoning
-  lastUpdated?: string;  // ISO timestamp
-}
-```
-
-#### 💰 Price Alert System
-
-When a price change is detected between hourly fetches:
-- 🚨 Creates a "price_alert" type item
-- 📊 Shows old vs new price with percentage change
-- 🕐 Timestamps the change
-- 🔗 Links to the model on models.dev
-
-#### 🚀 Usage
+Simply open `dashboard.html` in any modern web browser, or visit the live site:
 
 ```bash
-# Test the models.dev integration
-npx ts-node test-modelsdev.ts
+# Local
+open dashboard.html
 
-# Scrape all platforms (includes models.dev)
-npm run scrape
+# Or serve with Python
+python3 -m http.server 8080
+# Then visit http://localhost:8080/dashboard.html
 ```
 
-#### 📁 State Files
+## Data Source
 
-- **Cache**: `data/modelsdev-state.json`
-- **Tracks**: Last fetch time, current models, price history
+### models.dev API
 
-### GitHub Time Distribution Strategy
+The dashboard aggregates data from [models.dev](https://models.dev/api.json), a comprehensive database of AI models.
 
-The GitHub API implementation uses an intelligent time distribution system to maximize fresh content discovery while respecting rate limits:
+**What qualifies as "free":**
+- Models where `cost.input === 0` AND `cost.output === 0`
+- No API key required for access
+- Currently tracking **452+ free models**
 
-#### ⏰ 48 Periods per Day (30-minute intervals)
+**Top providers with free models:**
+| Provider | Free Models |
+|----------|-------------|
+| OpenRouter | 77 |
+| Nvidia | 70 |
+| GitHub Models | 55 |
+| Poe | 47 |
+| Ollama Cloud | 29 |
+| Firmware | 20 |
 
-```
-24 hours ÷ 30 minutes = 48 scrape periods per day
-Period 0 (00:00) → Period 47 (23:30)
-```
-
-#### 📊 Rate Limit Distribution
-
-| Metric | Value |
-|--------|-------|
-| **GitHub Rate Limit** | 5,000 requests/hour |
-| **Conservative Usage** | 20% per period (1,000 requests) |
-| **Requests per Day** | 48,000 requests (40% of daily limit) |
-| **Emergency Buffer** | 4,000 req/hour remaining |
-
-#### 🎯 Search Query Rotation
-
-Each period searches for **fresh content only** (last 2 hours) using rotating queries:
-
-| Period | Search Query | Content Type |
-|--------|--------------|--------------|
-| 0, 5, 10, 15... | "free AI models" | Repos, Issues, Discussions |
-| 1, 6, 11, 16... | "open source LLM" | Repos, Issues, Discussions |
-| 2, 7, 12, 17... | "free API providers" | Repos, Issues, Discussions |
-| 3, 8, 13, 18... | "opencode" | Repos, Issues, Discussions |
-| 4, 9, 14, 19... | "zen AI" | Repos, Issues, Discussions |
-
-#### 🔍 Fresh Content Strategy
-
-- **Time Window**: Last 2 hours (to catch delayed items)
-- **Repositories**: `pushed:>YYYY-MM-DD` + query
-- **Issues**: `created:>YYYY-MM-DDTHH:MM:SSZ` + query
-- **Discussions**: `created:>YYYY-MM-DDTHH:MM:SSZ` + label:discussion + query
-- **User/Org Repos**: Checked every 6 periods (every 3 hours)
-
-#### 💡 Key Benefits
-
-✅ **Freshness**: Only fetches content from last 2 hours  
-✅ **Distribution**: 48 evenly-spaced scrapes per day  
-✅ **Safety**: Stays well within rate limits (20% usage)  
-✅ **Coverage**: Rotates through 5 different search queries  
-✅ **Efficiency**: 48,000 requests/day utilized from 120,000 available  
-✅ **Buffer**: 4,000 req/hour emergency buffer for manual searches  
-
-#### 📁 State Tracking
-
-The scraper maintains state in `data/github-scrape-state.json`:
-- Last scrape timestamp
-- Current period (0-47)
-- Requests used this period
-- Requests used today
-- Searches already performed
-
-View the distribution schedule:
-```bash
-node github-distribution.ts
-```
-
-### Data Normalization
-
-All content is normalized to a common schema:
-
-```typescript
-interface AggregatedItem {
-  id: string;
-  platform: 'github' | 'reddit' | 'stackoverflow' | 'discord' | 'x' | 'modelsdev';
-  type: 'repository' | 'issue' | 'model' | 'price_alert' | 'post' | 'question' | 'answer';
-  title: string;
-  content: string;
-  author: {
-    name: string;
-    url?: string;
-    avatar?: string;
-  };
-  timestamp: string;
-  url: string;
-  metrics: {
-    stars?: number;
-    forks?: number;
-    comments?: number;
-    upvotes?: number;
-    // ... platform-specific metrics
-  };
-  tags: string[];
-  raw: unknown; // Original platform data
-}
-```
+**Update Frequency:**
+- **Hourly**: Automated via GitHub Actions cron job
+- **Manual**: Run `npm run scrape` locally
 
 ## Project Structure
 
 ```
-├── .github/workflows/     # GitHub Actions automation
-│   ├── scrape-and-deploy.yml  # Main scraping workflow (30-min cron)
-│   └── test.yml              # CI testing
-├── data/                  # Scraped data storage
+├── .github/workflows/
+│   └── scrape-and-deploy.yml  # Hourly scraper workflow
+├── data/
+│   └── aggregated-data.json   # Free AI models data
 ├── src/
-│   ├── api/              # Platform API clients
-│   │   ├── github.ts     # ✅ Tested & working
-│   │   ├── modelsdev.ts  # ✅ Hourly pricing tracker
-│   │   ├── reddit.ts     # ✅ Ready
-│   │   ├── stackoverflow.ts  # ✅ Ready
-│   │   ├── discord.ts    # ⚠️ Bot valid, needs invite
-│   │   └── x.ts          # ✅ Ready
-│   ├── scraper/          # Scraper orchestration
-│   │   ├── index.ts      # Main scraper service
-│   │   └── cli.ts        # CLI interface
-│   ├── data/             # Data storage layer
-│   │   └── store.ts      # JSON persistence with search
-│   ├── types/            # TypeScript definitions
-│   │   └── index.ts      # Unified data schema
-│   ├── app/              # Next.js app router
-│   └── components/       # React components
-├── public/               # Static assets
-│   └── project-status.json  # Live progress tracking
-├── index.html           # Enhanced roadmap site
-├── styles.css           # Progress tracking styles
-├── scripts.js           # Interactive features
-├── test-credentials.ts  # API credential tester
-├── API-SETUP-GUIDE.md   # 📖 Complete setup guide
-├── IMPLEMENTATION-SUMMARY.md  # What was built
-├── ROADMAP.md           # Original roadmap specification
-├── package.json
-├── tsconfig.json
-├── next.config.js
-└── .env.example         # Environment template
+│   ├── api/
+│   │   └── modelsdev.ts      # Free models API client
+│   ├── scraper/
+│   │   ├── index.ts          # Scraper service
+│   │   └── cli.ts            # CLI interface
+│   ├── data/
+│   │   └── store.ts          # Data persistence
+│   └── types/
+│       └── index.ts          # TypeScript definitions
+├── dashboard.html            # Main dashboard UI
+├── favicon.ico               # Site favicon
+├── scripts/
+│   ├── setup-duckdns.sh      # DuckDNS setup script
+│   └── setup-public-access.sh # Public access setup
+├── PUBLIC-ACCESS-GUIDE.md    # Public hosting guide
+└── package.json
 ```
 
 ## Usage
@@ -359,131 +157,85 @@ interface AggregatedItem {
 ### Running the Scraper
 
 ```bash
-# Scrape all configured platforms
+# Scrape free AI models from models.dev
 npm run scrape
-
-# Scrape specific platform
-npm run scrape:github
-npm run scrape:reddit
-npm run scrape:stackoverflow
-
-# Test credentials before scraping
-npx ts-node test-credentials.ts
 ```
 
-### Automated Deployment
+### Automated Updates
 
-The project includes GitHub Actions workflows:
-
-1. **Scrape & Deploy** (`.github/workflows/scrape-and-deploy.yml`):
-   - ✅ Runs every 30 minutes via cron
-   - ✅ Scrapes all configured platforms
-   - ✅ Commits data to repository
-   - ✅ Deploys to GitHub Pages
-   - ✅ Can be triggered manually with platform selection
-
-2. **Tests** (`.github/workflows/test.yml`):
-   - ✅ Runs on every push
-   - ✅ Lints code
-   - ✅ Type checks
-   - ✅ Runs unit tests
-   - ✅ Tests scraper initialization
+The GitHub Actions workflow runs hourly:
+- Fetches fresh data from models.dev
+- Filters for free models only
+- Commits to repository
+- Your local nginx serves the updated data
 
 ### Manual Trigger
 
 You can manually trigger the scrape workflow:
-
-1. Go to Actions → Scrape and Deploy
+1. Go to Actions → Scrape Free AI Models
 2. Click "Run workflow"
-3. Optionally specify platforms (comma-separated)
+
+## Configuration
+
+### Environment Variables
+
+None required! The scraper uses models.dev public API (no authentication needed).
+
+### Nginx Configuration
+
+Your nginx is configured to:
+- Serve static files from project root
+- Proxy `/data/` requests to data directory
+- Handle HTTPS with SSL certificate
+- Redirect HTTP to HTTPS
+
+## Deployment
+
+### Current Setup (Raspberry Pi)
+
+Your site is already deployed and publicly accessible:
+- **Domain**: freeai4all.duckdns.org
+- **Server**: Nginx on Raspberry Pi 3+
+- **SSL**: Let's Encrypt certificate
+- **DNS**: DuckDNS (updates every 5 minutes)
+
+### Services Status
+
+```bash
+# Check all services
+sudo systemctl status nginx
+sudo systemctl status ai4all-data-server
+
+# View logs
+sudo tail -f /var/log/nginx/access.log
+```
 
 ## Development
 
 ### Available Scripts
 
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run scrape` - Run scraper
+- `npm run scrape` - Fetch free AI models from models.dev
 - `npm run lint` - Run ESLint
 - `npm run typecheck` - Run TypeScript compiler
 - `npm test` - Run tests
 
-### Testing Credentials
+### Dashboard Features
 
-Before running the full scraper, test your credentials:
+- **Search**: Find models by name, provider, or capability
+- **Provider Filter**: Click provider chips to filter
+- **Statistics**: Total models count, provider count
+- **Real-time**: Data auto-refreshes from GitHub Actions
 
-```bash
-npx ts-node test-credentials.ts
-```
-
-This will:
-- ✅ Verify GitHub token and show rate limits
-- ✅ Search for relevant repositories (e.g., "free AI models")
-- ✅ Validate Discord bot token
-- ✅ Check channel access permissions
-- ✅ Show helpful error messages if something's wrong
-
-#### Testing Models.dev Integration
-
-```bash
-# Test models.dev pricing tracker
-npx ts-node test-modelsdev.ts
-```
-
-This will:
-- ✅ Fetch opencode/zen models from models.dev API
-- ✅ Display current pricing information
-- ✅ Show price change history
-- ✅ Track model specifications and capabilities
-
-### Adding a New Platform
-
-1. Create API client in `src/api/{platform}.ts`
-2. Extend `BasePlatformAPI` class
-3. Implement `fetchItems()` method with rate limiting
-4. Add configuration to `ScraperService`
-5. Update documentation
-
-## Deployment
-
-### GitHub Pages (Recommended)
-
-1. ✅ GitHub Actions workflows already configured
-2. Enable GitHub Pages in repository settings
-3. Set source to GitHub Actions
-4. Add credentials to GitHub Secrets:
-   - Go to Settings → Secrets and variables → Actions
-   - Add `GITHUB_TOKEN`, `DISCORD_TOKEN`, etc.
-5. Workflow automatically deploys on successful scrape
-
-### Vercel/Netlify
-
-1. Connect repository to Vercel/Netlify
-2. Set build command: `npm run build`
-3. Set output directory: `out`
-4. Add environment variables in dashboard
-5. Configure webhook to trigger on data updates
-
-## Monitoring
-
-The scraper includes comprehensive logging:
-- Platform-specific fetch status
-- Item counts per platform
-- Rate limiting compliance tracking
-- Error messages and stack traces
-- Data store statistics
-
-Check the GitHub Actions logs for detailed execution information.
-
-## Cost Estimate
+## Cost
 
 | Component | Monthly Cost | Notes |
 |-----------|-------------|-------|
-| Hosting (GitHub Pages) | $0 | ✅ Free for public repos |
-| GitHub Actions | $0 | ✅ 2,000 minutes/month free tier |
-| API calls | $0 | ✅ Free tiers sufficient for 30-min updates |
-| Domain (optional) | $10-15 | Custom domain optional |
-| **Total** | **$0-15** | ✅ Very cost-effective |
+| Hosting (Raspberry Pi) | $0 | Uses existing hardware |
+| Domain (DuckDNS) | $0 | Free dynamic DNS |
+| SSL Certificate | $0 | Let's Encrypt free tier |
+| GitHub Actions | $0 | Free tier (hourly runs) |
+| Power (Pi 24/7) | ~$5 | Estimated |
+| **Total** | **~$5** | ✅ Very cost-effective |
 
 ## Browser Support
 
@@ -492,44 +244,44 @@ Check the GitHub Actions logs for detailed execution information.
 - Safari 13+
 - Edge 80+
 
-## Customization
-
-The site uses CSS custom properties (variables) for easy theming:
-
-```css
-:root {
-    --primary: #6366f1;        /* Main brand color */
-    --secondary: #06b6d4;      /* Accent color */
-    --background: #0f172a;     /* Page background */
-    --surface: #1e293b;        /* Card backgrounds */
-    --text: #f8fafc;           /* Primary text */
-    --text-muted: #94a3b8;     /* Secondary text */
-}
-```
-
-## Project Roadmap
-
-**Current Status: 85% Complete**
-
-- ✅ Phase 1: Research & Planning (100%)
-- ✅ Phase 2: Architecture Design (100%)
-- ✅ Phase 3: Tech Stack Setup (100%)
-- ✅ Phase 4: API Integration Layer (100%)
-- ✅ Phase 5: Deployment & Automation (100%)
-- ⏳ Phase 6: Optimization (90%)
-  - ✅ Search & dark mode
-  - ✅ Mobile responsiveness
-  - ⏳ RSS feed generation
-  - ⏳ Advanced filtering
-
-See `ROADMAP.md` for detailed implementation plan.
-
 ## Documentation
 
-- **`API-SETUP-GUIDE.md`** - Complete guide for obtaining API credentials
-- **`IMPLEMENTATION-SUMMARY.md`** - Detailed summary of what was built
-- **`ROADMAP.md`** - Original roadmap with current progress
-- **`test-credentials.ts`** - Script to validate your API credentials
+- **`PUBLIC-ACCESS-GUIDE.md`** - Guide for public hosting setup
+- **`ROADMAP.md`** - Original project roadmap
+- **`API-SETUP-GUIDE.md`** - Legacy API setup (not needed anymore)
+
+## Troubleshooting
+
+### Site not accessible?
+
+1. Check nginx status:
+   ```bash
+   sudo systemctl status nginx
+   ```
+
+2. Verify port forwarding on router (ports 80 and 443)
+
+3. Check DuckDNS is updating:
+   ```bash
+   cat ~/duckdns/duck.log
+   ```
+
+### Data not loading?
+
+1. Check data file exists:
+   ```bash
+   ls -la data/aggregated-data.json
+   ```
+
+2. Test data endpoint:
+   ```bash
+   curl -s http://localhost/data/aggregated-data.json | head -3
+   ```
+
+3. Run scraper manually:
+   ```bash
+   npm run scrape
+   ```
 
 ## Contributing
 
@@ -539,24 +291,6 @@ See `ROADMAP.md` for detailed implementation plan.
 4. Run tests: `npm test`
 5. Submit a pull request
 
-## Troubleshooting
-
-### Common Issues
-
-**GitHub API returns 401:**
-- Check token is valid at https://github.com/settings/tokens
-- Ensure token has `repo` and `read:user` scopes
-
-**Discord shows "Access Denied":**
-- Bot needs to be invited to server
-- Check `API-SETUP-GUIDE.md` for OAuth2 URL generation
-- Enable "MESSAGE CONTENT INTENT" in Bot settings
-
-**Rate limit exceeded:**
-- Check `test-credentials.ts` output for remaining requests
-- Scraper automatically respects rate limits
-- Consider increasing interval between scrapes
-
 ## License
 
 MIT License - see LICENSE file for details
@@ -564,16 +298,18 @@ MIT License - see LICENSE file for details
 ## Support
 
 For issues and questions:
-- 📖 Check `API-SETUP-GUIDE.md` for credential setup help
-- 📋 Review `ROADMAP.md` for current status
+- 📖 Check `PUBLIC-ACCESS-GUIDE.md` for hosting help
 - 🐛 Open an issue on GitHub
 
 ## Acknowledgments
 
-Built with ❤️ for the AI4ALL project
+- Data sourced from [models.dev](https://models.dev)
+- Built with ❤️ on a Raspberry Pi 3+
+- SSL by Let's Encrypt
+- DNS by DuckDNS
 
 ---
 
-**Last Updated:** February 6, 2026  
-**Version:** 1.0.0  
-**Status:** 🎉 Production Ready - Tested & Validated
+**Last Updated:** February 8, 2026  
+**Version:** 2.0.0  
+**Status:** 🎉 Production Ready - Publicly Accessible
