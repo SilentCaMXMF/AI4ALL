@@ -92,27 +92,60 @@ export class ScraperService {
       return results;
     }
 
-    // Phase 2: Search for feedback on other platforms
-    if (this.config.enableFeedbackSearch !== false && models.length > 0) {
+    // Phase 2: Search for feedback on other platforms (only if APIs are configured)
+    const hasFeedbackAPIs = this.githubAPI || this.redditAPI;
+    
+    if (this.config.enableFeedbackSearch !== false && models.length > 0 && hasFeedbackAPIs) {
       console.log('[Scraper] Phase 2: Searching for model feedback across platforms...');
+      console.log('[Scraper] Note: Processing first 50 models to avoid rate limits');
       
+      const modelsToProcess = models.slice(0, 50); // Limit to first 50 models
       const modelsWithFeedback: ModelWithFeedback[] = [];
       
-      for (const model of models) {
-        const feedback = await this.searchModelFeedback(model);
-        const modelWithFeedback: ModelWithFeedback = {
-          ...model,
-          feedback: feedback.feedback,
-          feedbackSummary: feedback.summary
-        };
-        modelsWithFeedback.push(modelWithFeedback);
+      // Process in parallel batches of 5
+      const batchSize = 5;
+      for (let i = 0; i < modelsToProcess.length; i += batchSize) {
+        const batch = modelsToProcess.slice(i, i + batchSize);
+        console.log(`[Scraper] Processing batch ${Math.floor(i/batchSize) + 1}/${Math.ceil(modelsToProcess.length/batchSize)}...`);
         
-        // Save to store
-        await this.store.save(modelWithFeedback);
+        const batchResults = await Promise.all(
+          batch.map(async (model) => {
+            const feedback = await this.searchModelFeedback(model);
+            const modelWithFeedback: ModelWithFeedback = {
+              ...model,
+              feedback: feedback.feedback,
+              feedbackSummary: feedback.summary
+            };
+            return modelWithFeedback;
+          })
+        );
         
-        // Rate limiting between models
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        modelsWithFeedback.push(...batchResults);
+        
+        // Rate limiting between batches
+        if (i + batchSize < modelsToProcess.length) {
+          await new Promise(resolve => setTimeout(resolve, 2000));
+        }
       }
+      
+      // Save all processed models with feedback
+      await this.store.saveMany(modelsWithFeedback);
+      
+      // Save remaining models without feedback
+      const remainingModels = models.slice(50).map(model => ({
+        ...model,
+        feedback: [],
+        feedbackSummary: {
+          total: 0,
+          positive: 0,
+          negative: 0,
+          neutral: 0,
+          lastMention: new Date().toISOString(),
+          availabilityStatus: 'unknown',
+          commonIssues: []
+        }
+      }));
+      await this.store.saveMany(remainingModels);
       
       console.log(`[Scraper] ✓ Processed ${modelsWithFeedback.length} models with feedback`);
       
@@ -120,10 +153,26 @@ export class ScraperService {
       const totalFeedback = modelsWithFeedback.reduce((sum, m) => sum + m.feedback.length, 0);
       console.log(`[Scraper] ✓ Total feedback items collected: ${totalFeedback}`);
     } else {
-      // Save models without feedback
-      for (const model of models) {
-        await this.store.save(model);
-      }
+      // Save all models without feedback (empty feedback arrays)
+      console.log('[Scraper] Phase 2: Skipping feedback search (no APIs configured or disabled)');
+      console.log('[Scraper] Saving models without feedback...');
+      
+      const modelsWithEmptyFeedback = models.map(model => ({
+        ...model,
+        feedback: [],
+        feedbackSummary: {
+          total: 0,
+          positive: 0,
+          negative: 0,
+          neutral: 0,
+          lastMention: new Date().toISOString(),
+          availabilityStatus: 'unknown',
+          commonIssues: []
+        }
+      }));
+      await this.store.saveMany(modelsWithEmptyFeedback);
+      
+      console.log(`[Scraper] ✓ Saved ${models.length} models`);
     }
 
     console.log(`[Scraper] Completed. Total models: ${models.length}`);
