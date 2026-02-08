@@ -1,6 +1,315 @@
 {
   "items": [
     {
+      "id": "github-issue-3911973213",
+      "platform": "github",
+      "type": "issue",
+      "title": "ArxivDaily-Haolin/issues #128: Latest 15 Papers - February 08, 2026",
+      "content": "**Please check the [Github](https://github.com/zezhishao/MTS_Daily_ArXiv) page for a better reading experience and more papers.**\n\n## Unified\n| **Title** | **Date** | **Comment** |\n| --- | --- | --- |\n| **[UniAudio 2.0: A Unified Audio Language Model with Text-Aligned Factorized Audio Tokenization](https://arxiv.org/abs/2602.04683v2)** | 2026-02-05 |  |\n| **[Many-for-Many: Unify the Training of Multiple Video and Image Generation and Manipulation Tasks](https://arxiv.org/abs/2506.01758v3)** | 2026-02-05 |  |\n| **[Unified Sensor Simulation for Autonomous Driving](https://arxiv.org/abs/2602.05617v1)** | 2026-02-05 |  |\n| **[A Unified Framework for Rethinking Policy Divergence Measures in GRPO](https://arxiv.org/abs/2602.05494v1)** | 2026-02-05 |  |\n| **[PolarGrad: A Class of Matrix-Gradient Optimizers from a Unifying Preconditioning Perspective](https://arxiv.org/abs/2505.21799v4)** | 2026-02-05 | <details><summary>Minor...</summary><p>Minor typos corrected</p></details> |\n| **[A Short and Unified Convergence Analysis of the SAG, SAGA, and IAG Algorithms](https://arxiv.org/abs/2602.05304v1)** | 2026-02-05 |  |\n| **[PaperX: A Unified Framework for Multimodal Academic Presentation Generation with Scholar DAG](https://arxiv.org/abs/2602.03866v2)** | 2026-02-05 | 29 pages, 9 figures |\n| **[Unifying Ranking and Generation in Query Auto-Completion via Retrieval-Augmented Generation and Multi-Objective Alignment](https://arxiv.org/abs/2602.01023v3)** | 2026-02-05 | 11 pages, 4 figures |\n| **[UAM: A Unified Attention-Mamba Backbone of Multimodal Framework for Tumor Cell Classification](https://arxiv.org/abs/2511.17355v2)** | 2026-02-04 |  |\n| **[A-Graph: A Unified Graph Representation for At-Will Simulation across System Stacks](https://arxiv.org/abs/2602.04847v1)** | 2026-02-04 |  |\n| **[Skin Tokens: A Learned Compact Representation for Unified Autoregressive Rigging](https://arxiv.org/abs/2602.04805v1)** | 2026-02-04 | 14 pages, 10 figures |\n| **[UniReason 1.0: A Unified Reasoning Framework for World Knowledge Aligned Image Generation and Editing](https://arxiv.org/abs/2602.02437v2)** | 2026-02-04 |  |\n| **[Unifying Re-Identification, Attribute Inference, and Data Reconstruction Risks in Differential Privacy](https://arxiv.org/abs/2507.06969v4)** | 2026-02-04 | NeurIPS 2025 |\n| **[UNO: Unifying One-stage Video Scene Graph Generation via Object-Centric Visual Representation Learning](https://arxiv.org/abs/2509.06165v5)** | 2026-02-04 | <details><summary>11 pa...</summary><p>11 pages, 7 figures. Accepted at WACV 2026</p></details> |\n| **[Learning to Separate RF Signals Under Uncertainty: Detect-Then-Separate vs. Unified Joint Models](https://arxiv.org/abs/2602.04650v1)** | 2026-02-04 | <details><summary>6 pag...</summary><p>6 pages, 6 figures, 1 table, accepted at the 2026 IEEE International Conference on Communications</p></details> |\n\n## Video Understanding\n| **Title** | **Date** | **Comment** |\n| --- | --- | --- |\n| **[UniSurg: A Video-Native Foundation Model for Universal Understanding of Surgical Videos](https://arxiv.org/abs/2602.05638v1)** | 2026-02-05 |  |\n| **[TennisTV: Do Multimodal Large Language Models Understand Tennis Rallies?](https://arxiv.org/abs/2509.15602v4)** | 2026-02-05 |  |\n| **[Active Perception Agent for Omnimodal Audio-Video Understanding](https://arxiv.org/abs/2512.23646v2)** | 2026-02-05 | <details><summary>Websi...</summary><p>Website:https://kd-tao.github.io/OmniAgent/</p></details> |\n| **[OmniSIFT: Modality-Asymmetric Token Compression for Efficient Omni-modal Large Language Models](https://arxiv.org/abs/2602.04804v1)** | 2026-02-04 | <details><summary>Code ...</summary><p>Code will be released soon</p></details> |\n| **[LoVR: A Benchmark for Long Video Retrieval in Multimodal Contexts](https://arxiv.org/abs/2505.13928v4)** | 2026-02-04 |  |\n| **[VTok: A Unified Video Tokenizer with Decoupled Spatial-Temporal Latents](https://arxiv.org/abs/2602.04202v1)** | 2026-02-04 |  |\n| **[VideoBrain: Learning Adaptive Frame Sampling for Long Video Understanding](https://arxiv.org/abs/2602.04094v1)** | 2026-02-04 |  |\n| **[KTV: Keyframes and Key Tokens Selection for Efficient Training-Free Video LLMs](https://arxiv.org/abs/2602.03615v1)** | 2026-02-03 |  |\n| **[SlowFocus: Enhancing Fine-grained Temporal Understanding in Video LLM](https://arxiv.org/abs/2602.03589v1)** | 2026-02-03 | NeurIPS 2024 |\n| **[Morphe: High-Fidelity Generative Video Streaming with Vision Foundation Model](https://arxiv.org/abs/2602.03529v1)** | 2026-02-03 | <details><summary>Accep...</summary><p>Accepted by NSDI 2026 Fall</p></details> |\n| **[video-SALMONN S: Memory-Enhanced Streaming Audio-Visual LLM](https://arxiv.org/abs/2510.11129v2)** | 2026-02-03 |  |\n| **[How do people watch AI-generated videos of physical scenes?](https://arxiv.org/abs/2602.03374v1)** | 2026-02-03 |  |\n| **[V2P-Bench: Evaluating Video-Language Understanding with Visual Prompts for Better Human-Model Interaction](https://arxiv.org/abs/2503.17736v2)** | 2026-02-03 | <details><summary>Proje...</summary><p>Project Page: https://vlm-reasoning.github.io/V2P-Bench/</p></details> |\n| **[SurgVidLM: Towards Multi-grained Surgical Video Understanding with Large Language Model](https://arxiv.org/abs/2506.17873v3)** | 2026-02-03 |  |\n| **[LongVPO: From Anchored Cues to Self-Reasoning for Long-Form Video Preference Optimization](https://arxiv.org/abs/2602.02341v1)** | 2026-02-02 | NeurIPS 2025 |\n\n## World Model\n| **Title** | **Date** | **Comment** |\n| --- | --- | --- |\n| **[Visuo-Tactile World Models](https://arxiv.org/abs/2602.06001v1)** | 2026-02-05 | Preprint |\n| **[Verification of the Implicit World Model in a Generative Model via Adversarial Sequences](https://arxiv.org/abs/2602.05903v1)** | 2026-02-05 | <details><summary>Accep...</summary><p>Accepted at ICLR 2026. Code, datasets, and models are available at https://github.com/szegedai/world-model-verification</p></details> |\n| **[The Double Life of Code World Models: Provably Unmasking Malicious Behavior Through Execution Traces](https://arxiv.org/abs/2512.13821v2)** | 2026-02-05 | 13 Pages, A Preprint |\n| **[Reinforcement World Model Learning for LLM-based Agents](https://arxiv.org/abs/2602.05842v1)** | 2026-02-05 |  |\n| **[PIRATR: Parametric Object Inference for Robotic Applications with Transformers in 3D Point Clouds](https://arxiv.org/abs/2602.05557v1)** | 2026-02-05 | <details><summary>8 Pag...</summary><p>8 Pages, 11 Figures, Accepted at 2026 IEEE International Conference on Robotics & Automation (ICRA) Vienna</p></details> |\n| **[Safe Urban Traffic Control via Uncertainty-Aware Conformal Prediction and World-Model Reinforcement Learning](https://arxiv.org/abs/2602.04821v1)** | 2026-02-04 |  |\n| **[Dual Mind World Model Inspired Network Digital Twin for Access Scheduling](https://arxiv.org/abs/2602.04566v1)** | 2026-02-04 |  |\n| **[Language Models Struggle to Use Representations Learned In-Context](https://arxiv.org/abs/2602.04212v1)** | 2026-02-04 |  |\n| **[Simulating the Visual World with Artificial Intelligence: A Roadmap](https://arxiv.org/abs/2511.08585v3)** | 2026-02-03 | <details><summary>Proje...</summary><p>Project page: https://world-model-roadmap.github.io/ Github Repo: https://github.com/ziqihuangg/Awesome-From-Video-Generation-to-World-Model</p></details> |\n| **[Active Epistemic Control for Query-Efficient Verified Planning](https://arxiv.org/abs/2602.03974v1)** | 2026-02-03 |  |\n| **[BridgeV2W: Bridging Video Generation Models to Embodied World Models via Embodiment Masks](https://arxiv.org/abs/2602.03793v1)** | 2026-02-03 |  |\n| **[LIVE: Long-horizon Interactive Video World Modeling](https://arxiv.org/abs/2602.03747v1)** | 2026-02-03 | 18 pages, 22 figures |\n| **[Infinite-World: Scaling Interactive World Models to 1000-Frame Horizons via Pose-Free Hierarchical Memory](https://arxiv.org/abs/2602.02393v2)** | 2026-02-03 | <details><summary>proje...</summary><p>project page: https://rq-wu.github.io/projects/infinite-world/index.html</p></details> |\n| **[A Lightweight Library for Energy-Based Joint-Embedding Predictive Architectures](https://arxiv.org/abs/2602.03604v1)** | 2026-02-03 |  |\n| **[Building spatial world models from sparse transitional episodic memories](https://arxiv.org/abs/2505.13696v2)** | 2026-02-03 | Accepted ICLR 2026 |\n\n## Multimodal\n| **Title** | **Date** | **Comment** |\n| --- | --- | --- |\n| **[V-Retrver: Evidence-Driven Agentic Reasoning for Universal Multimodal Retrieval](https://arxiv.org/abs/2602.06034v1)** | 2026-02-05 |  |\n| **[SIRR-LMM: Single-image Reflection Removal via Large Multimodal Model](https://arxiv.org/abs/2601.07209v2)** | 2026-02-05 | <details><summary>12 pa...</summary><p>12 pages, 14 figures, accepted in WACVW 2026</p></details> |\n| **[Vision-R1: Incentivizing Reasoning Capability in Multimodal Large Language Models](https://arxiv.org/abs/2503.06749v3)** | 2026-02-05 | <details><summary>Accep...</summary><p>Accepted to ICLR 2026. Code is available at https://github.com/Osilly/Vision-R1</p></details> |\n| **[Vistoria: A Multimodal System to Support Fictional Story Writing through Instrumental Text-Image Co-Editing](https://arxiv.org/abs/2509.13646v3)** | 2026-02-05 | <details><summary>Chang...</summary><p>Change the format of the first page</p></details> |\n| **[Can MLLMs generate human-like feedback in grading multimodal short answers?](https://arxiv.org/abs/2412.19755v4)** | 2026-02-05 |  |\n| **[(Computer) Vision in Action: Comparing Remote Sighted Assistance and a Multimodal Voice Agent in Inspection Sequences](https://arxiv.org/abs/2602.05671v1)** | 2026-02-05 | <details><summary>Condi...</summary><p>Conditionally accepted at CHI 2026, 32 pages, 8 figures</p></details> |\n| **[Empowering Time Series Analysis with Large-Scale Multimodal Pretraining](https://arxiv.org/abs/2602.05646v1)** | 2026-02-05 |  |\n| **[OpenMAG: A Comprehensive Benchmark for Multimodal-Attributed Graph](https://arxiv.org/abs/2602.05576v1)** | 2026-02-05 |  |\n| **[Test-time Adaptive Hierarchical Co-enhanced Denoising Network for Reliable Multimodal Classification](https://arxiv.org/abs/2601.07163v2)** | 2026-02-05 | <details><summary>14 pa...</summary><p>14 pages,9 figures, 8 tables</p></details> |\n| **[A Unified Multimodal Framework for Dataset Construction and Model-Based Diagnosis of Ameloblastoma](https://arxiv.org/abs/2602.05515v1)** | 2026-02-05 |  |\n| **[DECO: Decoupled Multimodal Diffusion Transformer for Bimanual Dexterous Manipulation with a Plugin Tactile Adapter](https://arxiv.org/abs/2602.05513v1)** | 2026-02-05 | 17 pages, 8 figures |\n| **[XEmoGPT: An Explainable Multimodal Emotion Recognition Framework with Cue-Level Perception and Reasoning](https://arxiv.org/abs/2602.05496v1)** | 2026-02-05 |  |\n| **[TennisTV: Do Multimodal Large Language Models Understand Tennis Rallies?](https://arxiv.org/abs/2509.15602v4)** | 2026-02-05 |  |\n| **[LMMRec: LLM-driven Motivation-aware Multimodal Recommendation](https://arxiv.org/abs/2602.05474v1)** | 2026-02-05 |  |\n| **[PPE: Positional Preservation Embedding for Token Compression in Multimodal Large Language Models](https://arxiv.org/abs/2510.22936v2)** | 2026-02-05 | ICLR 2026 |\n\n## Multimodal LLM\n| **Title** | **Date** | **Comment** |\n| --- | --- | --- |\n| **[Clouding the Mirror: Stealthy Prompt Injection Attacks Targeting LLM-based Phishing Detection](https://arxiv.org/abs/2602.05484v1)** | 2026-02-05 |  |\n| **[All You Need for Object Detection: From Pixels, Points, and Prompts to Next-Gen Fusion and Multimodal LLMs/VLMs in Autonomous Vehicles](https://arxiv.org/abs/2510.26641v3)** | 2026-02-04 |  |\n| **[Reinforced Attention Learning](https://arxiv.org/abs/2602.04884v1)** | 2026-02-04 |  |\n| **[M^3-Bench: Multi-Modal, Multi-Hop, Multi-Threaded Tool-Using MLLM Agent Benchmark](https://arxiv.org/abs/2511.17729v4)** | 2026-02-04 |  |\n| **[Alignment Drift in Multimodal LLMs: A Two-Phase, Longitudinal Evaluation of Harm Across Eight Model Releases](https://arxiv.org/abs/2602.04739v1)** | 2026-02-04 | under peer-review |\n| **[Vid-LLM: A Compact Video-based 3D Multimodal LLM with Reconstruction-Reasoning Synergy](https://arxiv.org/abs/2509.24385v2)** | 2026-02-04 |  |\n| **[Agentic Explainable Artificial Intelligence (Agentic XAI) Approach To Explore Better Explanation](https://arxiv.org/abs/2512.21066v2)** | 2026-02-04 |  |\n| **[Concise Geometric Description as a Bridge: Unleashing the Potential of LLM for Plane Geometry Problem Solving](https://arxiv.org/abs/2601.21164v2)** | 2026-02-04 | Under review |\n| **[A Modern System Recipe for Situated Embodied Human-Robot Conversation with Real-Time Multimodal LLMs and Tool-Calling](https://arxiv.org/abs/2602.04157v1)** | 2026-02-04 | 9 pages, 7 figures |\n| **[When Good Sounds Go Adversarial: Jailbreaking Audio-Language Models with Benign Inputs](https://arxiv.org/abs/2508.03365v3)** | 2026-02-04 |  |\n| **[DuoGen: Towards General Purpose Interleaved Multimodal Generation](https://arxiv.org/abs/2602.00508v2)** | 2026-02-03 | <details><summary>Techn...</summary><p>Technical Report. Project Page: https://research.nvidia.com/labs/dir/duogen/</p></details> |\n| **[Watch and Listen: Understanding Audio-Visual-Speech Moments with Multimodal LLM](https://arxiv.org/abs/2505.18110v3)** | 2026-02-02 | <details><summary>Accep...</summary><p>Accepted by NeurIPS 2025</p></details> |\n| **[Hierarchical Adaptive Eviction for KV Cache Management in Multimodal Language Models](https://arxiv.org/abs/2602.02197v1)** | 2026-02-02 | 10 oages, 3 figures |\n| **[CodeOCR: On the Effectiveness of Vision Language Models in Code Understanding](https://arxiv.org/abs/2602.01785v1)** | 2026-02-02 | <details><summary>Code ...</summary><p>Code and data are available at https://github.com/YerbaPage/CodeOCR</p></details> |\n| **[WordCraft: Scaffolding the Keyword Method for L2 Vocabulary Learning with Multimodal LLMs](https://arxiv.org/abs/2602.00762v1)** | 2026-01-31 | <details><summary>Proce...</summary><p>Proceedings of the 2026 CHI Conference on Human Factors in Computing Systems (CHI' 26), April 13--17, 2026, Barcelona, Spain</p></details> |\n\n## Video Foundation Model\n| **Title** | **Date** | **Comment** |\n| --- | --- | --- |\n| **[Simulating the Visual World with Artificial Intelligence: A Roadmap](https://arxiv.org/abs/2511.08585v3)** | 2026-02-03 | <details><summary>Proje...</summary><p>Project page: https://world-model-roadmap.github.io/ Github Repo: https://github.com/ziqihuangg/Awesome-From-Video-Generation-to-World-Model</p></details> |\n| **[DIVINE: Coordinating Multimodal Disentangled Representations for Oro-Facial Neurological Disorder Assessment](https://arxiv.org/abs/2601.07014v1)** | 2026-01-11 | <details><summary>Accep...</summary><p>Accepted to EACL 2026</p></details> |\n| **[Wow, wo, val! A Comprehensive Embodied World Model Evaluation Turing Test](https://arxiv.org/abs/2601.04137v1)** | 2026-01-07 |  |\n| **[SAGOnline: Segment Any Gaussians Online](https://arxiv.org/abs/2508.08219v2)** | 2026-01-06 | 11 pages, 6 figures |\n| **[Evaluating Gemini Robotics Policies in a Veo World Simulator](https://arxiv.org/abs/2512.10675v2)** | 2026-01-06 |  |\n| **[How Much 3D Do Video Foundation Models Encode?](https://arxiv.org/abs/2512.19949v1)** | 2025-12-23 | <details><summary>Proje...</summary><p>Project Page: https://vidfm-3d-probe.github.io</p></details> |\n| **[A Study of Finetuning Video Transformers for Multi-view Geometry Tasks](https://arxiv.org/abs/2512.18684v1)** | 2025-12-21 | <details><summary>AAAI ...</summary><p>AAAI 20206, Project website: geovit-aaai26.github.io</p></details> |\n| **[MMGR: Multi-Modal Generative Reasoning](https://arxiv.org/abs/2512.14691v2)** | 2025-12-17 | work in progress |\n| **[Generative Spatiotemporal Data Augmentation](https://arxiv.org/abs/2512.12508v1)** | 2025-12-14 |  |\n| **[InternVideo-Next: Towards General Video Foundation Models without Video-Text Supervision](https://arxiv.org/abs/2512.01342v1)** | 2025-12-01 |  |\n| **[HanDyVQA: A Video QA Benchmark for Fine-Grained Hand-Object Interaction Dynamics](https://arxiv.org/abs/2512.00885v1)** | 2025-11-30 | <details><summary>Proje...</summary><p>Project page: https://masatate.github.io/HanDyVQA-project-page/</p></details> |\n| **[ViMix-14M: A Curated Multi-Source Video-Text Dataset with Long-Form, High-Quality Captions and Crawl-Free Access](https://arxiv.org/abs/2511.18382v1)** | 2025-11-23 |  |\n| **[Zero-shot Synthetic Video Realism Enhancement via Structure-aware Denoising](https://arxiv.org/abs/2511.14719v1)** | 2025-11-18 | <details><summary>Proje...</summary><p>Project Page: https://wyf0824.github.io/Video_Realism_Enhancement/</p></details> |\n| **[Privacy Beyond Pixels: Latent Anonymization for Privacy-Preserving Video Understanding](https://arxiv.org/abs/2511.08666v1)** | 2025-11-11 |  |\n| **[Quality Over Quantity? LLM-Based Curation for a Data-Efficient Audio-Video Foundation Model](https://arxiv.org/abs/2503.09205v4)** | 2025-11-10 | <details><summary>Accep...</summary><p>Accepted at EUSIPCO 2025 - 5 pages, 5 figures, 2 tables</p></details> |\n\n",
+      "author": {
+        "name": "github-actions[bot]",
+        "url": "https://github.com/apps/github-actions",
+        "avatar": "https://avatars.githubusercontent.com/in/15368?v=4"
+      },
+      "timestamp": "2026-02-08T04:32:40Z",
+      "url": "https://github.com/yanghlll/ArxivDaily-Haolin/issues/128",
+      "metrics": {
+        "comments": 0
+      },
+      "tags": [
+        "documentation"
+      ],
+      "raw": {
+        "url": "https://api.github.com/repos/yanghlll/ArxivDaily-Haolin/issues/128",
+        "repository_url": "https://api.github.com/repos/yanghlll/ArxivDaily-Haolin",
+        "labels_url": "https://api.github.com/repos/yanghlll/ArxivDaily-Haolin/issues/128/labels{/name}",
+        "comments_url": "https://api.github.com/repos/yanghlll/ArxivDaily-Haolin/issues/128/comments",
+        "events_url": "https://api.github.com/repos/yanghlll/ArxivDaily-Haolin/issues/128/events",
+        "html_url": "https://github.com/yanghlll/ArxivDaily-Haolin/issues/128",
+        "id": 3911973213,
+        "node_id": "I_kwDOP4-k_c7pK_ld",
+        "number": 128,
+        "title": "Latest 15 Papers - February 08, 2026",
+        "user": {
+          "login": "github-actions[bot]",
+          "id": 41898282,
+          "node_id": "MDM6Qm90NDE4OTgyODI=",
+          "avatar_url": "https://avatars.githubusercontent.com/in/15368?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/github-actions%5Bbot%5D",
+          "html_url": "https://github.com/apps/github-actions",
+          "followers_url": "https://api.github.com/users/github-actions%5Bbot%5D/followers",
+          "following_url": "https://api.github.com/users/github-actions%5Bbot%5D/following{/other_user}",
+          "gists_url": "https://api.github.com/users/github-actions%5Bbot%5D/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/github-actions%5Bbot%5D/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/github-actions%5Bbot%5D/subscriptions",
+          "organizations_url": "https://api.github.com/users/github-actions%5Bbot%5D/orgs",
+          "repos_url": "https://api.github.com/users/github-actions%5Bbot%5D/repos",
+          "events_url": "https://api.github.com/users/github-actions%5Bbot%5D/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/github-actions%5Bbot%5D/received_events",
+          "type": "Bot",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "labels": [
+          {
+            "id": 9370811952,
+            "node_id": "LA_kwDOP4-k_c8AAAACLos-MA",
+            "url": "https://api.github.com/repos/yanghlll/ArxivDaily-Haolin/labels/documentation",
+            "name": "documentation",
+            "color": "0075ca",
+            "default": true,
+            "description": "Improvements or additions to documentation"
+          }
+        ],
+        "state": "open",
+        "locked": false,
+        "assignee": null,
+        "assignees": [],
+        "milestone": null,
+        "comments": 0,
+        "created_at": "2026-02-08T04:32:40Z",
+        "updated_at": "2026-02-08T04:32:40Z",
+        "closed_at": null,
+        "author_association": "NONE",
+        "active_lock_reason": null,
+        "sub_issues_summary": {
+          "total": 0,
+          "completed": 0,
+          "percent_completed": 0
+        },
+        "issue_dependencies_summary": {
+          "blocked_by": 0,
+          "total_blocked_by": 0,
+          "blocking": 0,
+          "total_blocking": 0
+        },
+        "body": "**Please check the [Github](https://github.com/zezhishao/MTS_Daily_ArXiv) page for a better reading experience and more papers.**\n\n## Unified\n| **Title** | **Date** | **Comment** |\n| --- | --- | --- |\n| **[UniAudio 2.0: A Unified Audio Language Model with Text-Aligned Factorized Audio Tokenization](https://arxiv.org/abs/2602.04683v2)** | 2026-02-05 |  |\n| **[Many-for-Many: Unify the Training of Multiple Video and Image Generation and Manipulation Tasks](https://arxiv.org/abs/2506.01758v3)** | 2026-02-05 |  |\n| **[Unified Sensor Simulation for Autonomous Driving](https://arxiv.org/abs/2602.05617v1)** | 2026-02-05 |  |\n| **[A Unified Framework for Rethinking Policy Divergence Measures in GRPO](https://arxiv.org/abs/2602.05494v1)** | 2026-02-05 |  |\n| **[PolarGrad: A Class of Matrix-Gradient Optimizers from a Unifying Preconditioning Perspective](https://arxiv.org/abs/2505.21799v4)** | 2026-02-05 | <details><summary>Minor...</summary><p>Minor typos corrected</p></details> |\n| **[A Short and Unified Convergence Analysis of the SAG, SAGA, and IAG Algorithms](https://arxiv.org/abs/2602.05304v1)** | 2026-02-05 |  |\n| **[PaperX: A Unified Framework for Multimodal Academic Presentation Generation with Scholar DAG](https://arxiv.org/abs/2602.03866v2)** | 2026-02-05 | 29 pages, 9 figures |\n| **[Unifying Ranking and Generation in Query Auto-Completion via Retrieval-Augmented Generation and Multi-Objective Alignment](https://arxiv.org/abs/2602.01023v3)** | 2026-02-05 | 11 pages, 4 figures |\n| **[UAM: A Unified Attention-Mamba Backbone of Multimodal Framework for Tumor Cell Classification](https://arxiv.org/abs/2511.17355v2)** | 2026-02-04 |  |\n| **[A-Graph: A Unified Graph Representation for At-Will Simulation across System Stacks](https://arxiv.org/abs/2602.04847v1)** | 2026-02-04 |  |\n| **[Skin Tokens: A Learned Compact Representation for Unified Autoregressive Rigging](https://arxiv.org/abs/2602.04805v1)** | 2026-02-04 | 14 pages, 10 figures |\n| **[UniReason 1.0: A Unified Reasoning Framework for World Knowledge Aligned Image Generation and Editing](https://arxiv.org/abs/2602.02437v2)** | 2026-02-04 |  |\n| **[Unifying Re-Identification, Attribute Inference, and Data Reconstruction Risks in Differential Privacy](https://arxiv.org/abs/2507.06969v4)** | 2026-02-04 | NeurIPS 2025 |\n| **[UNO: Unifying One-stage Video Scene Graph Generation via Object-Centric Visual Representation Learning](https://arxiv.org/abs/2509.06165v5)** | 2026-02-04 | <details><summary>11 pa...</summary><p>11 pages, 7 figures. Accepted at WACV 2026</p></details> |\n| **[Learning to Separate RF Signals Under Uncertainty: Detect-Then-Separate vs. Unified Joint Models](https://arxiv.org/abs/2602.04650v1)** | 2026-02-04 | <details><summary>6 pag...</summary><p>6 pages, 6 figures, 1 table, accepted at the 2026 IEEE International Conference on Communications</p></details> |\n\n## Video Understanding\n| **Title** | **Date** | **Comment** |\n| --- | --- | --- |\n| **[UniSurg: A Video-Native Foundation Model for Universal Understanding of Surgical Videos](https://arxiv.org/abs/2602.05638v1)** | 2026-02-05 |  |\n| **[TennisTV: Do Multimodal Large Language Models Understand Tennis Rallies?](https://arxiv.org/abs/2509.15602v4)** | 2026-02-05 |  |\n| **[Active Perception Agent for Omnimodal Audio-Video Understanding](https://arxiv.org/abs/2512.23646v2)** | 2026-02-05 | <details><summary>Websi...</summary><p>Website:https://kd-tao.github.io/OmniAgent/</p></details> |\n| **[OmniSIFT: Modality-Asymmetric Token Compression for Efficient Omni-modal Large Language Models](https://arxiv.org/abs/2602.04804v1)** | 2026-02-04 | <details><summary>Code ...</summary><p>Code will be released soon</p></details> |\n| **[LoVR: A Benchmark for Long Video Retrieval in Multimodal Contexts](https://arxiv.org/abs/2505.13928v4)** | 2026-02-04 |  |\n| **[VTok: A Unified Video Tokenizer with Decoupled Spatial-Temporal Latents](https://arxiv.org/abs/2602.04202v1)** | 2026-02-04 |  |\n| **[VideoBrain: Learning Adaptive Frame Sampling for Long Video Understanding](https://arxiv.org/abs/2602.04094v1)** | 2026-02-04 |  |\n| **[KTV: Keyframes and Key Tokens Selection for Efficient Training-Free Video LLMs](https://arxiv.org/abs/2602.03615v1)** | 2026-02-03 |  |\n| **[SlowFocus: Enhancing Fine-grained Temporal Understanding in Video LLM](https://arxiv.org/abs/2602.03589v1)** | 2026-02-03 | NeurIPS 2024 |\n| **[Morphe: High-Fidelity Generative Video Streaming with Vision Foundation Model](https://arxiv.org/abs/2602.03529v1)** | 2026-02-03 | <details><summary>Accep...</summary><p>Accepted by NSDI 2026 Fall</p></details> |\n| **[video-SALMONN S: Memory-Enhanced Streaming Audio-Visual LLM](https://arxiv.org/abs/2510.11129v2)** | 2026-02-03 |  |\n| **[How do people watch AI-generated videos of physical scenes?](https://arxiv.org/abs/2602.03374v1)** | 2026-02-03 |  |\n| **[V2P-Bench: Evaluating Video-Language Understanding with Visual Prompts for Better Human-Model Interaction](https://arxiv.org/abs/2503.17736v2)** | 2026-02-03 | <details><summary>Proje...</summary><p>Project Page: https://vlm-reasoning.github.io/V2P-Bench/</p></details> |\n| **[SurgVidLM: Towards Multi-grained Surgical Video Understanding with Large Language Model](https://arxiv.org/abs/2506.17873v3)** | 2026-02-03 |  |\n| **[LongVPO: From Anchored Cues to Self-Reasoning for Long-Form Video Preference Optimization](https://arxiv.org/abs/2602.02341v1)** | 2026-02-02 | NeurIPS 2025 |\n\n## World Model\n| **Title** | **Date** | **Comment** |\n| --- | --- | --- |\n| **[Visuo-Tactile World Models](https://arxiv.org/abs/2602.06001v1)** | 2026-02-05 | Preprint |\n| **[Verification of the Implicit World Model in a Generative Model via Adversarial Sequences](https://arxiv.org/abs/2602.05903v1)** | 2026-02-05 | <details><summary>Accep...</summary><p>Accepted at ICLR 2026. Code, datasets, and models are available at https://github.com/szegedai/world-model-verification</p></details> |\n| **[The Double Life of Code World Models: Provably Unmasking Malicious Behavior Through Execution Traces](https://arxiv.org/abs/2512.13821v2)** | 2026-02-05 | 13 Pages, A Preprint |\n| **[Reinforcement World Model Learning for LLM-based Agents](https://arxiv.org/abs/2602.05842v1)** | 2026-02-05 |  |\n| **[PIRATR: Parametric Object Inference for Robotic Applications with Transformers in 3D Point Clouds](https://arxiv.org/abs/2602.05557v1)** | 2026-02-05 | <details><summary>8 Pag...</summary><p>8 Pages, 11 Figures, Accepted at 2026 IEEE International Conference on Robotics & Automation (ICRA) Vienna</p></details> |\n| **[Safe Urban Traffic Control via Uncertainty-Aware Conformal Prediction and World-Model Reinforcement Learning](https://arxiv.org/abs/2602.04821v1)** | 2026-02-04 |  |\n| **[Dual Mind World Model Inspired Network Digital Twin for Access Scheduling](https://arxiv.org/abs/2602.04566v1)** | 2026-02-04 |  |\n| **[Language Models Struggle to Use Representations Learned In-Context](https://arxiv.org/abs/2602.04212v1)** | 2026-02-04 |  |\n| **[Simulating the Visual World with Artificial Intelligence: A Roadmap](https://arxiv.org/abs/2511.08585v3)** | 2026-02-03 | <details><summary>Proje...</summary><p>Project page: https://world-model-roadmap.github.io/ Github Repo: https://github.com/ziqihuangg/Awesome-From-Video-Generation-to-World-Model</p></details> |\n| **[Active Epistemic Control for Query-Efficient Verified Planning](https://arxiv.org/abs/2602.03974v1)** | 2026-02-03 |  |\n| **[BridgeV2W: Bridging Video Generation Models to Embodied World Models via Embodiment Masks](https://arxiv.org/abs/2602.03793v1)** | 2026-02-03 |  |\n| **[LIVE: Long-horizon Interactive Video World Modeling](https://arxiv.org/abs/2602.03747v1)** | 2026-02-03 | 18 pages, 22 figures |\n| **[Infinite-World: Scaling Interactive World Models to 1000-Frame Horizons via Pose-Free Hierarchical Memory](https://arxiv.org/abs/2602.02393v2)** | 2026-02-03 | <details><summary>proje...</summary><p>project page: https://rq-wu.github.io/projects/infinite-world/index.html</p></details> |\n| **[A Lightweight Library for Energy-Based Joint-Embedding Predictive Architectures](https://arxiv.org/abs/2602.03604v1)** | 2026-02-03 |  |\n| **[Building spatial world models from sparse transitional episodic memories](https://arxiv.org/abs/2505.13696v2)** | 2026-02-03 | Accepted ICLR 2026 |\n\n## Multimodal\n| **Title** | **Date** | **Comment** |\n| --- | --- | --- |\n| **[V-Retrver: Evidence-Driven Agentic Reasoning for Universal Multimodal Retrieval](https://arxiv.org/abs/2602.06034v1)** | 2026-02-05 |  |\n| **[SIRR-LMM: Single-image Reflection Removal via Large Multimodal Model](https://arxiv.org/abs/2601.07209v2)** | 2026-02-05 | <details><summary>12 pa...</summary><p>12 pages, 14 figures, accepted in WACVW 2026</p></details> |\n| **[Vision-R1: Incentivizing Reasoning Capability in Multimodal Large Language Models](https://arxiv.org/abs/2503.06749v3)** | 2026-02-05 | <details><summary>Accep...</summary><p>Accepted to ICLR 2026. Code is available at https://github.com/Osilly/Vision-R1</p></details> |\n| **[Vistoria: A Multimodal System to Support Fictional Story Writing through Instrumental Text-Image Co-Editing](https://arxiv.org/abs/2509.13646v3)** | 2026-02-05 | <details><summary>Chang...</summary><p>Change the format of the first page</p></details> |\n| **[Can MLLMs generate human-like feedback in grading multimodal short answers?](https://arxiv.org/abs/2412.19755v4)** | 2026-02-05 |  |\n| **[(Computer) Vision in Action: Comparing Remote Sighted Assistance and a Multimodal Voice Agent in Inspection Sequences](https://arxiv.org/abs/2602.05671v1)** | 2026-02-05 | <details><summary>Condi...</summary><p>Conditionally accepted at CHI 2026, 32 pages, 8 figures</p></details> |\n| **[Empowering Time Series Analysis with Large-Scale Multimodal Pretraining](https://arxiv.org/abs/2602.05646v1)** | 2026-02-05 |  |\n| **[OpenMAG: A Comprehensive Benchmark for Multimodal-Attributed Graph](https://arxiv.org/abs/2602.05576v1)** | 2026-02-05 |  |\n| **[Test-time Adaptive Hierarchical Co-enhanced Denoising Network for Reliable Multimodal Classification](https://arxiv.org/abs/2601.07163v2)** | 2026-02-05 | <details><summary>14 pa...</summary><p>14 pages,9 figures, 8 tables</p></details> |\n| **[A Unified Multimodal Framework for Dataset Construction and Model-Based Diagnosis of Ameloblastoma](https://arxiv.org/abs/2602.05515v1)** | 2026-02-05 |  |\n| **[DECO: Decoupled Multimodal Diffusion Transformer for Bimanual Dexterous Manipulation with a Plugin Tactile Adapter](https://arxiv.org/abs/2602.05513v1)** | 2026-02-05 | 17 pages, 8 figures |\n| **[XEmoGPT: An Explainable Multimodal Emotion Recognition Framework with Cue-Level Perception and Reasoning](https://arxiv.org/abs/2602.05496v1)** | 2026-02-05 |  |\n| **[TennisTV: Do Multimodal Large Language Models Understand Tennis Rallies?](https://arxiv.org/abs/2509.15602v4)** | 2026-02-05 |  |\n| **[LMMRec: LLM-driven Motivation-aware Multimodal Recommendation](https://arxiv.org/abs/2602.05474v1)** | 2026-02-05 |  |\n| **[PPE: Positional Preservation Embedding for Token Compression in Multimodal Large Language Models](https://arxiv.org/abs/2510.22936v2)** | 2026-02-05 | ICLR 2026 |\n\n## Multimodal LLM\n| **Title** | **Date** | **Comment** |\n| --- | --- | --- |\n| **[Clouding the Mirror: Stealthy Prompt Injection Attacks Targeting LLM-based Phishing Detection](https://arxiv.org/abs/2602.05484v1)** | 2026-02-05 |  |\n| **[All You Need for Object Detection: From Pixels, Points, and Prompts to Next-Gen Fusion and Multimodal LLMs/VLMs in Autonomous Vehicles](https://arxiv.org/abs/2510.26641v3)** | 2026-02-04 |  |\n| **[Reinforced Attention Learning](https://arxiv.org/abs/2602.04884v1)** | 2026-02-04 |  |\n| **[M^3-Bench: Multi-Modal, Multi-Hop, Multi-Threaded Tool-Using MLLM Agent Benchmark](https://arxiv.org/abs/2511.17729v4)** | 2026-02-04 |  |\n| **[Alignment Drift in Multimodal LLMs: A Two-Phase, Longitudinal Evaluation of Harm Across Eight Model Releases](https://arxiv.org/abs/2602.04739v1)** | 2026-02-04 | under peer-review |\n| **[Vid-LLM: A Compact Video-based 3D Multimodal LLM with Reconstruction-Reasoning Synergy](https://arxiv.org/abs/2509.24385v2)** | 2026-02-04 |  |\n| **[Agentic Explainable Artificial Intelligence (Agentic XAI) Approach To Explore Better Explanation](https://arxiv.org/abs/2512.21066v2)** | 2026-02-04 |  |\n| **[Concise Geometric Description as a Bridge: Unleashing the Potential of LLM for Plane Geometry Problem Solving](https://arxiv.org/abs/2601.21164v2)** | 2026-02-04 | Under review |\n| **[A Modern System Recipe for Situated Embodied Human-Robot Conversation with Real-Time Multimodal LLMs and Tool-Calling](https://arxiv.org/abs/2602.04157v1)** | 2026-02-04 | 9 pages, 7 figures |\n| **[When Good Sounds Go Adversarial: Jailbreaking Audio-Language Models with Benign Inputs](https://arxiv.org/abs/2508.03365v3)** | 2026-02-04 |  |\n| **[DuoGen: Towards General Purpose Interleaved Multimodal Generation](https://arxiv.org/abs/2602.00508v2)** | 2026-02-03 | <details><summary>Techn...</summary><p>Technical Report. Project Page: https://research.nvidia.com/labs/dir/duogen/</p></details> |\n| **[Watch and Listen: Understanding Audio-Visual-Speech Moments with Multimodal LLM](https://arxiv.org/abs/2505.18110v3)** | 2026-02-02 | <details><summary>Accep...</summary><p>Accepted by NeurIPS 2025</p></details> |\n| **[Hierarchical Adaptive Eviction for KV Cache Management in Multimodal Language Models](https://arxiv.org/abs/2602.02197v1)** | 2026-02-02 | 10 oages, 3 figures |\n| **[CodeOCR: On the Effectiveness of Vision Language Models in Code Understanding](https://arxiv.org/abs/2602.01785v1)** | 2026-02-02 | <details><summary>Code ...</summary><p>Code and data are available at https://github.com/YerbaPage/CodeOCR</p></details> |\n| **[WordCraft: Scaffolding the Keyword Method for L2 Vocabulary Learning with Multimodal LLMs](https://arxiv.org/abs/2602.00762v1)** | 2026-01-31 | <details><summary>Proce...</summary><p>Proceedings of the 2026 CHI Conference on Human Factors in Computing Systems (CHI' 26), April 13--17, 2026, Barcelona, Spain</p></details> |\n\n## Video Foundation Model\n| **Title** | **Date** | **Comment** |\n| --- | --- | --- |\n| **[Simulating the Visual World with Artificial Intelligence: A Roadmap](https://arxiv.org/abs/2511.08585v3)** | 2026-02-03 | <details><summary>Proje...</summary><p>Project page: https://world-model-roadmap.github.io/ Github Repo: https://github.com/ziqihuangg/Awesome-From-Video-Generation-to-World-Model</p></details> |\n| **[DIVINE: Coordinating Multimodal Disentangled Representations for Oro-Facial Neurological Disorder Assessment](https://arxiv.org/abs/2601.07014v1)** | 2026-01-11 | <details><summary>Accep...</summary><p>Accepted to EACL 2026</p></details> |\n| **[Wow, wo, val! A Comprehensive Embodied World Model Evaluation Turing Test](https://arxiv.org/abs/2601.04137v1)** | 2026-01-07 |  |\n| **[SAGOnline: Segment Any Gaussians Online](https://arxiv.org/abs/2508.08219v2)** | 2026-01-06 | 11 pages, 6 figures |\n| **[Evaluating Gemini Robotics Policies in a Veo World Simulator](https://arxiv.org/abs/2512.10675v2)** | 2026-01-06 |  |\n| **[How Much 3D Do Video Foundation Models Encode?](https://arxiv.org/abs/2512.19949v1)** | 2025-12-23 | <details><summary>Proje...</summary><p>Project Page: https://vidfm-3d-probe.github.io</p></details> |\n| **[A Study of Finetuning Video Transformers for Multi-view Geometry Tasks](https://arxiv.org/abs/2512.18684v1)** | 2025-12-21 | <details><summary>AAAI ...</summary><p>AAAI 20206, Project website: geovit-aaai26.github.io</p></details> |\n| **[MMGR: Multi-Modal Generative Reasoning](https://arxiv.org/abs/2512.14691v2)** | 2025-12-17 | work in progress |\n| **[Generative Spatiotemporal Data Augmentation](https://arxiv.org/abs/2512.12508v1)** | 2025-12-14 |  |\n| **[InternVideo-Next: Towards General Video Foundation Models without Video-Text Supervision](https://arxiv.org/abs/2512.01342v1)** | 2025-12-01 |  |\n| **[HanDyVQA: A Video QA Benchmark for Fine-Grained Hand-Object Interaction Dynamics](https://arxiv.org/abs/2512.00885v1)** | 2025-11-30 | <details><summary>Proje...</summary><p>Project page: https://masatate.github.io/HanDyVQA-project-page/</p></details> |\n| **[ViMix-14M: A Curated Multi-Source Video-Text Dataset with Long-Form, High-Quality Captions and Crawl-Free Access](https://arxiv.org/abs/2511.18382v1)** | 2025-11-23 |  |\n| **[Zero-shot Synthetic Video Realism Enhancement via Structure-aware Denoising](https://arxiv.org/abs/2511.14719v1)** | 2025-11-18 | <details><summary>Proje...</summary><p>Project Page: https://wyf0824.github.io/Video_Realism_Enhancement/</p></details> |\n| **[Privacy Beyond Pixels: Latent Anonymization for Privacy-Preserving Video Understanding](https://arxiv.org/abs/2511.08666v1)** | 2025-11-11 |  |\n| **[Quality Over Quantity? LLM-Based Curation for a Data-Efficient Audio-Video Foundation Model](https://arxiv.org/abs/2503.09205v4)** | 2025-11-10 | <details><summary>Accep...</summary><p>Accepted at EUSIPCO 2025 - 5 pages, 5 figures, 2 tables</p></details> |\n\n",
+        "reactions": {
+          "url": "https://api.github.com/repos/yanghlll/ArxivDaily-Haolin/issues/128/reactions",
+          "total_count": 0,
+          "+1": 0,
+          "-1": 0,
+          "laugh": 0,
+          "hooray": 0,
+          "confused": 0,
+          "heart": 0,
+          "rocket": 0,
+          "eyes": 0
+        },
+        "timeline_url": "https://api.github.com/repos/yanghlll/ArxivDaily-Haolin/issues/128/timeline",
+        "performed_via_github_app": null,
+        "state_reason": null,
+        "score": 1
+      }
+    },
+    {
+      "id": "github-issue-3911946001",
+      "platform": "github",
+      "type": "issue",
+      "title": "DailyArXiv/issues #241: Latest 15 Papers - February 08, 2026",
+      "content": "**Please check the [Github](https://github.com/zezhishao/MTS_Daily_ArXiv) page for a better reading experience and more papers.**\n\n## Knowledge Editing\n| **Title** | **Date** | **Comment** |\n| --- | --- | --- |\n| **[ACE: Attribution-Controlled Knowledge Editing for Multi-hop Factual Recall](https://arxiv.org/abs/2510.07896v2)** | 2026-02-04 | Accepted by ICLR2026 |\n| **[Conflict-Resolving and Sharpness-Aware Minimization for Generalized Knowledge Editing with Multiple Updates](https://arxiv.org/abs/2602.03696v1)** | 2026-02-03 | <details><summary>22 pa...</summary><p>22 pages, 8 figures. Code link: https://github.com/duykhuongnguyen/CoRSA</p></details> |\n| **[Edit Knowledge, Not Just Facts via Multi-Step Reasoning over Background Stories](https://arxiv.org/abs/2602.02028v1)** | 2026-02-02 | under review |\n| **[Beyond Local Edits: Embedding-Virtualized Knowledge for Broader Evaluation and Preservation of Model Editing](https://arxiv.org/abs/2602.01977v1)** | 2026-02-02 |  |\n| **[PretrainRL: Alleviating Factuality Hallucination of Large Language Models at the Beginning](https://arxiv.org/abs/2602.01875v1)** | 2026-02-02 |  |\n| **[EtCon: Edit-then-Consolidate for Reliable Knowledge Editing](https://arxiv.org/abs/2512.04753v2)** | 2026-01-30 |  |\n| **[Generalizable Multimodal Large Language Model Editing via Invariant Trajectory Learning](https://arxiv.org/abs/2601.19700v2)** | 2026-01-30 |  |\n| **[Dynamics Reveals Structure: Challenging the Linear Propagation Assumption](https://arxiv.org/abs/2601.21601v1)** | 2026-01-29 |  |\n| **[Persuasion Tokens for Editing Factual Knowledge in LLMs](https://arxiv.org/abs/2601.16781v2)** | 2026-01-26 | <details><summary>Accep...</summary><p>Accepted at EACL Main 2026</p></details> |\n| **[CLM-Bench: Benchmarking and Analyzing Cross-lingual Misalignment of LLMs in Knowledge Editing](https://arxiv.org/abs/2601.17397v1)** | 2026-01-24 | <details><summary>EACL ...</summary><p>EACL MME workshop paper</p></details> |\n| **[SonoEdit: Null-Space Constrained Knowledge Editing for Pronunciation Correction in LLM-Based TTS](https://arxiv.org/abs/2601.17086v1)** | 2026-01-23 |  |\n| **[Beyond Memorization: A Rigorous Evaluation Framework for Medical Knowledge Editing](https://arxiv.org/abs/2506.03490v3)** | 2026-01-23 | <details><summary>Accep...</summary><p>Accepted to EACL 2026 Main Conference</p></details> |\n| **[Is Your Writing Being Mimicked by AI? Unveiling Imitation with Invisible Watermarks in Creative Writing](https://arxiv.org/abs/2504.00035v3)** | 2026-01-22 |  |\n| **[Tracking the Limits of Knowledge Propagation: How LLMs Fail at Multi-Step Reasoning with Conflicting Knowledge](https://arxiv.org/abs/2601.15495v1)** | 2026-01-21 | <details><summary>Accep...</summary><p>Accepted to EACL 2026 (Main)</p></details> |\n| **[Spectral Characterization and Mitigation of Sequential Knowledge Editing Collapse](https://arxiv.org/abs/2601.11042v1)** | 2026-01-16 | 22 pages, 18 figures |\n\n## Model Editing\n| **Title** | **Date** | **Comment** |\n| --- | --- | --- |\n| **[Transmuting prompts into weights](https://arxiv.org/abs/2510.08734v2)** | 2026-02-05 |  |\n| **[Structural Disentanglement in Bilinear MLPs via Architectural Inductive Bias](https://arxiv.org/abs/2602.05635v1)** | 2026-02-05 |  |\n| **[Conflict-Resolving and Sharpness-Aware Minimization for Generalized Knowledge Editing with Multiple Updates](https://arxiv.org/abs/2602.03696v1)** | 2026-02-03 | <details><summary>22 pa...</summary><p>22 pages, 8 figures. Code link: https://github.com/duykhuongnguyen/CoRSA</p></details> |\n| **[ReasonEdit: Editing Vision-Language Models using Human Reasoning](https://arxiv.org/abs/2602.02408v2)** | 2026-02-03 |  |\n| **[MEMOIR: Lifelong Model Editing with Minimal Overwrite and Informed Retention for LLMs](https://arxiv.org/abs/2506.07899v4)** | 2026-02-02 | <details><summary>The f...</summary><p>The first two authors contributed equally to this work; Accepted to NeurIPS 2025</p></details> |\n| **[Beyond Local Edits: Embedding-Virtualized Knowledge for Broader Evaluation and Preservation of Model Editing](https://arxiv.org/abs/2602.01977v1)** | 2026-02-02 |  |\n| **[Model Editing with Graph-Based External Memory](https://arxiv.org/abs/2505.18343v2)** | 2026-01-31 |  |\n| **[Behemoth: Benchmarking Unlearning in LLMs Using Fully Synthetic Data](https://arxiv.org/abs/2601.23153v1)** | 2026-01-30 |  |\n| **[SPEED: Scalable, Precise, and Efficient Concept Erasure for Diffusion Models](https://arxiv.org/abs/2503.07392v4)** | 2026-01-30 | <details><summary>Accep...</summary><p>Accepted to ICLR 2026</p></details> |\n| **[Generalizable Multimodal Large Language Model Editing via Invariant Trajectory Learning](https://arxiv.org/abs/2601.19700v2)** | 2026-01-30 |  |\n| **[Toward Ultra-Long-Horizon Sequential Model Editing](https://arxiv.org/abs/2602.02543v1)** | 2026-01-30 |  |\n| **[EMSEdit: Efficient Multi-Step Meta-Learning-based Model Editing](https://arxiv.org/abs/2508.04012v3)** | 2026-01-29 | Accepted at WWW2026 |\n| **[Localizing Knowledge in Diffusion Transformers](https://arxiv.org/abs/2505.18832v3)** | 2026-01-26 |  |\n| **[Are We Evaluating the Edit Locality of LLM Model Editing Properly?](https://arxiv.org/abs/2601.17343v1)** | 2026-01-24 |  |\n| **[SonoEdit: Null-Space Constrained Knowledge Editing for Pronunciation Correction in LLM-Based TTS](https://arxiv.org/abs/2601.17086v1)** | 2026-01-23 |  |\n\n## GUI Agent\n| **Title** | **Date** | **Comment** |\n| --- | --- | --- |\n| **[UI-Mem: Self-Evolving Experience Memory for Online Reinforcement Learning in Mobile GUI Agents](https://arxiv.org/abs/2602.05832v1)** | 2026-02-05 | <details><summary>23 pa...</summary><p>23 pages, 16 figures. Project page: https://ui-mem.github.io</p></details> |\n| **[M$^2$-Miner: Multi-Agent Enhanced MCTS for Mobile GUI Agent Data Mining](https://arxiv.org/abs/2602.05429v1)** | 2026-02-05 | <details><summary>Accep...</summary><p>Accepted by ICLR 2026. Supplementary material is included at the end of the main paper (16 pages, 15 figures, 2 tables)</p></details> |\n| **[Agent Alpha: Tree Search Unifying Generation, Exploration and Evaluation for Computer-Use Agents](https://arxiv.org/abs/2602.02995v1)** | 2026-02-03 |  |\n| **[Generative Visual Code Mobile World Models](https://arxiv.org/abs/2602.01576v1)** | 2026-02-02 | <details><summary>Pre-p...</summary><p>Pre-print (technical report)</p></details> |\n| **[MAGNET: Towards Adaptive GUI Agents with Memory-Driven Knowledge Evolution](https://arxiv.org/abs/2601.19199v2)** | 2026-01-31 |  |\n| **[Environmental Injection Attacks against GUI Agents in Realistic Dynamic Environments](https://arxiv.org/abs/2509.11250v2)** | 2026-01-31 |  |\n| **[Agentic Reward Modeling: Verifying GUI Agent via Online Proactive Interaction](https://arxiv.org/abs/2602.00575v1)** | 2026-01-31 | 21 pages, 11 figures |\n| **[Learning with Challenges: Adaptive Difficulty-Aware Data Generation for Mobile GUI Agent Training](https://arxiv.org/abs/2601.22781v1)** | 2026-01-30 |  |\n| **[Okara: Detection and Attribution of TLS Man-in-the-Middle Vulnerabilities in Android Apps with Foundation Models](https://arxiv.org/abs/2601.22770v1)** | 2026-01-30 | <details><summary>Accep...</summary><p>Accepted to ACISP 2026</p></details> |\n| **[ToolTok: Tool Tokenization for Efficient and Generalizable GUI Agents](https://arxiv.org/abs/2602.02548v1)** | 2026-01-30 | <details><summary>8 pag...</summary><p>8 pages main paper, 18 pages total, 8 figures, 5 tables, code at https://github.com/ZephinueCode/ToolTok</p></details> |\n| **[Darwinian Memory: A Training-Free Self-Regulating Memory System for GUI Agent Evolution](https://arxiv.org/abs/2601.22528v1)** | 2026-01-30 |  |\n| **[BEAP-Agent: Backtrackable Execution and Adaptive Planning for GUI Agents](https://arxiv.org/abs/2601.21352v1)** | 2026-01-29 |  |\n| **[Continual GUI Agents](https://arxiv.org/abs/2601.20732v2)** | 2026-01-29 |  |\n| **[MobileBench-OL: A Comprehensive Chinese Benchmark for Evaluating Mobile GUI Agents in Real-World Environment](https://arxiv.org/abs/2601.20335v2)** | 2026-01-29 |  |\n| **[GUIGuard: Toward a General Framework for Privacy-Preserving GUI Agents](https://arxiv.org/abs/2601.18842v2)** | 2026-01-29 |  |\n\n## Steering Vector\n| **Title** | **Date** | **Comment** |\n| --- | --- | --- |\n| **[Transmuting prompts into weights](https://arxiv.org/abs/2510.08734v2)** | 2026-02-05 |  |\n| **[Low-complexity Design for Beam Coverage in Near-field and Far-field: A Fourier Transform Approach](https://arxiv.org/abs/2602.05666v1)** | 2026-02-05 | <details><summary>13 pa...</summary><p>13 pages, 7 figures, submitted to IEEE for possible publication</p></details> |\n| **[Disentangling meaning from language in LLM-based machine translation](https://arxiv.org/abs/2602.04613v1)** | 2026-02-04 | 61 pages, 70 figures |\n| **[Simulated Adoption: Decoupling Magnitude and Direction in LLM In-Context Conflict Resolution](https://arxiv.org/abs/2602.04918v1)** | 2026-02-04 |  |\n| **[Phantom Transfer: Data-level Defences are Insufficient Against Data Poisoning](https://arxiv.org/abs/2602.04899v1)** | 2026-02-03 |  |\n| **[Steering Externalities: Benign Activation Steering Unintentionally Increases Jailbreak Risk for Large Language Models](https://arxiv.org/abs/2602.04896v1)** | 2026-02-03 |  |\n| **[Language Steering for Multilingual In-Context Learning](https://arxiv.org/abs/2602.02326v1)** | 2026-02-02 |  |\n| **[Small Vectors, Big Effects: A Mechanistic Study of RL-Induced Reasoning via Steering Vectors](https://arxiv.org/abs/2509.06608v4)** | 2026-02-02 | Preprint |\n| **[Steering Vector Fields for Context-Aware Inference-Time Control in Large Language Models](https://arxiv.org/abs/2602.01654v1)** | 2026-02-02 |  |\n| **[Controlling Repetition in Protein Language Models](https://arxiv.org/abs/2602.00782v1)** | 2026-01-31 | <details><summary>Publi...</summary><p>Published as a conference paper at ICLR 2026</p></details> |\n| **[One-shot Optimized Steering Vector for Hallucination Mitigation for VLMs](https://arxiv.org/abs/2601.23041v1)** | 2026-01-30 |  |\n| **[EmoShift: Lightweight Activation Steering for Enhanced Emotion-Aware Speech Synthesis](https://arxiv.org/abs/2601.22873v1)** | 2026-01-30 | <details><summary>Activ...</summary><p>Activation Steering; Emotion-Aware TTS; Speech Synthesis; Accepted by ICASSP 2026</p></details> |\n| **[CASteer: Cross-Attention Steering for Controllable Concept Erasure](https://arxiv.org/abs/2503.09630v4)** | 2026-01-30 |  |\n| **[How Language Models Conflate Logical Validity with Plausibility: A Representational Analysis of Content Effects](https://arxiv.org/abs/2510.06700v2)** | 2026-01-26 |  |\n| **[Adaptive Beam Alignment using Noisy Twenty Questions Estimation with Trained Questioner](https://arxiv.org/abs/2601.16799v2)** | 2026-01-26 |  |\n\n## Efficient LLM\n| **Title** | **Date** | **Comment** |\n| --- | --- | --- |\n| **[RaBiT: Residual-Aware Binarization Training for Accurate and Efficient LLMs](https://arxiv.org/abs/2602.05367v1)** | 2026-02-05 |  |\n| **[Opt4GPTQ: Co-Optimizing Memory and Computation for 4-bit GPTQ Quantized LLM Inference on Heterogeneous Platforms](https://arxiv.org/abs/2511.19438v2)** | 2026-02-05 |  |\n| **[Mugi: Value Level Parallelism For Efficient LLMs](https://arxiv.org/abs/2601.10823v2)** | 2026-02-04 | <details><summary>2026 ...</summary><p>2026 International Conference on Architectural Support for Programming Languages and Operating Systems</p></details> |\n| **[LinGO: A Linguistic Graph Optimization Framework with LLMs for Interpreting Intents of Online Uncivil Discourse](https://arxiv.org/abs/2602.04693v1)** | 2026-02-04 |  |\n| **[Agent-Omit: Training Efficient LLM Agents for Adaptive Thought and Observation Omission via Agentic Reinforcement Learning](https://arxiv.org/abs/2602.04284v1)** | 2026-02-04 | Under Review |\n| **[MeKi: Memory-based Expert Knowledge Injection for Efficient LLM Scaling](https://arxiv.org/abs/2602.03359v1)** | 2026-02-03 |  |\n| **[NLI:Non-uniform Linear Interpolation Approximation of Nonlinear Operations for Efficient LLMs Inference](https://arxiv.org/abs/2602.02988v1)** | 2026-02-03 | <details><summary>Admit...</summary><p>Admitted to ICLR 18pages 5 figures</p></details> |\n| **[A Single Revision Step Improves Token-Efficient LLM Reasoning](https://arxiv.org/abs/2602.02828v1)** | 2026-02-02 |  |\n| **[Trust by Design: Skill Profiles for Transparent, Cost-Aware LLM Routing](https://arxiv.org/abs/2602.02386v1)** | 2026-02-02 | <details><summary>Appea...</summary><p>Appeared at MLSys YPS 2025</p></details> |\n| **[MAS-Shield: A Defense Framework for Secure and Efficient LLM MAS](https://arxiv.org/abs/2511.22924v2)** | 2026-02-02 |  |\n| **[Predictive Scheduling for Efficient Inference-Time Reasoning in Large Language Models](https://arxiv.org/abs/2602.01237v1)** | 2026-02-01 | ICML ES-FoMo 2025 |\n| **[Lotus: Efficient LLM Training by Randomized Low-Rank Gradient Projection with Adaptive Subspace Switching](https://arxiv.org/abs/2602.01233v1)** | 2026-02-01 |  |\n| **[A State-Transition Framework for Efficient LLM Reasoning](https://arxiv.org/abs/2602.01198v1)** | 2026-02-01 | ICLR 2026 |\n| **[ESSAM: A Novel Competitive Evolution Strategies Approach to Reinforcement Learning for Memory Efficient LLMs Fine-Tuning](https://arxiv.org/abs/2602.01003v1)** | 2026-02-01 |  |\n| **[Sparsity-Aware Unlearning for Large Language Models](https://arxiv.org/abs/2602.00577v1)** | 2026-01-31 |  |\n\n",
+      "author": {
+        "name": "github-actions[bot]",
+        "url": "https://github.com/apps/github-actions",
+        "avatar": "https://avatars.githubusercontent.com/in/15368?v=4"
+      },
+      "timestamp": "2026-02-08T04:15:13Z",
+      "url": "https://github.com/asdfo123/DailyArXiv/issues/241",
+      "metrics": {
+        "comments": 0
+      },
+      "tags": [
+        "documentation"
+      ],
+      "raw": {
+        "url": "https://api.github.com/repos/asdfo123/DailyArXiv/issues/241",
+        "repository_url": "https://api.github.com/repos/asdfo123/DailyArXiv",
+        "labels_url": "https://api.github.com/repos/asdfo123/DailyArXiv/issues/241/labels{/name}",
+        "comments_url": "https://api.github.com/repos/asdfo123/DailyArXiv/issues/241/comments",
+        "events_url": "https://api.github.com/repos/asdfo123/DailyArXiv/issues/241/events",
+        "html_url": "https://github.com/asdfo123/DailyArXiv/issues/241",
+        "id": 3911946001,
+        "node_id": "I_kwDOOCYuCc7pK48R",
+        "number": 241,
+        "title": "Latest 15 Papers - February 08, 2026",
+        "user": {
+          "login": "github-actions[bot]",
+          "id": 41898282,
+          "node_id": "MDM6Qm90NDE4OTgyODI=",
+          "avatar_url": "https://avatars.githubusercontent.com/in/15368?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/github-actions%5Bbot%5D",
+          "html_url": "https://github.com/apps/github-actions",
+          "followers_url": "https://api.github.com/users/github-actions%5Bbot%5D/followers",
+          "following_url": "https://api.github.com/users/github-actions%5Bbot%5D/following{/other_user}",
+          "gists_url": "https://api.github.com/users/github-actions%5Bbot%5D/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/github-actions%5Bbot%5D/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/github-actions%5Bbot%5D/subscriptions",
+          "organizations_url": "https://api.github.com/users/github-actions%5Bbot%5D/orgs",
+          "repos_url": "https://api.github.com/users/github-actions%5Bbot%5D/repos",
+          "events_url": "https://api.github.com/users/github-actions%5Bbot%5D/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/github-actions%5Bbot%5D/received_events",
+          "type": "Bot",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "labels": [
+          {
+            "id": 8234384857,
+            "node_id": "LA_kwDOOCYuCc8AAAAB6s692Q",
+            "url": "https://api.github.com/repos/asdfo123/DailyArXiv/labels/documentation",
+            "name": "documentation",
+            "color": "0075ca",
+            "default": true,
+            "description": "Improvements or additions to documentation"
+          }
+        ],
+        "state": "open",
+        "locked": false,
+        "assignee": null,
+        "assignees": [],
+        "milestone": null,
+        "comments": 0,
+        "created_at": "2026-02-08T04:15:13Z",
+        "updated_at": "2026-02-08T04:15:13Z",
+        "closed_at": null,
+        "author_association": "NONE",
+        "active_lock_reason": null,
+        "sub_issues_summary": {
+          "total": 0,
+          "completed": 0,
+          "percent_completed": 0
+        },
+        "issue_dependencies_summary": {
+          "blocked_by": 0,
+          "total_blocked_by": 0,
+          "blocking": 0,
+          "total_blocking": 0
+        },
+        "body": "**Please check the [Github](https://github.com/zezhishao/MTS_Daily_ArXiv) page for a better reading experience and more papers.**\n\n## Knowledge Editing\n| **Title** | **Date** | **Comment** |\n| --- | --- | --- |\n| **[ACE: Attribution-Controlled Knowledge Editing for Multi-hop Factual Recall](https://arxiv.org/abs/2510.07896v2)** | 2026-02-04 | Accepted by ICLR2026 |\n| **[Conflict-Resolving and Sharpness-Aware Minimization for Generalized Knowledge Editing with Multiple Updates](https://arxiv.org/abs/2602.03696v1)** | 2026-02-03 | <details><summary>22 pa...</summary><p>22 pages, 8 figures. Code link: https://github.com/duykhuongnguyen/CoRSA</p></details> |\n| **[Edit Knowledge, Not Just Facts via Multi-Step Reasoning over Background Stories](https://arxiv.org/abs/2602.02028v1)** | 2026-02-02 | under review |\n| **[Beyond Local Edits: Embedding-Virtualized Knowledge for Broader Evaluation and Preservation of Model Editing](https://arxiv.org/abs/2602.01977v1)** | 2026-02-02 |  |\n| **[PretrainRL: Alleviating Factuality Hallucination of Large Language Models at the Beginning](https://arxiv.org/abs/2602.01875v1)** | 2026-02-02 |  |\n| **[EtCon: Edit-then-Consolidate for Reliable Knowledge Editing](https://arxiv.org/abs/2512.04753v2)** | 2026-01-30 |  |\n| **[Generalizable Multimodal Large Language Model Editing via Invariant Trajectory Learning](https://arxiv.org/abs/2601.19700v2)** | 2026-01-30 |  |\n| **[Dynamics Reveals Structure: Challenging the Linear Propagation Assumption](https://arxiv.org/abs/2601.21601v1)** | 2026-01-29 |  |\n| **[Persuasion Tokens for Editing Factual Knowledge in LLMs](https://arxiv.org/abs/2601.16781v2)** | 2026-01-26 | <details><summary>Accep...</summary><p>Accepted at EACL Main 2026</p></details> |\n| **[CLM-Bench: Benchmarking and Analyzing Cross-lingual Misalignment of LLMs in Knowledge Editing](https://arxiv.org/abs/2601.17397v1)** | 2026-01-24 | <details><summary>EACL ...</summary><p>EACL MME workshop paper</p></details> |\n| **[SonoEdit: Null-Space Constrained Knowledge Editing for Pronunciation Correction in LLM-Based TTS](https://arxiv.org/abs/2601.17086v1)** | 2026-01-23 |  |\n| **[Beyond Memorization: A Rigorous Evaluation Framework for Medical Knowledge Editing](https://arxiv.org/abs/2506.03490v3)** | 2026-01-23 | <details><summary>Accep...</summary><p>Accepted to EACL 2026 Main Conference</p></details> |\n| **[Is Your Writing Being Mimicked by AI? Unveiling Imitation with Invisible Watermarks in Creative Writing](https://arxiv.org/abs/2504.00035v3)** | 2026-01-22 |  |\n| **[Tracking the Limits of Knowledge Propagation: How LLMs Fail at Multi-Step Reasoning with Conflicting Knowledge](https://arxiv.org/abs/2601.15495v1)** | 2026-01-21 | <details><summary>Accep...</summary><p>Accepted to EACL 2026 (Main)</p></details> |\n| **[Spectral Characterization and Mitigation of Sequential Knowledge Editing Collapse](https://arxiv.org/abs/2601.11042v1)** | 2026-01-16 | 22 pages, 18 figures |\n\n## Model Editing\n| **Title** | **Date** | **Comment** |\n| --- | --- | --- |\n| **[Transmuting prompts into weights](https://arxiv.org/abs/2510.08734v2)** | 2026-02-05 |  |\n| **[Structural Disentanglement in Bilinear MLPs via Architectural Inductive Bias](https://arxiv.org/abs/2602.05635v1)** | 2026-02-05 |  |\n| **[Conflict-Resolving and Sharpness-Aware Minimization for Generalized Knowledge Editing with Multiple Updates](https://arxiv.org/abs/2602.03696v1)** | 2026-02-03 | <details><summary>22 pa...</summary><p>22 pages, 8 figures. Code link: https://github.com/duykhuongnguyen/CoRSA</p></details> |\n| **[ReasonEdit: Editing Vision-Language Models using Human Reasoning](https://arxiv.org/abs/2602.02408v2)** | 2026-02-03 |  |\n| **[MEMOIR: Lifelong Model Editing with Minimal Overwrite and Informed Retention for LLMs](https://arxiv.org/abs/2506.07899v4)** | 2026-02-02 | <details><summary>The f...</summary><p>The first two authors contributed equally to this work; Accepted to NeurIPS 2025</p></details> |\n| **[Beyond Local Edits: Embedding-Virtualized Knowledge for Broader Evaluation and Preservation of Model Editing](https://arxiv.org/abs/2602.01977v1)** | 2026-02-02 |  |\n| **[Model Editing with Graph-Based External Memory](https://arxiv.org/abs/2505.18343v2)** | 2026-01-31 |  |\n| **[Behemoth: Benchmarking Unlearning in LLMs Using Fully Synthetic Data](https://arxiv.org/abs/2601.23153v1)** | 2026-01-30 |  |\n| **[SPEED: Scalable, Precise, and Efficient Concept Erasure for Diffusion Models](https://arxiv.org/abs/2503.07392v4)** | 2026-01-30 | <details><summary>Accep...</summary><p>Accepted to ICLR 2026</p></details> |\n| **[Generalizable Multimodal Large Language Model Editing via Invariant Trajectory Learning](https://arxiv.org/abs/2601.19700v2)** | 2026-01-30 |  |\n| **[Toward Ultra-Long-Horizon Sequential Model Editing](https://arxiv.org/abs/2602.02543v1)** | 2026-01-30 |  |\n| **[EMSEdit: Efficient Multi-Step Meta-Learning-based Model Editing](https://arxiv.org/abs/2508.04012v3)** | 2026-01-29 | Accepted at WWW2026 |\n| **[Localizing Knowledge in Diffusion Transformers](https://arxiv.org/abs/2505.18832v3)** | 2026-01-26 |  |\n| **[Are We Evaluating the Edit Locality of LLM Model Editing Properly?](https://arxiv.org/abs/2601.17343v1)** | 2026-01-24 |  |\n| **[SonoEdit: Null-Space Constrained Knowledge Editing for Pronunciation Correction in LLM-Based TTS](https://arxiv.org/abs/2601.17086v1)** | 2026-01-23 |  |\n\n## GUI Agent\n| **Title** | **Date** | **Comment** |\n| --- | --- | --- |\n| **[UI-Mem: Self-Evolving Experience Memory for Online Reinforcement Learning in Mobile GUI Agents](https://arxiv.org/abs/2602.05832v1)** | 2026-02-05 | <details><summary>23 pa...</summary><p>23 pages, 16 figures. Project page: https://ui-mem.github.io</p></details> |\n| **[M$^2$-Miner: Multi-Agent Enhanced MCTS for Mobile GUI Agent Data Mining](https://arxiv.org/abs/2602.05429v1)** | 2026-02-05 | <details><summary>Accep...</summary><p>Accepted by ICLR 2026. Supplementary material is included at the end of the main paper (16 pages, 15 figures, 2 tables)</p></details> |\n| **[Agent Alpha: Tree Search Unifying Generation, Exploration and Evaluation for Computer-Use Agents](https://arxiv.org/abs/2602.02995v1)** | 2026-02-03 |  |\n| **[Generative Visual Code Mobile World Models](https://arxiv.org/abs/2602.01576v1)** | 2026-02-02 | <details><summary>Pre-p...</summary><p>Pre-print (technical report)</p></details> |\n| **[MAGNET: Towards Adaptive GUI Agents with Memory-Driven Knowledge Evolution](https://arxiv.org/abs/2601.19199v2)** | 2026-01-31 |  |\n| **[Environmental Injection Attacks against GUI Agents in Realistic Dynamic Environments](https://arxiv.org/abs/2509.11250v2)** | 2026-01-31 |  |\n| **[Agentic Reward Modeling: Verifying GUI Agent via Online Proactive Interaction](https://arxiv.org/abs/2602.00575v1)** | 2026-01-31 | 21 pages, 11 figures |\n| **[Learning with Challenges: Adaptive Difficulty-Aware Data Generation for Mobile GUI Agent Training](https://arxiv.org/abs/2601.22781v1)** | 2026-01-30 |  |\n| **[Okara: Detection and Attribution of TLS Man-in-the-Middle Vulnerabilities in Android Apps with Foundation Models](https://arxiv.org/abs/2601.22770v1)** | 2026-01-30 | <details><summary>Accep...</summary><p>Accepted to ACISP 2026</p></details> |\n| **[ToolTok: Tool Tokenization for Efficient and Generalizable GUI Agents](https://arxiv.org/abs/2602.02548v1)** | 2026-01-30 | <details><summary>8 pag...</summary><p>8 pages main paper, 18 pages total, 8 figures, 5 tables, code at https://github.com/ZephinueCode/ToolTok</p></details> |\n| **[Darwinian Memory: A Training-Free Self-Regulating Memory System for GUI Agent Evolution](https://arxiv.org/abs/2601.22528v1)** | 2026-01-30 |  |\n| **[BEAP-Agent: Backtrackable Execution and Adaptive Planning for GUI Agents](https://arxiv.org/abs/2601.21352v1)** | 2026-01-29 |  |\n| **[Continual GUI Agents](https://arxiv.org/abs/2601.20732v2)** | 2026-01-29 |  |\n| **[MobileBench-OL: A Comprehensive Chinese Benchmark for Evaluating Mobile GUI Agents in Real-World Environment](https://arxiv.org/abs/2601.20335v2)** | 2026-01-29 |  |\n| **[GUIGuard: Toward a General Framework for Privacy-Preserving GUI Agents](https://arxiv.org/abs/2601.18842v2)** | 2026-01-29 |  |\n\n## Steering Vector\n| **Title** | **Date** | **Comment** |\n| --- | --- | --- |\n| **[Transmuting prompts into weights](https://arxiv.org/abs/2510.08734v2)** | 2026-02-05 |  |\n| **[Low-complexity Design for Beam Coverage in Near-field and Far-field: A Fourier Transform Approach](https://arxiv.org/abs/2602.05666v1)** | 2026-02-05 | <details><summary>13 pa...</summary><p>13 pages, 7 figures, submitted to IEEE for possible publication</p></details> |\n| **[Disentangling meaning from language in LLM-based machine translation](https://arxiv.org/abs/2602.04613v1)** | 2026-02-04 | 61 pages, 70 figures |\n| **[Simulated Adoption: Decoupling Magnitude and Direction in LLM In-Context Conflict Resolution](https://arxiv.org/abs/2602.04918v1)** | 2026-02-04 |  |\n| **[Phantom Transfer: Data-level Defences are Insufficient Against Data Poisoning](https://arxiv.org/abs/2602.04899v1)** | 2026-02-03 |  |\n| **[Steering Externalities: Benign Activation Steering Unintentionally Increases Jailbreak Risk for Large Language Models](https://arxiv.org/abs/2602.04896v1)** | 2026-02-03 |  |\n| **[Language Steering for Multilingual In-Context Learning](https://arxiv.org/abs/2602.02326v1)** | 2026-02-02 |  |\n| **[Small Vectors, Big Effects: A Mechanistic Study of RL-Induced Reasoning via Steering Vectors](https://arxiv.org/abs/2509.06608v4)** | 2026-02-02 | Preprint |\n| **[Steering Vector Fields for Context-Aware Inference-Time Control in Large Language Models](https://arxiv.org/abs/2602.01654v1)** | 2026-02-02 |  |\n| **[Controlling Repetition in Protein Language Models](https://arxiv.org/abs/2602.00782v1)** | 2026-01-31 | <details><summary>Publi...</summary><p>Published as a conference paper at ICLR 2026</p></details> |\n| **[One-shot Optimized Steering Vector for Hallucination Mitigation for VLMs](https://arxiv.org/abs/2601.23041v1)** | 2026-01-30 |  |\n| **[EmoShift: Lightweight Activation Steering for Enhanced Emotion-Aware Speech Synthesis](https://arxiv.org/abs/2601.22873v1)** | 2026-01-30 | <details><summary>Activ...</summary><p>Activation Steering; Emotion-Aware TTS; Speech Synthesis; Accepted by ICASSP 2026</p></details> |\n| **[CASteer: Cross-Attention Steering for Controllable Concept Erasure](https://arxiv.org/abs/2503.09630v4)** | 2026-01-30 |  |\n| **[How Language Models Conflate Logical Validity with Plausibility: A Representational Analysis of Content Effects](https://arxiv.org/abs/2510.06700v2)** | 2026-01-26 |  |\n| **[Adaptive Beam Alignment using Noisy Twenty Questions Estimation with Trained Questioner](https://arxiv.org/abs/2601.16799v2)** | 2026-01-26 |  |\n\n## Efficient LLM\n| **Title** | **Date** | **Comment** |\n| --- | --- | --- |\n| **[RaBiT: Residual-Aware Binarization Training for Accurate and Efficient LLMs](https://arxiv.org/abs/2602.05367v1)** | 2026-02-05 |  |\n| **[Opt4GPTQ: Co-Optimizing Memory and Computation for 4-bit GPTQ Quantized LLM Inference on Heterogeneous Platforms](https://arxiv.org/abs/2511.19438v2)** | 2026-02-05 |  |\n| **[Mugi: Value Level Parallelism For Efficient LLMs](https://arxiv.org/abs/2601.10823v2)** | 2026-02-04 | <details><summary>2026 ...</summary><p>2026 International Conference on Architectural Support for Programming Languages and Operating Systems</p></details> |\n| **[LinGO: A Linguistic Graph Optimization Framework with LLMs for Interpreting Intents of Online Uncivil Discourse](https://arxiv.org/abs/2602.04693v1)** | 2026-02-04 |  |\n| **[Agent-Omit: Training Efficient LLM Agents for Adaptive Thought and Observation Omission via Agentic Reinforcement Learning](https://arxiv.org/abs/2602.04284v1)** | 2026-02-04 | Under Review |\n| **[MeKi: Memory-based Expert Knowledge Injection for Efficient LLM Scaling](https://arxiv.org/abs/2602.03359v1)** | 2026-02-03 |  |\n| **[NLI:Non-uniform Linear Interpolation Approximation of Nonlinear Operations for Efficient LLMs Inference](https://arxiv.org/abs/2602.02988v1)** | 2026-02-03 | <details><summary>Admit...</summary><p>Admitted to ICLR 18pages 5 figures</p></details> |\n| **[A Single Revision Step Improves Token-Efficient LLM Reasoning](https://arxiv.org/abs/2602.02828v1)** | 2026-02-02 |  |\n| **[Trust by Design: Skill Profiles for Transparent, Cost-Aware LLM Routing](https://arxiv.org/abs/2602.02386v1)** | 2026-02-02 | <details><summary>Appea...</summary><p>Appeared at MLSys YPS 2025</p></details> |\n| **[MAS-Shield: A Defense Framework for Secure and Efficient LLM MAS](https://arxiv.org/abs/2511.22924v2)** | 2026-02-02 |  |\n| **[Predictive Scheduling for Efficient Inference-Time Reasoning in Large Language Models](https://arxiv.org/abs/2602.01237v1)** | 2026-02-01 | ICML ES-FoMo 2025 |\n| **[Lotus: Efficient LLM Training by Randomized Low-Rank Gradient Projection with Adaptive Subspace Switching](https://arxiv.org/abs/2602.01233v1)** | 2026-02-01 |  |\n| **[A State-Transition Framework for Efficient LLM Reasoning](https://arxiv.org/abs/2602.01198v1)** | 2026-02-01 | ICLR 2026 |\n| **[ESSAM: A Novel Competitive Evolution Strategies Approach to Reinforcement Learning for Memory Efficient LLMs Fine-Tuning](https://arxiv.org/abs/2602.01003v1)** | 2026-02-01 |  |\n| **[Sparsity-Aware Unlearning for Large Language Models](https://arxiv.org/abs/2602.00577v1)** | 2026-01-31 |  |\n\n",
+        "reactions": {
+          "url": "https://api.github.com/repos/asdfo123/DailyArXiv/issues/241/reactions",
+          "total_count": 0,
+          "+1": 0,
+          "-1": 0,
+          "laugh": 0,
+          "hooray": 0,
+          "confused": 0,
+          "heart": 0,
+          "rocket": 0,
+          "eyes": 0
+        },
+        "timeline_url": "https://api.github.com/repos/asdfo123/DailyArXiv/issues/241/timeline",
+        "performed_via_github_app": null,
+        "state_reason": null,
+        "score": 1
+      }
+    },
+    {
+      "id": "github-issue-3911940004",
+      "platform": "github",
+      "type": "issue",
+      "title": "daily-trending-repo/issues #325: Latest 10 Trending Repositories - February 08, 2026",
+      "content": "# 📚 Weekly Trending Repositories Update\n\n### 📅 Date: February 08, 2026\n\nWelcome to this week's collection of the latest Github REPOS! Below you'll find the top 10 repos for each category.\n\n💡 **Note**: For a better reading experience and access to more repos, please visit our [Github Repository](https://github.com/marc-ko/daily-trending-repo).\n\n---\n\n| **Title** | **Description** | **Language** | **Summary** | **Tags** | **Stars Count** |\n| --- | --- | --- | --- | --- | --- |\n| **[ClawRouter](https://github.com/BlockRunAI/ClawRouter)** | Smart LLM router — save 78% on inference costs. 30+ models, one wallet, x402 micropayments. | TypeScript |  | <details><summary>ai, a...</summary><p>ai, ai-agents, anthropic, cost-optimization, crypto, deepseek, gemini, llm, llm-router, micropayments, openai, openclaw, smart-routing, usdc, x402</p></details> | 1625 |\n| **[tirith](https://github.com/sheeki03/tirith)** | Your browser catches homograph attacks. Your terminal doesn't. Tirith guards the gate — intercepts suspicious URLs, ANSI injection, and pipe-to-shell attacks before they execute. | Rust |  | <details><summary>cli, ...</summary><p>cli, devtools, homograph-attack, rust, security, shell, supply-chain-security, terminal, unicode, url-security</p></details> | 1540 |\n| **[claudes-c-compiler](https://github.com/anthropics/claudes-c-compiler)** | Claude Opus 4.6 wrote a dependency-free C compiler in Rust, with backends targeting x86 (64- and 32-bit), ARM, and RISC-V, capable of compiling a booting Linux kernel. | Rust |  |  | 1480 |\n| **[excalidraw-mcp-app](https://github.com/antonpk1/excalidraw-mcp-app)** | Excalidraw MCP App Server — hand-drawn diagrams for Claude | TypeScript |  |  | 875 |\n| **[GLM-OCR](https://github.com/zai-org/GLM-OCR)** | GLM-OCR: Accurate ×  Fast × Comprehensive | Python |  | <details><summary>glm, ...</summary><p>glm, image2text, ocr</p></details> | 730 |\n| **[clash-master](https://github.com/foru17/clash-master)** | A modern and elegant dashboard for visualizing and managing Clash network traffic. | TypeScript |  | <details><summary>clash...</summary><p>clash, openclash, traffic-monitor</p></details> | 723 |\n| **[rememory](https://github.com/eljojo/rememory)** | have a plan for the worst-case scenario | Go |  | <details><summary>age-e...</summary><p>age-encryption, shamir-secret-sharing</p></details> | 586 |\n| **[paqctl](https://github.com/SamNet-dev/paqctl)** | Unified proxy manager for bypassing firewalls - supports Paqet (KCP/raw socket) and GFW-Knocker (violated TCP/QUIC) with dual-backend simultaneous operation | Shell |  | <details><summary>china...</summary><p>china, firewall-bypass, gfw, gfw-breaker, iran, proxy, raw-socket, socks5, socks5-proxy, tunnel, vpn, windows</p></details> | 554 |\n| **[EpsteIn](https://github.com/cfinke/EpsteIn)** | See which of your LinkedIn connections appear in the Epstein files. | Python |  |  | 462 |\n| **[ace-step-ui](https://github.com/fspecii/ace-step-ui)** | 🎵 The Ultimate Open Source Suno Alternative - Professional UI for ACE-Step 1.5 AI Music Generation. Free, local, unlimited. Stop paying for Suno! | JavaScript |  | <details><summary>ace-s...</summary><p>ace-step, ai, ai-music, local-first, music, music-generation, open-source, react, suno-alternative, typescript</p></details> | 434 |\n\n",
+      "author": {
+        "name": "github-actions[bot]",
+        "url": "https://github.com/apps/github-actions",
+        "avatar": "https://avatars.githubusercontent.com/in/15368?v=4"
+      },
+      "timestamp": "2026-02-08T04:10:38Z",
+      "url": "https://github.com/marc-ko/daily-trending-repo/issues/325",
+      "metrics": {
+        "comments": 0
+      },
+      "tags": [
+        "documentation"
+      ],
+      "raw": {
+        "url": "https://api.github.com/repos/marc-ko/daily-trending-repo/issues/325",
+        "repository_url": "https://api.github.com/repos/marc-ko/daily-trending-repo",
+        "labels_url": "https://api.github.com/repos/marc-ko/daily-trending-repo/issues/325/labels{/name}",
+        "comments_url": "https://api.github.com/repos/marc-ko/daily-trending-repo/issues/325/comments",
+        "events_url": "https://api.github.com/repos/marc-ko/daily-trending-repo/issues/325/events",
+        "html_url": "https://github.com/marc-ko/daily-trending-repo/issues/325",
+        "id": 3911940004,
+        "node_id": "I_kwDOOMmfjs7pK3ek",
+        "number": 325,
+        "title": "Latest 10 Trending Repositories - February 08, 2026",
+        "user": {
+          "login": "github-actions[bot]",
+          "id": 41898282,
+          "node_id": "MDM6Qm90NDE4OTgyODI=",
+          "avatar_url": "https://avatars.githubusercontent.com/in/15368?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/github-actions%5Bbot%5D",
+          "html_url": "https://github.com/apps/github-actions",
+          "followers_url": "https://api.github.com/users/github-actions%5Bbot%5D/followers",
+          "following_url": "https://api.github.com/users/github-actions%5Bbot%5D/following{/other_user}",
+          "gists_url": "https://api.github.com/users/github-actions%5Bbot%5D/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/github-actions%5Bbot%5D/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/github-actions%5Bbot%5D/subscriptions",
+          "organizations_url": "https://api.github.com/users/github-actions%5Bbot%5D/orgs",
+          "repos_url": "https://api.github.com/users/github-actions%5Bbot%5D/repos",
+          "events_url": "https://api.github.com/users/github-actions%5Bbot%5D/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/github-actions%5Bbot%5D/received_events",
+          "type": "Bot",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "labels": [
+          {
+            "id": 8332370179,
+            "node_id": "LA_kwDOOMmfjs8AAAAB8KXhAw",
+            "url": "https://api.github.com/repos/marc-ko/daily-trending-repo/labels/documentation",
+            "name": "documentation",
+            "color": "0075ca",
+            "default": true,
+            "description": "Improvements or additions to documentation"
+          }
+        ],
+        "state": "open",
+        "locked": false,
+        "assignee": null,
+        "assignees": [],
+        "milestone": null,
+        "comments": 0,
+        "created_at": "2026-02-08T04:10:38Z",
+        "updated_at": "2026-02-08T04:10:38Z",
+        "closed_at": null,
+        "author_association": "NONE",
+        "active_lock_reason": null,
+        "sub_issues_summary": {
+          "total": 0,
+          "completed": 0,
+          "percent_completed": 0
+        },
+        "issue_dependencies_summary": {
+          "blocked_by": 0,
+          "total_blocked_by": 0,
+          "blocking": 0,
+          "total_blocking": 0
+        },
+        "body": "# 📚 Weekly Trending Repositories Update\n\n### 📅 Date: February 08, 2026\n\nWelcome to this week's collection of the latest Github REPOS! Below you'll find the top 10 repos for each category.\n\n💡 **Note**: For a better reading experience and access to more repos, please visit our [Github Repository](https://github.com/marc-ko/daily-trending-repo).\n\n---\n\n| **Title** | **Description** | **Language** | **Summary** | **Tags** | **Stars Count** |\n| --- | --- | --- | --- | --- | --- |\n| **[ClawRouter](https://github.com/BlockRunAI/ClawRouter)** | Smart LLM router — save 78% on inference costs. 30+ models, one wallet, x402 micropayments. | TypeScript |  | <details><summary>ai, a...</summary><p>ai, ai-agents, anthropic, cost-optimization, crypto, deepseek, gemini, llm, llm-router, micropayments, openai, openclaw, smart-routing, usdc, x402</p></details> | 1625 |\n| **[tirith](https://github.com/sheeki03/tirith)** | Your browser catches homograph attacks. Your terminal doesn't. Tirith guards the gate — intercepts suspicious URLs, ANSI injection, and pipe-to-shell attacks before they execute. | Rust |  | <details><summary>cli, ...</summary><p>cli, devtools, homograph-attack, rust, security, shell, supply-chain-security, terminal, unicode, url-security</p></details> | 1540 |\n| **[claudes-c-compiler](https://github.com/anthropics/claudes-c-compiler)** | Claude Opus 4.6 wrote a dependency-free C compiler in Rust, with backends targeting x86 (64- and 32-bit), ARM, and RISC-V, capable of compiling a booting Linux kernel. | Rust |  |  | 1480 |\n| **[excalidraw-mcp-app](https://github.com/antonpk1/excalidraw-mcp-app)** | Excalidraw MCP App Server — hand-drawn diagrams for Claude | TypeScript |  |  | 875 |\n| **[GLM-OCR](https://github.com/zai-org/GLM-OCR)** | GLM-OCR: Accurate ×  Fast × Comprehensive | Python |  | <details><summary>glm, ...</summary><p>glm, image2text, ocr</p></details> | 730 |\n| **[clash-master](https://github.com/foru17/clash-master)** | A modern and elegant dashboard for visualizing and managing Clash network traffic. | TypeScript |  | <details><summary>clash...</summary><p>clash, openclash, traffic-monitor</p></details> | 723 |\n| **[rememory](https://github.com/eljojo/rememory)** | have a plan for the worst-case scenario | Go |  | <details><summary>age-e...</summary><p>age-encryption, shamir-secret-sharing</p></details> | 586 |\n| **[paqctl](https://github.com/SamNet-dev/paqctl)** | Unified proxy manager for bypassing firewalls - supports Paqet (KCP/raw socket) and GFW-Knocker (violated TCP/QUIC) with dual-backend simultaneous operation | Shell |  | <details><summary>china...</summary><p>china, firewall-bypass, gfw, gfw-breaker, iran, proxy, raw-socket, socks5, socks5-proxy, tunnel, vpn, windows</p></details> | 554 |\n| **[EpsteIn](https://github.com/cfinke/EpsteIn)** | See which of your LinkedIn connections appear in the Epstein files. | Python |  |  | 462 |\n| **[ace-step-ui](https://github.com/fspecii/ace-step-ui)** | 🎵 The Ultimate Open Source Suno Alternative - Professional UI for ACE-Step 1.5 AI Music Generation. Free, local, unlimited. Stop paying for Suno! | JavaScript |  | <details><summary>ace-s...</summary><p>ace-step, ai, ai-music, local-first, music, music-generation, open-source, react, suno-alternative, typescript</p></details> | 434 |\n\n",
+        "reactions": {
+          "url": "https://api.github.com/repos/marc-ko/daily-trending-repo/issues/325/reactions",
+          "total_count": 0,
+          "+1": 0,
+          "-1": 0,
+          "laugh": 0,
+          "hooray": 0,
+          "confused": 0,
+          "heart": 0,
+          "rocket": 0,
+          "eyes": 0
+        },
+        "timeline_url": "https://api.github.com/repos/marc-ko/daily-trending-repo/issues/325/timeline",
+        "performed_via_github_app": null,
+        "state_reason": null,
+        "score": 1
+      }
+    },
+    {
       "id": "github-issue-3911761009",
       "platform": "github",
       "type": "issue",
@@ -3227,7 +3536,7 @@
       "metrics": {
         "upvotes": -5,
         "comments": 0,
-        "views": 24
+        "views": 28
       },
       "tags": [
         "javascript",
@@ -3252,16 +3561,17 @@
           "link": "https://stackoverflow.com/users/3374544/user3374544"
         },
         "is_answered": false,
-        "view_count": 24,
+        "view_count": 28,
         "answer_count": 0,
         "score": -5,
-        "last_activity_date": 1770501538,
+        "last_activity_date": 1770527124,
         "creation_date": 1770501538,
+        "last_edit_date": 1770527124,
         "question_id": 79885085,
         "content_license": "CC BY-SA 4.0",
         "link": "https://stackoverflow.com/questions/79885085/telegram-newmessage-event-handler-not-firing-for-large-supergroups-gramjs",
         "title": "Telegram NewMessage Event Handler Not Firing for Large Supergroups (GramJS)",
-        "body": "<p>Problem Summary\nI'm using GramJS (telegram npm package) to listen for new messages in Telegram groups. The NewMessage event handler works perfectly for:</p>\n<p>✅ Direct messages (DMs)\n✅ Small groups (&lt; 1000 members)\n✅ Medium groups (tested up to ~5000 members)</p>\n<p>However, it completely fails to fire for large supergroups (30k+ members), even though:</p>\n<p>✅ My account is a member of these groups\n✅ I can manually fetch messages using client.getMessages()\n✅ The listener has been running continuously for 2+ days\n✅ New messages ARE being sent to these groups (verified manually)</p>\n<pre><code>const { TelegramClient } = require(&quot;telegram&quot;);\nconst { StringSession } = require(&quot;telegram/sessions&quot;);\nconst { NewMessage } = require(&quot;telegram/events&quot;);\n\nconst apiId = parseInt(process.env.API_ID);\nconst apiHash = process.env.API_HASH;\nconst stringSession = new StringSession(process.env.SESSION_STRING);\n\n(async () =&gt; {\n  const client = new TelegramClient(stringSession, apiId, apiHash, {\n    connectionRetries: 5,\n  });\n\n  await client.start({\n    onError: (err) =&gt; console.log(err),\n  });\n\n  console.log(&quot;✅ Connected!&quot;);\n\n  // This event handler NEVER fires for large groups\n  client.addEventHandler(async (event) =&gt; {\n    console.log(&quot;📨 New message:&quot;, event.message.text);\n    // Process message...\n  }, new NewMessage({}));\n\n  console.log(&quot;👂 Listening...&quot;);\n})();\n</code></pre>\n<p>What I've Verified</p>\n<p>Account has access: Using client.getDialogs() shows I'm a member of the group with 31,512 members\nCan read messages: client.getMessages(groupEntity, {limit: 10}) successfully returns recent messages\nConnection is stable: No disconnections, client stays connected\nNo errors: No error logs, no FloodWait, no exceptions\nEvent handler works elsewhere: Same code catches messages from smaller groups instantly</p>\n<p>Additional Context\nThe same limitation seems to apply to ALL large groups I'm in (34 groups with 30k+ members), while smaller groups work flawlessly. This suggests it's not group-specific but rather a size/type-related limitation.\nI'd prefer to avoid polling due to rate limits and efficiency concerns. Any guidance on receiving real-time events from large Telegram supergroups would be greatly appreciated.</p>\n"
+        "body": "<p>I'm using GramJS (telegram npm package) to listen for new messages in Telegram groups. The NewMessage event handler works perfectly for:\nDirect messages (DMs),Small groups (&lt; 1000 members),Medium groups (tested up to ~5000 members)\nHowever, it completely fails to fire for large supergroups (30k+ members), even though:\nMy account is a member of these groups\nI can manually fetch messages using client.getMessages()\nThe listener has been running continuously for 2+ days\nNew messages ARE being sent to these groups (verified manually)</p>\n<p>I've Verified\nAccount has access: Using client.getDialogs() shows I'm a member of the group with 31,512 members\nCan read messages: client.getMessages(groupEntity, {limit: 10}) successfully returns recent messages</p>\n<pre><code>const { TelegramClient } = require(&quot;telegram&quot;);\nconst { StringSession } = require(&quot;telegram/sessions&quot;);\nconst { NewMessage } = require(&quot;telegram/events&quot;);\n\nconst apiId = parseInt(process.env.API_ID);\nconst apiHash = process.env.API_HASH;\nconst stringSession = new StringSession(process.env.SESSION_STRING);\n\n(async () =&gt; {\n  const client = new TelegramClient(stringSession, apiId, apiHash, {\n    connectionRetries: 5,\n  });\n\n  await client.start({\n    onError: (err) =&gt; console.log(err),\n  });\n\n  console.log(&quot;✅ Connected!&quot;);\n\n  // This event handler NEVER fires for large groups\n  client.addEventHandler(async (event) =&gt; {\n    console.log(&quot;📨 New message:&quot;, event.message.text);\n    // Process message...\n  }, new NewMessage({}));\n\n  console.log(&quot;👂 Listening...&quot;);\n})();\n</code></pre>\n"
       }
     },
     {
@@ -4091,7 +4401,7 @@
       "metrics": {
         "upvotes": 0,
         "comments": 0,
-        "views": 19
+        "views": 22
       },
       "tags": [
         "typescript",
@@ -4114,7 +4424,7 @@
           "link": "https://stackoverflow.com/users/30343441/elliot-datsomor"
         },
         "is_answered": false,
-        "view_count": 19,
+        "view_count": 22,
         "answer_count": 0,
         "score": 0,
         "last_activity_date": 1770498633,
@@ -5922,7 +6232,7 @@
       "metrics": {
         "upvotes": -2,
         "comments": 0,
-        "views": 48
+        "views": 52
       },
       "tags": [
         "javascript",
@@ -5944,7 +6254,7 @@
           "link": "https://stackoverflow.com/users/4512005/razvan-zamfir"
         },
         "is_answered": false,
-        "view_count": 48,
+        "view_count": 52,
         "closed_date": 1770504207,
         "answer_count": 0,
         "score": -2,
@@ -7280,7 +7590,7 @@
       "metrics": {
         "upvotes": -1,
         "comments": 0,
-        "views": 37
+        "views": 38
       },
       "tags": [
         "javascript",
@@ -7305,7 +7615,7 @@
           "link": "https://stackoverflow.com/users/8103934/bustinout"
         },
         "is_answered": false,
-        "view_count": 37,
+        "view_count": 38,
         "answer_count": 0,
         "score": -1,
         "last_activity_date": 1770486800,
@@ -8114,7 +8424,7 @@
       "metrics": {
         "upvotes": 1,
         "comments": 1,
-        "views": 32
+        "views": 33
       },
       "tags": [
         "typescript",
@@ -8136,7 +8446,7 @@
           "link": "https://stackoverflow.com/users/985454/qwerty"
         },
         "is_answered": false,
-        "view_count": 32,
+        "view_count": 33,
         "answer_count": 1,
         "score": 1,
         "last_activity_date": 1770444332,
@@ -8215,7 +8525,7 @@
       "metrics": {
         "upvotes": -1,
         "comments": 0,
-        "views": 46
+        "views": 48
       },
       "tags": [
         "typescript",
@@ -8236,7 +8546,7 @@
           "link": "https://stackoverflow.com/users/13349770/eziomercer"
         },
         "is_answered": false,
-        "view_count": 46,
+        "view_count": 48,
         "answer_count": 0,
         "score": -1,
         "last_activity_date": 1770414147,
@@ -8318,7 +8628,7 @@
       "metrics": {
         "upvotes": 0,
         "comments": 1,
-        "views": 39
+        "views": 40
       },
       "tags": [
         "typescript"
@@ -8337,7 +8647,7 @@
           "link": "https://stackoverflow.com/users/11337273/pythonnovice"
         },
         "is_answered": false,
-        "view_count": 39,
+        "view_count": 40,
         "answer_count": 1,
         "score": 0,
         "last_activity_date": 1770401817,
@@ -8616,5 +8926,5 @@
       }
     }
   ],
-  "lastUpdated": "2026-02-08T02:51:14.590Z"
+  "lastUpdated": "2026-02-08T05:06:32.938Z"
 }
