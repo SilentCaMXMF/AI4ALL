@@ -93,7 +93,7 @@ async function main() {
 
     // Show stats
     const store = scraper.getStore();
-    const stats = store.getStoreStats();
+    const stats = store.getStats();
     console.log('[Main] Data store stats:');
     console.log(`  Total items: ${stats.total}`);
     Object.entries(stats.byPlatform).forEach(([platform, count]) => {

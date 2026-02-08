@@ -3,26 +3,33 @@ import type { AggregatedItem, FetchOptions, FetchResult, Platform } from '../typ
 import { readFile, writeFile, access } from 'fs/promises';
 import { join } from 'path';
 
+interface ProviderConfig {
+  id: string;
+  env_var: string;
+  npm_package?: string;
+  api_endpoint?: string;
+  name: string;
+  docs?: string;
+  models: Record<string, ModelsDevModel>;
+}
+
 interface ModelsDevModel {
   id: string;
   name: string;
-  provider: string;
-  providerId: string;
-  modelId: string;
   family?: string;
-  inputCost?: number;
-  outputCost?: number;
-  reasoningCost?: number;
-  cacheReadCost?: number;
-  cacheWriteCost?: number;
-  contextLimit?: number;
-  inputLimit?: number;
-  outputLimit?: number;
-  toolCall?: boolean;
+  attachment?: boolean;
   reasoning?: boolean;
-  releaseDate?: string;
-  lastUpdated?: string;
-  description?: string;
+  tool_call?: boolean;
+  structured_output?: boolean;
+  temperature?: boolean;
+  knowledge?: string;
+  release_date?: string;
+  last_updated?: string;
+  modalities?: {
+    input: string[];
+    output: string[];
+  };
+  open_weights?: boolean;
   cost?: {
     input: number | null;
     output: number | null;
@@ -32,11 +39,6 @@ interface ModelsDevModel {
     context: number;
     output: number;
   };
-  modalities?: {
-    input: string[];
-    output: string[];
-  };
-  open_weights?: boolean;
 }
 
 interface PriceChange {
@@ -111,10 +113,29 @@ export class ModelsDevAPI extends BasePlatformAPI {
         throw new Error(`Models.dev API error: ${response.status} ${response.statusText}`);
       }
 
-      const allModels = await response.json() as ModelsDevModel[];
+      // Parse response as object with provider keys
+      const providersData = await response.json() as Record<string, ProviderConfig>;
       this.state.fetchCount++;
       
-      console.log(`[ModelsDev] Total models in database: ${allModels.length}`);
+      // Flatten all models from all providers
+      let allModels: Array<ModelsDevModel & { providerId: string; providerName: string }> = [];
+      let totalModelsCount = 0;
+      
+      for (const [providerId, provider] of Object.entries(providersData)) {
+        if (provider.models) {
+          const providerModels = Object.entries(provider.models).map(([modelId, model]) => ({
+            ...model,
+            id: model.id || modelId,
+            providerId: providerId,
+            providerName: provider.name || providerId
+          }));
+          allModels = allModels.concat(providerModels);
+          totalModelsCount += Object.keys(provider.models).length;
+        }
+      }
+      
+      console.log(`[ModelsDev] Total providers: ${Object.keys(providersData).length}`);
+      console.log(`[ModelsDev] Total models in database: ${totalModelsCount}`);
       
       // Filter for FREE models only (cost.input === 0 && cost.output === 0)
       const freeModels = this.filterFreeModels(allModels);
@@ -214,16 +235,16 @@ export class ModelsDevAPI extends BasePlatformAPI {
     return changes;
   }
 
-  private normalizeModel(model: ModelsDevModel): AggregatedItem {
+  private normalizeModel(model: ModelsDevModel & { providerId: string; providerName: string }): AggregatedItem {
     const capabilities = [];
-    if (model.toolCall || model.tool_call) capabilities.push('Tool Calling');
+    if (model.tool_call) capabilities.push('Tool Calling');
     if (model.reasoning) capabilities.push('Reasoning');
     if (model.open_weights) capabilities.push('Open Weights');
     if (model.modalities?.input?.includes('image')) capabilities.push('Vision');
     if (model.modalities?.input?.includes('audio')) capabilities.push('Audio');
     
-    const contextLimit = model.limit?.context ?? model.contextLimit ?? 0;
-    const outputLimit = model.limit?.output ?? model.outputLimit ?? 0;
+    const contextLimit = model.limit?.context ?? 0;
+    const outputLimit = model.limit?.output ?? 0;
     
     const contentParts = [
       '💰 FREE MODEL',
@@ -234,17 +255,17 @@ export class ModelsDevAPI extends BasePlatformAPI {
     ].filter(Boolean);
     
     return {
-      id: `modelsdev-${model.id || `${model.providerId}-${model.modelId}`}`,
+      id: `modelsdev-${model.id}`,
       platform: 'modelsdev',
       type: 'model',
-      title: `${model.provider}: ${model.name || model.modelId}`,
+      title: `${model.providerName}: ${model.name || model.id}`,
       content: contentParts.join(' | '),
       author: {
-        name: model.provider,
+        name: model.providerName,
         url: `https://models.dev/?search=${encodeURIComponent(model.providerId)}`
       },
-      timestamp: model.lastUpdated || model.releaseDate || new Date().toISOString(),
-      url: `https://models.dev/?search=${encodeURIComponent(model.providerId)}&model=${encodeURIComponent(model.modelId)}`,
+      timestamp: model.last_updated || model.release_date || new Date().toISOString(),
+      url: `https://models.dev/?search=${encodeURIComponent(model.providerId)}&model=${encodeURIComponent(model.id)}`,
       metrics: {
         stars: contextLimit,
         forks: outputLimit,

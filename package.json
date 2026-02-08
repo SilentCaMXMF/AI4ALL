@@ -8,7 +8,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "scrape": "ts-node src/scraper/index.ts",
+    "scrape": "npx tsx src/scraper/cli.ts",
     "scrape:github": "ts-node src/scraper/platforms/github.ts",
     "scrape:reddit": "ts-node src/scraper/platforms/reddit.ts",
     "scrape:stackoverflow": "ts-node src/scraper/platforms/stackoverflow.ts",
