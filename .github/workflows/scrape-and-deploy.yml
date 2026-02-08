@@ -1,22 +1,15 @@
-name: Scrape and Deploy
+name: Scrape Free AI Models
 
 on:
   schedule:
-    # Run every 30 minutes
-    - cron: '*/30 * * * *'
+    # Run every hour to check for new free models
+    - cron: '0 * * * *'
   
   # Allow manual trigger
   workflow_dispatch:
-    inputs:
-      platforms:
-        description: 'Platforms to scrape (comma-separated, or "all")'
-        required: false
-        default: 'all'
 
 permissions:
   contents: write
-  pages: write
-  id-token: write
 
 jobs:
   scrape:
@@ -38,27 +31,13 @@ jobs:
       - name: Create data directory
         run: mkdir -p data
 
-      - name: Run scraper (using tsx)
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          REDDIT_CLIENT_ID: ${{ secrets.REDDIT_CLIENT_ID }}
-          REDDIT_CLIENT_SECRET: ${{ secrets.REDDIT_CLIENT_SECRET }}
-          REDDIT_USERNAME: ${{ secrets.REDDIT_USERNAME }}
-          REDDIT_PASSWORD: ${{ secrets.REDDIT_PASSWORD }}
-          DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
-          X_BEARER_TOKEN: ${{ secrets.X_BEARER_TOKEN }}
-          PLATFORMS: ${{ github.event.inputs.platforms || 'all' }}
-        run: |
-          if [ "$PLATFORMS" = "all" ]; then
-            npx tsx src/scraper/cli.ts
-          else
-            npx tsx src/scraper/cli.ts --platforms $PLATFORMS
-          fi
+      - name: Run scraper (fetch free AI models)
+        run: npx tsx src/scraper/cli.ts
 
       - name: Upload scraped data
         uses: actions/upload-artifact@v4
         with:
-          name: scraped-data
+          name: free-models-data
           path: data/aggregated-data.json
           retention-days: 7
 
@@ -67,55 +46,20 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add -f data/aggregated-data.json
-          git diff --staged --quiet || (git commit -m "Update aggregated data [$(date +%Y-%m-%d_%H:%M)]" && git push)
-
-  deploy:
-    needs: scrape
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
-    
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Download scraped data
-        uses: actions/download-artifact@v4
-        with:
-          name: scraped-data
-          path: data/
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build site
-        run: npm run build
-
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        if: github.ref == 'refs/heads/main'
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./out
+          git diff --staged --quiet || (git commit -m "Update free AI models data [$(date +%Y-%m-%d_%H:%M)]" && git push)
 
   notify:
-    needs: [scrape, deploy]
+    needs: scrape
     runs-on: ubuntu-latest
     if: always()
     
     steps:
       - name: Notify on success
-        if: needs.scrape.result == 'success' && needs.deploy.result == 'success'
-        run: echo "✅ Scrape and deployment completed successfully!"
+        if: needs.scrape.result == 'success'
+        run: echo "✅ Free AI models data updated successfully!"
 
       - name: Notify on failure
-        if: needs.scrape.result == 'failure' || needs.deploy.result == 'failure'
+        if: needs.scrape.result == 'failure'
         run: |
           echo "❌ Workflow failed!"
           echo "Scrape result: ${{ needs.scrape.result }}"
-          echo "Deploy result: ${{ needs.deploy.result }}"

@@ -23,6 +23,20 @@ interface ModelsDevModel {
   releaseDate?: string;
   lastUpdated?: string;
   description?: string;
+  cost?: {
+    input: number | null;
+    output: number | null;
+    cache_read?: number | null;
+  };
+  limit?: {
+    context: number;
+    output: number;
+  };
+  modalities?: {
+    input: string[];
+    output: string[];
+  };
+  open_weights?: boolean;
 }
 
 interface PriceChange {
@@ -75,7 +89,7 @@ export class ModelsDevAPI extends BasePlatformAPI {
     if (hoursSinceLastFetch < 1 && this.state.modelsCache.length > 0) {
       console.log(`[ModelsDev] Skipping fetch - last update ${hoursSinceLastFetch.toFixed(1)}h ago (hourly intervals)`);
       return {
-        items: [],
+        items: this.state.modelsCache.map(model => this.normalizeModel(model)),
         hasMore: false
       };
     }
@@ -102,44 +116,26 @@ export class ModelsDevAPI extends BasePlatformAPI {
       
       console.log(`[ModelsDev] Total models in database: ${allModels.length}`);
       
-      // Filter for opencode/zen related models
-      const relevantModels = this.filterRelevantModels(allModels);
-      console.log(`[ModelsDev] Found ${relevantModels.length} opencode/zen related models`);
+      // Filter for FREE models only (cost.input === 0 && cost.output === 0)
+      const freeModels = this.filterFreeModels(allModels);
+      console.log(`[ModelsDev] Found ${freeModels.length} FREE models`);
       
-      // Detect price changes
-      const priceChanges = this.detectPriceChanges(relevantModels);
-      
-      if (priceChanges.length > 0) {
-        console.log(`[ModelsDev] 🚨 Detected ${priceChanges.length} price changes!`);
-        priceChanges.forEach(change => {
-          const percentStr = change.changePercent ? ` (${change.changePercent > 0 ? '+' : ''}${change.changePercent.toFixed(1)}%)` : '';
-          console.log(`  ${change.modelId}: ${change.field} $${change.oldValue} → $${change.newValue}${percentStr}`);
-        });
-        
-        // Add price changes to history
-        this.state.priceHistory.push(...priceChanges);
-        
-        // Keep only last 1000 price changes
-        if (this.state.priceHistory.length > 1000) {
-          this.state.priceHistory = this.state.priceHistory.slice(-1000);
-        }
-      }
+      // Group by provider for summary
+      const providerCounts = this.groupByProvider(freeModels);
+      console.log(`[ModelsDev] Free models by provider:`, providerCounts);
       
       // Update cache
-      this.state.modelsCache = relevantModels;
+      this.state.modelsCache = freeModels;
       this.state.lastFetchTime = now.toISOString();
       await this.saveState();
       
       // Convert to AggregatedItems
-      const items: AggregatedItem[] = relevantModels.map(model => this.normalizeModel(model));
+      const items: AggregatedItem[] = freeModels.map(model => this.normalizeModel(model));
       
-      // Add price change alerts as separate items
-      const priceAlertItems = priceChanges.map(change => this.normalizePriceChange(change));
-      
-      console.log(`[ModelsDev] Returning ${items.length} models + ${priceAlertItems.length} price alerts`);
+      console.log(`[ModelsDev] Returning ${items.length} free models`);
       
       return {
-        items: [...items, ...priceAlertItems].slice(0, options.limit || 100),
+        items: items.slice(0, options.limit || 500),
         hasMore: false
       };
     } catch (error) {
@@ -147,11 +143,26 @@ export class ModelsDevAPI extends BasePlatformAPI {
     }
   }
 
-  private filterRelevantModels(models: ModelsDevModel[]): ModelsDevModel[] {
+  private filterFreeModels(models: ModelsDevModel[]): ModelsDevModel[] {
     return models.filter(model => {
-      const searchString = `${model.provider} ${model.providerId} ${model.name} ${model.modelId}`.toLowerCase();
-      return this.searchTerms.some(term => searchString.includes(term.toLowerCase()));
+      // A model is FREE when cost.input === 0 OR null/undefined AND cost.output === 0 OR null/undefined
+      const inputCost = model.cost?.input ?? model.inputCost;
+      const outputCost = model.cost?.output ?? model.outputCost;
+      
+      const isFree = (inputCost === 0 || inputCost === null || inputCost === undefined) &&
+                     (outputCost === 0 || outputCost === null || outputCost === undefined);
+      
+      return isFree;
     });
+  }
+
+  private groupByProvider(models: ModelsDevModel[]): Record<string, number> {
+    const counts: Record<string, number> = {};
+    for (const model of models) {
+      const provider = model.provider || model.providerId || 'Unknown';
+      counts[provider] = (counts[provider] || 0) + 1;
+    }
+    return counts;
   }
 
   private detectPriceChanges(newModels: ModelsDevModel[]): PriceChange[] {
@@ -204,33 +215,43 @@ export class ModelsDevAPI extends BasePlatformAPI {
   }
 
   private normalizeModel(model: ModelsDevModel): AggregatedItem {
-    const costInfo = [];
-    if (model.inputCost !== undefined) costInfo.push(`Input: $${model.inputCost}/1M tokens`);
-    if (model.outputCost !== undefined) costInfo.push(`Output: $${model.outputCost}/1M tokens`);
-    if (model.reasoningCost !== undefined) costInfo.push(`Reasoning: $${model.reasoningCost}/1M tokens`);
-    
     const capabilities = [];
-    if (model.toolCall) capabilities.push('Tool Calling');
+    if (model.toolCall || model.tool_call) capabilities.push('Tool Calling');
     if (model.reasoning) capabilities.push('Reasoning');
+    if (model.open_weights) capabilities.push('Open Weights');
+    if (model.modalities?.input?.includes('image')) capabilities.push('Vision');
+    if (model.modalities?.input?.includes('audio')) capabilities.push('Audio');
+    
+    const contextLimit = model.limit?.context ?? model.contextLimit ?? 0;
+    const outputLimit = model.limit?.output ?? model.outputLimit ?? 0;
+    
+    const contentParts = [
+      '💰 FREE MODEL',
+      contextLimit > 0 ? `Context: ${contextLimit.toLocaleString()} tokens` : null,
+      outputLimit > 0 ? `Output: ${outputLimit.toLocaleString()} tokens` : null,
+      capabilities.length > 0 ? `Capabilities: ${capabilities.join(', ')}` : null,
+      model.family ? `Family: ${model.family}` : null
+    ].filter(Boolean);
     
     return {
       id: `modelsdev-${model.id || `${model.providerId}-${model.modelId}`}`,
       platform: 'modelsdev',
       type: 'model',
       title: `${model.provider}: ${model.name || model.modelId}`,
-      content: `Pricing: ${costInfo.join(' | ')}${capabilities.length > 0 ? ` | Capabilities: ${capabilities.join(', ')}` : ''}${model.contextLimit ? ` | Context: ${model.contextLimit.toLocaleString()} tokens` : ''}`,
+      content: contentParts.join(' | '),
       author: {
         name: model.provider,
         url: `https://models.dev/?search=${encodeURIComponent(model.providerId)}`
       },
-      timestamp: model.lastUpdated || new Date().toISOString(),
+      timestamp: model.lastUpdated || model.releaseDate || new Date().toISOString(),
       url: `https://models.dev/?search=${encodeURIComponent(model.providerId)}&model=${encodeURIComponent(model.modelId)}`,
       metrics: {
-        stars: model.inputCost,
-        forks: model.outputCost,
-        watchers: model.contextLimit
+        stars: contextLimit,
+        forks: outputLimit,
+        watchers: capabilities.length
       },
       tags: [
+        'free',
         model.providerId,
         ...(model.family ? [model.family] : []),
         ...(capabilities)
