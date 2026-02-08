@@ -399,6 +399,51 @@
             border-radius: 4px;
         }
 
+        /* JSON Reference Section */
+        .json-reference {
+            background: rgba(15, 23, 42, 0.8);
+            border-radius: 8px;
+            padding: 0.5rem 0.75rem;
+            margin-top: 0.5rem;
+            border: 1px solid rgba(148, 163, 184, 0.15);
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.7rem;
+            overflow-x: auto;
+        }
+
+        .json-reference code {
+            color: #a5b4fc;
+            white-space: nowrap;
+        }
+
+        .json-key {
+            color: #93c5fd;
+        }
+
+        .json-value {
+            color: #86efac;
+        }
+
+        .copy-btn {
+            background: rgba(16, 185, 129, 0.2);
+            border: none;
+            color: #34d399;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.65rem;
+            cursor: pointer;
+            margin-left: 0.5rem;
+            transition: all 0.2s;
+        }
+
+        .copy-btn:hover {
+            background: rgba(16, 185, 129, 0.3);
+        }
+
+        .copy-btn.copied {
+            background: rgba(16, 185, 129, 0.4);
+        }
+
         /* Footer */
         footer {
             text-align: center;
@@ -738,6 +783,12 @@
                     
                     ${feedbackHtml}
                     
+                    <!-- JSON Reference -->
+                    <div class="json-reference">
+                        <code><span class="json-key">"model"</span>: <span class="json-value">"${escapeHtml(extractModelId(item.id))}"</span></code>
+                        <button class="copy-btn" onclick="copyToClipboard(this, '${escapeHtml(extractModelId(item.id))}')">Copy</button>
+                    </div>
+                    
                     <div class="card-meta">
                         <div class="tags">
                             ${tagsHtml}
@@ -769,6 +820,37 @@
             const div = document.createElement('div');
             div.textContent = text;
             return div.innerHTML;
+        }
+
+        // Extract model ID from item ID (format: modelsdev-provider-modelId)
+        function extractModelId(itemId) {
+            if (itemId.startsWith('modelsdev-')) {
+                const parts = itemId.replace('modelsdev-', '').split('-');
+                if (parts.length >= 2) {
+                    // First part is provider, rest is model name
+                    const provider = parts[0];
+                    const modelName = parts.slice(1).join('-');
+                    return `${provider}/${modelName}`;
+                }
+            }
+            return itemId;
+        }
+
+        // Copy to clipboard functionality
+        function copyToClipboard(btn, modelId) {
+            const text = `{\n  "model": "${modelId}"\n}`;
+            navigator.clipboard.writeText(text).then(() => {
+                const originalText = btn.textContent;
+                btn.textContent = 'Copied!';
+                btn.classList.add('copied');
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.classList.remove('copied');
+                }, 1500);
+            }).catch(err => {
+                console.error('Failed to copy:', err);
+                btn.textContent = 'Error';
+            });
         }
 
         // Search functionality
