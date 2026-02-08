@@ -37,9 +37,9 @@ async function loadConfig(): Promise<ScraperConfig> {
   // Stack Overflow (no credentials needed for basic search)
   config.stackoverflow = {
     key: process.env.STACKOVERFLOW_KEY,
-    tags: ['artificial-intelligence', 'machine-learning', 'api']
+    tags: ['ai', 'machine-learning', 'llm', 'openai', 'gpt', 'api', 'chatgpt', 'anthropic', 'claude']
   };
-  console.log('[Config] Stack Overflow API enabled for feedback search');
+  console.log('[Config] Stack Overflow API enabled for feedback search (AI-focused tags)');
 
   return config;
 }

@@ -48,6 +48,68 @@ export class StackOverflowAPI extends BasePlatformAPI {
     this.tags = config.tags || ['javascript', 'typescript', 'react', 'nodejs'];
   }
 
+  async searchForModel(modelName: string, provider: string): Promise<AggregatedItem[]> {
+    const results: AggregatedItem[] = [];
+    
+    try {
+      // Create search queries combining model name and AI-related tags
+      const searchQueries = [
+        `${modelName} ${provider} API`,
+        `${modelName} free`,
+        `"${modelName}"`,
+        `${modelName} pricing`,
+        `${modelName} access`
+      ];
+      
+      for (const query of searchQueries.slice(0, 3)) { // Limit queries to avoid rate limits
+        const questions = await this.searchQuestions(query);
+        results.push(...questions.map(q => this.normalizeQuestion(q)));
+        
+        // Rate limiting between requests
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      }
+      
+      return results;
+    } catch (error) {
+      console.warn(`[StackOverflow] Search failed for "${modelName}":`, error);
+      return [];
+    }
+  }
+
+  async searchQuestions(query: string): Promise<StackOverflowQuestion[]> {
+    await this.rateLimit();
+    
+    const params = new URLSearchParams({
+      order: 'desc',
+      sort: 'relevance',
+      q: query,
+      site: 'stackoverflow',
+      pagesize: '5',
+      filter: 'withbody'
+    });
+
+    if (this.apiKey) {
+      params.append('key', this.apiKey);
+    }
+
+    const response = await fetch(
+      `https://api.stackexchange.com/2.3/search/advanced?${params.toString()}`,
+      {
+        headers: {
+          'Accept': 'application/json',
+          'User-Agent': 'FreeAIModelsAggregator/1.0'
+        }
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Stack Overflow API error: ${response.status} ${response.statusText}`);
+    }
+
+    const data = await response.json() as { items?: StackOverflowQuestion[] };
+    return data.items || [];
+  }
+
   async fetchItems(options: FetchOptions = {}): Promise<FetchResult> {
     const items: AggregatedItem[] = [];
     

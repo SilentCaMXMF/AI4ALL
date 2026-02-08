@@ -310,11 +310,39 @@ export class ScraperService {
     const feedback: ModelFeedback[] = [];
 
     try {
-      const searchQuery = `${modelName} ${provider}`;
-      // This would use StackOverflow API to search
-      // Implementation depends on StackOverflowAPI capabilities
+      if (!this.stackoverflowAPI) {
+        console.warn(`[Scraper]   ⚠️ Stack Overflow API not initialized`);
+        return feedback;
+      }
+
+      console.log(`[Scraper]   → Searching Stack Overflow for "${modelName}"...`);
+      
+      const results = await this.stackoverflowAPI.searchForModel(modelName, provider);
+      
+      for (const item of results.slice(0, 5)) { // Limit to 5 results per model
+        const feedbackItem: ModelFeedback = {
+          id: `so-${item.id}`,
+          platform: 'stackoverflow',
+          type: item.type,
+          title: item.title,
+          content: item.content?.substring(0, 500) || '',
+          author: item.author,
+          timestamp: item.timestamp,
+          url: item.url,
+          metrics: item.metrics,
+          tags: [...(item.tags || []), 'stackoverflow-feedback'],
+          relevance: this.calculateRelevance(item.title + ' ' + (item.content || ''), modelName, provider),
+          sentiment: this.analyzeSentiment(item.title + ' ' + (item.content || ''))
+        };
+        
+        if (feedbackItem.relevance > 0.5) {
+          feedback.push(feedbackItem);
+        }
+      }
+      
+      console.log(`[Scraper]   ✓ Found ${feedback.length} relevant Stack Overflow posts`);
     } catch (error) {
-      console.warn(`[Scraper]   Stack Overflow search error:`, error);
+      console.warn(`[Scraper]   ⚠️ Stack Overflow search error:`, error);
     }
 
     return feedback;
