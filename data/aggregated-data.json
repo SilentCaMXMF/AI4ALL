@@ -1,6 +1,200 @@
 {
   "items": [
     {
+      "id": "github-issue-3911761009",
+      "platform": "github",
+      "type": "issue",
+      "title": "skills-hello-github-actions/issues #1: Exercise: Hello GitHub Actions",
+      "content": "## Hello GitHub Actions\n\n<img alt=\"original github octocat\" src=\"https://octodex.github.com/images/original.png\" align=\"left\" height=\"80px\" />\n\n👋 Hey there @Leo-de-Riv3r! Welcome to your Skills exercise!\n\nCreate and run a GitHub Actions workflow.\n\n---\n\n✨ **This is an interactive, hands-on GitHub Skills exercise!**\n\nAs you complete each step, I’ll leave updates in the comments:\n\n- ✅ Check your work and guide you forward\n- 💡 Share helpful tips and resources\n- 🚀 Celebrate your progress and completion\n\nLet’s get started - good luck and have fun!\n\n<sub>— Mona</sub>\n> <sub> If you encounter any issues along the way please report them [here](https://github.com/skills/hello-github-actions/issues).</sub>",
+      "author": {
+        "name": "github-actions[bot]",
+        "url": "https://github.com/apps/github-actions",
+        "avatar": "https://avatars.githubusercontent.com/in/15368?v=4"
+      },
+      "timestamp": "2026-02-08T02:05:19Z",
+      "url": "https://github.com/Leo-de-Riv3r/skills-hello-github-actions/issues/1",
+      "metrics": {
+        "comments": 15
+      },
+      "tags": [],
+      "raw": {
+        "url": "https://api.github.com/repos/Leo-de-Riv3r/skills-hello-github-actions/issues/1",
+        "repository_url": "https://api.github.com/repos/Leo-de-Riv3r/skills-hello-github-actions",
+        "labels_url": "https://api.github.com/repos/Leo-de-Riv3r/skills-hello-github-actions/issues/1/labels{/name}",
+        "comments_url": "https://api.github.com/repos/Leo-de-Riv3r/skills-hello-github-actions/issues/1/comments",
+        "events_url": "https://api.github.com/repos/Leo-de-Riv3r/skills-hello-github-actions/issues/1/events",
+        "html_url": "https://github.com/Leo-de-Riv3r/skills-hello-github-actions/issues/1",
+        "id": 3911761009,
+        "node_id": "I_kwDORLIc087pKLxx",
+        "number": 1,
+        "title": "Exercise: Hello GitHub Actions",
+        "user": {
+          "login": "github-actions[bot]",
+          "id": 41898282,
+          "node_id": "MDM6Qm90NDE4OTgyODI=",
+          "avatar_url": "https://avatars.githubusercontent.com/in/15368?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/github-actions%5Bbot%5D",
+          "html_url": "https://github.com/apps/github-actions",
+          "followers_url": "https://api.github.com/users/github-actions%5Bbot%5D/followers",
+          "following_url": "https://api.github.com/users/github-actions%5Bbot%5D/following{/other_user}",
+          "gists_url": "https://api.github.com/users/github-actions%5Bbot%5D/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/github-actions%5Bbot%5D/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/github-actions%5Bbot%5D/subscriptions",
+          "organizations_url": "https://api.github.com/users/github-actions%5Bbot%5D/orgs",
+          "repos_url": "https://api.github.com/users/github-actions%5Bbot%5D/repos",
+          "events_url": "https://api.github.com/users/github-actions%5Bbot%5D/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/github-actions%5Bbot%5D/received_events",
+          "type": "Bot",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "labels": [],
+        "state": "closed",
+        "locked": false,
+        "assignee": null,
+        "assignees": [],
+        "milestone": null,
+        "comments": 15,
+        "created_at": "2026-02-08T02:05:19Z",
+        "updated_at": "2026-02-08T02:35:58Z",
+        "closed_at": "2026-02-08T02:35:58Z",
+        "author_association": "CONTRIBUTOR",
+        "active_lock_reason": null,
+        "sub_issues_summary": {
+          "total": 0,
+          "completed": 0,
+          "percent_completed": 0
+        },
+        "issue_dependencies_summary": {
+          "blocked_by": 0,
+          "total_blocked_by": 0,
+          "blocking": 0,
+          "total_blocking": 0
+        },
+        "body": "## Hello GitHub Actions\n\n<img alt=\"original github octocat\" src=\"https://octodex.github.com/images/original.png\" align=\"left\" height=\"80px\" />\n\n👋 Hey there @Leo-de-Riv3r! Welcome to your Skills exercise!\n\nCreate and run a GitHub Actions workflow.\n\n---\n\n✨ **This is an interactive, hands-on GitHub Skills exercise!**\n\nAs you complete each step, I’ll leave updates in the comments:\n\n- ✅ Check your work and guide you forward\n- 💡 Share helpful tips and resources\n- 🚀 Celebrate your progress and completion\n\nLet’s get started - good luck and have fun!\n\n<sub>— Mona</sub>\n> <sub> If you encounter any issues along the way please report them [here](https://github.com/skills/hello-github-actions/issues).</sub>",
+        "reactions": {
+          "url": "https://api.github.com/repos/Leo-de-Riv3r/skills-hello-github-actions/issues/1/reactions",
+          "total_count": 0,
+          "+1": 0,
+          "-1": 0,
+          "laugh": 0,
+          "hooray": 0,
+          "confused": 0,
+          "heart": 0,
+          "rocket": 0,
+          "eyes": 0
+        },
+        "timeline_url": "https://api.github.com/repos/Leo-de-Riv3r/skills-hello-github-actions/issues/1/timeline",
+        "performed_via_github_app": null,
+        "state_reason": "completed",
+        "score": 1
+      }
+    },
+    {
+      "id": "github-issue-3911755162",
+      "platform": "github",
+      "type": "issue",
+      "title": "DailyArXiv/issues #294: Latest 15 Papers - February 08, 2026",
+      "content": "**Please check the [Github](https://github.com/zezhishao/MTS_Daily_ArXiv) page for a better reading experience and more papers.**\n\n## Differentiable Architecture Search\n| **Title** | **Date** | **Comment** |\n| --- | --- | --- |\n| **[Robust MAE-Driven NAS: From Mask Reconstruction to Architecture Innovation](https://arxiv.org/abs/2311.12086v3)** | 2026-01-28 |  |\n| **[Differentiable Architecture Search for Adversarially Robust Quantum Computer Vision](https://arxiv.org/abs/2601.18058v1)** | 2026-01-26 | <details><summary>Publi...</summary><p>Published in Quantum Machine Intelligence</p></details> |\n| **[MGAS: Multi-Granularity Architecture Search for Trade-Off Between Model Effectiveness and Efficiency](https://arxiv.org/abs/2310.15074v4)** | 2025-11-25 |  |\n| **[DARTS-GT: Differentiable Architecture Search for Graph Transformers with Quantifiable Instance-Specific Interpretability Analysis](https://arxiv.org/abs/2510.14336v2)** | 2025-10-30 |  |\n| **[OptiProxy-NAS: Optimization Proxy based End-to-End Neural Architecture Search](https://arxiv.org/abs/2509.05656v1)** | 2025-09-06 |  |\n| **[Large-Scale Model Enabled Semantic Communication Based on Robust Knowledge Distillation](https://arxiv.org/abs/2508.02148v2)** | 2025-08-25 | <details><summary>13 pa...</summary><p>13 pages, 8 figures, 3 tables</p></details> |\n| **[Quantum Long Short-term Memory with Differentiable Architecture Search](https://arxiv.org/abs/2508.14955v1)** | 2025-08-20 | <details><summary>Accep...</summary><p>Accepted by the IEEE International Conference on Quantum Artificial Intelligence (QAI) 2025</p></details> |\n| **[MorphNAS: Differentiable Architecture Search for Morphologically-Aware Multilingual NER](https://arxiv.org/abs/2508.15836v1)** | 2025-08-19 |  |\n| **[RegimeNAS: Regime-Aware Differentiable Architecture Search With Theoretical Guarantees for Financial Trading](https://arxiv.org/abs/2508.11338v1)** | 2025-08-15 |  |\n| **[Architect of the Bits World: Masked Autoregressive Modeling for Circuit Generation Guided by Truth Table](https://arxiv.org/abs/2502.12751v2)** | 2025-07-18 |  |\n| **[DASViT: Differentiable Architecture Search for Vision Transformer](https://arxiv.org/abs/2507.13079v1)** | 2025-07-17 | <details><summary>Accep...</summary><p>Accepted to the International Joint Conference on Neural Networks (IJCNN) 2025</p></details> |\n| **[DNAD: Differentiable Neural Architecture Distillation](https://arxiv.org/abs/2504.20080v1)** | 2025-04-25 |  |\n| **[FX-DARTS: Designing Topology-unconstrained Architectures with Differentiable Architecture Search and Entropy-based Super-network Shrinking](https://arxiv.org/abs/2504.20079v1)** | 2025-04-25 |  |\n| **[Regularizing Differentiable Architecture Search with Smooth Activation](https://arxiv.org/abs/2504.16306v1)** | 2025-04-22 |  |\n| **[EM-DARTS: Hierarchical Differentiable Architecture Search for Eye Movement Recognition](https://arxiv.org/abs/2409.14432v2)** | 2025-01-13 | <details><summary>Submi...</summary><p>Submited to IEEE Transactions on Instrumentation and Measurement</p></details> |\n\n## Neural Architecture Search\n| **Title** | **Date** | **Comment** |\n| --- | --- | --- |\n| **[RF-DETR: Neural Architecture Search for Real-Time Detection Transformers](https://arxiv.org/abs/2511.09554v2)** | 2026-02-03 | <details><summary>This ...</summary><p>This work has been accepted to the International Conference on Learning Representations (ICLR) 2026. Project Page: https://rfdetr.roboflow.com/</p></details> |\n| **[Child Mortality Prediction in Bangladesh: A Decade-Long Validation Study](https://arxiv.org/abs/2602.03957v1)** | 2026-02-03 |  |\n| **[TraceNAS: Zero-shot LLM Pruning via Gradient Trace Correlation](https://arxiv.org/abs/2602.02891v1)** | 2026-02-02 | Preprint |\n| **[Green-NAS: A Global-Scale Multi-Objective Neural Architecture Search for Robust and Efficient Edge-Native Weather Forecasting](https://arxiv.org/abs/2602.00240v1)** | 2026-01-30 |  |\n| **[SQUAD: Scalable Quorum Adaptive Decisions via ensemble of early exit neural networks](https://arxiv.org/abs/2601.22711v1)** | 2026-01-30 |  |\n| **[Predictor-Free and Hardware-Aware Federated Neural Architecture Search via Pareto-Guided Supernet Training](https://arxiv.org/abs/2601.15127v2)** | 2026-01-28 | <details><summary>This ...</summary><p>This paper significantly extends the preliminary work accepted at ESANN 2026. Source Code: https://github.com/bostankhan6/DeepFedNAS</p></details> |\n| **[Robust MAE-Driven NAS: From Mask Reconstruction to Architecture Innovation](https://arxiv.org/abs/2311.12086v3)** | 2026-01-28 |  |\n| **[Quantum Architecture Search with Unsupervised Representation Learning](https://arxiv.org/abs/2401.11576v6)** | 2026-01-25 | <details><summary>12 Pa...</summary><p>12 Pages, quantum architecture search, unsupervised representation learning</p></details> |\n| **[Enhancing ECG Classification Robustness with Lightweight Unsupervised Anomaly Detection Filters](https://arxiv.org/abs/2510.26501v2)** | 2026-01-23 | <details><summary>7 pag...</summary><p>7 pages, LaTeX; Accepted at the 5th IEEE Workshop on Pervasive and Resource-constrained Artificial Intelligence (PeRConAI) 2026; Shortened the text and removed Fig. 2 and Table II, results unchanged; updated faculty name of one author</p></details> |\n| **[Mobile-friendly Image de-noising: Hardware Conscious Optimization for Edge Application](https://arxiv.org/abs/2601.11684v1)** | 2026-01-16 | <details><summary>Accep...</summary><p>Accepted at ICASSP 2025</p></details> |\n| **[Distill-then-Replace: Efficient Task-Specific Hybrid Attention Model Construction](https://arxiv.org/abs/2601.11667v1)** | 2026-01-16 |  |\n| **[Closed-Loop LLM Discovery of Non-Standard Channel Priors in Vision Models](https://arxiv.org/abs/2601.08517v1)** | 2026-01-13 |  |\n| **[Breaking Robustness Barriers in Cognitive Diagnosis: A One-Shot Neural Architecture Search Perspective](https://arxiv.org/abs/2601.04918v1)** | 2026-01-08 | KDD2026, 15 pages |\n| **[FAQNAS: FLOPs-aware Hybrid Quantum Neural Architecture Search using Genetic Algorithm](https://arxiv.org/abs/2511.10062v2)** | 2026-01-08 |  |\n| **[Offline Model-Based Optimization: Comprehensive Review](https://arxiv.org/abs/2503.17286v2)** | 2026-01-06 | <details><summary>Accep...</summary><p>Accepted to TMLR 2026 (Survey Certification)</p></details> |\n\n## DARTS\n| **Title** | **Date** | **Comment** |\n| --- | --- | --- |\n| **[DART-ing Through the Drift: Dynamic Tracing of Knowledge Neurons for Adaptive Inference-Time Pruning](https://arxiv.org/abs/2601.22632v1)** | 2026-01-30 |  |\n| **[DART: Diffusion-Inspired Speculative Decoding for Fast LLM Inference](https://arxiv.org/abs/2601.19278v1)** | 2026-01-27 |  |\n| **[DART: Difficulty-Adaptive Reasoning Truncation for Efficient Large Language Models](https://arxiv.org/abs/2511.01170v2)** | 2025-12-16 |  |\n| **[DARTs: A Dual-Path Robust Framework for Anomaly Detection in High-Dimensional Multivariate Time Series](https://arxiv.org/abs/2512.13735v1)** | 2025-12-14 |  |\n| **[DART: Leveraging Multi-Agent Disagreement for Tool Recruitment in Multimodal Reasoning](https://arxiv.org/abs/2512.07132v1)** | 2025-12-08 | <details><summary>Code:...</summary><p>Code: https://github.com/nsivaku/dart</p></details> |\n| **[Darts Analysis](https://arxiv.org/abs/2511.14537v1)** | 2025-11-18 | 16 pages, 8 figures |\n| **[DARTS-GT: Differentiable Architecture Search for Graph Transformers with Quantifiable Instance-Specific Interpretability Analysis](https://arxiv.org/abs/2510.14336v2)** | 2025-10-30 |  |\n| **[DARTS: A Drone-Based AI-Powered Real-Time Traffic Incident Detection System](https://arxiv.org/abs/2510.26004v1)** | 2025-10-29 | <details><summary>Prepr...</summary><p>Preprint version. This manuscript is currently under review at Transportation Research Part C: Emerging Technologies. The PDF corresponds to the version submitted in June 2025. The main findings of this work were recognized with the Best Intelligent Transportation Systems Paper Award at the 2025 TRB Annual Meeting</p></details> |\n| **[DART: A Structured Dataset of Regulatory Drug Documents in Italian for Clinical NLP](https://arxiv.org/abs/2510.18475v1)** | 2025-10-21 |  |\n| **[DART: Differentiable Dynamic Adaptive Region Tokenizer for Vision Foundation Models](https://arxiv.org/abs/2506.10390v3)** | 2025-09-29 | <details><summary>Code ...</summary><p>Code is available at https://github.com/HCPLab-SYSU/DART</p></details> |\n| **[Hi-DARTS: Hierarchical Dynamically Adapting Reinforcement Trading System](https://arxiv.org/abs/2509.12048v1)** | 2025-09-15 | <details><summary>Accep...</summary><p>Accepted paper at International Conference on ICT Convergence 2025</p></details> |\n| **[DART: Distilling Autoregressive Reasoning to Silent Thought](https://arxiv.org/abs/2506.11752v2)** | 2025-08-28 |  |\n| **[DART: Dual Adaptive Refinement Transfer for Open-Vocabulary Multi-Label Recognition](https://arxiv.org/abs/2508.05585v1)** | 2025-08-07 | <details><summary>Accep...</summary><p>Accepted by ACM MM 2025</p></details> |\n| **[DART-Eval: A Comprehensive DNA Language Model Evaluation Benchmark on Regulatory DNA](https://arxiv.org/abs/2412.05430v2)** | 2025-08-04 | <details><summary>NeurI...</summary><p>NeurIPS Datasets and Benchmarks 2024</p></details> |\n| **[DART: An Automated End-to-End Object Detection Pipeline with Data Diversification, Open-Vocabulary Bounding Box Annotation, Pseudo-Label Review, and Model Training](https://arxiv.org/abs/2407.09174v4)** | 2025-06-22 | <details><summary>Corre...</summary><p>Corrected minor typos; no changes to results or conclusions</p></details> |\n\n## NAS\n| **Title** | **Date** | **Comment** |\n| --- | --- | --- |\n| **[Green-NAS: A Global-Scale Multi-Objective Neural Architecture Search for Robust and Efficient Edge-Native Weather Forecasting](https://arxiv.org/abs/2602.00240v1)** | 2026-01-30 |  |\n| **[Robust MAE-Driven NAS: From Mask Reconstruction to Architecture Innovation](https://arxiv.org/abs/2311.12086v3)** | 2026-01-28 |  |\n| **[NAS-GS: Noise-Aware Sonar Gaussian Splatting](https://arxiv.org/abs/2601.06285v1)** | 2026-01-09 |  |\n| **[Hybrid Convolution and Vision Transformer NAS Search Space for TinyML Image Classification](https://arxiv.org/abs/2511.02992v2)** | 2025-12-31 | <details><summary>Prese...</summary><p>Presented at ITEM workshop co-located with ECML PKDD 2024, Vilnius LT</p></details> |\n| **[NA-DiD: Extending Difference-in-Differences with Capabilities](https://arxiv.org/abs/2507.12690v2)** | 2025-12-22 | <details><summary>I hav...</summary><p>I have received a reviews from a journal, and after reading them I came to the conclusion that this research does not meet novelty threshold for a paper I would like to put in public. I missed some references, which are more relevant to the problem I try to solve and offer a better solution</p></details> |\n| **[LLM-NAS: LLM-driven Hardware-Aware Neural Architecture Search](https://arxiv.org/abs/2510.01472v4)** | 2025-12-04 |  |\n| **[NAS-LoRA: Empowering Parameter-Efficient Fine-Tuning for Visual Foundation Models with Searchable Adaptation](https://arxiv.org/abs/2512.03499v1)** | 2025-12-03 |  |\n| **[DeNAS-ViT: Data Efficient NAS-Optimized Vision Transformer for Ultrasound Image Segmentation](https://arxiv.org/abs/2407.04203v3)** | 2025-11-10 | <details><summary>Accep...</summary><p>Accepted by AAAI-26 Main Technical Track</p></details> |\n| **[SAND: A Self-supervised and Adaptive NAS-Driven Framework for Hardware Trojan Detection](https://arxiv.org/abs/2510.23643v1)** | 2025-10-24 |  |\n| **[GI-NAS: Boosting Gradient Inversion Attacks Through Adaptive Neural Architecture Search](https://arxiv.org/abs/2405.20725v4)** | 2025-10-11 | <details><summary>accep...</summary><p>accepted by IEEE Transactions on Information Forensics and Security (TIFS) 2025</p></details> |\n| **[BioAutoML-NAS: An End-to-End AutoML Framework for Multimodal Insect Classification via Neural Architecture Search on Large-Scale Biodiversity Data](https://arxiv.org/abs/2510.05888v1)** | 2025-10-07 |  |\n| **[CoLLM-NAS: Collaborative Large Language Models for Efficient Knowledge-Guided Neural Architecture Search](https://arxiv.org/abs/2509.26037v1)** | 2025-09-30 |  |\n| **[RAM-NAS: Resource-aware Multiobjective Neural Architecture Search Method for Robot Vision Tasks](https://arxiv.org/abs/2509.20688v1)** | 2025-09-25 | <details><summary>Joint...</summary><p>Joint first authors: Shouren Mao and Minghao Qin. Published in IEEE/RSJ IROS 2024. This arXiv version adds a joint first-authorship note to correct an omission in the IEEE Xplore version. No technical changes. Please cite the IEEE version</p></details> |\n| **[ABG-NAS: Adaptive Bayesian Genetic Neural Architecture Search for Graph Representation Learning](https://arxiv.org/abs/2504.21254v3)** | 2025-09-23 | <details><summary>Accep...</summary><p>Accepted by *Knowledge-Based Systems* (Elsevier), 2025. DOI: https://doi.org/10.1016/j.knosys.2025.114235</p></details> |\n| **[HyperNAS: Enhancing Architecture Representation for NAS Predictor via Hypernetwork](https://arxiv.org/abs/2509.18151v1)** | 2025-09-16 |  |\n\n",
+      "author": {
+        "name": "github-actions[bot]",
+        "url": "https://github.com/apps/github-actions",
+        "avatar": "https://avatars.githubusercontent.com/in/15368?v=4"
+      },
+      "timestamp": "2026-02-08T02:01:44Z",
+      "url": "https://github.com/likeyan666/DailyArXiv/issues/294",
+      "metrics": {
+        "comments": 0
+      },
+      "tags": [
+        "documentation"
+      ],
+      "raw": {
+        "url": "https://api.github.com/repos/likeyan666/DailyArXiv/issues/294",
+        "repository_url": "https://api.github.com/repos/likeyan666/DailyArXiv",
+        "labels_url": "https://api.github.com/repos/likeyan666/DailyArXiv/issues/294/labels{/name}",
+        "comments_url": "https://api.github.com/repos/likeyan666/DailyArXiv/issues/294/comments",
+        "events_url": "https://api.github.com/repos/likeyan666/DailyArXiv/issues/294/events",
+        "html_url": "https://github.com/likeyan666/DailyArXiv/issues/294",
+        "id": 3911755162,
+        "node_id": "I_kwDOObxY487pKKWa",
+        "number": 294,
+        "title": "Latest 15 Papers - February 08, 2026",
+        "user": {
+          "login": "github-actions[bot]",
+          "id": 41898282,
+          "node_id": "MDM6Qm90NDE4OTgyODI=",
+          "avatar_url": "https://avatars.githubusercontent.com/in/15368?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/github-actions%5Bbot%5D",
+          "html_url": "https://github.com/apps/github-actions",
+          "followers_url": "https://api.github.com/users/github-actions%5Bbot%5D/followers",
+          "following_url": "https://api.github.com/users/github-actions%5Bbot%5D/following{/other_user}",
+          "gists_url": "https://api.github.com/users/github-actions%5Bbot%5D/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/github-actions%5Bbot%5D/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/github-actions%5Bbot%5D/subscriptions",
+          "organizations_url": "https://api.github.com/users/github-actions%5Bbot%5D/orgs",
+          "repos_url": "https://api.github.com/users/github-actions%5Bbot%5D/repos",
+          "events_url": "https://api.github.com/users/github-actions%5Bbot%5D/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/github-actions%5Bbot%5D/received_events",
+          "type": "Bot",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "labels": [
+          {
+            "id": 8477568434,
+            "node_id": "LA_kwDOObxY488AAAAB-U1tsg",
+            "url": "https://api.github.com/repos/likeyan666/DailyArXiv/labels/documentation",
+            "name": "documentation",
+            "color": "0075ca",
+            "default": true,
+            "description": "Improvements or additions to documentation"
+          }
+        ],
+        "state": "open",
+        "locked": false,
+        "assignee": null,
+        "assignees": [],
+        "milestone": null,
+        "comments": 0,
+        "created_at": "2026-02-08T02:01:44Z",
+        "updated_at": "2026-02-08T02:01:44Z",
+        "closed_at": null,
+        "author_association": "NONE",
+        "active_lock_reason": null,
+        "sub_issues_summary": {
+          "total": 0,
+          "completed": 0,
+          "percent_completed": 0
+        },
+        "issue_dependencies_summary": {
+          "blocked_by": 0,
+          "total_blocked_by": 0,
+          "blocking": 0,
+          "total_blocking": 0
+        },
+        "body": "**Please check the [Github](https://github.com/zezhishao/MTS_Daily_ArXiv) page for a better reading experience and more papers.**\n\n## Differentiable Architecture Search\n| **Title** | **Date** | **Comment** |\n| --- | --- | --- |\n| **[Robust MAE-Driven NAS: From Mask Reconstruction to Architecture Innovation](https://arxiv.org/abs/2311.12086v3)** | 2026-01-28 |  |\n| **[Differentiable Architecture Search for Adversarially Robust Quantum Computer Vision](https://arxiv.org/abs/2601.18058v1)** | 2026-01-26 | <details><summary>Publi...</summary><p>Published in Quantum Machine Intelligence</p></details> |\n| **[MGAS: Multi-Granularity Architecture Search for Trade-Off Between Model Effectiveness and Efficiency](https://arxiv.org/abs/2310.15074v4)** | 2025-11-25 |  |\n| **[DARTS-GT: Differentiable Architecture Search for Graph Transformers with Quantifiable Instance-Specific Interpretability Analysis](https://arxiv.org/abs/2510.14336v2)** | 2025-10-30 |  |\n| **[OptiProxy-NAS: Optimization Proxy based End-to-End Neural Architecture Search](https://arxiv.org/abs/2509.05656v1)** | 2025-09-06 |  |\n| **[Large-Scale Model Enabled Semantic Communication Based on Robust Knowledge Distillation](https://arxiv.org/abs/2508.02148v2)** | 2025-08-25 | <details><summary>13 pa...</summary><p>13 pages, 8 figures, 3 tables</p></details> |\n| **[Quantum Long Short-term Memory with Differentiable Architecture Search](https://arxiv.org/abs/2508.14955v1)** | 2025-08-20 | <details><summary>Accep...</summary><p>Accepted by the IEEE International Conference on Quantum Artificial Intelligence (QAI) 2025</p></details> |\n| **[MorphNAS: Differentiable Architecture Search for Morphologically-Aware Multilingual NER](https://arxiv.org/abs/2508.15836v1)** | 2025-08-19 |  |\n| **[RegimeNAS: Regime-Aware Differentiable Architecture Search With Theoretical Guarantees for Financial Trading](https://arxiv.org/abs/2508.11338v1)** | 2025-08-15 |  |\n| **[Architect of the Bits World: Masked Autoregressive Modeling for Circuit Generation Guided by Truth Table](https://arxiv.org/abs/2502.12751v2)** | 2025-07-18 |  |\n| **[DASViT: Differentiable Architecture Search for Vision Transformer](https://arxiv.org/abs/2507.13079v1)** | 2025-07-17 | <details><summary>Accep...</summary><p>Accepted to the International Joint Conference on Neural Networks (IJCNN) 2025</p></details> |\n| **[DNAD: Differentiable Neural Architecture Distillation](https://arxiv.org/abs/2504.20080v1)** | 2025-04-25 |  |\n| **[FX-DARTS: Designing Topology-unconstrained Architectures with Differentiable Architecture Search and Entropy-based Super-network Shrinking](https://arxiv.org/abs/2504.20079v1)** | 2025-04-25 |  |\n| **[Regularizing Differentiable Architecture Search with Smooth Activation](https://arxiv.org/abs/2504.16306v1)** | 2025-04-22 |  |\n| **[EM-DARTS: Hierarchical Differentiable Architecture Search for Eye Movement Recognition](https://arxiv.org/abs/2409.14432v2)** | 2025-01-13 | <details><summary>Submi...</summary><p>Submited to IEEE Transactions on Instrumentation and Measurement</p></details> |\n\n## Neural Architecture Search\n| **Title** | **Date** | **Comment** |\n| --- | --- | --- |\n| **[RF-DETR: Neural Architecture Search for Real-Time Detection Transformers](https://arxiv.org/abs/2511.09554v2)** | 2026-02-03 | <details><summary>This ...</summary><p>This work has been accepted to the International Conference on Learning Representations (ICLR) 2026. Project Page: https://rfdetr.roboflow.com/</p></details> |\n| **[Child Mortality Prediction in Bangladesh: A Decade-Long Validation Study](https://arxiv.org/abs/2602.03957v1)** | 2026-02-03 |  |\n| **[TraceNAS: Zero-shot LLM Pruning via Gradient Trace Correlation](https://arxiv.org/abs/2602.02891v1)** | 2026-02-02 | Preprint |\n| **[Green-NAS: A Global-Scale Multi-Objective Neural Architecture Search for Robust and Efficient Edge-Native Weather Forecasting](https://arxiv.org/abs/2602.00240v1)** | 2026-01-30 |  |\n| **[SQUAD: Scalable Quorum Adaptive Decisions via ensemble of early exit neural networks](https://arxiv.org/abs/2601.22711v1)** | 2026-01-30 |  |\n| **[Predictor-Free and Hardware-Aware Federated Neural Architecture Search via Pareto-Guided Supernet Training](https://arxiv.org/abs/2601.15127v2)** | 2026-01-28 | <details><summary>This ...</summary><p>This paper significantly extends the preliminary work accepted at ESANN 2026. Source Code: https://github.com/bostankhan6/DeepFedNAS</p></details> |\n| **[Robust MAE-Driven NAS: From Mask Reconstruction to Architecture Innovation](https://arxiv.org/abs/2311.12086v3)** | 2026-01-28 |  |\n| **[Quantum Architecture Search with Unsupervised Representation Learning](https://arxiv.org/abs/2401.11576v6)** | 2026-01-25 | <details><summary>12 Pa...</summary><p>12 Pages, quantum architecture search, unsupervised representation learning</p></details> |\n| **[Enhancing ECG Classification Robustness with Lightweight Unsupervised Anomaly Detection Filters](https://arxiv.org/abs/2510.26501v2)** | 2026-01-23 | <details><summary>7 pag...</summary><p>7 pages, LaTeX; Accepted at the 5th IEEE Workshop on Pervasive and Resource-constrained Artificial Intelligence (PeRConAI) 2026; Shortened the text and removed Fig. 2 and Table II, results unchanged; updated faculty name of one author</p></details> |\n| **[Mobile-friendly Image de-noising: Hardware Conscious Optimization for Edge Application](https://arxiv.org/abs/2601.11684v1)** | 2026-01-16 | <details><summary>Accep...</summary><p>Accepted at ICASSP 2025</p></details> |\n| **[Distill-then-Replace: Efficient Task-Specific Hybrid Attention Model Construction](https://arxiv.org/abs/2601.11667v1)** | 2026-01-16 |  |\n| **[Closed-Loop LLM Discovery of Non-Standard Channel Priors in Vision Models](https://arxiv.org/abs/2601.08517v1)** | 2026-01-13 |  |\n| **[Breaking Robustness Barriers in Cognitive Diagnosis: A One-Shot Neural Architecture Search Perspective](https://arxiv.org/abs/2601.04918v1)** | 2026-01-08 | KDD2026, 15 pages |\n| **[FAQNAS: FLOPs-aware Hybrid Quantum Neural Architecture Search using Genetic Algorithm](https://arxiv.org/abs/2511.10062v2)** | 2026-01-08 |  |\n| **[Offline Model-Based Optimization: Comprehensive Review](https://arxiv.org/abs/2503.17286v2)** | 2026-01-06 | <details><summary>Accep...</summary><p>Accepted to TMLR 2026 (Survey Certification)</p></details> |\n\n## DARTS\n| **Title** | **Date** | **Comment** |\n| --- | --- | --- |\n| **[DART-ing Through the Drift: Dynamic Tracing of Knowledge Neurons for Adaptive Inference-Time Pruning](https://arxiv.org/abs/2601.22632v1)** | 2026-01-30 |  |\n| **[DART: Diffusion-Inspired Speculative Decoding for Fast LLM Inference](https://arxiv.org/abs/2601.19278v1)** | 2026-01-27 |  |\n| **[DART: Difficulty-Adaptive Reasoning Truncation for Efficient Large Language Models](https://arxiv.org/abs/2511.01170v2)** | 2025-12-16 |  |\n| **[DARTs: A Dual-Path Robust Framework for Anomaly Detection in High-Dimensional Multivariate Time Series](https://arxiv.org/abs/2512.13735v1)** | 2025-12-14 |  |\n| **[DART: Leveraging Multi-Agent Disagreement for Tool Recruitment in Multimodal Reasoning](https://arxiv.org/abs/2512.07132v1)** | 2025-12-08 | <details><summary>Code:...</summary><p>Code: https://github.com/nsivaku/dart</p></details> |\n| **[Darts Analysis](https://arxiv.org/abs/2511.14537v1)** | 2025-11-18 | 16 pages, 8 figures |\n| **[DARTS-GT: Differentiable Architecture Search for Graph Transformers with Quantifiable Instance-Specific Interpretability Analysis](https://arxiv.org/abs/2510.14336v2)** | 2025-10-30 |  |\n| **[DARTS: A Drone-Based AI-Powered Real-Time Traffic Incident Detection System](https://arxiv.org/abs/2510.26004v1)** | 2025-10-29 | <details><summary>Prepr...</summary><p>Preprint version. This manuscript is currently under review at Transportation Research Part C: Emerging Technologies. The PDF corresponds to the version submitted in June 2025. The main findings of this work were recognized with the Best Intelligent Transportation Systems Paper Award at the 2025 TRB Annual Meeting</p></details> |\n| **[DART: A Structured Dataset of Regulatory Drug Documents in Italian for Clinical NLP](https://arxiv.org/abs/2510.18475v1)** | 2025-10-21 |  |\n| **[DART: Differentiable Dynamic Adaptive Region Tokenizer for Vision Foundation Models](https://arxiv.org/abs/2506.10390v3)** | 2025-09-29 | <details><summary>Code ...</summary><p>Code is available at https://github.com/HCPLab-SYSU/DART</p></details> |\n| **[Hi-DARTS: Hierarchical Dynamically Adapting Reinforcement Trading System](https://arxiv.org/abs/2509.12048v1)** | 2025-09-15 | <details><summary>Accep...</summary><p>Accepted paper at International Conference on ICT Convergence 2025</p></details> |\n| **[DART: Distilling Autoregressive Reasoning to Silent Thought](https://arxiv.org/abs/2506.11752v2)** | 2025-08-28 |  |\n| **[DART: Dual Adaptive Refinement Transfer for Open-Vocabulary Multi-Label Recognition](https://arxiv.org/abs/2508.05585v1)** | 2025-08-07 | <details><summary>Accep...</summary><p>Accepted by ACM MM 2025</p></details> |\n| **[DART-Eval: A Comprehensive DNA Language Model Evaluation Benchmark on Regulatory DNA](https://arxiv.org/abs/2412.05430v2)** | 2025-08-04 | <details><summary>NeurI...</summary><p>NeurIPS Datasets and Benchmarks 2024</p></details> |\n| **[DART: An Automated End-to-End Object Detection Pipeline with Data Diversification, Open-Vocabulary Bounding Box Annotation, Pseudo-Label Review, and Model Training](https://arxiv.org/abs/2407.09174v4)** | 2025-06-22 | <details><summary>Corre...</summary><p>Corrected minor typos; no changes to results or conclusions</p></details> |\n\n## NAS\n| **Title** | **Date** | **Comment** |\n| --- | --- | --- |\n| **[Green-NAS: A Global-Scale Multi-Objective Neural Architecture Search for Robust and Efficient Edge-Native Weather Forecasting](https://arxiv.org/abs/2602.00240v1)** | 2026-01-30 |  |\n| **[Robust MAE-Driven NAS: From Mask Reconstruction to Architecture Innovation](https://arxiv.org/abs/2311.12086v3)** | 2026-01-28 |  |\n| **[NAS-GS: Noise-Aware Sonar Gaussian Splatting](https://arxiv.org/abs/2601.06285v1)** | 2026-01-09 |  |\n| **[Hybrid Convolution and Vision Transformer NAS Search Space for TinyML Image Classification](https://arxiv.org/abs/2511.02992v2)** | 2025-12-31 | <details><summary>Prese...</summary><p>Presented at ITEM workshop co-located with ECML PKDD 2024, Vilnius LT</p></details> |\n| **[NA-DiD: Extending Difference-in-Differences with Capabilities](https://arxiv.org/abs/2507.12690v2)** | 2025-12-22 | <details><summary>I hav...</summary><p>I have received a reviews from a journal, and after reading them I came to the conclusion that this research does not meet novelty threshold for a paper I would like to put in public. I missed some references, which are more relevant to the problem I try to solve and offer a better solution</p></details> |\n| **[LLM-NAS: LLM-driven Hardware-Aware Neural Architecture Search](https://arxiv.org/abs/2510.01472v4)** | 2025-12-04 |  |\n| **[NAS-LoRA: Empowering Parameter-Efficient Fine-Tuning for Visual Foundation Models with Searchable Adaptation](https://arxiv.org/abs/2512.03499v1)** | 2025-12-03 |  |\n| **[DeNAS-ViT: Data Efficient NAS-Optimized Vision Transformer for Ultrasound Image Segmentation](https://arxiv.org/abs/2407.04203v3)** | 2025-11-10 | <details><summary>Accep...</summary><p>Accepted by AAAI-26 Main Technical Track</p></details> |\n| **[SAND: A Self-supervised and Adaptive NAS-Driven Framework for Hardware Trojan Detection](https://arxiv.org/abs/2510.23643v1)** | 2025-10-24 |  |\n| **[GI-NAS: Boosting Gradient Inversion Attacks Through Adaptive Neural Architecture Search](https://arxiv.org/abs/2405.20725v4)** | 2025-10-11 | <details><summary>accep...</summary><p>accepted by IEEE Transactions on Information Forensics and Security (TIFS) 2025</p></details> |\n| **[BioAutoML-NAS: An End-to-End AutoML Framework for Multimodal Insect Classification via Neural Architecture Search on Large-Scale Biodiversity Data](https://arxiv.org/abs/2510.05888v1)** | 2025-10-07 |  |\n| **[CoLLM-NAS: Collaborative Large Language Models for Efficient Knowledge-Guided Neural Architecture Search](https://arxiv.org/abs/2509.26037v1)** | 2025-09-30 |  |\n| **[RAM-NAS: Resource-aware Multiobjective Neural Architecture Search Method for Robot Vision Tasks](https://arxiv.org/abs/2509.20688v1)** | 2025-09-25 | <details><summary>Joint...</summary><p>Joint first authors: Shouren Mao and Minghao Qin. Published in IEEE/RSJ IROS 2024. This arXiv version adds a joint first-authorship note to correct an omission in the IEEE Xplore version. No technical changes. Please cite the IEEE version</p></details> |\n| **[ABG-NAS: Adaptive Bayesian Genetic Neural Architecture Search for Graph Representation Learning](https://arxiv.org/abs/2504.21254v3)** | 2025-09-23 | <details><summary>Accep...</summary><p>Accepted by *Knowledge-Based Systems* (Elsevier), 2025. DOI: https://doi.org/10.1016/j.knosys.2025.114235</p></details> |\n| **[HyperNAS: Enhancing Architecture Representation for NAS Predictor via Hypernetwork](https://arxiv.org/abs/2509.18151v1)** | 2025-09-16 |  |\n\n",
+        "reactions": {
+          "url": "https://api.github.com/repos/likeyan666/DailyArXiv/issues/294/reactions",
+          "total_count": 0,
+          "+1": 0,
+          "-1": 0,
+          "laugh": 0,
+          "hooray": 0,
+          "confused": 0,
+          "heart": 0,
+          "rocket": 0,
+          "eyes": 0
+        },
+        "timeline_url": "https://api.github.com/repos/likeyan666/DailyArXiv/issues/294/timeline",
+        "performed_via_github_app": null,
+        "state_reason": null,
+        "score": 1
+      }
+    },
+    {
       "id": "github-repo-1148524149",
       "platform": "github",
       "type": "repository",
@@ -3031,9 +3225,9 @@
       "timestamp": "2026-02-07T21:58:58.000Z",
       "url": "https://stackoverflow.com/questions/79885085/telegram-newmessage-event-handler-not-firing-for-large-supergroups-gramjs",
       "metrics": {
-        "upvotes": -4,
+        "upvotes": -5,
         "comments": 0,
-        "views": 21
+        "views": 24
       },
       "tags": [
         "javascript",
@@ -3050,7 +3244,7 @@
         ],
         "owner": {
           "account_id": 4111943,
-          "reputation": 27,
+          "reputation": 25,
           "user_id": 3374544,
           "user_type": "registered",
           "profile_image": "https://graph.facebook.com/1554216215/picture?type=large",
@@ -3058,9 +3252,9 @@
           "link": "https://stackoverflow.com/users/3374544/user3374544"
         },
         "is_answered": false,
-        "view_count": 21,
+        "view_count": 24,
         "answer_count": 0,
-        "score": -4,
+        "score": -5,
         "last_activity_date": 1770501538,
         "creation_date": 1770501538,
         "question_id": 79885085,
@@ -3897,7 +4091,7 @@
       "metrics": {
         "upvotes": 0,
         "comments": 0,
-        "views": 18
+        "views": 19
       },
       "tags": [
         "typescript",
@@ -3920,7 +4114,7 @@
           "link": "https://stackoverflow.com/users/30343441/elliot-datsomor"
         },
         "is_answered": false,
-        "view_count": 18,
+        "view_count": 19,
         "answer_count": 0,
         "score": 0,
         "last_activity_date": 1770498633,
@@ -5728,7 +5922,7 @@
       "metrics": {
         "upvotes": -2,
         "comments": 0,
-        "views": 46
+        "views": 48
       },
       "tags": [
         "javascript",
@@ -5750,7 +5944,7 @@
           "link": "https://stackoverflow.com/users/4512005/razvan-zamfir"
         },
         "is_answered": false,
-        "view_count": 46,
+        "view_count": 48,
         "closed_date": 1770504207,
         "answer_count": 0,
         "score": -2,
@@ -7086,7 +7280,7 @@
       "metrics": {
         "upvotes": -1,
         "comments": 0,
-        "views": 36
+        "views": 37
       },
       "tags": [
         "javascript",
@@ -7111,7 +7305,7 @@
           "link": "https://stackoverflow.com/users/8103934/bustinout"
         },
         "is_answered": false,
-        "view_count": 36,
+        "view_count": 37,
         "answer_count": 0,
         "score": -1,
         "last_activity_date": 1770486800,
@@ -7582,7 +7776,7 @@
       "metrics": {
         "upvotes": 0,
         "comments": 0,
-        "views": 29
+        "views": 30
       },
       "tags": [
         "javascript",
@@ -7609,7 +7803,7 @@
           "link": "https://stackoverflow.com/users/15927992/literallycode"
         },
         "is_answered": false,
-        "view_count": 29,
+        "view_count": 30,
         "answer_count": 0,
         "score": 0,
         "last_activity_date": 1770471336,
@@ -7920,7 +8114,7 @@
       "metrics": {
         "upvotes": 1,
         "comments": 1,
-        "views": 30
+        "views": 32
       },
       "tags": [
         "typescript",
@@ -7942,7 +8136,7 @@
           "link": "https://stackoverflow.com/users/985454/qwerty"
         },
         "is_answered": false,
-        "view_count": 30,
+        "view_count": 32,
         "answer_count": 1,
         "score": 1,
         "last_activity_date": 1770444332,
@@ -8422,5 +8616,5 @@
       }
     }
   ],
-  "lastUpdated": "2026-02-08T00:56:26.425Z"
+  "lastUpdated": "2026-02-08T02:51:14.590Z"
 }
