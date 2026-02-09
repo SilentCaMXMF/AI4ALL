@@ -1,5 +1,5 @@
-import { BasePlatformAPI } from '../types/index.js';
-import type { AggregatedItem, FetchOptions, FetchResult, Platform } from '../types/index.js';
+import { BasePlatformAPI } from '../types';
+import type { AggregatedItem, FetchOptions, FetchResult, Platform } from '../types';
 
 interface DiscordMessage {
   id: string;

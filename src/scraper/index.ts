@@ -2,7 +2,14 @@ import { ModelsDevAPI } from '../api/modelsdev.js';
 import { GitHubAPI } from '../api/github.js';
 import { RedditAPI } from '../api/reddit.js';
 import { StackOverflowAPI } from '../api/stackoverflow.js';
+<<<<<<< Updated upstream
 import type { AggregatedItem, ModelWithFeedback, ModelFeedback, PlatformConfig, FetchOptions } from '../types/index.js';
+=======
+import { DiscordAPI } from '../api/discord.js';
+import { XAPI } from '../api/x.js';
+import { ModelsDevAPI } from '../api/modelsdev.js';
+import type { AggregatedItem, PlatformConfig, FetchOptions } from '../types';
+>>>>>>> Stashed changes
 import { DataStore } from '../data/store.js';
 
 export interface ScraperConfig extends PlatformConfig {
