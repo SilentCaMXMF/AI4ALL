@@ -237,15 +237,15 @@ export class ModelsDevService {
   }
 
   /**
-   * Filter for free models only
+   * Filter for free models only (input cost = 0 AND output cost = 0)
    */
   private filterFreeModels(models: Array<ModelsDevModel & { providerId: string; providerName: string }>): typeof models {
     return models.filter(model => {
       const inputCost = model.cost?.input !== undefined ? model.cost.input : model.inputCost;
       const outputCost = model.cost?.output !== undefined ? model.cost.output : model.outputCost;
-      
-      return (inputCost === 0 || inputCost === undefined || inputCost === null) &&
-             (outputCost === 0 || outputCost === undefined || outputCost === null);
+
+      // Strict filter: both input and output must be exactly 0
+      return inputCost === 0 && outputCost === 0;
     });
   }
 
@@ -287,8 +287,8 @@ export class ModelsDevService {
       model.family ? `Family: ${model.family}` : null
     ].filter(Boolean);
 
-    const isFree = (inputCost === 0 || inputCost === undefined || inputCost === null) &&
-                   (outputCost === 0 || outputCost === undefined || outputCost === null);
+    // Strict free model definition: both input and output cost must be exactly 0
+    const isFree = inputCost === 0 && outputCost === 0;
 
     return {
       id: `modelsdev-${model.id || `${model.providerId}-${model.modelId}`}`,
