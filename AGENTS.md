@@ -1,31 +1,32 @@
 # AI4ALL Development Guidelines
 
+This file provides guidelines and commands for AI coding agents working on the AI4ALL project.
+
 ## Build, Lint, and Test Commands
 
+### Core Development
 ```bash
-# Development
-npm run dev                    # Start Next.js development server
-npm run build                  # Build for production
-npm run start                  # Start production server
+npm run dev              # Start Next.js development server
+npm run build            # Build for production
+npm run start            # Start production server
+```
 
-# Scraper Commands
-npm run scrape                 # Run full scraper
-npm run scrape:github          # Scrape GitHub only
-npm run scrape:reddit          # Scrape Reddit only
-npm run scrape:stackoverflow   # Scrape Stack Overflow only
+### 2-Phase Scraper Commands
+```bash
+npm run scrape           # Run full 2-phase scraper with verification
+npm run scrape:modelsdev  # Phase 1 only - fetch models from models.dev
+npm run scrape:verify    # Phase 2 only - verify existing models
+npm run schedule        # Run GitHub distribution scheduler
+```
 
-# Scheduling
-npm run schedule               # Run GitHub distribution scheduler
-
-# Code Quality
-npm run lint                   # Run ESLint on .ts/.tsx files
-npm run typecheck              # Type-check without emitting
-npm run test                   # Run all tests
-npm run test -- src/file.test.ts  # Run single test file (vitest)
-npm run test -- --run          # Run tests once (no watch mode)
-
-# TypeScript
-npx tsc --noEmit               # Type-check only
+### Code Quality
+```bash
+npm run lint            # Run ESLint on .ts/.tsx files
+npm run typecheck       # Type-check without emitting
+npm run test            # Run all tests (vitest)
+npm run test -- src/file.test.ts  # Run single test file
+npm run test -- --run   # Run tests once (no watch mode)
+npx tsc --noEmit       # Type-check only
 ```
 
 ## Code Style Guidelines
@@ -59,7 +60,7 @@ import { AggregatedItem } from '../types/index.js';
 - Never use `any` for error types; use `unknown` and type guards
 - Wrap async operations in try/catch blocks
 - Create typed error objects with platform context
-- Log errors with `[platform] prefix for filtering
+- Log errors with `[platform]` prefix for filtering
 
 ```typescript
 catch (error) {
@@ -74,119 +75,147 @@ catch (error) {
 - Use `async/await` over raw promises
 - Handle promise rejections with try/catch
 
-### Platform Architecture
-- Each platform API extends `BasePlatformAPI`
-- Implement `fetchItems(options?: FetchOptions): Promise<FetchResult>`
-- Respect rate limits: minimum 1 second between requests
-- Use unified `AggregatedItem` format for all platforms
+### 2-Phase Scraping Architecture
 
-### Data Types
+**Phase 1 - Model Discovery:**
+- Fetch models from models.dev API
+- Filter for 0-cost models (input = 0 AND output = 0)
+- Store in aggregated database
+
+**Phase 2 - Social Verification:**
+- Search GitHub, Stack Overflow for model mentions
+- Analyze sentiment (positive/negative/neutral)
+- Calculate verification score (0-100%)
+- Flag common issues (rate limits, availability)
+
+**Data Types:**
 ```typescript
 export type Platform = 'github' | 'reddit' | 'stackoverflow' | 'discord' | 'x' | 'modelsdev';
 export type ContentType = 'repository' | 'issue' | 'post' | 'comment' | 'question' | 'answer' | 'model';
+
+interface FeedbackSummary {
+  total: number;
+  positive: number;
+  negative: number;
+  neutral: number;
+  verificationScore: number;      // 0-100%
+  verificationLevel: string;       // 'confirmed', 'questioned', 'unknown'
+  availabilityStatus: 'confirmed' | 'questioned' | 'unknown';
+  commonIssues: string[];
+}
 ```
 
 ### File Organization
 - `src/api/` - Platform API implementations
-- `src/scraper/` - Scraper orchestration
+- `src/scraper/` - 2-phase scraper orchestration
 - `src/types/` - TypeScript interfaces and types
 - `src/data/` - Data storage and persistence
 - `src/app/` - Next.js App Router pages
-- `public/` - Static assets
+- `src/services/` - Core service modules
+- `src/utils/` - Utility functions
+- `data/` - Aggregated data files
 
 ### Console Logging
 - Use structured logs with prefixes: `[Scraper]`, `[GitHub]`, etc.
 - Prefix success with `✓`, errors with `✗`
 - Log operation start/end with platform name
+- Use `console.warn` for non-critical issues, `console.error` for failures
 
 ### General Rules
 - No comments unless explaining complex business logic
 - Keep functions small and focused (< 50 lines when possible)
 - Use early returns to reduce nesting
 - Destructure objects for cleaner parameter handling
-- Use `console.warn` for non-critical issues, `console.error` for failures
 
-## Planning and Task Management
+## Raspberry Pi Deployment
 
-This project uses the **opencode-planning-toolkit** plugin for structured task management. Add to `opencode.json`:
-```json
-{"plugins": ["@howaboua/opencode-planning-toolkit@latest"]}
+**Live URL:** https://freeai4all.duckdns.org
+
+**Infrastructure:**
+- Raspberry Pi 3+ with Nginx reverse proxy
+- DuckDNS for dynamic DNS (updates every 5 minutes)
+- Let's Encrypt SSL certificates
+- GitHub Actions for hourly data updates
+
+**Commands:**
+```bash
+# Check services
+sudo systemctl status nginx
+sudo systemctl status ai4all-data-server
+
+# View logs
+sudo tail -f /var/log/nginx/access.log
+
+# Update data
+cd ~/ai4all/AI4ALL && npm run scrape
 ```
 
-### Available Tools
-- **`create_spec`** - Create a reusable specification (repo-level or feature-specific)
-- **`create_plan`** - Create an actionable work plan with implementation steps (min 5)
-- **`append_spec`** - Link an existing spec to a plan
-- **`read_plan`** - Read a plan with all linked spec content expanded inline
-- **`mark_plan_done`** - Mark a plan as complete (status: active → done)
+## Testing Guidelines
 
-### File Organization
+### Test Structure
+- Place tests in `*.test.ts` or `*.spec.ts` files
+- Use Vitest framework
+- Mock external APIs (GitHub, Stack Overflow, etc.)
+- Test both phases of scraping independently
+
+### Test Examples
+```typescript
+// Test Phase 1 - Model Discovery
+test('filters 0-cost models correctly', () => {
+  const models = [/* test data */];
+  const freeModels = filterZeroCostModels(models);
+  expect(freeModels).toHaveLength(12);
+});
+
+// Test Phase 2 - Verification
+test('calculates verification score', () => {
+  const feedback = [{ sentiment: 'positive' }, { sentiment: 'negative' }];
+  const score = calculateVerificationScore(feedback);
+  expect(score).toBe(50);
+});
 ```
-docs/
-├── specs/     # Reusable specifications (*.md)
-└── plans/     # Work plans (*.md)
+
+## Documentation Standards
+
+- Update README.md with major feature changes
+- Document breaking changes in commit messages
+- Include code examples in complex logic comments
+- Keep AGENTS.md updated with new commands
+
+## Version Control
+
+- Use conventional commits: `<emoji> <type>: <description>`
+- Commit types: feat, fix, docs, style, refactor, perf, test, chore
+- Push to `main` branch after successful tests
+- Link issues in commit messages with `#123`
+
+## Platform API Requirements
+
+Each platform API must implement:
+```typescript
+interface BasePlatformAPI {
+  fetchItems(options?: FetchOptions): Promise<FetchResult>;
+  rateLimit(): Promise<void>;
+  handleError(error: unknown, context: string): Error;
+}
 ```
 
-### Workflow
-1. Create Specs for reusable standards/patterns (`create_spec`)
-2. Create Plans with step-by-step implementation (`create_plan`)
-3. Link Specs to Plans (`append_spec`)
-4. Read full context before work (`read_plan`)
-5. Mark complete when done (`mark_plan_done`)
+### Platform-Specific Features
+- **modelsdev.ts**: Filter for 0-cost models, track price changes
+- **github.ts**: Search issues, discussions, repositories
+- **stackoverflow.ts**: Search questions with AI/tags
+- **reddit.ts**: Fetch subreddit posts and comments
+- **discord.ts**: Fetch channel messages
+- **x.ts**: Search tweets with rate limiting
 
----
+## Known Issues
 
-## Roadmap: GitHub Actions Workflow Fixes
+- TypeScript interface conflicts in `models-dev-service.ts`
+- ESLint warnings for unused imports (72 errors, 14 warnings)
+- GitHub Actions workflow needs token configuration
 
-### Status: Both workflows are 100% non-functional (30+ failed runs)
+## Additional Resources
 
----
-
-### CRITICAL - Phase 1: ESLint Configuration
-
-- [ ] **ESLint-001**: Create ESLint configuration file (`.eslintrc.js` or `eslint.config.js`)
-  - Required before test workflow can pass
-  - Command: `npm init @eslint/config`
-  - Affects: `.github/workflows/test.yml` lint step
-
----
-
-### CRITICAL - Phase 2: TypeScript Import Extensions
-
-- [ ] **TS-IMP-001**: Fix import extensions in `src/api/github.ts` - add `.js` to imports
-- [ ] **TS-IMP-002**: Fix import extensions in `src/api/discord.ts` - add `.js` to imports
-- [ ] **TS-IMP-003**: Fix import extensions in `src/api/reddit.ts` - add `.js` to imports
-- [ ] **TS-IMP-004**: Fix import extensions in `src/api/stackoverflow.ts` - add `.js` to imports
-- [ ] **TS-IMP-005**: Fix import extensions in `src/api/x.ts` - add `.js` to imports
-- [ ] **TS-IMP-006**: Fix import extensions in `src/api/modelsdev.ts` - add `.js` to imports
-- [ ] **TS-IMP-007**: Fix import extensions in `src/index.ts` - add `.js` to imports
-- [ ] **TS-IMP-008**: Fix import extensions in `src/scraper/cli.ts` - add `.js` to imports
-- [ ] **TS-IMP-009**: Fix import extensions in `src/scraper/index.ts` - add `.js` to imports
-
-**Alternative**: Change `moduleResolution` from `'node16'` to `'bundler'` in `tsconfig.json` or `tsconfig.scraper.json`
-
----
-
-### CRITICAL - Phase 3: TypeScript Type Definitions
-
-- [ ] **TS-TYPE-001**: Add `rateLimit()` method to `GitHubAPI` type interface
-- [ ] **TS-TYPE-002**: Add `rateLimit()` method to `DiscordAPI` type interface
-- [ ] **TS-TYPE-003**: Add `rateLimit()` method to `RedditAPI` type interface
-- [ ] **TS-TYPE-004**: Add `rateLimit()` method to `StackOverflowAPI` type interface
-- [ ] **TS-TYPE-005**: Add `rateLimit()` method to `XAPI` type interface
-- [ ] **TS-TYPE-006**: Add `rateLimit()` method to `ModelsDevAPI` type interface
-- [ ] **TS-TYPE-007**: Add `handleError()` method to `GitHubAPI` type interface
-- [ ] **TS-TYPE-008**: Add `handleError()` method to `DiscordAPI` type interface
-- [ ] **TS-TYPE-009**: Add `handleError()` method to `RedditAPI` type interface
-- [ ] **TS-TYPE-010**: Add `handleError()` method to `StackOverflowAPI` type interface
-- [ ] **TS-TYPE-011**: Add `handleError()` method to `XAPI` type interface
-- [ ] **TS-TYPE-012**: Add `handleError()` method to `ModelsDevAPI` type interface
-- [ ] **TS-TYPE-013**: Add platform properties to `ScraperConfig` interface (`github`, `reddit`, `stackoverflow`, `discord`, `x`)
-
----
-
-### HIGH PRIORITY - Phase 4: Workflow Verification
-
-- [ ] **WF-001**: Run test workflow and verify linting passes
-- [ ] **WF-002**: Run scrape-and-deploy workflow and verify compilation passes
-- [ ] **WF-003**: Verify both workflows complete successfully with no errors
+- **README.md**: Complete project overview and deployment guide
+- **PUBLIC-ACCESS-GUIDE.md**: Raspberry Pi hosting setup
+- **ROADMAP.md**: Original project roadmap
