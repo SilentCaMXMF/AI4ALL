@@ -80,8 +80,12 @@ export abstract class BasePlatformAPI {
   }
 
   protected handleError(error: unknown, context: string): Error {
-    console.error(`[${this.platform}] Error in ${context}:`, error);
-    return new Error(`[${this.platform}] ${context}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    // Create basic error without importing to avoid circular dependencies
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    const platformError = new Error(`[${this.platform}] ${context}: ${errorMessage}`);
+    platformError.name = 'PlatformError';
+    console.error(`✗ [${this.platform}] ${context}: ${errorMessage}`);
+    return platformError;
   }
 }
 
@@ -120,6 +124,8 @@ export interface ModelWithFeedback extends AggregatedItem {
     lastMention: string;
     availabilityStatus: 'confirmed' | 'questioned' | 'unknown';
     commonIssues: string[];
+    verificationLevel: string;
+    verificationScore: number;
   };
 }
 

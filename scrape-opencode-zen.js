@@ -1,14 +1,39 @@
-import { writeFile, mkdir } from 'fs/promises';
+import { ModelsDevService } from './src/services/models-dev-service.js';
+import { createHeader } from './src/utils/console-utils.js';
 
 async function fetchOpencodeZenModels() {
   console.log('[Scraper] Fetching Opencode Zen models from models.dev...');
   
   try {
-    const response = await fetch('https://models.dev/api.json', {
-      headers: {
-        'Accept': 'application/json',
-        'User-Agent': 'AI4ALL-ModelScraper/1.0'
-      }
+    const service = new ModelsDevService();
+    
+    // Create structured model data
+    const modelData = await service.createModelData(['opencode', 'zen']);
+    
+    // Log provider summary
+    service.logProviderSummary(modelData.models);
+    
+    // Save to file
+    await service.saveModelData('opencode-zen-models.json', modelData);
+    
+    // Show summary
+    createHeader('Opencode Zen Free Models Summary');
+    
+    console.log(`Total API Providers:       ${modelData.summary.totalProviders.toString().padStart(3)}`);
+    console.log(`Total Models in API:       ${modelData.summary.totalModels.toString().padStart(3)}`);
+    console.log(`Opencode/Zen Models:       ${modelData.summary.opencodeZenModels.toString().padStart(3)}`);
+    console.log(`FREE Models Available:     ${modelData.summary.freeModels.toString().padStart(3)}`);
+    console.log(`Unique Providers:          ${modelData.summary.providerCount.toString().padStart(3)}`);
+    console.log();
+    
+    return modelData;
+    
+  } catch (error) {
+    console.error('[Scraper] Error:', error);
+    throw error;
+  }
+}
+}
     });
 
     if (!response.ok) {
@@ -136,15 +161,14 @@ async function fetchOpencodeZenModels() {
     console.log('\n[Scraper] ✅ Saved to data/opencode-zen-models.json');
     
     // Show summary
-    console.log('\n╔════════════════════════════════════════════════════════╗');
-    console.log('║           OPENCODE ZEN FREE MODELS SUMMARY             ║');
-    console.log('╠════════════════════════════════════════════════════════╣');
-    console.log(`║ Total API Providers:       ${modelData.summary.totalProviders.toString().padStart(3)}                  ║`);
-    console.log(`║ Total Models in API:       ${modelData.summary.totalModels.toString().padStart(3)}                  ║`);
-    console.log(`║ Opencode/Zen Models:       ${modelData.summary.opencodeZenModels.toString().padStart(3)}                  ║`);
-    console.log(`║ FREE Models Available:     ${modelData.summary.freeModels.toString().padStart(3)}                  ║`);
-    console.log(`║ Unique Providers:          ${modelData.summary.providerCount.toString().padStart(3)}                  ║`);
-    console.log('╚════════════════════════════════════════════════════════╝');
+    createHeader('Opencode Zen Free Models Summary');
+    
+    console.log(`Total API Providers:       ${modelData.summary.totalProviders.toString().padStart(3)}`);
+    console.log(`Total Models in API:       ${modelData.summary.totalModels.toString().padStart(3)}`);
+    console.log(`Opencode/Zen Models:       ${modelData.summary.opencodeZenModels.toString().padStart(3)}`);
+    console.log(`FREE Models Available:     ${modelData.summary.freeModels.toString().padStart(3)}`);
+    console.log(`Unique Providers:          ${modelData.summary.providerCount.toString().padStart(3)}`);
+    console.log();
     
     return modelData;
     

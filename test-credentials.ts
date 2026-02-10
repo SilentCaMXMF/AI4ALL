@@ -1,15 +1,14 @@
 import fetch from 'node-fetch';
 import { config } from 'dotenv';
+import { createHeader } from './src/utils/console-utils.js';
 
 // Load environment variables
 config();
 
 const TODAY = '2026-02-06';
 
-console.log('╔════════════════════════════════════════════════════════╗');
-console.log('║       Testing API Credentials - AI Models Search       ║');
-console.log('║              Date: ' + TODAY + '                 ║');
-console.log('╚════════════════════════════════════════════════════════╝\n');
+createHeader('Testing API Credentials - AI Models Search');
+console.log(`Date: ${TODAY}\n`);
 
 // Test GitHub API
 async function testGitHub() {
@@ -246,15 +245,12 @@ async function main() {
   console.log('─'.repeat(60) + '\n');
   await testDiscord();
   
-  console.log('╔════════════════════════════════════════════════════════╗');
-  console.log('║                    Test Summary                        ║');
-  console.log('╠════════════════════════════════════════════════════════╣');
-  console.log('║ Check the output above for:                            ║');
-  console.log('║ ✓ API connection status                                ║');
-  console.log('║ ✓ Found repositories about free AI models              ║');
-  console.log('║ ✓ Discord channel access status                        ║');
-  console.log('║ ✓ Rate limit information                               ║');
-  console.log('╚════════════════════════════════════════════════════════╝');
+  createHeader('Test Summary');
+  console.log('Check the output above for:');
+  console.log('✓ API connection status');
+  console.log('✓ Found repositories about free AI models');
+  console.log('✓ Discord channel access status');
+  console.log('✓ Rate limit information');
 }
 
 main().catch(console.error);

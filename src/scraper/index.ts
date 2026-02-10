@@ -31,6 +31,8 @@ export interface FeedbackSearchResult {
     lastMention: string;
     availabilityStatus: 'confirmed' | 'questioned' | 'unknown';
     commonIssues: string[];
+    verificationLevel: string;
+    verificationScore: number;
   };
 }
 
@@ -64,10 +66,18 @@ export class ScraperService {
     const results: ScraperResult[] = [];
     let models: AggregatedItem[] = [];
 
-    // Phase 1: Get free models from models.dev
+    // Phase 1: Get 0-cost models from models.dev
     try {
+      console.log('[Scraper] Phase 1: Fetching 0-cost models from models.dev...');
       const modelsResult = await this.modelsDevAPI.fetchItems({ limit: 500 });
-      models = modelsResult.items;
+      
+      // Filter for only 0-cost input/output models
+      models = modelsResult.items.filter(model => {
+        const rawModel = model.raw as any;
+        return rawModel?.cost?.input === 0 && rawModel?.cost?.output === 0;
+      });
+      
+      console.log(`[Scraper] ✓ Found ${models.length} 0-cost models from ${modelsResult.items.length} total models`);
       
       console.log(`[Scraper] ✓ Found ${models.length} free models from models.dev`);
       
@@ -142,7 +152,9 @@ export class ScraperService {
           neutral: 0,
           lastMention: new Date().toISOString(),
           availabilityStatus: 'unknown',
-          commonIssues: []
+          commonIssues: [],
+          verificationLevel: 'No verification data',
+          verificationScore: 0
         }
       }));
       await this.store.saveMany(remainingModels);
@@ -167,7 +179,9 @@ export class ScraperService {
           neutral: 0,
           lastMention: new Date().toISOString(),
           availabilityStatus: 'unknown',
-          commonIssues: []
+          commonIssues: [],
+          verificationLevel: 'No verification data',
+          verificationScore: 0
         }
       }));
       await this.store.saveMany(modelsWithEmptyFeedback);
@@ -181,18 +195,27 @@ export class ScraperService {
 
   private async searchModelFeedback(model: AggregatedItem): Promise<FeedbackSearchResult> {
     const feedback: ModelFeedback[] = [];
-    const modelName = model.title.split(':')[1]?.trim() || model.title;
-    const provider = model.author.name;
+    const rawModel = model.raw as any;
+    const modelName = rawModel?.name || model.title.split(':')[1]?.trim() || model.title;
+    const provider = rawModel?.providerId || rawModel?.provider || model.author.name;
     
-    console.log(`[Scraper] Searching feedback for: ${modelName} (${provider})`);
+    console.log(`[Scraper] Phase 2: Searching social media validation for: ${modelName} (${provider})`);
 
-    // Search terms for this model
+    // Enhanced search terms for this model using keywords from models.dev
     const searchTerms = [
-      `${modelName} free`,
-      `${modelName} pricing`,
-      `${provider} ${modelName}`,
-      `${modelName} API`
+      `"${modelName}" free API access`,
+      `"${modelName}" working`, 
+      `"${modelName}" available`,
+      `${provider} "${modelName}"`,
+      `"${modelName}" rate limits`,
+      `"${modelName}" not working`,
+      `"${modelName}" issues`
     ];
+
+    // Add family-based searches if available
+    if (rawModel?.family) {
+      searchTerms.push(`"${rawModel.family}" free`, `"${rawModel.family}" API`);
+    }
 
     // Search GitHub if available
     if (this.githubAPI) {
@@ -373,18 +396,38 @@ export class ScraperService {
   private analyzeSentiment(text: string): 'positive' | 'negative' | 'neutral' {
     const lowerText = text.toLowerCase();
     
-    const positiveWords = ['free', 'working', 'great', 'awesome', 'good', 'available', 'accessible', 'working', 'stable'];
-    const negativeWords = ['not free', 'paid', 'expensive', 'broken', 'down', 'error', 'issue', 'problem', 'unavailable'];
+    // Enhanced positive indicators for model availability
+    const positivePhrases = [
+      'working', 'works', 'available', 'free access', 'free tier', 'no cost',
+      'successfully', 'great', 'excellent', 'perfect', 'stable', 'reliable',
+      'api key', 'api working', 'no issues', 'recommend', 'love using'
+    ];
+    
+    // Enhanced negative indicators for model issues
+    const negativePhrases = [
+      'not working', 'broken', 'down', 'unavailable', 'paid only', 'requires payment',
+      'error', 'failed', 'issue', 'problem', 'not free', 'expensive',
+      'rate limit', 'quota exceeded', 'access denied', 'deprecated', 'discontinued'
+    ];
     
     let positive = 0;
     let negative = 0;
     
-    for (const word of positiveWords) {
-      if (lowerText.includes(word)) positive++;
+    for (const phrase of positivePhrases) {
+      if (lowerText.includes(phrase)) positive++;
     }
     
-    for (const word of negativeWords) {
-      if (lowerText.includes(word)) negative++;
+    for (const phrase of negativePhrases) {
+      if (lowerText.includes(phrase)) negative++;
+    }
+    
+    // Weight recent mentions more heavily
+    const recentKeywords = ['just', 'today', 'recently', 'currently'];
+    for (const keyword of recentKeywords) {
+      if (lowerText.includes(keyword)) {
+        if (positive > 0) positive += 0.5;
+        if (negative > 0) negative += 0.5;
+      }
     }
     
     if (positive > negative) return 'positive';
@@ -404,36 +447,67 @@ export class ScraperService {
       ? new Date(Math.max(...timestamps)).toISOString()
       : new Date().toISOString();
     
-    // Determine availability status
+    // Enhanced verification logic
     let availabilityStatus: 'confirmed' | 'questioned' | 'unknown' = 'unknown';
-    if (total > 0) {
-      if (positive > negative * 2) {
+    let verificationLevel = 'No verification data';
+    
+    if (total === 0) {
+      availabilityStatus = 'unknown';
+      verificationLevel = 'No social media mentions found';
+    } else if (total < 3) {
+      availabilityStatus = 'questioned';
+      verificationLevel = 'Limited verification data';
+    } else {
+      const positiveRatio = positive / total;
+      const negativeRatio = negative / total;
+      
+      if (positiveRatio >= 0.7 && negativeRatio <= 0.2) {
         availabilityStatus = 'confirmed';
-      } else if (negative > positive) {
+        verificationLevel = 'Strongly verified as working';
+      } else if (positiveRatio >= 0.5 && negativeRatio <= 0.3) {
+        availabilityStatus = 'confirmed';
+        verificationLevel = 'Likely working';
+      } else if (negativeRatio > positiveRatio) {
         availabilityStatus = 'questioned';
+        verificationLevel = 'Reported issues detected';
+      } else {
+        availabilityStatus = 'questioned';
+        verificationLevel = 'Mixed verification results';
       }
     }
     
-    // Extract common issues
+    // Extract common issues with enhanced detection
     const commonIssues: string[] = [];
-    const issueKeywords = ['rate limit', 'unavailable', 'error', 'not working', 'deprecated'];
+    const issueKeywords = [
+      'rate limit', 'rate-limit', 'quota', 'unavailable', 'not available',
+      'error', 'failed', 'not working', 'deprecated', 'discontinued',
+      'paid only', 'requires payment', 'access denied', 'invalid api key'
+    ];
+    
     for (const item of feedback) {
+      const content = item.content.toLowerCase();
       for (const keyword of issueKeywords) {
-        if (item.content.toLowerCase().includes(keyword) && !commonIssues.includes(keyword)) {
+        if (content.includes(keyword) && !commonIssues.includes(keyword)) {
           commonIssues.push(keyword);
         }
       }
     }
     
-    return {
+    const summary = {
       total,
       positive,
       negative,
       neutral,
       lastMention,
       availabilityStatus,
-      commonIssues
+      commonIssues,
+      verificationLevel,
+      verificationScore: total > 0 ? Math.round((positive / total) * 100) : 0
     };
+    
+    console.log(`[Scraper]   → Verification: ${verificationLevel} (${summary.verificationScore}% positive)`);
+    
+    return summary;
   }
 
   getStore(): DataStore {

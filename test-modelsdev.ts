@@ -4,10 +4,9 @@
 // This tests the opencode Zen model pricing tracker
 
 import { ModelsDevAPI } from './src/api/modelsdev.js';
+import { createHeader, createSectionHeader } from './src/utils/console-utils.js';
 
-console.log('╔════════════════════════════════════════════════════════════════╗');
-console.log('║        Models.dev API Test - Opencode Zen Pricing Tracker      ║');
-console.log('╚════════════════════════════════════════════════════════════════╝\n');
+createHeader('Models.dev API Test - Opencode Zen Pricing Tracker');
 
 async function testModelsDevAPI() {
   console.log('🚀 Initializing Models.dev API client...\n');
@@ -22,9 +21,7 @@ async function testModelsDevAPI() {
     
     const result = await api.fetchItems({ limit: 50 });
     
-    console.log('\n' + '═'.repeat(70));
-    console.log('📊 RESULTS SUMMARY');
-    console.log('═'.repeat(70));
+    createSectionHeader('Results Summary');
     console.log(`Total items fetched: ${result.items.length}`);
     
     // Separate models and price alerts
@@ -43,9 +40,7 @@ async function testModelsDevAPI() {
     console.log(`  Price changes (24h): ${stats.priceChanges24h}`);
     
     if (models.length > 0) {
-      console.log('\n' + '═'.repeat(70));
-      console.log('🤖 OPENCODE/ZEN MODELS');
-      console.log('═'.repeat(70));
+      createSectionHeader('Opencode/Zen Models');
       
       models.forEach((model, index) => {
         console.log(`\n${index + 1}. ${model.title}`);
@@ -57,9 +52,7 @@ async function testModelsDevAPI() {
     }
     
     if (priceAlerts.length > 0) {
-      console.log('\n' + '═'.repeat(70));
-      console.log('💰 PRICE CHANGES DETECTED');
-      console.log('═'.repeat(70));
+      createSectionHeader('Price Changes Detected');
       
       priceAlerts.forEach((alert, index) => {
         console.log(`\n${index + 1}. ${alert.title}`);
@@ -71,9 +64,7 @@ async function testModelsDevAPI() {
     // Show price history if available
     const priceHistory = api.getPriceHistory(undefined, 10);
     if (priceHistory.length > 0) {
-      console.log('\n' + '═'.repeat(70));
-      console.log('📜 RECENT PRICE HISTORY (Last 10 changes)');
-      console.log('═'.repeat(70));
+      createSectionHeader('Recent Price History (Last 10 changes)');
       
       priceHistory.forEach((change, index) => {
         const percentStr = change.changePercent 
@@ -83,9 +74,7 @@ async function testModelsDevAPI() {
       });
     }
     
-    console.log('\n' + '═'.repeat(70));
-    console.log('✅ TEST COMPLETED SUCCESSFULLY');
-    console.log('═'.repeat(70));
+    createSectionHeader('Test Completed Successfully');
     console.log('\n💡 This API fetches hourly - price changes are tracked automatically');
     console.log('📝 Data is cached to avoid duplicate fetches within 1 hour');
     console.log('🚨 Price change alerts are generated when costs change between fetches\n');

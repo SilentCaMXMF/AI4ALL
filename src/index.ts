@@ -1,4 +1,4 @@
-/// <reference types="node" />
+
 
 export * from './types/index.js';
 export type { ScraperService, ScraperConfig, ScraperResult } from './scraper/index.js';

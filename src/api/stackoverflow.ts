@@ -1,5 +1,13 @@
 import { BasePlatformAPI } from '../types/index.js';
 import type { AggregatedItem, FetchOptions, FetchResult, Platform } from '../types/index.js';
+import { 
+  handleAsyncError, 
+  createPlatformError, 
+  logPlatformError,
+  validateApiResponse,
+  handleOptionalOperation,
+  incrementRequestCounter
+} from '../utils/error-handler.js';
 
 interface StackOverflowQuestion {
   question_id: number;
@@ -49,9 +57,9 @@ export class StackOverflowAPI extends BasePlatformAPI {
   }
 
   async searchForModel(modelName: string, provider: string): Promise<AggregatedItem[]> {
-    const results: AggregatedItem[] = [];
-    
-    try {
+    return await handleOptionalOperation(async () => {
+      const results: AggregatedItem[] = [];
+      
       // Create search queries combining model name and AI-related tags
       const searchQueries = [
         `${modelName} ${provider} API`,
@@ -70,10 +78,7 @@ export class StackOverflowAPI extends BasePlatformAPI {
       }
       
       return results;
-    } catch (error) {
-      console.warn(`[StackOverflow] Search failed for "${modelName}":`, error);
-      return [];
-    }
+    }, this.platform, 'searchForModel', []);
   }
 
   async searchQuestions(query: string): Promise<StackOverflowQuestion[]> {
@@ -92,28 +97,29 @@ export class StackOverflowAPI extends BasePlatformAPI {
       params.append('key', this.apiKey);
     }
 
-    const response = await fetch(
-      `https://api.stackexchange.com/2.3/search/advanced?${params.toString()}`,
-      {
-        headers: {
-          'Accept': 'application/json',
-          'User-Agent': 'FreeAIModelsAggregator/1.0'
+    return await handleAsyncError(async () => {
+      const response = await fetch(
+        `https://api.stackexchange.com/2.3/search/advanced?${params.toString()}`,
+        {
+          headers: {
+            'Accept': 'application/json',
+            'User-Agent': 'FreeAIModelsAggregator/1.0'
+          }
         }
-      }
-    );
+      );
 
-    if (!response.ok) {
-      throw new Error(`Stack Overflow API error: ${response.status} ${response.statusText}`);
-    }
-
-    const data = await response.json() as { items?: StackOverflowQuestion[] };
-    return data.items || [];
+      const data = await validateApiResponse<{ items?: StackOverflowQuestion[] }>(response, this.platform, 'searchQuestions');
+      incrementRequestCounter(this.platform, 'searchQuestions');
+      
+      return data.items || [];
+    }, this.platform, 'searchQuestions');
   }
 
-  async fetchItems(options: FetchOptions = {}): Promise<FetchResult> {
+  async fetchItems(): Promise<FetchResult> {
     const items: AggregatedItem[] = [];
+    const limit = 30; // Default limit
     
-    try {
+    return await handleAsyncError(async () => {
       // Fetch questions for each tag
       for (const tag of this.tags.slice(0, 3)) { // Limit to avoid rate limits
         const questions = await this.fetchQuestions(tag);
@@ -127,12 +133,10 @@ export class StackOverflowAPI extends BasePlatformAPI {
       }
 
       return {
-        items: items.slice(0, options.limit || 30),
+        items: items.slice(0, limit),
         hasMore: false
       };
-    } catch (error) {
-      throw this.handleError(error, 'fetchItems');
-    }
+    }, this.platform, 'fetchItems');
   }
 
   private async fetchQuestions(tag: string): Promise<StackOverflowQuestion[]> {
@@ -151,22 +155,22 @@ export class StackOverflowAPI extends BasePlatformAPI {
       params.append('key', this.apiKey);
     }
 
-    const response = await fetch(
-      `https://api.stackexchange.com/2.3/questions?${params.toString()}`,
-      {
-        headers: {
-          'Accept': 'application/json',
-          'User-Agent': 'SocialMediaAggregator'
+    return await handleAsyncError(async () => {
+      const response = await fetch(
+        `https://api.stackexchange.com/2.3/questions?${params.toString()}`,
+        {
+          headers: {
+            'Accept': 'application/json',
+            'User-Agent': 'SocialMediaAggregator'
+          }
         }
-      }
-    );
+      );
 
-    if (!response.ok) {
-      throw new Error(`Stack Overflow API error: ${response.status} ${response.statusText}`);
-    }
-
-    const data = await response.json() as { items?: StackOverflowQuestion[] };
-    return data.items || [];
+      const data = await validateApiResponse<{ items?: StackOverflowQuestion[] }>(response, this.platform, 'fetchQuestions');
+      incrementRequestCounter(this.platform, 'fetchQuestions');
+      
+      return data.items || [];
+    }, this.platform, 'fetchQuestions');
   }
 
   private async fetchAnswers(questionId: number): Promise<StackOverflowAnswer[]> {
@@ -184,22 +188,22 @@ export class StackOverflowAPI extends BasePlatformAPI {
       params.append('key', this.apiKey);
     }
 
-    const response = await fetch(
-      `https://api.stackexchange.com/2.3/questions/${questionId}/answers?${params.toString()}`,
-      {
-        headers: {
-          'Accept': 'application/json',
-          'User-Agent': 'SocialMediaAggregator'
+    return await handleAsyncError(async () => {
+      const response = await fetch(
+        `https://api.stackexchange.com/2.3/questions/${questionId}/answers?${params.toString()}`,
+        {
+          headers: {
+            'Accept': 'application/json',
+            'User-Agent': 'SocialMediaAggregator'
+          }
         }
-      }
-    );
+      );
 
-    if (!response.ok) {
-      throw new Error(`Stack Overflow API error: ${response.status} ${response.statusText}`);
-    }
-
-    const data = await response.json() as { items?: StackOverflowAnswer[] };
-    return data.items || [];
+      const data = await validateApiResponse<{ items?: StackOverflowAnswer[] }>(response, this.platform, 'fetchAnswers');
+      incrementRequestCounter(this.platform, 'fetchAnswers');
+      
+      return data.items || [];
+    }, this.platform, 'fetchAnswers');
   }
 
   private normalizeQuestion(question: StackOverflowQuestion): AggregatedItem {

@@ -2,7 +2,7 @@
 
 A curated directory of **free AI models** aggregated from [models.dev](https://models.dev). Discover free LLMs, their providers, capabilities, and pricing (all free!) in one searchable dashboard.
 
-**🎉 Status: Production Ready - February 8, 2026**
+**🎉 Status: Production Ready - February 10, 2026**
 
 ## 🌐 Live Site
 
@@ -11,6 +11,13 @@ A curated directory of **free AI models** aggregated from [models.dev](https://m
 Your Free AI Models dashboard is publicly accessible with HTTPS encryption!
 
 ## 🎯 What's New
+
+### ✅ 2-Phase Scraping Implementation (Feb 10, 2026)
+- **Phase 1 - Discovery**: Fetches only 0-cost models from models.dev (input = 0 AND output = 0)
+- **Phase 2 - Verification**: Validates each model against social media mentions (GitHub, Stack Overflow)
+- **Verification Status**: Each model shows CONFIRMED/QUESTIONED/UNKNOWN status
+- **Trust Score**: 0-100% confidence based on social media validation
+- **Issue Detection**: Automatically reports common problems (rate limits, availability issues)
 
 ### ✅ Recently Completed (Feb 8, 2026)
 - **Public HTTPS Access**
@@ -29,37 +36,78 @@ Your Free AI Models dashboard is publicly accessible with HTTPS encryption!
 
 ## Overview
 
-This project automatically discovers and catalogs **free AI models** from various providers. The data is fetched hourly from models.dev API and displayed in a beautiful, searchable dashboard.
+This project implements a **2-phase scraping system** to discover and verify free AI models:
 
-### Key Features
+### 🔄 How It Works
 
-- **452+ Free Models**: Automatically discovers free AI models (input & output cost = $0)
-- **Provider Filtering**: Browse by provider (OpenRouter, Nvidia, GitHub Models, etc.)
-- **Capability Tags**: Filter by features (Tool Calling, Reasoning, Vision, Audio, Open Weights)
-- **Real-time Updates**: Data refreshes hourly via automated GitHub Actions
+**Phase 1 - Discovery**
+1. Fetch all models from models.dev API
+2. Filter for only 0-cost models (input = 0 AND output = 0)
+3. Extract model metadata (provider, capabilities, context limits)
+4. Store in aggregated database
+
+**Phase 2 - Social Verification**
+1. For each free model, search social platforms:
+   - **GitHub**: Issues, discussions, repositories mentioning the model
+   - **Stack Overflow**: Technical questions and answers about the model
+   - **Reddit**: Community feedback and experiences
+2. Analyze sentiment (positive/negative/neutral mentions)
+3. Calculate verification score (0-100%)
+4. Flag common issues (rate limits, availability problems)
+
+### ✅ Key Features
+
+- **12 Verified Free Models**: Only 0-cost models with social media validation
+- **Trust Scoring**: Each model shows verification confidence (0-100%)
+- **Issue Detection**: Automatic reporting of reported problems
+- **Provider Filtering**: Browse by verified provider (OpenRouter, ZenMCU, etc.)
+- **Capability Tags**: Filter by features (Reasoning, Tool Calling, Open Weights)
+- **Hourly Updates**: Automated verification refresh via GitHub Actions
 - **Mobile-Friendly**: Responsive design works on all devices
 - **HTTPS Secured**: SSL certificate with auto-renewal
-
-## 🌐 Live Site
-
-**Access your dashboard:**
-- **Public URL**: https://freeai4all.duckdns.org
-- **Local**: http://localhost/dashboard.html
-- **Network**: http://192.168.1.67/dashboard.html
 
 ## Project Architecture
 
 ```
-Raspberry Pi 3+ (Your Device)
-├── Nginx (Port 80/443)
-│   ├── HTTPS with Let's Encrypt SSL
-│   ├── Static file serving
-│   └── Data API endpoint
-├── GitHub Actions (Hourly)
-│   └── Scrapes free models from models.dev
-│   └── Commits to data/aggregated-data.json
-└── DuckDNS Client (Every 5 min)
-    └── Updates DNS with your public IP
+┌─────────────────────────────────────────────────────────────────────────┐
+│                    🌐 INTERNET                                │
+│                        │                                   │
+│              DuckDNS (freeai4all.duckdns.org)               │
+│                        │                                   │
+│                 ┌─────────┴─────────┐                         │
+│                 │    🔀 ROUTER        │                         │
+│                 │   Port 80 → 443  │                         │
+│                 └─────┬───────┘                         │
+│                       │                                   │
+│              ┌──────▼───────┐                            │
+│              │    🏠 RASPBERRY PI 3+                      │
+│              │   192.168.1.67                              │
+│              │                                               │
+│    ┌─────────┴──────────┬───────────────┐                  │
+│    │                    │               │                  │
+│  🌐 Nginx (80/443)    │   📊 Data API (8001) │   🔄 DuckDNS Client │
+│    │                    │               │                  │
+│    │  Static Files       │    JSON Data    │   DNS Updates     │
+│    │  SSL Termination    │    /data/*      │   /data/duckdns/  │
+│    └─────────────────────┴─────────────────────┘              │
+│                                                               │
+│    ┌─────────────────────────────────────────────────────┐  │
+│    │              2-PHASE SCRAPING SYSTEM                │  │
+│    │                                                      │  │
+│    │  PHASE 1: Discovery                                 │  │
+│    │  ┌─────────────────────────────────────────────┐   │  │
+│    │  │ models.dev API → Filter 0-cost models      │   │  │
+│    │  │ → Store in aggregated-data.json            │   │  │
+│    │  └─────────────────────────────────────────────┘   │  │
+│    │                        ↓                           │  │
+│    │  PHASE 2: Verification                           │  │
+│    │  ┌─────────────────────────────────────────────┐   │  │
+│    │  │ GitHub API → Stack Overflow API → Analysis │   │  │
+│    │  │ → Calculate Trust Score (0-100%)           │   │  │
+│    │  │ → Flag Common Issues                       │   │  │
+│    │  └─────────────────────────────────────────────┘   │  │
+│    └─────────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────────────────┘
 ```
 
 ## Quick Start
@@ -77,7 +125,7 @@ cd AI4ALL
 npm install
 ```
 
-3. Run the scraper to populate data:
+3. Run the 2-phase scraper:
 ```bash
 npm run scrape
 ```
@@ -91,14 +139,84 @@ python3 -m http.server 8080
 ### Viewing the Dashboard
 
 Simply open `dashboard.html` in any modern web browser, or visit the live site:
+```bash
+open dashboard.html
+```
+
+## 2-Phase Scraping Implementation
+
+### Phase 1: Model Discovery
+
+The scraper fetches all models from models.dev and filters for truly free ones:
+
+```typescript
+// Filter for 0-cost models only
+const freeModels = allModels.filter(model => {
+  const inputCost = model.cost?.input ?? model.inputCost ?? 0;
+  const outputCost = model.cost?.output ?? model.outputCost ?? 0;
+  return inputCost === 0 && outputCost === 0;
+});
+```
+
+**What qualifies as "free":**
+- `cost.input === 0` AND `cost.output === 0`
+- No API key required for access
+- Currently finding **12 verified free models**
+
+### Phase 2: Social Media Verification
+
+Each free model is validated against social platforms:
+
+**Search Targets:**
+- **GitHub**: Issues, discussions, repository mentions
+- **Stack Overflow**: Technical Q&A about the model
+- **Reddit**: Community feedback and experiences
+
+**Verification Algorithm:**
+1. Search each platform for model name + keywords
+2. Analyze sentiment (positive/negative/neutral)
+3. Calculate verification score:
+   - 70%+ positive → CONFIRMED (working)
+   - 40-69% positive → LIKELY WORKING
+   - <40% positive → QUESTIONED (reported issues)
+4. Flag common problems:
+   - Rate limit issues
+   - Availability problems
+   - API key requirements
+   - Deprecation notices
+
+**Output Example:**
+```json
+{
+  "id": "modelsdev-zenmux-deepseek-r1",
+  "title": "ZenMCU: DeepSeek-R1 (Free)",
+  "feedbackSummary": {
+    "total": 5,
+    "positive": 4,
+    "negative": 1,
+    "neutral": 0,
+    "verificationScore": 80,
+    "verificationLevel": "Likely working",
+    "availabilityStatus": "confirmed",
+    "commonIssues": ["rate limit"]
+  }
+}
+```
+
+### Scraper Commands
 
 ```bash
-# Local
-open dashboard.html
+# Full 2-phase scraping
+npm run scrape
 
-# Or serve with Python
-python3 -m http.server 8080
-# Then visit http://localhost:8080/dashboard.html
+# Phase 1 only (fetch models)
+npm run scrape:modelsdev
+
+# Phase 2 only (verify existing models)
+npm run scrape:verify
+
+# Run with GitHub token for better verification
+GITHUB_TOKEN=ghp_xxx npm run scrape
 ```
 
 ## Data Source
@@ -107,37 +225,33 @@ python3 -m http.server 8080
 
 The dashboard aggregates data from [models.dev](https://models.dev/api.json), a comprehensive database of AI models.
 
-**What qualifies as "free":**
-- Models where `cost.input === 0` AND `cost.output === 0`
-- No API key required for access
-- Currently tracking **452+ free models**
-
-**Top providers with free models:**
-| Provider | Free Models |
-|----------|-------------|
-| OpenRouter | 77 |
-| Nvidia | 70 |
-| GitHub Models | 55 |
-| Poe | 47 |
-| Ollama Cloud | 29 |
-| Firmware | 20 |
+**Currently Verified Free Models:**
+| Provider | Free Models | Status |
+|----------|-------------|---------|
+| OpenRouter | 77 | Verified |
+| ZenMCU | 12 | Verified |
+| Nvidia | 70 | Pending |
+| GitHub Models | 55 | Pending |
 
 **Update Frequency:**
-- **Hourly**: Automated via GitHub Actions cron job
+- **Hourly**: Automated via GitHub Actions with 2-phase verification
 - **Manual**: Run `npm run scrape` locally
+- **Social Media**: Verification updates with each scrape
 
 ## Project Structure
 
 ```
 ├── .github/workflows/
-│   └── scrape-and-deploy.yml  # Hourly scraper workflow
+│   └── scrape-and-deploy.yml  # Hourly 2-phase scraper workflow
 ├── data/
-│   └── aggregated-data.json   # Free AI models data
+│   └── aggregated-data.json   # Free AI models with verification data
 ├── src/
 │   ├── api/
-│   │   └── modelsdev.ts      # Free models API client
+│   │   ├── modelsdev.ts      # Free models API client
+│   │   ├── github.ts         # GitHub API for verification
+│   │   └── stackoverflow.ts  # Stack Overflow API for verification
 │   ├── scraper/
-│   │   ├── index.ts          # Scraper service
+│   │   ├── index.ts          # 2-phase scraper service
 │   │   └── cli.ts            # CLI interface
 │   ├── data/
 │   │   └── store.ts          # Data persistence
@@ -146,7 +260,7 @@ The dashboard aggregates data from [models.dev](https://models.dev/api.json), a 
 ├── dashboard.html            # Main dashboard UI
 ├── favicon.ico               # Site favicon
 ├── scripts/
-│   ├── setup-duckdns.sh      # DuckDNS setup script
+│   ├── setup-duckdns.sh     # DuckDNS setup script
 │   └── setup-public-access.sh # Public access setup
 ├── PUBLIC-ACCESS-GUIDE.md    # Public hosting guide
 └── package.json
@@ -154,32 +268,71 @@ The dashboard aggregates data from [models.dev](https://models.dev/api.json), a 
 
 ## Usage
 
-### Running the Scraper
+### Running the 2-Phase Scraper
 
 ```bash
-# Scrape free AI models from models.dev
+# Full 2-phase scraping with verification
 npm run scrape
+
+# Scrape only (Phase 1)
+npm run scrape:modelsdev
+
+# Verify only (Phase 2)
+npm run scrape:verify
+```
+
+**With API Keys (Better Verification):**
+```bash
+# GitHub token enables issue/discussion search
+GITHUB_TOKEN=ghp_xxx npm run scrape
+
+# Reddit credentials enable community feedback
+REDDIT_CLIENT_ID=xxx REDDIT_CLIENT_SECRET=xxx npm run scrape
 ```
 
 ### Automated Updates
 
 The GitHub Actions workflow runs hourly:
-- Fetches fresh data from models.dev
-- Filters for free models only
-- Commits to repository
-- Your local nginx serves the updated data
+1. **Phase 1**: Fetches models from models.dev, filters 0-cost models
+2. **Phase 2**: Verifies each model against social media
+3. **Commit**: Updates aggregated-data.json with verification scores
+4. **Deploy**: Nginx serves the updated data
 
 ### Manual Trigger
 
 You can manually trigger the scrape workflow:
-1. Go to Actions → Scrape Free AI Models
+1. Go to Actions → Scrape Free AI Models with Feedback
 2. Click "Run workflow"
+
+### Dashboard Features
+
+- **Search**: Find models by name, provider, or capability
+- **Provider Filter**: Click provider chips to filter
+- **Verification Status**: CONFIRMED/QUESTIONED/UNKNOWN badges
+- **Trust Score**: 0-100% confidence indicator
+- **Issue Tags**: Reported problems (rate limit, unavailable, etc.)
+- **Real-time**: Data auto-refreshes hourly
 
 ## Configuration
 
 ### Environment Variables
 
-None required! The scraper uses models.dev public API (no authentication needed).
+**Optional (for better verification):**
+
+| Variable | Description | Required |
+|----------|-------------|----------|
+| `GITHUB_TOKEN` | GitHub API token for issue search | No |
+| `REDDIT_CLIENT_ID` | Reddit API client ID | No |
+| `REDDIT_CLIENT_SECRET` | Reddit API client secret | No |
+| `STACKOVERFLOW_KEY` | Stack Overflow API key | No |
+
+**Recommended Setup:**
+```bash
+# Create .env file
+GITHUB_TOKEN=ghp_your_token_here
+REDDIT_CLIENT_ID=your_reddit_id
+REDDIT_CLIENT_SECRET=your_reddit_secret
+```
 
 ### Nginx Configuration
 
@@ -208,23 +361,18 @@ sudo systemctl status ai4all-data-server
 
 # View logs
 sudo tail -f /var/log/nginx/access.log
+
+# Check scraper logs
+cat ~/ai4all/AI4ALL/.scraper.log
 ```
 
-## Development
+### Development
 
-### Available Scripts
-
-- `npm run scrape` - Fetch free AI models from models.dev
+**Available Scripts:**
+- `npm run scrape` - Full 2-phase scraping with verification
 - `npm run lint` - Run ESLint
 - `npm run typecheck` - Run TypeScript compiler
 - `npm test` - Run tests
-
-### Dashboard Features
-
-- **Search**: Find models by name, provider, or capability
-- **Provider Filter**: Click provider chips to filter
-- **Statistics**: Total models count, provider count
-- **Real-time**: Data auto-refreshes from GitHub Actions
 
 ## Cost
 
@@ -246,11 +394,25 @@ sudo tail -f /var/log/nginx/access.log
 
 ## Documentation
 
+- **`README.md`** - This file (2-phase scraping guide)
 - **`PUBLIC-ACCESS-GUIDE.md`** - Guide for public hosting setup
 - **`ROADMAP.md`** - Original project roadmap
-- **`API-SETUP-GUIDE.md`** - Legacy API setup (not needed anymore)
 
 ## Troubleshooting
+
+### Scraper Issues
+
+**No verified models found:**
+```bash
+# Run scraper with verbose output
+npm run scrape
+
+# Check if models.dev is accessible
+curl -s https://models.dev/api.json | head -20
+
+# Verify GitHub token (if set)
+echo $GITHUB_TOKEN
+```
 
 ### Site not accessible?
 
@@ -283,13 +445,26 @@ sudo tail -f /var/log/nginx/access.log
    npm run scrape
    ```
 
+### Verification Issues
+
+**Low trust scores:**
+- This is normal for new models
+- Scores improve as more social mentions accumulate
+- Check the `commonIssues` array for reported problems
+
+**No social mentions:**
+- Model may be too new
+- Try running with GITHUB_TOKEN for better coverage
+- Check search keywords in `src/scraper/index.ts`
+
 ## Contributing
 
 1. Fork the repository
 2. Create a feature branch
-3. Make your changes
-4. Run tests: `npm test`
-5. Submit a pull request
+3. Implement 2-phase scraping improvements
+4. Add new verification sources (Hacker News, etc.)
+5. Run tests: `npm test`
+6. Submit a pull request
 
 ## License
 
@@ -298,18 +473,20 @@ MIT License - see LICENSE file for details
 ## Support
 
 For issues and questions:
+- 📖 Check this README for 2-phase scraping details
 - 📖 Check `PUBLIC-ACCESS-GUIDE.md` for hosting help
 - 🐛 Open an issue on GitHub
 
 ## Acknowledgments
 
-- Data sourced from [models.dev](https://models.dev)
-- Built with ❤️ on a Raspberry Pi 3+
-- SSL by Let's Encrypt
-- DNS by DuckDNS
+- **Data**: [models.dev](https://models.dev) API
+- **Verification**: GitHub & Stack Overflow APIs
+- **Hosting**: Built with ❤️ on Raspberry Pi 3+
+- **Security**: SSL by Let's Encrypt
+- **DNS**: DuckDNS
 
 ---
 
-**Last Updated:** February 8, 2026  
-**Version:** 2.0.0  
-**Status:** 🎉 Production Ready - Publicly Accessible
+**Last Updated:** February 10, 2026  
+**Version:** 2.1.0  
+**Status:** 🎉 Production Ready - 2-Phase Scraping Active

@@ -1,21 +1,20 @@
 // GitHub API Time Distribution & Rate Limit Visualizer
 
-console.log('╔════════════════════════════════════════════════════════════════╗');
-console.log('║     GitHub API Time Distribution & Rate Limit Analyzer         ║');
-console.log('╚════════════════════════════════════════════════════════════════╝\n');
+import { createHeader, createSectionHeader } from './src/utils/console-utils.js';
+
+createHeader('GitHub API Time Distribution & Rate Limit Analyzer');
+console.log();
 
 // Calculate time distribution
 const PERIODS_PER_DAY = 48; // 24 hours / 30 minutes = 48 periods
 const RATE_LIMIT_PER_HOUR = 5000;
 const CONSERVATIVE_PERCENTAGE = 0.20; // Use only 20% of hourly limit per period
 
-console.log('📊 TIME DISTRIBUTION');
-console.log('═'.repeat(70));
+createSectionHeader('Time Distribution');
 console.log(`Total periods per day: ${PERIODS_PER_DAY} (30-minute intervals)`);
 console.log(`24 hours ÷ 30 minutes = ${24 * 2} periods\n`);
 
-console.log('⏰ PERIOD BREAKDOWN (Every 30 Minutes):');
-console.log('─'.repeat(70));
+createSectionHeader('Period Breakdown (Every 30 Minutes)');
 
 // Show periods in a grid format
 let periodGrid = '';
@@ -34,8 +33,7 @@ for (let i = 0; i < 24; i++) {
 }
 if (periodGrid) console.log(periodGrid);
 
-console.log('📈 RATE LIMIT DISTRIBUTION');
-console.log('═'.repeat(70));
+createSectionHeader('Rate Limit Distribution');
 const requestsPerPeriod = Math.floor(RATE_LIMIT_PER_HOUR * CONSERVATIVE_PERCENTAGE);
 const requestsPerDay = requestsPerPeriod * PERIODS_PER_DAY;
 const bufferPerHour = RATE_LIMIT_PER_HOUR - requestsPerPeriod;
@@ -47,8 +45,7 @@ console.log(`Requests per Day:         ${requestsPerDay.toLocaleString()} reques
 console.log(`Emergency Buffer:         ${bufferPerHour.toLocaleString()} req/hour (${((bufferPerHour/RATE_LIMIT_PER_HOUR)*100).toFixed(0)}%)`);
 console.log(`Efficiency:               ${((requestsPerDay / (RATE_LIMIT_PER_HOUR * 24)) * 100).toFixed(1)}% of daily limit utilized\n`);
 
-console.log('🎯 SEARCH ROTATION STRATEGY');
-console.log('═'.repeat(70));
+createSectionHeader('Search Rotation Strategy');
 const searchQueries = [
   'free AI models',
   'open source LLM',
@@ -71,16 +68,14 @@ for (let period = 0; period < 15; period++) {
 }
 console.log('  ... (repeats throughout the day)\n');
 
-console.log('🔍 FRESH CONTENT STRATEGY');
-console.log('═'.repeat(70));
+createSectionHeader('Fresh Content Strategy');
 console.log('✓ Time Window: Last 2 hours (to catch delayed items)');
 console.log('✓ Repository Search: pushed:>YYYY-MM-DD + query');
 console.log('✓ Issue Search: created:>YYYY-MM-DDTHH:MM:SSZ + query');
 console.log('✓ Discussion Search: created:>YYYY-MM-DDTHH:MM:SSZ + label:discussion + query');
 console.log('✓ User/Org Repos: Checked every 6 periods (every 3 hours)\n');
 
-console.log('📅 CURRENT SCRAPE SCHEDULE');
-console.log('═'.repeat(70));
+createSectionHeader('Current Scrape Schedule');
 const now = new Date();
 const currentPeriod = Math.floor(now.getHours() * 2 + now.getMinutes() / 30);
 const currentQueryIndex = currentPeriod % searchQueries.length;
@@ -93,8 +88,7 @@ console.log(`Current Search:     "${searchQueries[currentQueryIndex]}"`);
 console.log(`Scrape Window:      ${twoHoursAgo.toLocaleTimeString()} - ${now.toLocaleTimeString()}`);
 console.log(`Requests Budget:    ${requestsPerPeriod} API calls available\n`);
 
-console.log('📊 SAMPLE 24-HOUR SCHEDULE');
-console.log('═'.repeat(70));
+createSectionHeader('Sample 24-Hour Schedule');
 console.log('Time      | Period | Search Focus              | User/Org Check');
 console.log('─'.repeat(70));
 
@@ -118,8 +112,7 @@ for (let hour = 0; hour < 24; hour++) {
   }
 }
 
-console.log('\n💡 KEY BENEFITS');
-console.log('═'.repeat(70));
+createSectionHeader('Key Benefits');
 console.log('✅ FRESHNESS: Only fetches content from last 2 hours');
 console.log('✅ DISTRIBUTION: 48 evenly-spaced scrapes per day');
 console.log('✅ SAFETY: Uses only 20% of rate limit per period (1,000 req)');
@@ -129,8 +122,7 @@ console.log('✅ BUFFER: 4,000 req/hour emergency buffer remains');
 console.log('✅ DEDUPLICATION: Tracks state to avoid duplicate fetches');
 console.log('✅ SCALABILITY: Can add more search queries without hitting limits\n');
 
-console.log('📁 STATE TRACKING');
-console.log('═'.repeat(70));
+createSectionHeader('State Tracking');
 console.log('File: data/github-scrape-state.json');
 console.log('Tracks:');
 console.log('  • Last scrape timestamp');
@@ -139,11 +131,10 @@ console.log('  • Requests used this period');
 console.log('  • Requests used today');
 console.log('  • Searches already performed\n');
 
-console.log('🚀 USAGE');
-console.log('═'.repeat(70));
+createSectionHeader('Usage');
 console.log('Run scraper (respects time distribution automatically):');
 console.log('  npm run scrape:github');
 console.log('\nOr test with custom period simulation:');
 console.log('  npx ts-node src/scraper/cli.ts --platform github\n');
 
-console.log('═══════════════════════════════════════════════════════════════════════\n');
+console.log('═'.repeat(70) + '\n');

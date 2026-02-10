@@ -3,6 +3,8 @@
 import { readFile, writeFile, mkdir } from 'fs/promises';
 import { join } from 'path';
 import { config } from 'dotenv';
+import { createHeader, createSummary, createTimestampedLog } from './src/utils/console-utils.js';
+import { ModelsDevService } from './src/services/models-dev-service.js';
 
 // Load environment variables
 config();
@@ -13,65 +15,15 @@ async function fetchModelsDev() {
   console.log('[Scraper] Fetching from Models.dev...');
   
   try {
-    const response = await fetch('https://models.dev/api.json', {
-      headers: {
-        'Accept': 'application/json',
-        'User-Agent': 'SocialMediaAggregator/1.0'
-      }
+    const service = new ModelsDevService();
+    const items = await service.fetchItems({
+      filterType: 'simple',
+      searchTerms: ['opencode', 'zen'],
+      freeOnly: false // Include all models for simple scraper
     });
 
-    if (!response.ok) {
-      throw new Error(`Models.dev API error: ${response.status}`);
-    }
-
-    const responseData = await response.json();
-    
-    // Handle both array and object responses
-    const models = Array.isArray(responseData) ? responseData : 
-                   (responseData.models || responseData.data || []);
-    
-    if (!Array.isArray(models)) {
-      console.log('[Scraper] Models.dev response:', JSON.stringify(responseData).substring(0, 200));
-      throw new Error('Unexpected response format from Models.dev');
-    }
-    
-    // Filter for opencode/zen related models
-    const relevantModels = models.filter((model) => {
-      const searchString = `${model.provider || ''} ${model.providerId || ''} ${model.name || ''} ${model.modelId || ''}`.toLowerCase();
-      return ['opencode', 'zen'].some(term => searchString.includes(term));
-    });
-
-    console.log(`[Scraper] Found ${relevantModels.length} models from Models.dev`);
-
-    return relevantModels.map((model) => {
-      const costInfo = [];
-      if (model.inputCost !== undefined) costInfo.push(`Input: $${model.inputCost}/1M tokens`);
-      if (model.outputCost !== undefined) costInfo.push(`Output: $${model.outputCost}/1M tokens`);
-      
-      const capabilities = [];
-      if (model.toolCall) capabilities.push('Tool Calling');
-      if (model.reasoning) capabilities.push('Reasoning');
-
-      return {
-        id: `modelsdev-${model.id || `${model.providerId}-${model.modelId}`}`,
-        platform: 'modelsdev',
-        type: 'model',
-        title: `${model.provider}: ${model.name || model.modelId}`,
-        content: `Pricing: ${costInfo.join(' | ')}${capabilities.length > 0 ? ` | Capabilities: ${capabilities.join(', ')}` : ''}${model.contextLimit ? ` | Context: ${model.contextLimit.toLocaleString()} tokens` : ''}`,
-        author: {
-          name: model.provider,
-          url: `https://models.dev/?search=${encodeURIComponent(model.providerId)}`
-        },
-        timestamp: model.lastUpdated || new Date().toISOString(),
-        url: `https://models.dev/?search=${encodeURIComponent(model.providerId)}&model=${encodeURIComponent(model.modelId)}`,
-        metrics: {
-          inputCost: model.inputCost,
-          outputCost: model.outputCost,
-          contextLimit: model.contextLimit
-        },
-        tags: [model.providerId, ...(model.family ? [model.family] : []), ...capabilities]
-      };
-    });
+    console.log(`[Scraper] Found ${items.length} models from Models.dev`);
+    return items;
   } catch (error) {
     console.error('[Scraper] Error fetching from Models.dev:', error);
     return [];
@@ -205,10 +157,7 @@ async function fetchGitHub() {
 }
 
 async function main() {
-  console.log('╔════════════════════════════════════════════════════════╗');
-  console.log('║     Social Media Aggregator - Data Scraper v1.0       ║');
-  console.log('╚════════════════════════════════════════════════════════╝');
-  console.log();
+  createHeader('Social Media Aggregator - Data Scraper', '1.0');
 
   try {
     // Ensure data directory exists
@@ -235,28 +184,22 @@ async function main() {
       JSON.stringify(data, null, 2)
     );
     
-    console.log();
-    console.log('╔════════════════════════════════════════════════════════╗');
-    console.log('║                    SCRAPE SUMMARY                      ║');
-    console.log('╠════════════════════════════════════════════════════════╣');
-    
     const platformStats = {};
     for (const item of allItems) {
       platformStats[item.platform] = (platformStats[item.platform] || 0) + 1;
     }
     
-    for (const [platform, count] of Object.entries(platformStats)) {
-      console.log(`║ ✅ ${platform.padEnd(15)} ${count.toString().padStart(3)} items          ║`);
-    }
+    const summaryItems = Object.entries(platformStats).map(([platform, count]) => ({
+      platform,
+      count,
+      status: 'success'
+    }));
     
-    console.log('╠════════════════════════════════════════════════════════╣');
-    console.log(`║ Total: ${allItems.length.toString().padStart(3)} items${' '.repeat(33)}║`);
-    console.log('╚════════════════════════════════════════════════════════╝');
-    console.log();
-    console.log('[Main] ✅ Data saved to data/aggregated-data.json');
+    createSummary(summaryItems, 'Total');
+    createTimestampedLog('Main', 'Data saved to data/aggregated-data.json', 'success');
     
   } catch (error) {
-    console.error('[Main] ❌ Fatal error:', error);
+    createTimestampedLog('Main', `Fatal error: ${error}`, 'error');
     process.exit(1);
   }
 }

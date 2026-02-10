@@ -2,6 +2,30 @@
 
 import { ScraperService } from './index.js';
 import type { ScraperConfig } from './index.js';
+import { createHeader, createSummary, createTimestampedLog } from '../utils/console-utils.js';
+import { readFileSync } from 'fs';
+import { resolve } from 'path';
+
+// Load .env file manually
+try {
+  const envPath = resolve(process.cwd(), '.env');
+  const envContent = readFileSync(envPath, 'utf8');
+  const lines = envContent.split('\n');
+  
+  for (const line of lines) {
+    const trimmed = line.trim();
+    if (trimmed && !trimmed.startsWith('#')) {
+      const [key, ...valueParts] = trimmed.split('=');
+      if (key && valueParts.length > 0) {
+        const value = valueParts.join('=').trim();
+        process.env[key] = value;
+      }
+    }
+  }
+  console.log('[Config] ✓ Environment variables loaded from .env');
+} catch (error) {
+  console.log('[Config] ⚠️ Could not load .env file');
+}
 
 async function loadConfig(): Promise<ScraperConfig> {
   const config: ScraperConfig = {
@@ -45,12 +69,10 @@ async function loadConfig(): Promise<ScraperConfig> {
 }
 
 async function main() {
-  console.log('╔════════════════════════════════════════════════════════╗');
-  console.log('║     Free AI Models Aggregator - Data Scraper v2.0     ║');
+  createHeader('Free AI Models Aggregator - Data Scraper', '2.0');
   console.log('║     With Cross-Platform Feedback Validation           ║');
-  console.log('╚════════════════════════════════════════════════════════╝');
   console.log();
-  console.log('[Info] Scrape Strategy:');
+  createTimestampedLog('Info', 'Scrape Strategy:', 'info');
   console.log('  1. Fetch free models from models.dev');
   console.log('  2. Search GitHub for issues/discussions about each model');
   console.log('  3. Search Reddit for community feedback');
@@ -69,27 +91,14 @@ async function main() {
     const results = await scraper.scrapeAll({ limit: 100 }); // Limit to 100 models to avoid rate limits
     const duration = (Date.now() - startTime) / 1000;
 
-    console.log();
-    console.log('╔════════════════════════════════════════════════════════╗');
-    console.log('║                    SCRAPE SUMMARY                      ║');
-    console.log('╠════════════════════════════════════════════════════════╣');
+    const summaryItems = results.map(result => ({
+      platform: result.platform,
+      count: result.items.length,
+      status: result.success ? 'success' as const : 'error' as const,
+      error: result.error
+    }));
     
-    let totalItems = 0;
-    for (const result of results) {
-      const status = result.success ? '✅' : '❌';
-      const itemCount = result.items.length.toString().padStart(3);
-      console.log(`║ ${status} ${result.platform.padEnd(15)} ${itemCount} items              ║`);
-      totalItems += result.items.length;
-      
-      if (result.error) {
-        console.log(`║    Error: ${result.error.slice(0, 35).padEnd(35)} ║`);
-      }
-    }
-    
-    console.log('╠════════════════════════════════════════════════════════╣');
-    console.log(`║ Total: ${totalItems.toString().padStart(3)} models processed in ${duration.toFixed(1)}s${' '.repeat(8)}║`);
-    console.log('╚════════════════════════════════════════════════════════╝');
-    console.log();
+    createSummary(summaryItems, `Total: models processed in ${duration.toFixed(1)}s`);
 
     // Show stats
     const store = scraper.getStore();
@@ -111,7 +120,7 @@ async function main() {
     console.log('  - Verify availability status indicators');
 
   } catch (error) {
-    console.error('[Main] ❌ Fatal error:', error);
+    createTimestampedLog('Main', `Fatal error: ${error}`, 'error');
     process.exit(1);
   }
 }
