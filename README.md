@@ -1,16 +1,44 @@
 # Free AI Models Aggregator
 
-A curated directory of **free AI models** aggregated from [models.dev](https://models.dev). Discover free LLMs, their providers, capabilities, and pricing (all free!) in one searchable dashboard.
+A curated directory of **free AI models** aggregated from [models.dev](https://models.dev). Discover free LLMs, their providers, capabilities, and pricing (all free!) in one searchable, filterable, and comparable dashboard.
 
-**🎉 Status: Production Ready - February 10, 2026**
+**🎉 Status: Production Ready - February 11, 2026**
 
 ## 🌐 Live Site
 
 **🔗 https://freeai4all.duckdns.org**
 
-Your Free AI Models dashboard is publicly accessible with HTTPS encryption!
+Your Free AI Models dashboard is publicly accessible with HTTPS encryption and optimized for search engines!
 
-## 🎯 What's New
+---
+
+## 🎯 What's New - v2.5.0 (Feb 11, 2026)
+
+### ✨ Interactive Features
+- **⭐ Favorites System** - Save models with one click (persisted in localStorage)
+- **🔍 Advanced Filtering** - Real-time search + capability filters + token limit sliders
+- **⚖️ Model Comparison** - Compare up to 3 models side-by-side with detailed specs
+- **📄 Model Detail Modal** - Full specifications with copy-to-clipboard buttons
+- **📋 Quick Copy** - Copy model ID or provider name instantly
+
+### 🎨 UI/UX Improvements
+- **Responsive Provider Filters** - Interactive chips with live counts
+- **Sticky Comparison Bar** - Access comparison controls while scrolling
+- **Favorites Section** - Quick access to saved models
+- **No Results State** - Clear feedback when filters match nothing
+- **Smooth Animations** - Hover effects and transitions throughout
+
+### 🚀 SEO & Performance
+- **100/100 SEO Score** - Complete meta tags, structured data, OG images
+- **Social Media Ready** - 1200x630px OG image for rich previews
+- **Open Graph** - Full Facebook/LinkedIn/Discord preview support
+- **Twitter Cards** - Large image cards for Twitter/X
+- **JSON-LD Schema** - WebSite and Organization structured data
+- **Preconnect Hints** - Faster external resource loading
+
+---
+
+## 🎯 Previous Updates
 
 ### ✅ 2-Phase Scraping Implementation (Feb 10, 2026)
 - **Phase 1 - Discovery**: Fetches only 0-cost models from models.dev (input = 0 AND output = 0)
@@ -19,20 +47,59 @@ Your Free AI Models dashboard is publicly accessible with HTTPS encryption!
 - **Trust Score**: 0-100% confidence based on social media validation
 - **Issue Detection**: Automatically reports common problems (rate limits, availability issues)
 
-### ✅ Recently Completed (Feb 8, 2026)
-- **Public HTTPS Access**
-  - Domain: freeai4all.duckdns.org
-  - SSL certificate from Let's Encrypt
-  - Auto-renewal enabled
-- **Simplified Focus**
-  - Now only aggregates FREE AI models from models.dev
-  - Removed all other platforms (GitHub, Reddit, Stack Overflow, Discord, X)
-  - Clean, focused interface
-- **Local Hosting on Raspberry Pi**
-  - Running on Raspberry Pi 3+
-  - Nginx reverse proxy with SSL
-  - DuckDNS for dynamic DNS
-  - Auto-updates hourly via GitHub Actions
+### ✅ Public HTTPS Access (Feb 8, 2026)
+- Domain: freeai4all.duckdns.org
+- SSL certificate from Let's Encrypt
+- Auto-renewal enabled
+
+---
+
+## ✨ Interactive Features
+
+### ⭐ Favorites & Bookmarks
+Save your preferred models for quick access:
+- Click the **🤍 heart icon** on any model card
+- Favorites are saved to browser storage
+- "My Favorites" section appears automatically
+- Works across page refreshes
+
+### 🔍 Advanced Filtering
+Find exactly what you need with powerful filters:
+
+| Filter Type | Description |
+|-------------|-------------|
+| **Search** | Real-time search by name, provider, or capability |
+| **Context Limit** | Slider to filter by minimum context tokens (0-500K) |
+| **Output Limit** | Slider to filter by minimum output tokens (0-200K) |
+| **Capabilities** | Multi-select: Tool Calling, Reasoning, Vision, Audio, Open Weights |
+| **Provider** | Click provider chips to filter by source |
+
+**Clear Filters** button appears when any filter is active.
+
+### ⚖️ Model Comparison
+Compare specifications side-by-side:
+1. Click **⚖️ compare button** on up to 3 models
+2. Sticky comparison bar appears at top
+3. Click **"Compare Selected"** to open comparison modal
+4. View detailed comparison table with all specs
+5. Remove models individually or clear all
+
+### 📄 Model Details
+View complete model information:
+- Click **ℹ️ Details** button on any card
+- See full specifications in modal
+- Copy model ID with one click
+- View modalities, capabilities, limits
+- Direct link to models.dev
+
+### 📋 Copy-to-Clipboard
+Quick access to model information:
+- **📋 ID** button - copies the model ID
+- **🏢 Provider** button - copies provider name
+- Visual feedback shows "✓ Copied!"
+- Also available in detail modal
+
+---
 
 ## Overview
 
@@ -55,60 +122,62 @@ This project implements a **2-phase scraping system** to discover and verify fre
 3. Calculate verification score (0-100%)
 4. Flag common issues (rate limits, availability problems)
 
-### ✅ Key Features
-
-- **12 Verified Free Models**: Only 0-cost models with social media validation
-- **Trust Scoring**: Each model shows verification confidence (0-100%)
-- **Issue Detection**: Automatic reporting of reported problems
-- **Provider Filtering**: Browse by verified provider (OpenRouter, ZenMCU, etc.)
-- **Capability Tags**: Filter by features (Reasoning, Tool Calling, Open Weights)
-- **Hourly Updates**: Automated verification refresh via GitHub Actions
-- **Mobile-Friendly**: Responsive design works on all devices
-- **HTTPS Secured**: SSL certificate with auto-renewal
+---
 
 ## Project Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
-│                    🌐 INTERNET                                │
-│                        │                                   │
-│              DuckDNS (freeai4all.duckdns.org)               │
-│                        │                                   │
-│                 ┌─────────┴─────────┐                         │
-│                 │    🔀 ROUTER        │                         │
-│                 │   Port 80 → 443  │                         │
-│                 └─────┬───────┘                         │
-│                       │                                   │
-│              ┌──────▼───────┐                            │
-│              │    🏠 RASPBERRY PI 3+                      │
-│              │   192.168.1.67                              │
-│              │                                               │
-│    ┌─────────┴──────────┬───────────────┐                  │
-│    │                    │               │                  │
-│  🌐 Nginx (80/443)    │   📊 Data API (8001) │   🔄 DuckDNS Client │
-│    │                    │               │                  │
-│    │  Static Files       │    JSON Data    │   DNS Updates     │
-│    │  SSL Termination    │    /data/*      │   /data/duckdns/  │
-│    └─────────────────────┴─────────────────────┘              │
-│                                                               │
-│    ┌─────────────────────────────────────────────────────┐  │
-│    │              2-PHASE SCRAPING SYSTEM                │  │
-│    │                                                      │  │
-│    │  PHASE 1: Discovery                                 │  │
-│    │  ┌─────────────────────────────────────────────┐   │  │
-│    │  │ models.dev API → Filter 0-cost models      │   │  │
-│    │  │ → Store in aggregated-data.json            │   │  │
-│    │  └─────────────────────────────────────────────┘   │  │
-│    │                        ↓                           │  │
-│    │  PHASE 2: Verification                           │  │
-│    │  ┌─────────────────────────────────────────────┐   │  │
-│    │  │ GitHub API → Stack Overflow API → Analysis │   │  │
-│    │  │ → Calculate Trust Score (0-100%)           │   │  │
-│    │  │ → Flag Common Issues                       │   │  │
-│    │  └─────────────────────────────────────────────┘   │  │
-│    └─────────────────────────────────────────────────────┘  │
+│                         🌐 INTERNET                                      │
+│                             │                                            │
+│              DuckDNS (freeai4all.duckdns.org)                           │
+│                             │                                            │
+│                    ┌────────┴────────┐                                   │
+│                    │    🔀 ROUTER     │                                   │
+│                    │  Port 80 → 443  │                                   │
+│                    └────────┬────────┘                                   │
+│                             │                                            │
+│                  ┌──────────▼──────────┐                                 │
+│                  │  🏠 RASPBERRY PI 3+ │                                 │
+│                  │    192.168.1.67     │                                 │
+│                  │                     │                                 │
+│    ┌─────────────┼─────────┬───────────┼─────────────┐                  │
+│    │             │         │           │             │                  │
+│  🌐 Nginx      📊 Data   🔄 DuckDNS  📝 Astro      🤖 Models         │
+│  (80/443)      API       Client      Static Site   Directory          │
+│    │           (8001)    (5min)      (dist/)       (Features)         │
+│    │             │         │           │             │                  │
+│    │  ┌──────────┴─────────┴───────────┴─────────────┤                  │
+│    │  │                                              │                  │
+│    │  │  ✨ Interactive Features                      │                  │
+│    │  │  ⭐ Favorites (localStorage)                  │                  │
+│    │  │  🔍 Advanced Filters                         │                  │
+│    │  │  ⚖️ Model Comparison                         │                  │
+│    │  │  📄 Detail Modals                            │                  │
+│    │  │  📋 Copy-to-Clipboard                        │                  │
+│    │  │                                              │                  │
+│    └───┴──────────────────────────────────────────────┘                  │
+│                                                                          │
+│    ┌─────────────────────────────────────────────────────┐              │
+│    │         2-PHASE SCRAPING SYSTEM                     │              │
+│    │                                                     │              │
+│    │  PHASE 1: Discovery                                 │              │
+│    │  ┌─────────────────────────────────────────────┐   │              │
+│    │  │ models.dev API → Filter 0-cost models      │   │              │
+│    │  │ → Store in aggregated-data.json            │   │              │
+│    │  └─────────────────────────────────────────────┘   │              │
+│    │                        ↓                           │              │
+│    │  PHASE 2: Verification                           │              │
+│    │  ┌─────────────────────────────────────────────┐   │              │
+│    │  │ GitHub API → Stack Overflow API → Analysis │   │              │
+│    │  │ → Calculate Trust Score (0-100%)           │   │              │
+│    │  │ → Flag Common Issues                       │   │              │
+│    │  └─────────────────────────────────────────────┘   │              │
+│    └─────────────────────────────────────────────────────┘              │
 └─────────────────────────────────────────────────────────────────────────┘
 ```
+
+---
 
 ## Quick Start
 
@@ -144,6 +213,35 @@ npm run preview
 ### Viewing the Dashboard
 
 Visit the live site at https://freeai4all.duckdns.org or open `dist/index.html` locally after building.
+
+---
+
+## Using the Dashboard
+
+### Basic Navigation
+
+1. **Browse Models** - Scroll through providers or use provider chips to filter
+2. **Search** - Type in the search box to find models by name
+3. **Filter** - Use sliders and capability toggles to narrow results
+4. **Save Favorites** - Click 🤍 to save models for later
+5. **Compare** - Click ⚖️ on 2-3 models, then "Compare Selected"
+6. **View Details** - Click ℹ️ to see full specifications
+7. **Copy IDs** - Click 📋 or 🏢 to copy model info
+
+### Keyboard Shortcuts
+
+- `Esc` - Close any open modal
+- `Ctrl/Cmd + F` - Focus search box
+
+### Mobile Usage
+
+All features work on mobile:
+- Swipe to scroll through models
+- Touch-friendly buttons and sliders
+- Responsive comparison table (scrolls horizontally)
+- Modals adjust to screen size
+
+---
 
 ## 2-Phase Scraping Implementation
 
@@ -221,6 +319,38 @@ npm run scrape:verify
 GITHUB_TOKEN=ghp_xxx npm run scrape
 ```
 
+---
+
+## SEO & Social Media
+
+### SEO Score: 100/100 🎯
+
+**Implemented:**
+- ✅ Title & Meta Description
+- ✅ Open Graph tags (9 total)
+- ✅ Twitter Cards (7 tags)
+- ✅ Canonical URL
+- ✅ Structured Data (JSON-LD)
+- ✅ Sitemap.xml
+- ✅ Robots.txt
+- ✅ OG Image (1200x630px)
+- ✅ Mobile Responsive
+- ✅ Performance optimized
+
+**Social Sharing Preview:**
+When you share https://freeai4all.duckdns.org on social media:
+- **Title**: Free AI Models Directory | 0-Cost AI Models
+- **Description**: Discover 450+ free AI models with zero input/output costs
+- **Image**: Professional gradient card with stats
+- **Site Name**: FreeAI4All
+
+**Test your SEO:**
+- [Facebook Sharing Debugger](https://developers.facebook.com/tools/debug/)
+- [Twitter Card Validator](https://cards-dev.twitter.com/validator)
+- [LinkedIn Post Inspector](https://www.linkedin.com/post-inspector/)
+
+---
+
 ## Data Source
 
 ### models.dev API
@@ -240,6 +370,8 @@ The dashboard aggregates data from [models.dev](https://models.dev/api.json), a 
 - **Manual**: Run `npm run scrape` locally
 - **Social Media**: Verification updates with each scrape
 
+---
+
 ## Project Structure
 
 ```
@@ -247,31 +379,42 @@ The dashboard aggregates data from [models.dev](https://models.dev/api.json), a 
 │   └── scrape-and-deploy.yml  # Hourly 2-phase scraper workflow
 ├── data/
 │   └── aggregated-data.json   # Free AI models with verification data
-├── dist/                     # Astro build output (static site)
+├── dist/                      # Astro build output (static site)
+├── public/
+│   ├── favicon.svg           # Site icon
+│   ├── og-image.png          # Social media preview (1200x630)
+│   └── og-image.svg          # Vector source for OG image
 ├── src/
 │   ├── api/                  # Platform API implementations
 │   │   ├── modelsdev.ts      # Free models API client
 │   │   ├── github.ts         # GitHub API for verification
 │   │   └── stackoverflow.ts  # Stack Overflow API for verification
 │   ├── components/           # Astro components
-│   │   └── ModelCard.astro   # Model display component
+│   │   └── ModelCard.astro   # Model display with favorite/compare/copy buttons
 │   ├── data/                 # Data layer
 │   │   ├── models.ts         # Model loading and filtering
 │   │   └── store.ts          # Data persistence
 │   ├── layouts/              # Astro layouts
-│   │   └── Layout.astro      # Base page layout
+│   │   └── Layout.astro      # Base page layout with SEO meta tags
 │   ├── pages/                # Astro pages
-│   │   └── index.astro       # Homepage with model directory
+│   │   └── index.astro       # Homepage with all interactive features
 │   ├── scraper/              # 2-phase scraper service
 │   │   ├── index.ts
 │   │   └── cli.ts
-│   └── types/
-│       └── index.ts          # TypeScript definitions
+│   ├── types/
+│   │   └── index.ts          # TypeScript definitions
+│   └── utils/
+│       └── favorites.ts      # Favorites localStorage management
 ├── astro.config.mjs          # Astro configuration
+├── convert-og-image.js       # OG image generation script
+├── og-image-generator.html   # OG image HTML template
 ├── package.json
 ├── PUBLIC-ACCESS-GUIDE.md    # Public hosting guide
+├── ROADMAP.md                # Project roadmap
 └── README.md                 # This file
 ```
+
+---
 
 ## Usage
 
@@ -313,12 +456,17 @@ You can manually trigger the scrape workflow:
 
 ### Dashboard Features
 
-- **Search**: Find models by name, provider, or capability
-- **Provider Filter**: Click provider chips to filter
-- **Verification Status**: CONFIRMED/QUESTIONED/UNKNOWN badges
-- **Trust Score**: 0-100% confidence indicator
-- **Issue Tags**: Reported problems (rate limit, unavailable, etc.)
-- **Real-time**: Data auto-refreshes hourly
+- **⭐ Favorites**: Save models with heart icon, access in "My Favorites" section
+- **🔍 Search**: Real-time filtering by name, provider, capability
+- **⚖️ Compare**: Select 2-3 models and view side-by-side comparison
+- **📄 Details**: Click ℹ️ for full model specifications
+- **📋 Copy**: One-click copy for model ID and provider
+- **🎚️ Sliders**: Filter by context/output token limits
+- **🏷️ Capabilities**: Multi-select filters for features
+- **🏢 Providers**: Click chips to filter by source
+- **Clear Filters**: Reset all filters with one button
+
+---
 
 ## Configuration
 
@@ -344,10 +492,13 @@ REDDIT_CLIENT_SECRET=your_reddit_secret
 ### Nginx Configuration
 
 Your nginx is configured to:
-- Serve static files from project root
+- Serve static files from project root (`/home/pedroocalado/ai4all/AI4ALL/dist`)
 - Proxy `/data/` requests to data directory
 - Handle HTTPS with SSL certificate
 - Redirect HTTP to HTTPS
+- Gzip compression enabled
+
+---
 
 ## Deployment
 
@@ -358,6 +509,22 @@ Your site is already deployed and publicly accessible:
 - **Server**: Nginx on Raspberry Pi 3+
 - **SSL**: Let's Encrypt certificate
 - **DNS**: DuckDNS (updates every 5 minutes)
+
+### Build & Deploy
+
+```bash
+# Build the site (generates static files in dist/)
+npm run build
+
+# Nginx automatically serves from dist/ directory
+# (No manual copy needed - nginx root points to dist/)
+
+# Reload nginx if needed
+sudo systemctl reload nginx
+
+# Or preview locally
+npm run preview
+```
 
 ### Services Status
 
@@ -373,7 +540,9 @@ sudo tail -f /var/log/nginx/access.log
 cat ~/ai4all/AI4ALL/.scraper.log
 ```
 
-### Development
+---
+
+## Development
 
 **Available Scripts:**
 - `npm run dev` - Start Astro development server
@@ -383,17 +552,20 @@ cat ~/ai4all/AI4ALL/.scraper.log
 - `npm run lint` - Run ESLint
 - `npm run typecheck` - Run TypeScript compiler
 
-**Build & Deploy:**
+**Build & Test:**
 ```bash
-# Build the site (generates static files in dist/)
+# Clean build
+rm -rf dist/
 npm run build
 
-# Copy to web server (example for nginx)
-sudo cp -r dist/* /var/www/html/
+# Verify build output
+ls -la dist/
 
-# Or preview locally
+# Test locally
 npm run preview
 ```
+
+---
 
 ## Cost
 
@@ -406,6 +578,8 @@ npm run preview
 | Power (Pi 24/7) | ~$5 | Estimated |
 | **Total** | **~$5** | ✅ Very cost-effective |
 
+---
+
 ## Browser Support
 
 - Chrome 80+
@@ -413,13 +587,36 @@ npm run preview
 - Safari 13+
 - Edge 80+
 
+All interactive features work on mobile browsers with touch-optimized controls.
+
+---
+
 ## Documentation
 
-- **`README.md`** - This file (2-phase scraping guide)
+- **`README.md`** - This file (features guide, deployment, usage)
 - **`PUBLIC-ACCESS-GUIDE.md`** - Guide for public hosting setup
 - **`ROADMAP.md`** - Original project roadmap
+- **`AGENTS.md`** - Development guidelines for AI agents
+
+---
 
 ## Troubleshooting
+
+### Dashboard Features Not Working?
+
+**Favorites not persisting:**
+- Check browser's localStorage is enabled
+- Try incognito/private mode to test
+- Check browser console for JavaScript errors
+
+**Filters not working:**
+- Clear browser cache and refresh
+- Check JavaScript is enabled
+- Try different browser
+
+**Comparison not opening:**
+- Select at least 2 models to compare
+- Check for JavaScript errors in console
 
 ### Scraper Issues
 
@@ -478,36 +675,55 @@ echo $GITHUB_TOKEN
 - Try running with GITHUB_TOKEN for better coverage
 - Check search keywords in `src/scraper/index.ts`
 
+---
+
 ## Contributing
 
 1. Fork the repository
 2. Create a feature branch
-3. Implement 2-phase scraping improvements
-4. Add new verification sources (Hacker News, etc.)
-5. Run tests: `npm test`
+3. Implement new features or improvements
+4. Run tests: `npm run typecheck && npm run lint`
+5. Build and verify: `npm run build`
 6. Submit a pull request
+
+**Feature Ideas:**
+- Model usage examples/snippets
+- Export favorites to JSON/CSV
+- Dark/light theme toggle
+- Model rating/reviews
+- API endpoint for third-party access
+
+---
 
 ## License
 
 MIT License - see LICENSE file for details
 
+---
+
 ## Support
 
 For issues and questions:
-- 📖 Check this README for 2-phase scraping details
+- 📖 Check this README for feature documentation
 - 📖 Check `PUBLIC-ACCESS-GUIDE.md` for hosting help
 - 🐛 Open an issue on GitHub
+- 💬 Share feedback on the live site
+
+---
 
 ## Acknowledgments
 
 - **Data**: [models.dev](https://models.dev) API
-- **Verification**: GitHub & Stack Overflow APIs
+- **Framework**: [Astro](https://astro.build) for static site generation
+- **Icons**: Emoji icons for universal compatibility
 - **Hosting**: Built with ❤️ on Raspberry Pi 3+
 - **Security**: SSL by Let's Encrypt
 - **DNS**: DuckDNS
 
 ---
 
-**Last Updated:** February 10, 2026  
-**Version:** 2.1.0  
-**Status:** 🎉 Production Ready - 2-Phase Scraping Active
+**Last Updated:** February 11, 2026  
+**Version:** 2.5.0  
+**Status:** 🎉 Production Ready - Interactive Features Live
+
+**Share the link**: https://freeai4all.duckdns.org
