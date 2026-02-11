@@ -130,18 +130,20 @@ npm install
 npm run scrape
 ```
 
-4. Serve locally:
+4. Build the Astro site:
 ```bash
-python3 -m http.server 8080
-# Visit http://localhost:8080/dashboard.html
+npm run build
+```
+
+5. Serve locally:
+```bash
+npm run preview
+# Or copy dist/ to your web server
 ```
 
 ### Viewing the Dashboard
 
-Simply open `dashboard.html` in any modern web browser, or visit the live site:
-```bash
-open dashboard.html
-```
+Visit the live site at https://freeai4all.duckdns.org or open `dist/index.html` locally after building.
 
 ## 2-Phase Scraping Implementation
 
@@ -245,25 +247,30 @@ The dashboard aggregates data from [models.dev](https://models.dev/api.json), a 
 │   └── scrape-and-deploy.yml  # Hourly 2-phase scraper workflow
 ├── data/
 │   └── aggregated-data.json   # Free AI models with verification data
+├── dist/                     # Astro build output (static site)
 ├── src/
-│   ├── api/
+│   ├── api/                  # Platform API implementations
 │   │   ├── modelsdev.ts      # Free models API client
 │   │   ├── github.ts         # GitHub API for verification
 │   │   └── stackoverflow.ts  # Stack Overflow API for verification
-│   ├── scraper/
-│   │   ├── index.ts          # 2-phase scraper service
-│   │   └── cli.ts            # CLI interface
-│   ├── data/
+│   ├── components/           # Astro components
+│   │   └── ModelCard.astro   # Model display component
+│   ├── data/                 # Data layer
+│   │   ├── models.ts         # Model loading and filtering
 │   │   └── store.ts          # Data persistence
+│   ├── layouts/              # Astro layouts
+│   │   └── Layout.astro      # Base page layout
+│   ├── pages/                # Astro pages
+│   │   └── index.astro       # Homepage with model directory
+│   ├── scraper/              # 2-phase scraper service
+│   │   ├── index.ts
+│   │   └── cli.ts
 │   └── types/
 │       └── index.ts          # TypeScript definitions
-├── dashboard.html            # Main dashboard UI
-├── favicon.ico               # Site favicon
-├── scripts/
-│   ├── setup-duckdns.sh     # DuckDNS setup script
-│   └── setup-public-access.sh # Public access setup
+├── astro.config.mjs          # Astro configuration
+├── package.json
 ├── PUBLIC-ACCESS-GUIDE.md    # Public hosting guide
-└── package.json
+└── README.md                 # This file
 ```
 
 ## Usage
@@ -369,10 +376,24 @@ cat ~/ai4all/AI4ALL/.scraper.log
 ### Development
 
 **Available Scripts:**
+- `npm run dev` - Start Astro development server
+- `npm run build` - Build static site to dist/
+- `npm run preview` - Preview built site locally
 - `npm run scrape` - Full 2-phase scraping with verification
 - `npm run lint` - Run ESLint
 - `npm run typecheck` - Run TypeScript compiler
-- `npm test` - Run tests
+
+**Build & Deploy:**
+```bash
+# Build the site (generates static files in dist/)
+npm run build
+
+# Copy to web server (example for nginx)
+sudo cp -r dist/* /var/www/html/
+
+# Or preview locally
+npm run preview
+```
 
 ## Cost
 

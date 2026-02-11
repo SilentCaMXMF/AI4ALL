@@ -4,28 +4,22 @@ This file provides guidelines and commands for AI coding agents working on the A
 
 ## Build, Lint, and Test Commands
 
-### Core Development
+### Core Development (Astro)
 ```bash
-npm run dev              # Start Next.js development server
-npm run build            # Build for production
-npm run start            # Start production server
+npm run dev              # Start Astro development server
+npm run build            # Build static site to dist/
+npm run preview          # Preview built site locally
 ```
 
 ### 2-Phase Scraper Commands
 ```bash
 npm run scrape           # Run full 2-phase scraper with verification
-npm run scrape:modelsdev  # Phase 1 only - fetch models from models.dev
-npm run scrape:verify    # Phase 2 only - verify existing models
-npm run schedule        # Run GitHub distribution scheduler
 ```
 
 ### Code Quality
 ```bash
-npm run lint            # Run ESLint on .ts/.tsx files
+npm run lint            # Run ESLint
 npm run typecheck       # Type-check without emitting
-npm run test            # Run all tests (vitest)
-npm run test -- src/file.test.ts  # Run single test file
-npm run test -- --run   # Run tests once (no watch mode)
 npx tsc --noEmit       # Type-check only
 ```
 
@@ -34,8 +28,8 @@ npx tsc --noEmit       # Type-check only
 ### TypeScript Configuration
 - Target: ES2022 with strict mode enabled
 - Module: ESNext with bundler resolution
-- JSX: preserve (Next.js App Router)
 - Always use explicit types for function parameters and return values
+- Astro uses .astro files for components with TypeScript support
 
 ### Imports and Exports
 - Use ES modules (`import`/`export`, not CommonJS)
@@ -107,13 +101,16 @@ interface FeedbackSummary {
 
 ### File Organization
 - `src/api/` - Platform API implementations
+- `src/components/` - Astro UI components (.astro files)
+- `src/data/` - Data layer (models.ts for loading/filtering)
+- `src/layouts/` - Astro layout templates
+- `src/pages/` - Astro pages (index.astro is homepage)
 - `src/scraper/` - 2-phase scraper orchestration
-- `src/types/` - TypeScript interfaces and types
-- `src/data/` - Data storage and persistence
-- `src/app/` - Next.js App Router pages
 - `src/services/` - Core service modules
+- `src/types/` - TypeScript interfaces and types
 - `src/utils/` - Utility functions
 - `data/` - Aggregated data files
+- `dist/` - Astro build output (static HTML/CSS/JS)
 
 ### Console Logging
 - Use structured logs with prefixes: `[Scraper]`, `[GitHub]`, etc.
@@ -210,9 +207,8 @@ interface BasePlatformAPI {
 
 ## Known Issues
 
-- TypeScript interface conflicts in `models-dev-service.ts`
-- ESLint warnings for unused imports (72 errors, 14 warnings)
-- GitHub Actions workflow needs token configuration
+- None currently - migration to Astro completed successfully
+- Build is fast (13s) and memory-efficient on Raspberry Pi 3B+
 
 ## Additional Resources
 
