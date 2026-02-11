@@ -64,7 +64,7 @@
         "positive": 0,
         "negative": 0,
         "neutral": 0,
-        "lastMention": "2026-02-11T20:36:26.859Z",
+        "lastMention": "2026-02-11T21:31:00.714Z",
         "availabilityStatus": "unknown",
         "commonIssues": [],
         "verificationLevel": "No social media mentions found",
@@ -137,7 +137,7 @@
         "positive": 0,
         "negative": 0,
         "neutral": 0,
-        "lastMention": "2026-02-11T20:36:14.559Z",
+        "lastMention": "2026-02-11T21:30:48.381Z",
         "availabilityStatus": "unknown",
         "commonIssues": [],
         "verificationLevel": "No social media mentions found",
@@ -218,7 +218,7 @@
         "positive": 0,
         "negative": 0,
         "neutral": 0,
-        "lastMention": "2026-02-11T20:36:26.810Z",
+        "lastMention": "2026-02-11T21:31:00.683Z",
         "availabilityStatus": "unknown",
         "commonIssues": [],
         "verificationLevel": "No social media mentions found",
@@ -289,7 +289,7 @@
         "positive": 0,
         "negative": 0,
         "neutral": 0,
-        "lastMention": "2026-02-11T20:36:37.010Z",
+        "lastMention": "2026-02-11T21:31:10.944Z",
         "availabilityStatus": "unknown",
         "commonIssues": [],
         "verificationLevel": "No social media mentions found",
@@ -367,7 +367,7 @@
         "positive": 0,
         "negative": 0,
         "neutral": 0,
-        "lastMention": "2026-02-11T20:36:25.842Z",
+        "lastMention": "2026-02-11T21:30:59.673Z",
         "availabilityStatus": "unknown",
         "commonIssues": [],
         "verificationLevel": "No social media mentions found",
@@ -446,7 +446,7 @@
         "positive": 0,
         "negative": 0,
         "neutral": 0,
-        "lastMention": "2026-02-11T20:36:15.619Z",
+        "lastMention": "2026-02-11T21:30:49.497Z",
         "availabilityStatus": "unknown",
         "commonIssues": [],
         "verificationLevel": "No social media mentions found",
@@ -517,7 +517,7 @@
         "positive": 0,
         "negative": 0,
         "neutral": 0,
-        "lastMention": "2026-02-11T20:36:26.868Z",
+        "lastMention": "2026-02-11T21:31:00.740Z",
         "availabilityStatus": "unknown",
         "commonIssues": [],
         "verificationLevel": "No social media mentions found",
@@ -591,7 +591,7 @@
         "positive": 0,
         "negative": 0,
         "neutral": 0,
-        "lastMention": "2026-02-11T20:36:26.810Z",
+        "lastMention": "2026-02-11T21:31:00.696Z",
         "availabilityStatus": "unknown",
         "commonIssues": [],
         "verificationLevel": "No social media mentions found",
@@ -661,7 +661,7 @@
         "positive": 0,
         "negative": 0,
         "neutral": 0,
-        "lastMention": "2026-02-11T20:36:38.007Z",
+        "lastMention": "2026-02-11T21:31:11.881Z",
         "availabilityStatus": "unknown",
         "commonIssues": [],
         "verificationLevel": "No social media mentions found",
@@ -736,7 +736,7 @@
         "positive": 0,
         "negative": 0,
         "neutral": 0,
-        "lastMention": "2026-02-11T20:36:15.610Z",
+        "lastMention": "2026-02-11T21:30:49.535Z",
         "availabilityStatus": "unknown",
         "commonIssues": [],
         "verificationLevel": "No social media mentions found",
@@ -811,7 +811,7 @@
         "positive": 0,
         "negative": 0,
         "neutral": 0,
-        "lastMention": "2026-02-11T20:36:15.690Z",
+        "lastMention": "2026-02-11T21:30:49.459Z",
         "availabilityStatus": "unknown",
         "commonIssues": [],
         "verificationLevel": "No social media mentions found",
@@ -823,7 +823,7 @@
       "platform": "modelsdev",
       "type": "model",
       "title": "OpenCode Zen: GPT-5 Nano",
-      "content": "💰 FREE MODEL | Context: 272,000 tokens | Output: 128,000 tokens | Capabilities: Tool Calling, Reasoning, Structured Output, Vision | Family: gpt-nano",
+      "content": "💰 FREE MODEL | Context: 400,000 tokens | Output: 128,000 tokens | Capabilities: Tool Calling, Reasoning, Structured Output, Vision | Family: gpt-nano",
       "author": {
         "name": "OpenCode Zen",
         "url": "https://models.dev/?search=opencode"
@@ -833,7 +833,7 @@
       "metrics": {
         "inputCost": 0,
         "outputCost": 0,
-        "contextLimit": 272000,
+        "contextLimit": 400000,
         "outputLimit": 128000,
         "isFree": true,
         "capabilities": 4
@@ -875,7 +875,8 @@
           "cache_read": 0
         },
         "limit": {
-          "context": 272000,
+          "context": 400000,
+          "input": 272000,
           "output": 128000
         },
         "provider": {
@@ -892,7 +893,7 @@
         "positive": 0,
         "negative": 0,
         "neutral": 0,
-        "lastMention": "2026-02-11T20:36:15.640Z",
+        "lastMention": "2026-02-11T21:30:49.459Z",
         "availabilityStatus": "unknown",
         "commonIssues": [],
         "verificationLevel": "No social media mentions found",
@@ -900,5 +901,5 @@
       }
     }
   ],
-  "lastUpdated": "2026-02-11T20:36:38.011Z"
+  "lastUpdated": "2026-02-11T21:31:11.886Z"
 }
