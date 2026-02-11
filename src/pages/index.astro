@@ -1,0 +1,255 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ModelCard from '../components/ModelCard.astro';
+import { getFreeModels, getModelStats, getUniqueProviders, type ModelItem } from '../data/models.js';
+
+// Load models at build time
+const models = await getFreeModels();
+const stats = getModelStats(models);
+const providers = getUniqueProviders(models);
+
+// Group models by provider for display
+const groupedModels = new Map<string, ModelItem[]>();
+for (const model of models) {
+  const provider = model.raw.providerName || model.raw.providerId || 'Unknown';
+  if (!groupedModels.has(provider)) {
+    groupedModels.set(provider, []);
+  }
+  groupedModels.get(provider)!.push(model);
+}
+
+// Sort providers by model count (descending)
+const sortedProviders = Array.from(groupedModels.entries())
+  .sort((a, b) => b[1].length - a[1].length);
+---
+
+<Layout title="Free AI Models Directory | 0-Cost AI Models" description="Discover 450+ free AI models with zero input/output costs. Filter by provider, capabilities, and more.">
+  <section class="hero">
+    <h1>Free AI Models Directory</h1>
+    <p class="hero-description">
+      Curated collection of <strong>{stats.total}</strong> AI models with 
+      <span class="highlight">zero cost</span> for both input and output tokens
+    </p>
+    
+    <div class="stats-grid">
+      <div class="stat-card">
+        <span class="stat-number">{stats.total}</span>
+        <span class="stat-label">Free Models</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">{stats.providers}</span>
+        <span class="stat-label">Providers</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">{stats.tags}</span>
+        <span class="stat-label">Capabilities</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="providers-section">
+    <h2>Top Providers</h2>
+    <div class="provider-chips">
+      {sortedProviders.slice(0, 10).map(([provider, models]) => (
+        <a href={`#${provider.toLowerCase().replace(/\s+/g, '-')}`} class="provider-chip">
+          <span class="provider-name">{provider}</span>
+          <span class="provider-count">{models.length}</span>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <section class="models-section">
+    <h2>All Free Models</h2>
+    
+    {sortedProviders.map(([provider, providerModels]) => (
+      <div id={provider.toLowerCase().replace(/\s+/g, '-')} class="provider-section">
+        <h3 class="provider-heading">
+          {provider}
+          <span class="model-count">({providerModels.length} models)</span>
+        </h3>
+        <div class="models-grid">
+          {providerModels.map(model => (
+            <ModelCard model={model} />
+          ))}
+        </div>
+      </div>
+    ))}
+  </section>
+</Layout>
+
+<style>
+  .hero {
+    text-align: center;
+    padding: 3rem 0;
+    margin-bottom: 2rem;
+  }
+
+  h1 {
+    font-size: 3rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6, #ec4899);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 1rem;
+  }
+
+  .hero-description {
+    font-size: 1.25rem;
+    color: #94a3b8;
+    max-width: 600px;
+    margin: 0 auto 2rem;
+  }
+
+  .highlight {
+    color: #10b981;
+    font-weight: 700;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .stat-card {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.2));
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: center;
+  }
+
+  .stat-number {
+    display: block;
+    font-size: 2.5rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .stat-label {
+    font-size: 0.875rem;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .providers-section {
+    margin-bottom: 3rem;
+  }
+
+  h2 {
+    font-size: 1.75rem;
+    margin-bottom: 1rem;
+    color: #f8fafc;
+  }
+
+  .provider-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .provider-chip {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(59, 130, 246, 0.2);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    border-radius: 9999px;
+    padding: 0.5rem 1rem;
+    text-decoration: none;
+    color: #60a5fa;
+    transition: all 0.3s ease;
+  }
+
+  .provider-chip:hover {
+    background: rgba(59, 130, 246, 0.3);
+    transform: translateY(-2px);
+  }
+
+  .provider-name {
+    font-weight: 600;
+  }
+
+  .provider-count {
+    background: rgba(59, 130, 246, 0.4);
+    padding: 0.125rem 0.5rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+  }
+
+  .models-section {
+    margin-bottom: 3rem;
+  }
+
+  .provider-section {
+    margin-bottom: 3rem;
+  }
+
+  .provider-heading {
+    font-size: 1.5rem;
+    color: #f8fafc;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid rgba(59, 130, 246, 0.3);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .model-count {
+    font-size: 1rem;
+    color: #64748b;
+    font-weight: 400;
+  }
+
+  .models-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 1.5rem;
+  }
+
+  @media (max-width: 768px) {
+    h1 {
+      font-size: 2rem;
+    }
+
+    .hero-description {
+      font-size: 1rem;
+    }
+
+    .stats-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .stat-number {
+      font-size: 1.75rem;
+    }
+
+    .models-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .provider-chips {
+      justify-content: center;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .stats-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .stat-card {
+      padding: 1rem;
+    }
+  }
+</style>

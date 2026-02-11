@@ -1,43 +1,27 @@
 {
-  "name": "social-media-aggregator",
-  "version": "1.0.0",
-  "description": "Aggregate content from GitHub, Reddit, StackOverflow, Discord, and X (Twitter)",
-  "main": "src/index.ts",
+  "name": "ai4all",
+  "version": "2.0.0",
+  "description": "Free AI Models Directory - Curated list of free AI models with zero cost",
   "type": "module",
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
     "scrape": "npx tsx src/scraper/cli.ts",
-    "scrape:github": "ts-node src/scraper/platforms/github.ts",
-    "scrape:reddit": "ts-node src/scraper/platforms/reddit.ts",
-    "scrape:stackoverflow": "ts-node src/scraper/platforms/stackoverflow.ts",
-    "schedule": "node github-distribution.ts",
-    "schedule:github": "node github-distribution.ts",
+    "scrape:modelsdev": "npx tsx src/scraper/cli.ts",
     "lint": "eslint src",
-    "typecheck": "tsc --noEmit",
-    "test": "vitest"
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "astro": "^4.15.0",
     "date-fns": "^3.3.1",
     "dotenv": "^17.2.4",
-    "next": "^15.0.8",
-    "node-fetch": "^3.3.2",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "node-fetch": "^3.3.2"
   },
   "devDependencies": {
-    "@eslint/core": "^1.1.0",
     "@types/node": "^20.11.16",
-    "@types/react": "^18.2.55",
-    "@types/react-dom": "^18.2.19",
-    "@typescript-eslint/eslint-plugin": "^6.21.0",
-    "@typescript-eslint/parser": "^6.21.0",
-    "eslint": "^9.0.0",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.3.3",
-    "typescript-eslint": "^8.54.0",
-    "vitest": "^1.2.2"
+    "typescript": "^5.3.3"
   },
   "engines": {
     "node": ">=18.0.0"

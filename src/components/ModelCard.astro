@@ -1,0 +1,222 @@
+---
+import type { ModelItem } from '../data/models.js';
+
+interface Props {
+  model: ModelItem;
+}
+
+const { model } = Astro.props;
+const raw = model.raw;
+
+// Extract capabilities
+const capabilities = [];
+if (raw.capabilities?.tool_call) capabilities.push('🔧 Tool Calling');
+if (raw.capabilities?.reasoning) capabilities.push('🧠 Reasoning');
+if (raw.capabilities?.structured_output) capabilities.push('📋 Structured Output');
+if (raw.open_weights) capabilities.push('🔓 Open Weights');
+if (raw.modalities?.input?.includes('image')) capabilities.push('👁️ Vision');
+if (raw.modalities?.input?.includes('audio')) capabilities.push('🎵 Audio');
+
+// Format context limit
+const contextLimit = raw.limit?.context || raw.limit?.input || 0;
+const outputLimit = raw.limit?.output || 0;
+
+// Format numbers
+const formatNumber = (num: number) => {
+  if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`;
+  if (num >= 1000) return `${(num / 1000).toFixed(0)}K`;
+  return num.toString();
+};
+
+// Get provider color
+const getProviderColor = (provider: string) => {
+  const colors: Record<string, string> = {
+    'OpenRouter': '#3b82f6',
+    'Nvidia': '#76b900',
+    'GitHub Models': '#333333',
+    'Poe': '#9333ea',
+    'Ollama Cloud': '#f97316',
+  };
+  return colors[provider] || '#64748b';
+};
+---
+
+<div class="model-card">
+  <div class="card-header">
+    <div class="provider-badge" style={`background-color: ${getProviderColor(raw.providerName || raw.providerId || 'Unknown')}`}>
+      {raw.providerName || raw.providerId || 'Unknown'}
+    </div>
+    <div class="free-badge">✓ FREE</div>
+  </div>
+
+  <h3 class="model-name">{raw.name}</h3>
+  
+  {raw.family && (
+    <p class="model-family">Family: {raw.family}</p>
+  )}
+
+  <div class="model-limits">
+    {contextLimit > 0 && (
+      <span class="limit-badge">
+        📄 Context: {formatNumber(contextLimit)} tokens
+      </span>
+    )}
+    {outputLimit > 0 && (
+      <span class="limit-badge">
+        📤 Output: {formatNumber(outputLimit)} tokens
+      </span>
+    )}
+  </div>
+
+  {capabilities.length > 0 && (
+    <div class="capabilities">
+      {capabilities.map(cap => (
+        <span class="capability-tag">{cap}</span>
+      ))}
+    </div>
+  )}
+
+  <div class="card-footer">
+    <a href={model.url} target="_blank" rel="noopener" class="view-btn">
+      View Model →
+    </a>
+    {raw.release_date && (
+      <span class="release-date">
+        Released: {new Date(raw.release_date).toLocaleDateString()}
+      </span>
+    )}
+  </div>
+</div>
+
+<style>
+  .model-card {
+    background: linear-gradient(135deg, rgba(51, 65, 85, 0.8), rgba(30, 41, 59, 0.9));
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .model-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    border-color: rgba(59, 130, 246, 0.5);
+  }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .provider-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: white;
+  }
+
+  .free-badge {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+  }
+
+  .model-name {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #f8fafc;
+    margin: 0;
+  }
+
+  .model-family {
+    font-size: 0.875rem;
+    color: #94a3b8;
+    font-style: italic;
+  }
+
+  .model-limits {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .limit-badge {
+    background: rgba(59, 130, 246, 0.2);
+    color: #60a5fa;
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+  }
+
+  .capabilities {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .capability-tag {
+    background: rgba(139, 92, 246, 0.2);
+    color: #a78bfa;
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    border: 1px solid rgba(139, 92, 246, 0.3);
+  }
+
+  .card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .view-btn {
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    color: white;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+  }
+
+  .view-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+  }
+
+  .release-date {
+    font-size: 0.75rem;
+    color: #64748b;
+  }
+
+  @media (max-width: 640px) {
+    .model-card {
+      padding: 1rem;
+    }
+
+    .model-name {
+      font-size: 1.1rem;
+    }
+
+    .card-footer {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+</style>
