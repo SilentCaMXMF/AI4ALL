@@ -2,9 +2,21 @@
 interface Props {
   title: string;
   description?: string;
+  keywords?: string;
+  ogImage?: string;
+  canonical?: string;
 }
 
-const { title, description = "Free AI Models Directory - Curated list of free AI models" } = Astro.props;
+const { 
+  title, 
+  description = "Free AI Models Directory - Curated list of free AI models",
+  keywords = "free AI models, AI directory, LLM, machine learning, AI tools, developer resources, OpenAI, Claude, Gemini",
+  ogImage = "https://freeai4all.duckdns.org/og-image.png",
+  canonical = "https://freeai4all.duckdns.org/"
+} = Astro.props;
+
+const siteUrl = "https://freeai4all.duckdns.org";
+const currentYear = new Date().getFullYear();
 ---
 
 <!DOCTYPE html>
@@ -12,9 +24,75 @@ const { title, description = "Free AI Models Directory - Curated list of free AI
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <!-- Primary Meta Tags -->
+    <meta name="title" content={title} />
     <meta name="description" content={description} />
+    <meta name="keywords" content={keywords} />
+    <meta name="author" content="FreeAI4All" />
+    <meta name="robots" content="index, follow" />
+    <meta name="language" content="English" />
+    <meta name="revisit-after" content="7 days" />
     <meta name="theme-color" content="#0f172a" />
+    <meta name="msapplication-TileColor" content="#0f172a" />
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href={canonical} />
+    
+    <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/favicon.svg" />
+    
+    <!-- Preconnect for Performance -->
+    <link rel="preconnect" href="https://models.dev" />
+    <link rel="dns-prefetch" href="https://models.dev" />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:site_name" content="FreeAI4All" />
+    <meta property="og:locale" content="en_US" />
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content={canonical} />
+    <meta property="twitter:title" content={title} />
+    <meta property="twitter:description" content={description} />
+    <meta property="twitter:image" content={ogImage} />
+    <meta property="twitter:creator" content="@FreeAI4All" />
+    <meta property="twitter:site" content="@FreeAI4All" />
+    
+    <!-- Structured Data -->
+    <script type="application/ld+json" set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "FreeAI4All",
+      "description": "Comprehensive directory of free AI models with zero cost input/output",
+      "url": siteUrl,
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": `${siteUrl}/?search={search_term_string}`,
+        "query-input": "required name=search_term_string"
+      }
+    })} />
+    
+    <script type="application/ld+json" set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "FreeAI4All",
+      "alternateName": "Free AI Models Directory",
+      "url": siteUrl,
+      "logo": `${siteUrl}/favicon.svg`,
+      "sameAs": [
+        "https://github.com/SilentCaMXMF/AI4ALL"
+      ]
+    })} />
+    
     <title>{title}</title>
     <style is:global>
       :root {
@@ -164,7 +242,7 @@ const { title, description = "Free AI Models Directory - Curated list of free AI
           <a href="https://models.dev" target="_blank" rel="noopener">Data from models.dev</a>
           <a href="https://github.com/SilentCaMXMF/AI4ALL" target="_blank" rel="noopener">GitHub</a>
         </div>
-        <p>© 2026 FreeAI4All. All models verified with 0-cost input/output.</p>
+        <p>© {currentYear} FreeAI4All. All models verified with 0-cost input/output.</p>
       </div>
     </footer>
   </body>

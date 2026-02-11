@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OG Image Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0f172a;
+        }
+        
+        .og-container {
+            width: 1200px;
+            height: 630px;
+            background: linear-gradient(135deg, #0f172a 0%, #1a1f3c 50%, #0f172a 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 80px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .og-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 30% 30%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 70% 70%, rgba(139, 92, 246, 0.15) 0%, transparent 50%);
+            pointer-events: none;
+        }
+        
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            margin-bottom: 40px;
+            z-index: 1;
+        }
+        
+        .logo-icon {
+            font-size: 80px;
+            filter: drop-shadow(0 4px 20px rgba(59, 130, 246, 0.5));
+        }
+        
+        .logo-text {
+            font-size: 72px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -2px;
+        }
+        
+        .tagline {
+            font-size: 36px;
+            color: #94a3b8;
+            text-align: center;
+            margin-bottom: 50px;
+            z-index: 1;
+            font-weight: 500;
+        }
+        
+        .stats {
+            display: flex;
+            gap: 60px;
+            z-index: 1;
+        }
+        
+        .stat {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 56px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: block;
+            line-height: 1;
+        }
+        
+        .stat-label {
+            font-size: 20px;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-top: 8px;
+            font-weight: 600;
+        }
+        
+        .url {
+            position: absolute;
+            bottom: 40px;
+            font-size: 24px;
+            color: #475569;
+            font-weight: 500;
+            z-index: 1;
+        }
+        
+        /* Grid pattern overlay */
+        .grid-pattern {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                linear-gradient(rgba(59, 130, 246, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(59, 130, 246, 0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="og-container">
+        <div class="grid-pattern"></div>
+        <div class="logo-section">
+            <span class="logo-icon">🤖</span>
+            <span class="logo-text">FreeAI4All</span>
+        </div>
+        <p class="tagline">Discover 450+ Free AI Models with Zero Cost</p>
+        <div class="stats">
+            <div class="stat">
+                <span class="stat-number">450+</span>
+                <span class="stat-label">Free Models</span>
+            </div>
+            <div class="stat">
+                <span class="stat-number">50+</span>
+                <span class="stat-label">Providers</span>
+            </div>
+            <div class="stat">
+                <span class="stat-number">0¢</span>
+                <span class="stat-label">Cost</span>
+            </div>
+        </div>
+        <span class="url">freeai4all.duckdns.org</span>
+    </div>
+</body>
+</html>
