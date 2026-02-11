@@ -17,7 +17,7 @@ export interface AggregatedItem {
   raw: unknown; // Original platform-specific data
 }
 
-export type Platform = 'github' | 'reddit' | 'stackoverflow' | 'discord' | 'x' | 'modelsdev';
+export type Platform = 'github' | 'reddit' | 'stackoverflow' | 'discord' | 'x' | 'modelsdev' | 'hackernews' | 'huggingface';
 
 export type ContentType = 
   | 'repository' 
@@ -43,6 +43,7 @@ export interface PlatformMetrics {
   shares?: number;
   likes?: number;
   replies?: number;
+  downloads?: number;        // For Hugging Face
 }
 
 export interface FetchOptions {
