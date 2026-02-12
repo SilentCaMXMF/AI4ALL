@@ -1,0 +1,18 @@
+{
+  "models": [],
+  "lastUpdated": "2026-02-12T00:00:00.000Z",
+  "stats": {
+    "totalModels": 0,
+    "verifiedModels": 0,
+    "questionedModels": 0,
+    "unknownModels": 0
+  },
+  "sources": {
+    "github": { "status": "not_configured" },
+    "reddit": { "status": "not_configured" },
+    "stackoverflow": { "status": "not_configured" },
+    "hackernews": { "status": "not_configured" },
+    "x": { "status": "not_configured" },
+    "huggingface": { "status": "not_configured" }
+  }
+}

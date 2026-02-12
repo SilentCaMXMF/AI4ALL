@@ -111,20 +111,6 @@ export class EnhancedScraperService {
     
     console.log(`[EnhancedScraper] ✓ Initialized ${this.platformAPIs.size} platform APIs`);
   }
-    
-    if (platformConfigs.reddit) {
-      this.platformAPIs.set('reddit', new RedditAPI(platformConfigs.reddit));
-    }
-    
-    if (platformConfigs.stackoverflow) {
-      this.platformAPIs.set('stackoverflow', new StackOverflowAPI(platformConfigs.stackoverflow));
-    }
-    
-    this.platformAPIs.set('hackernews', new HackerNewsAPI());
-    this.platformAPIs.set('huggingface', new EnhancedHuggingFaceAPI(this.apiKeyManager.getPlatformConfig('huggingface')));
-    
-    console.log(`[EnhancedScraper] ✓ Initialized ${this.platformAPIs.size} platform APIs`);
-  }
 
   private getPlatformConfigs(): any {
     return {

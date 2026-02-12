@@ -1,12 +1,12 @@
 import { readFile, writeFile } from 'node:fs/promises';
-import type { Platform } from '../types/index.js';
+import type { GenericPlatform } from '../types/index.js';
 
 /**
  * Standardized error classes for platform operations
  */
 export class PlatformError extends Error {
   constructor(
-    public readonly platform: Platform,
+    public readonly platform: GenericPlatform,
     public readonly context: string,
     public readonly originalError?: unknown,
     message?: string
@@ -18,7 +18,7 @@ export class PlatformError extends Error {
 
 export class NetworkError extends PlatformError {
   constructor(
-    platform: Platform,
+    platform: GenericPlatform,
     context: string,
     public readonly statusCode?: number,
     originalError?: unknown
@@ -29,14 +29,14 @@ export class NetworkError extends PlatformError {
 }
 
 export class RateLimitError extends PlatformError {
-  constructor(platform: Platform, context: string, public readonly retryAfter?: number) {
+  constructor(platform: GenericPlatform, context: string, public readonly retryAfter?: number) {
     super(platform, context, undefined, `Rate limit exceeded in ${context}${retryAfter ? ` - retry after ${retryAfter}s` : ''}`);
     this.name = 'RateLimitError';
   }
 }
 
 export class ValidationError extends PlatformError {
-  constructor(platform: Platform, context: string, public readonly field?: string, originalError?: unknown) {
+  constructor(platform: GenericPlatform, context: string, public readonly field?: string, originalError?: unknown) {
     super(platform, context, originalError, `Validation error in ${context}${field ? ` - field: ${field}` : ''}`);
     this.name = 'ValidationError';
   }
@@ -46,7 +46,7 @@ export class ValidationError extends PlatformError {
  * Create standardized platform error
  */
 export function createPlatformError(
-  platform: Platform | string,
+  platform: GenericPlatform | string,
   context: string,
   originalError?: unknown
 ): PlatformError {
@@ -76,7 +76,7 @@ export function createPlatformError(
  * Log platform error with consistent formatting
  */
 export function logPlatformError(
-  platform: Platform | string,
+  platform: GenericPlatform | string,
   error: unknown,
   context?: string
 ): void {
@@ -101,9 +101,9 @@ export function logPlatformError(
  */
 export async function handleAsyncError<T>(
   asyncFn: () => Promise<T>,
-  platform: Platform,
+  platform: GenericPlatform,
   context: string
-): Promise<T> {
+): Promise<T | undefined> {
   try {
     return await asyncFn();
   } catch (error) {
@@ -210,7 +210,7 @@ export function getTechnicalDetails(error: unknown): object {
 export async function loadStateFile<T>(
   filePath: string,
   defaultState: T,
-  platform: Platform
+  platform: GenericPlatform
 ): Promise<T> {
   try {
     const content = await readFile(filePath, 'utf-8');
@@ -224,7 +224,7 @@ export async function loadStateFile<T>(
 export async function saveStateFile<T>(
   filePath: string,
   state: T,
-  platform: Platform
+  platform: GenericPlatform
 ): Promise<void> {
   try {
     await writeFile(filePath, JSON.stringify(state, null, 2));
@@ -236,7 +236,7 @@ export async function saveStateFile<T>(
 // API response validation utility
 export async function validateApiResponse<T>(
   response: Response,
-  platform: Platform,
+  platform: GenericPlatform,
   context: string
 ): Promise<T> {
   if (!response.ok) {
@@ -254,7 +254,7 @@ export async function validateApiResponse<T>(
 // Optional operation wrapper
 export async function handleOptionalOperation<T>(
   asyncFn: () => Promise<T>,
-  platform: Platform,
+  platform: GenericPlatform,
   context: string,
   fallbackValue: T
 ): Promise<T> {
@@ -270,7 +270,7 @@ export async function handleOptionalOperation<T>(
 export async function ensureValidToken(
   tokenCheck: () => boolean,
   tokenRefresh: () => Promise<void>,
-  platform: Platform,
+  platform: GenericPlatform,
   context: string
 ): Promise<void> {
   try {
@@ -284,6 +284,6 @@ export async function ensureValidToken(
 }
 
 // Request counter utility
-export function incrementRequestCounter(platform: Platform, context: string): void {
+export function incrementRequestCounter(platform: GenericPlatform, context: string): void {
   console.debug(`[${platform}] Request counter incremented in ${context}`);
 }

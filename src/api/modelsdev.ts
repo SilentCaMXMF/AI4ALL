@@ -11,6 +11,7 @@ import {
   incrementRequestCounter
 } from '../utils/error-handler.js';
 import { ModelsDevService } from '../services/models-dev-service.js';
+import { sleep } from '../types/index.js';
 
 interface ProviderConfig {
   id: string;
@@ -73,117 +74,48 @@ export class ModelsDevAPI extends BasePlatformAPI {
   
   private stateFile: string;
   private state: ModelsDevState;
-  private searchTerms: string[];
-  private modelsService: ModelsDevService;
 
-  constructor(config: { searchTerms?: string[] } = {}) {
+  constructor() {
     super();
     this.stateFile = join(process.cwd(), 'data', 'modelsdev-state.json');
-    this.searchTerms = config.searchTerms || ['opencode', 'zen'];
-    this.modelsService = new ModelsDevService();
-    
     this.state = {
       lastFetchTime: new Date(0).toISOString(),
       modelsCache: [],
       priceHistory: [],
       fetchCount: 0
     };
+    this.loadState().catch(error => {
+      logPlatformError(error, this.platform, 'constructor');
+    });
   }
-
-async fetchItems(options: FetchOptions = {}): Promise<FetchResult> {
-    return handleAsyncError(async () => {
-      await this.loadState();
-      
-      const now = new Date();
-      const lastFetch = new Date(this.state.lastFetchTime);
-      const hoursSinceLastFetch = (now.getTime() - lastFetch.getTime()) / (1000 * 60 * 60);
-      
-      // Check if we should fetch (hourly intervals)
-      if (hoursSinceLastFetch < 1 && this.state.modelsCache.length > 0) {
-        console.log(`[ModelsDev] Skipping fetch - last update ${hoursSinceLastFetch.toFixed(1)}h ago (hourly intervals)`);
-        return {
-          items: this.state.modelsCache.map(model => this.normalizeModel(model)),
-          hasMore: false
-        } as FetchResult;
-      }
-      
-      console.log(`[ModelsDev] Fetching fresh data... (last fetch: ${hoursSinceLastFetch.toFixed(1)}h ago)`);
-      
-      await this.rateLimit();
-      incrementRequestCounter(this.platform, 'fetchItems');
-      
-      // Use the unified service to fetch items
-      const items = await this.modelsService.fetchItems({
-        filterType: 'advanced',
-        searchTerms: this.searchTerms,
-        freeOnly: true,
-        limit: options.limit || 500
-      });
-      
-      // Update cache with raw model data for price tracking
-      const modelData = await this.modelsService.createModelData(this.searchTerms);
-      this.state.modelsCache = modelData.models as any;
-      this.state.lastFetchTime = now.toISOString();
-      this.state.fetchCount++;
-      await this.saveState();
-      
-      console.log(`[ModelsDev] Returning ${items.length} free models`);
-      
-      return {
-        items,
-        hasMore: false
-      };
-    }, this.platform, 'fetchItems');
-  }
-
-  
 
   private detectPriceChanges(newModels: ModelsDevModel[]): PriceChange[] {
     const changes: PriceChange[] = [];
-    const now = new Date().toISOString();
+    const previousModels = new Map(this.state.modelsCache.map(m => [m.id, m]));
     
     for (const newModel of newModels) {
-      const oldModel = this.state.modelsCache.find(m => 
-        m.id === newModel.id || (m.providerId === newModel.providerId && m.modelId === newModel.modelId)
-      );
-      
-      if (!oldModel) continue; // New model, not a price change
-      
-      // Check input cost
-      if (newModel.inputCost !== oldModel.inputCost) {
-        const changePercent = oldModel.inputCost && newModel.inputCost
-          ? ((newModel.inputCost - oldModel.inputCost) / oldModel.inputCost) * 100
-          : undefined;
+      const previousModel = previousModels.get(newModel.id);
+      if (previousModel) {
+        const inputCost = newModel.cost?.input ?? 0;
+        const outputCost = newModel.cost?.output ?? 0;
+        const prevInputCost = previousModel.cost?.input ?? 0;
+        const prevOutputCost = previousModel.cost?.output ?? 0;
         
-        changes.push({
-          modelId: (newModel as any).modelId || 'unknown',
-          providerId: (newModel as any).providerId || 'unknown',
-          field: 'inputCost',
-          oldValue: oldModel.inputCost,
-          newValue: newModel.inputCost,
-          changePercent,
-          timestamp: now
-        });
-      }
-      
-      // Check output cost
-      if (newModel.outputCost !== oldModel.outputCost) {
-        const changePercent = oldModel.outputCost && newModel.outputCost
-          ? ((newModel.outputCost - oldModel.outputCost) / oldModel.outputCost) * 100
-          : undefined;
-        
-        changes.push({
-          modelId: (newModel as any).modelId || 'unknown',
-          providerId: (newModel as any).providerId || 'unknown',
-          field: 'outputCost',
-          oldValue: oldModel.outputCost,
-          newValue: newModel.outputCost,
-          changePercent,
-          timestamp: now
-        });
+        if (inputCost !== prevInputCost || outputCost !== prevOutputCost) {
+          changes.push({
+            modelId: newModel.id,
+            modelName: newModel.name,
+            oldPrice: { input: prevInputCost, output: prevOutputCost },
+            newPrice: { input: inputCost, output: outputCost },
+            changePercent: inputCost !== prevInputCost ? 
+              ((inputCost - prevInputCost) / Math.max(prevInputCost, 0.0001)) * 100 : 0,
+            timestamp: new Date().toISOString()
+          });
+        }
       }
     }
     
+    this.state.priceHistory.push(...changes);
     return changes;
   }
 
@@ -245,29 +177,74 @@ async fetchItems(options: FetchOptions = {}): Promise<FetchResult> {
     };
   }
 
+  async fetchItems(options?: FetchOptions): Promise<FetchResult> {
+    try {
+      console.log(`[${this.platform}] Starting fetch for free models...`);
+      
+      // Use the ModelsDevService to fetch models
+      const service = new ModelsDevService();
+      const items = await service.fetchItems({ freeOnly: true });
+      
+      const result: FetchResult = {
+        items,
+        hasMore: false
+      };
+      
+      console.log(`[${this.platform}] ✓ Fetched ${result.items.length} free models`);
+      
+      return result;
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      console.error(`[${this.platform}] Error in fetchItems:`, errorMessage);
+      
+      return {
+        items: [],
+        hasMore: false,
+        rateLimitUntil: null
+      };
+    }
+  }
+
   private normalizePriceChange(change: PriceChange): AggregatedItem {
     const percentStr = change.changePercent 
       ? ` (${change.changePercent > 0 ? '+' : ''}${change.changePercent.toFixed(1)}%)` 
       : '';
     
+    // Find the model from cache to get full details
+    const model = this.state.modelsCache.find(m => m.id === change.modelId);
+    if (!model) return null;
+    
+    const provider = {
+      name: model.providerName || model.provider || 'Unknown',
+      url: `https://models.dev/?search=${encodeURIComponent(model.providerId || model.provider)}`
+    };
+    
+    const inputCost = change.newPrice.input;
+    const outputCost = change.newPrice.output;
+    
     return {
-      id: `modelsdev-pricechange-${change.modelId}-${change.timestamp}`,
-      platform: 'modelsdev',
-      type: 'price_alert',
-      title: `💰 Price Change: ${change.modelId}`,
-      content: `${change.field} changed from $${change.oldValue} to $${change.newValue}${percentStr} per 1M tokens`,
-      author: {
-        name: change.providerId,
-        url: `https://models.dev/?search=${encodeURIComponent(change.providerId)}`
-      },
+      id: `price-change-${change.modelId}-${Date.now()}`,
+      platform: 'modelsdev' as Platform,
+      type: 'model' as ContentType,
+      title: `${provider.name}: ${model.name} - Price Change${percentStr}`,
+      content: `Price change for ${model.name}\nOld: Input: $${change.oldPrice.input}/1M, Output: $${change.oldPrice.output}/1M\nNew: Input: $${inputCost}/1M, Output: $${outputCost}/1M${percentStr}\nFamily: ${model.family || 'N/A'}\nProvider: ${provider.name}`,
+      author: provider,
       timestamp: change.timestamp,
-      url: `https://models.dev/?search=${encodeURIComponent(change.providerId)}&model=${encodeURIComponent(change.modelId)}`,
+      url: `https://models.dev/model/${model.id}`,
       metrics: {
-        stars: change.oldValue,
-        forks: change.newValue
+        stars: 0,
+        forks: 0,
+        watchers: 0,
+        comments: 0,
+        upvotes: 0,
+        downvotes: 0
       },
-      tags: ['price-change', change.providerId, change.field],
-      raw: change
+      tags: [
+        'price-change',
+        provider.name.toLowerCase(),
+        ...(model.family ? [model.family] : [])
+      ],
+      raw: { ...change, model }
     };
   }
 

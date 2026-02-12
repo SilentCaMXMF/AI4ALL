@@ -61,7 +61,7 @@ const modelsJson = JSON.stringify(models);
 
 <Layout title="Free AI Models Directory | Enhanced with Verification" description="Discover 450+ free AI models with zero input/output costs. Enhanced with cross-platform verification, reliability scores, and community insights.">
   <!-- Enhanced Verification Scripts -->
-  <script src="/scripts/verification-ui.js"></script>
+  <script src="/scripts/verification-ui.js" is:inline></script>
   
   <section class="hero enhanced">
     <h1>Free AI Models Directory</h1>

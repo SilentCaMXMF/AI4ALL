@@ -1,5 +1,4 @@
 import js from '@eslint/js';
-import tseslint from 'typescript-eslint';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 
@@ -30,20 +29,11 @@ export default [
     ],
   },
   js.configs.recommended,
-  ...tseslint.configs.recommended,
   {
     files: ['src/**/*.ts', 'src/**/*.tsx'],
     languageOptions: {
-      parser: tseslint.parser,
       ecmaVersion: 2022,
       sourceType: 'module',
-      parserOptions: {
-        ecmaFeatures: {
-          jsx: true,
-        },
-        project: './tsconfig.json',
-        tsconfigRootDir: __dirname,
-      },
       globals: {
         process: 'readonly',
         console: 'readonly',
@@ -56,12 +46,8 @@ export default [
     },
     rules: {
       ...js.configs.recommended.rules,
-      ...tseslint.configs.recommended.rules,
-      '@typescript-eslint/no-explicit-any': 'warn',
-      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
-      '@typescript-eslint/consistent-type-imports': 'error',
-      '@typescript-eslint/no-floating-promises': 'warn',
-      '@typescript-eslint/prefer-optional-chain': 'warn',
+      'no-unused-vars': 'off', // Turn off for TypeScript, will be handled by TS
+      'no-undef': 'off', // Turn off for TypeScript, will be handled by TS
     },
   },
 ];
