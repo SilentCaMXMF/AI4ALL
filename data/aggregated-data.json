@@ -1,6 +1,81 @@
 {
   "items": [
     {
+      "id": "modelsdev-minimax-m2.5-free",
+      "platform": "modelsdev",
+      "type": "model",
+      "title": "OpenCode Zen: MiniMax M2.5 Free",
+      "content": "💰 FREE MODEL | Context: 204,800 tokens | Output: 131,072 tokens | Capabilities: Tool Calling, Reasoning, Open Weights | Family: minimax-free",
+      "author": {
+        "name": "OpenCode Zen",
+        "url": "https://models.dev/?search=opencode"
+      },
+      "timestamp": "2026-02-12",
+      "url": "https://models.dev/?search=opencode&model=minimax-m2.5-free",
+      "metrics": {
+        "inputCost": 0,
+        "outputCost": 0,
+        "contextLimit": 204800,
+        "outputLimit": 131072,
+        "isFree": true,
+        "capabilities": 3
+      },
+      "tags": [
+        "opencode",
+        "minimax-free",
+        "Tool Calling",
+        "Reasoning",
+        "Open Weights",
+        "free"
+      ],
+      "raw": {
+        "id": "minimax-m2.5-free",
+        "name": "MiniMax M2.5 Free",
+        "family": "minimax-free",
+        "attachment": false,
+        "reasoning": true,
+        "tool_call": true,
+        "temperature": true,
+        "knowledge": "2025-01",
+        "release_date": "2026-02-12",
+        "last_updated": "2026-02-12",
+        "modalities": {
+          "input": [
+            "text"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "cost": {
+          "input": 0,
+          "output": 0,
+          "cache_read": 0
+        },
+        "limit": {
+          "context": 204800,
+          "output": 131072
+        },
+        "providerId": "opencode",
+        "providerName": "OpenCode Zen",
+        "modelId": "minimax-m2.5-free",
+        "providerUrl": ""
+      },
+      "feedback": [],
+      "feedbackSummary": {
+        "total": 0,
+        "positive": 0,
+        "negative": 0,
+        "neutral": 0,
+        "lastMention": "2026-02-12T16:55:00.340Z",
+        "availabilityStatus": "unknown",
+        "commonIssues": [],
+        "verificationLevel": "No social media mentions found",
+        "verificationScore": 0
+      }
+    },
+    {
       "id": "modelsdev-stepfun/step-3.5-flash-free",
       "platform": "modelsdev",
       "type": "model",
@@ -64,7 +139,7 @@
         "positive": 0,
         "negative": 0,
         "neutral": 0,
-        "lastMention": "2026-02-12T15:49:23.268Z",
+        "lastMention": "2026-02-12T16:54:39.022Z",
         "availabilityStatus": "unknown",
         "commonIssues": [],
         "verificationLevel": "No social media mentions found",
@@ -126,6 +201,7 @@
           "context": 131072,
           "output": 131072
         },
+        "status": "deprecated",
         "providerId": "opencode",
         "providerName": "OpenCode Zen",
         "modelId": "trinity-large-preview-free",
@@ -137,7 +213,7 @@
         "positive": 0,
         "negative": 0,
         "neutral": 0,
-        "lastMention": "2026-02-12T15:49:10.832Z",
+        "lastMention": "2026-02-12T16:54:49.195Z",
         "availabilityStatus": "unknown",
         "commonIssues": [],
         "verificationLevel": "No social media mentions found",
@@ -218,7 +294,7 @@
         "positive": 0,
         "negative": 0,
         "neutral": 0,
-        "lastMention": "2026-02-12T15:49:23.190Z",
+        "lastMention": "2026-02-12T16:54:50.144Z",
         "availabilityStatus": "unknown",
         "commonIssues": [],
         "verificationLevel": "No social media mentions found",
@@ -289,7 +365,7 @@
         "positive": 0,
         "negative": 0,
         "neutral": 0,
-        "lastMention": "2026-02-12T15:49:33.449Z",
+        "lastMention": "2026-02-12T16:54:39.025Z",
         "availabilityStatus": "unknown",
         "commonIssues": [],
         "verificationLevel": "No social media mentions found",
@@ -353,6 +429,7 @@
           "context": 204800,
           "output": 131072
         },
+        "status": "deprecated",
         "provider": {
           "npm": "@ai-sdk/anthropic"
         },
@@ -367,7 +444,7 @@
         "positive": 0,
         "negative": 0,
         "neutral": 0,
-        "lastMention": "2026-02-12T15:49:22.210Z",
+        "lastMention": "2026-02-12T16:54:50.217Z",
         "availabilityStatus": "unknown",
         "commonIssues": [],
         "verificationLevel": "No social media mentions found",
@@ -446,7 +523,7 @@
         "positive": 0,
         "negative": 0,
         "neutral": 0,
-        "lastMention": "2026-02-12T15:49:12.064Z",
+        "lastMention": "2026-02-12T16:55:01.395Z",
         "availabilityStatus": "unknown",
         "commonIssues": [],
         "verificationLevel": "No social media mentions found",
@@ -517,7 +594,7 @@
         "positive": 0,
         "negative": 0,
         "neutral": 0,
-        "lastMention": "2026-02-12T15:49:23.209Z",
+        "lastMention": "2026-02-12T16:54:37.973Z",
         "availabilityStatus": "unknown",
         "commonIssues": [],
         "verificationLevel": "No social media mentions found",
@@ -591,7 +668,7 @@
         "positive": 0,
         "negative": 0,
         "neutral": 0,
-        "lastMention": "2026-02-12T15:49:23.244Z",
+        "lastMention": "2026-02-12T16:54:38.928Z",
         "availabilityStatus": "unknown",
         "commonIssues": [],
         "verificationLevel": "No social media mentions found",
@@ -661,7 +738,7 @@
         "positive": 0,
         "negative": 0,
         "neutral": 0,
-        "lastMention": "2026-02-12T15:49:34.418Z",
+        "lastMention": "2026-02-12T16:54:39.015Z",
         "availabilityStatus": "unknown",
         "commonIssues": [],
         "verificationLevel": "No social media mentions found",
@@ -736,7 +813,7 @@
         "positive": 0,
         "negative": 0,
         "neutral": 0,
-        "lastMention": "2026-02-12T15:49:12.073Z",
+        "lastMention": "2026-02-12T16:54:50.193Z",
         "availabilityStatus": "unknown",
         "commonIssues": [],
         "verificationLevel": "No social media mentions found",
@@ -811,7 +888,7 @@
         "positive": 0,
         "negative": 0,
         "neutral": 0,
-        "lastMention": "2026-02-12T15:49:12.058Z",
+        "lastMention": "2026-02-12T16:54:50.231Z",
         "availabilityStatus": "unknown",
         "commonIssues": [],
         "verificationLevel": "No social media mentions found",
@@ -893,7 +970,7 @@
         "positive": 0,
         "negative": 0,
         "neutral": 0,
-        "lastMention": "2026-02-12T15:49:12.080Z",
+        "lastMention": "2026-02-12T16:55:01.404Z",
         "availabilityStatus": "unknown",
         "commonIssues": [],
         "verificationLevel": "No social media mentions found",
@@ -901,5 +978,5 @@
       }
     }
   ],
-  "lastUpdated": "2026-02-12T15:49:34.421Z"
+  "lastUpdated": "2026-02-12T16:55:01.408Z"
 }
