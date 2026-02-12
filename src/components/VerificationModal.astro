@@ -1,0 +1,684 @@
+---
+// Verification Details Modal Component
+
+interface Props {
+  modelId: string;
+  modelTitle: string;
+  verificationData?: any;
+  platformBreakdown?: any;
+  verificationHistory?: any;
+}
+
+const { modelId, modelTitle, verificationData = null, platformBreakdown = {}, verificationHistory = [] } = Astro.props;
+
+// Process verification data
+const verificationScore = verificationData?.feedbackSummary?.verificationScore || 0;
+const verificationLevel = verificationData?.feedbackSummary?.verificationLevel || 'No verification data';
+const availabilityStatus = verificationData?.feedbackSummary?.availabilityStatus || 'unknown';
+const commonIssues = verificationData?.feedbackSummary?.commonIssues || [];
+const totalMentions = verificationData?.feedbackSummary?.total || 0;
+const positiveMentions = verificationData?.feedbackSummary?.positive || 0;
+const negativeMentions = verificationData?.feedbackSummary?.negative || 0;
+const neutralMentions = verificationData?.feedbackSummary?.neutral || 0;
+const lastMention = verificationData?.feedbackSummary?.lastMention || '';
+
+// Platform icons and colors
+const platformConfig: Record<string, { icon: string; color: string; name: string }> = {
+  github: { icon: '🐙', color: '#333333', name: 'GitHub' },
+  reddit: { icon: '🤖', color: '#ff4500', name: 'Reddit' },
+  hackernews: { icon: '🔥', color: '#ff6600', name: 'Hacker News' },
+  stackoverflow: { icon: '📚', color: '#f48024', name: 'Stack Overflow' },
+  huggingface: { icon: '🤗', color: '#ffd21e', name: 'Hugging Face' },
+  discord: { icon: '💬', color: '#5865f2', name: 'Discord' },
+  x: { icon: '🐦', color: '#1da1f2', name: 'X (Twitter)' }
+};
+
+// Get status styling
+const getStatusStyle = (status: string) => {
+  switch (status) {
+    case 'confirmed':
+      return { color: '#10b981', bg: 'rgba(16, 185, 129, 0.1)', border: 'rgba(16, 185, 129, 0.3)' };
+    case 'questioned':
+      return { color: '#f59e0b', bg: 'rgba(245, 158, 11, 0.1)', border: 'rgba(245, 158, 11, 0.3)' };
+    default:
+      return { color: '#6b7280', bg: 'rgba(107, 114, 128, 0.1)', border: 'rgba(107, 114, 128, 0.3)' };
+  }
+};
+
+const statusStyle = getStatusStyle(availabilityStatus);
+
+// Calculate sentiment percentages
+const positivePercentage = totalMentions > 0 ? Math.round((positiveMentions / totalMentions) * 100) : 0;
+const negativePercentage = totalMentions > 0 ? Math.round((negativeMentions / totalMentions) * 100) : 0;
+const neutralPercentage = totalMentions > 0 ? Math.round((neutralMentions / totalMentions) * 100) : 0;
+---
+
+<div id="verification-modal-{modelId}" class="verification-modal" style="display: none;">
+  <div class="modal-overlay" onclick="closeVerificationModal('{modelId}')"></div>
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Verification Details</h2>
+      <button class="close-btn" onclick="closeVerificationModal('{modelId}')">×</button>
+    </div>
+
+    <div class="modal-body">
+      <!-- Model Info -->
+      <div class="model-info">
+        <h3>{modelTitle}</h3>
+        <div class="verification-score-display">
+          <div class="score-circle" style={`background: conic-gradient(#10b981 ${verificationScore * 3.6}deg, #e5e7eb ${verificationScore * 3.6}deg)`}>
+            <span class="score-text">{verificationScore}%</span>
+          </div>
+          <div class="score-details">
+            <div class="status-badge" style={`background: ${statusStyle.bg}; color: ${statusStyle.color}; border: 1px solid ${statusStyle.border}`}>
+              {verificationLevel}
+            </div>
+            <div class="availability-badge" style={`background: ${statusStyle.bg}; color: ${statusStyle.color}; border: 1px solid ${statusStyle.border}`}>
+              Status: <strong>{availabilityStatus}</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sentiment Analysis -->
+      <div class="sentiment-section">
+        <h4>Sentiment Analysis ({totalMentions} total mentions)</h4>
+        <div class="sentiment-bars">
+          <div class="sentiment-bar">
+            <span class="sentiment-label positive">Positive</span>
+            <div class="sentiment-progress">
+              <div class="sentiment-fill positive" style={`width: ${positivePercentage}%`}></div>
+            </div>
+            <span class="sentiment-count">{positiveMentions}</span>
+          </div>
+          <div class="sentiment-bar">
+            <span class="sentiment-label neutral">Neutral</span>
+            <div class="sentiment-progress">
+              <div class="sentiment-fill neutral" style={`width: ${neutralPercentage}%`}></div>
+            </div>
+            <span class="sentiment-count">{neutralMentions}</span>
+          </div>
+          <div class="sentiment-bar">
+            <span class="sentiment-label negative">Negative</span>
+            <div class="sentiment-progress">
+              <div class="sentiment-fill negative" style={`width: ${negativePercentage}%`}></div>
+            </div>
+            <span class="sentiment-count">{negativeMentions}</span>
+          </div>
+        </div>
+        {lastMention && (
+          <p class="last-mention">Last mention: {new Date(lastMention).toLocaleString()}</p>
+        )}
+      </div>
+
+      <!-- Platform Breakdown -->
+      {Object.keys(platformBreakdown).length > 0 && (
+        <div class="platform-section">
+          <h4>Platform Breakdown</h4>
+          <div class="platform-grid">
+            {Object.entries(platformBreakdown).map(([platform, data]: [string, any]) => {
+              const config = platformConfig[platform] || { icon: '🌐', color: '#6b7280', name: platform };
+              return (
+                <div class="platform-card" style={`border-color: ${config.color}20`}>
+                  <div class="platform-header">
+                    <span class="platform-icon" style={`color: ${config.color}`}>{config.icon}</span>
+                    <span class="platform-name">{config.name}</span>
+                    <span class="platform-count">{data.mentionCount} mentions</span>
+                  </div>
+                  <div class="platform-sentiment">
+                    <div class="sentiment-score" style={`color: ${data.averageSentiment >= 70 ? '#10b981' : data.averageSentiment < 40 ? '#ef4444' : '#f59e0b'}`}>
+                      {data.averageSentiment}% sentiment
+                    </div>
+                    <div class="last-checked">
+                      Last checked: {new Date(data.lastChecked).toLocaleDateString()}
+                    </div>
+                  </div>
+                  {data.commonIssues && data.commonIssues.length > 0 && (
+                    <div class="platform-issues">
+                      <div class="issues-title">Issues:</div>
+                      <div class="issues-list">
+                        {data.commonIssues.slice(0, 2).map((issue: string) => (
+                          <span class="issue-tag">{issue}</span>
+                        ))}
+                        {data.commonIssues.length > 2 && (
+                          <span class="issue-more">+{data.commonIssues.length - 2}</span>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      <!-- Common Issues -->
+      {commonIssues.length > 0 && (
+        <div class="issues-section">
+          <h4>Common Issues</h4>
+          <div class="issues-grid">
+            {commonIssues.map((issue: string, index: number) => (
+              <div class="issue-card">
+                <span class="issue-icon">⚠️</span>
+                <span class="issue-text">{issue}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <!-- Recent History -->
+      {verificationHistory.length > 0 && (
+        <div class="history-section">
+          <h4>Recent Verification Activity</h4>
+          <div class="history-timeline">
+            {verificationHistory.slice(0, 5).map((entry: any) => (
+              <div class="history-item">
+                <div class="history-marker" style={`background: ${platformConfig[entry.platform]?.color || '#6b7280'}`}></div>
+                <div class="history-content">
+                  <div class="history-header">
+                    <span class="history-platform">{platformConfig[entry.platform]?.name || entry.platform}</span>
+                    <span class="history-time">{new Date(entry.timestamp).toLocaleString()}</span>
+                  </div>
+                  <div class="history-type">{entry.type.replace('_', ' ').toUpperCase()}</div>
+                  {entry.data.scoreChange && (
+                    <div class="history-change">
+                      Score change: {entry.data.scoreChange > 0 ? '+' : ''}{entry.data.scoreChange}
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+
+    <div class="modal-footer">
+      <button class="secondary-btn" onclick="closeVerificationModal('{modelId}')">Close</button>
+      <a href="data/verification-database.json" target="_blank" class="primary-btn">
+        View Raw Data
+      </a>
+    </div>
+  </div>
+</div>
+
+<script>
+  function closeVerificationModal(modelId) {
+    const modal = document.getElementById(`verification-modal-${modelId}`);
+    if (modal) {
+      modal.style.display = 'none';
+      document.body.style.overflow = 'auto';
+    }
+  }
+
+  // Handle escape key
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      const modals = document.querySelectorAll('.verification-modal');
+      modals.forEach(modal => {
+        if (modal.style.display === 'block') {
+          modal.style.display = 'none';
+          document.body.style.overflow = 'auto';
+        }
+      });
+    }
+  });
+</script>
+
+<style>
+  .verification-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+  }
+
+  .modal-content {
+    position: relative;
+    background: linear-gradient(135deg, rgba(51, 65, 85, 0.95), rgba(30, 41, 59, 0.98));
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 2rem;
+    max-width: 800px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+    margin: 1rem;
+  }
+
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .modal-header h2 {
+    margin: 0;
+    color: #f8fafc;
+    font-size: 1.5rem;
+  }
+
+  .close-btn {
+    background: none;
+    border: none;
+    color: #94a3b8;
+    font-size: 2rem;
+    cursor: pointer;
+    padding: 0;
+    width: 2rem;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+  }
+
+  .close-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #f8fafc;
+  }
+
+  .modal-body {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .model-info h3 {
+    margin: 0 0 1rem 0;
+    color: #f8fafc;
+    font-size: 1.25rem;
+  }
+
+  .verification-score-display {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .score-circle {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    background: #e5e7eb;
+  }
+
+  .score-circle::before {
+    content: '';
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    background: linear-gradient(135deg, rgba(51, 65, 85, 0.95), rgba(30, 41, 59, 0.98));
+    border-radius: 50%;
+  }
+
+  .score-text {
+    position: relative;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #f8fafc;
+  }
+
+  .score-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .status-badge, .availability-badge {
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.875rem;
+  }
+
+  .sentiment-section h4,
+  .platform-section h4,
+  .issues-section h4,
+  .history-section h4 {
+    margin: 0 0 1rem 0;
+    color: #f8fafc;
+    font-size: 1.125rem;
+  }
+
+  .sentiment-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .sentiment-bar {
+    display: grid;
+    grid-template-columns: 80px 1fr 40px;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .sentiment-label {
+    font-weight: 600;
+    font-size: 0.875rem;
+  }
+
+  .sentiment-label.positive {
+    color: #10b981;
+  }
+
+  .sentiment-label.neutral {
+    color: #6b7280;
+  }
+
+  .sentiment-label.negative {
+    color: #ef4444;
+  }
+
+  .sentiment-progress {
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .sentiment-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.3s ease;
+  }
+
+  .sentiment-fill.positive {
+    background: linear-gradient(90deg, #10b981, #059669);
+  }
+
+  .sentiment-fill.neutral {
+    background: linear-gradient(90deg, #6b7280, #4b5563);
+  }
+
+  .sentiment-fill.negative {
+    background: linear-gradient(90deg, #ef4444, #dc2626);
+  }
+
+  .sentiment-count {
+    font-weight: 600;
+    color: #f8fafc;
+    text-align: right;
+  }
+
+  .last-mention {
+    margin-top: 0.5rem;
+    color: #94a3b8;
+    font-size: 0.875rem;
+    font-style: italic;
+  }
+
+  .platform-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1rem;
+  }
+
+  .platform-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 1rem;
+  }
+
+  .platform-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .platform-icon {
+    font-size: 1.25rem;
+  }
+
+  .platform-name {
+    font-weight: 600;
+    color: #f8fafc;
+    flex: 1;
+  }
+
+  .platform-count {
+    font-size: 0.875rem;
+    color: #94a3b8;
+  }
+
+  .platform-sentiment {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .sentiment-score {
+    font-weight: 600;
+  }
+
+  .last-checked {
+    font-size: 0.75rem;
+    color: #6b7280;
+  }
+
+  .platform-issues {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 0.75rem;
+  }
+
+  .issues-title {
+    font-size: 0.875rem;
+    color: #94a3b8;
+    margin-bottom: 0.5rem;
+  }
+
+  .issues-list {
+    display: flex;
+    gap: 0.25rem;
+    flex-wrap: wrap;
+  }
+
+  .issue-tag {
+    background: rgba(239, 68, 68, 0.2);
+    color: #fca5a5;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.7rem;
+  }
+
+  .issue-more {
+    background: rgba(239, 68, 68, 0.1);
+    color: #f87171;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-style: italic;
+  }
+
+  .issues-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+  }
+
+  .issue-card {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    border-radius: 8px;
+    padding: 1rem;
+  }
+
+  .issue-icon {
+    font-size: 1.25rem;
+  }
+
+  .issue-text {
+    color: #fca5a5;
+    font-weight: 500;
+  }
+
+  .history-timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .history-item {
+    display: flex;
+    gap: 1rem;
+  }
+
+  .history-marker {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 0.25rem;
+  }
+
+  .history-content {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding: 1rem;
+  }
+
+  .history-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+  }
+
+  .history-platform {
+    font-weight: 600;
+    color: #f8fafc;
+  }
+
+  .history-time {
+    font-size: 0.875rem;
+    color: #6b7280;
+  }
+
+  .history-type {
+    font-size: 0.875rem;
+    color: #94a3b8;
+    margin-bottom: 0.25rem;
+  }
+
+  .history-change {
+    font-weight: 600;
+    color: #60a5fa;
+  }
+
+  .modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .primary-btn, .secondary-btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .primary-btn {
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    color: white;
+  }
+
+  .primary-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+  }
+
+  .secondary-btn {
+    background: rgba(255, 255, 255, 0.1);
+    color: #f8fafc;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .secondary-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+
+  @media (max-width: 768px) {
+    .modal-content {
+      padding: 1.5rem;
+      margin: 0.5rem;
+    }
+
+    .verification-score-display {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .score-circle {
+      width: 100px;
+      height: 100px;
+    }
+
+    .score-circle::before {
+      width: 80px;
+      height: 80px;
+    }
+
+    .score-text {
+      font-size: 1.25rem;
+    }
+
+    .sentiment-bar {
+      grid-template-columns: 70px 1fr 30px;
+      gap: 0.5rem;
+    }
+
+    .platform-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .modal-footer {
+      flex-direction: column;
+    }
+
+    .primary-btn, .secondary-btn {
+      width: 100%;
+    }
+  }
+</style>

@@ -1,0 +1,741 @@
+---
+// Verification Timeline Component
+
+interface Props {
+  modelId: string;
+  modelTitle: string;
+  verificationHistory?: any[];
+  timeframe?: number; // days
+}
+
+const { modelId, modelTitle, verificationHistory = [], timeframe = 30 } = Astro.props;
+
+// Process history data for the specified timeframe
+const cutoffDate = new Date();
+cutoffDate.setDate(cutoffDate.getDate() - timeframe);
+
+const recentHistory = verificationHistory
+  .filter(entry => new Date(entry.timestamp) >= cutoffDate)
+  .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+
+// Platform configuration
+const platformConfig: Record<string, { icon: string; color: string; name: string }> = {
+  github: { icon: '🐙', color: '#333333', name: 'GitHub' },
+  reddit: { icon: '🤖', color: '#ff4500', name: 'Reddit' },
+  hackernews: { icon: '🔥', color: '#ff6600', name: 'Hacker News' },
+  stackoverflow: { icon: '📚', color: '#f48024', name: 'Stack Overflow' },
+  huggingface: { icon: '🤗', color: '#ffd21e', name: 'Hugging Face' },
+  discord: { icon: '💬', color: '#5865f2', name: 'Discord' },
+  x: { icon: '🐦', color: '#1da1f2', name: 'X (Twitter)' }
+};
+
+// Get event type styling
+const getEventStyling = (type: string) => {
+  switch (type) {
+    case 'verification_run':
+      return { icon: '🔍', color: '#3b82f6', label: 'Verification' };
+    case 'sentiment_change':
+      return { icon: '📊', color: '#8b5cf6', label: 'Sentiment' };
+    case 'issue_detected':
+      return { icon: '⚠️', color: '#ef4444', label: 'Issue' };
+    case 'availability_change':
+      return { icon: '🔄', color: '#f59e0b', label: 'Availability' };
+    default:
+      return { icon: '📝', color: '#6b7280', label: 'Update' };
+  }
+};
+
+// Calculate trend from score changes
+const calculateTrend = () => {
+  const scoreChanges = recentHistory
+    .filter(entry => entry.data.newScore !== undefined && entry.data.previousScore !== undefined)
+    .map(entry => entry.data.newScore - entry.data.previousScore);
+
+  if (scoreChanges.length === 0) return { trend: 'stable', change: 0 };
+
+  const totalChange = scoreChanges.reduce((sum, change) => sum + change, 0);
+  const averageChange = totalChange / scoreChanges.length;
+
+  let trend = 'stable';
+  if (averageChange > 5) trend = 'improving';
+  else if (averageChange < -5) trend = 'declining';
+
+  return { trend, change: Math.round(totalChange) };
+};
+
+const trendData = calculateTrend();
+---
+
+<div id="verification-timeline-{modelId}" class="verification-timeline" style="display: none;">
+  <div class="timeline-overlay" onclick="closeTimeline('{modelId}')"></div>
+  <div class="timeline-content">
+    <div class="timeline-header">
+      <h2>Verification Timeline</h2>
+      <button class="close-btn" onclick="closeTimeline('{modelId}')">×</button>
+    </div>
+
+    <div class="timeline-body">
+      <!-- Model Info and Trend -->
+      <div class="model-trend-summary">
+        <div class="model-info">
+          <h3>{modelTitle}</h3>
+          <div class="trend-indicator" data-trend={trendData.trend}>
+            <span class="trend-icon">
+              {trendData.trend === 'improving' ? '📈' : trendData.trend === 'declining' ? '📉' : '➡️'}
+            </span>
+            <span class="trend-text">
+              {trendData.trend === 'improving' ? 'Improving' : trendData.trend === 'declining' ? 'Declining' : 'Stable'}
+              {trendData.change !== 0 && ` (${trendData.change > 0 ? '+' : ''}${trendData.change}%)`}
+            </span>
+          </div>
+        </div>
+        
+        <div class="timeline-stats">
+          <div class="stat-card">
+            <span class="stat-number">{recentHistory.length}</span>
+            <span class="stat-label">Events ({timeframe} days)</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-number">{new Set(recentHistory.map(e => e.platform)).size}</span>
+            <span class="stat-label">Platforms</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Timeline -->
+      {recentHistory.length > 0 ? (
+        <div class="timeline-events">
+          <h4>Recent Activity</h4>
+          <div class="timeline-container">
+            {recentHistory.map((entry: any, index: number) => {
+              const eventStyling = getEventStyling(entry.type);
+              const platform = platformConfig[entry.platform] || { icon: '🌐', color: '#6b7280', name: entry.platform };
+              
+              return (
+                <div class="timeline-item" key={entry.id || index}>
+                  <div class="timeline-marker" style={`background: ${eventStyling.color}`}>
+                    <span class="marker-icon">{eventStyling.icon}</span>
+                  </div>
+                  
+                  <div class="timeline-content-card">
+                    <div class="event-header">
+                      <div class="event-type" style={`color: ${eventStyling.color}`}>
+                        <span>{eventStyling.icon}</span>
+                        <span>{eventStyling.label}</span>
+                      </div>
+                      <div class="event-platform" style={`color: ${platform.color}`}>
+                        <span>{platform.icon}</span>
+                        <span>{platform.name}</span>
+                      </div>
+                    </div>
+                    
+                    <div class="event-time">
+                      {new Date(entry.timestamp).toLocaleString()}
+                    </div>
+                    
+                    {entry.data.scoreChange && (
+                      <div class="score-change">
+                        Score: {entry.data.previousScore || '?'}% → {entry.data.newScore}% 
+                        <span class={`change-indicator ${entry.data.scoreChange > 0 ? 'positive' : entry.data.scoreChange < 0 ? 'negative' : 'neutral'}`}>
+                          ({entry.data.scoreChange > 0 ? '+' : ''}{entry.data.scoreChange}%)
+                        </span>
+                      </div>
+                    )}
+                    
+                    {entry.data.issues && entry.data.issues.length > 0 && (
+                      <div class="detected-issues">
+                        <span class="issues-label">Issues detected:</span>
+                        <div class="issues-list">
+                          {entry.data.issues.slice(0, 3).map((issue: string) => (
+                            <span class="issue-tag">{issue}</span>
+                          ))}
+                          {entry.data.issues.length > 3 && (
+                            <span class="issue-more">+{entry.data.issues.length - 3} more</span>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                    
+                    {entry.data.availability && (
+                      <div class="availability-change">
+                        Status changed to: 
+                        <span class={`availability-status ${entry.data.availability}`}>
+                          {entry.data.availability.replace('_', ' ')}
+                        </span>
+                      </div>
+                    )}
+                    
+                    {entry.data.mentionCount && (
+                      <div class="mention-count">
+                        {entry.data.mentionCount} new mentions found
+                      </div>
+                    )}
+                    
+                    {entry.metadata && (
+                      <div class="event-metadata">
+                        <details>
+                          <summary>Additional Details</summary>
+                          <pre>{JSON.stringify(entry.metadata, null, 2)}</pre>
+                        </details>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      ) : (
+        <div class="no-events">
+          <div class="no-events-icon">📊</div>
+          <h4>No Recent Activity</h4>
+          <p>No verification events recorded in the last {timeframe} days.</p>
+        </div>
+      )}
+      
+      <!-- Platform Activity Summary -->
+      <div class="platform-summary">
+        <h4>Platform Activity Summary</h4>
+        <div class="platform-activity-grid">
+          {Array.from(new Set(recentHistory.map(e => e.platform))).map(platform => {
+            const platformEvents = recentHistory.filter(e => e.platform === platform);
+            const config = platformConfig[platform] || { icon: '🌐', color: '#6b7280', name: platform };
+            
+            return (
+              <div class="platform-activity-card" style={`border-color: ${config.color}30`}>
+                <div class="platform-header">
+                  <span class="platform-icon" style={`color: ${config.color}`}>{config.icon}</span>
+                  <span class="platform-name">{config.name}</span>
+                </div>
+                <div class="platform-stats">
+                  <span class="event-count">{platformEvents.length} events</span>
+                  <div class="event-types">
+                    {Array.from(new Set(platformEvents.map(e => e.type))).slice(0, 2).map(type => {
+                      const eventStyling = getEventStyling(type);
+                      return (
+                        <span class="mini-event-type" style={`color: ${eventStyling.color}`}>
+                          {eventStyling.icon}
+                        </span>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+
+    <div class="timeline-footer">
+      <button class="secondary-btn" onclick="closeTimeline('{modelId}')">Close</button>
+      <select class="timeframe-select" onchange="updateTimelineTimeframe('{modelId}', this.value)">
+        <option value="7" selected={timeframe === 7}>Last 7 days</option>
+        <option value="30" selected={timeframe === 30}>Last 30 days</option>
+        <option value="90" selected={timeframe === 90}>Last 90 days</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<script>
+  function closeTimeline(modelId) {
+    const timeline = document.getElementById(`verification-timeline-${modelId}`);
+    if (timeline) {
+      timeline.style.display = 'none';
+      document.body.style.overflow = 'auto';
+    }
+  }
+
+  function updateTimelineTimeframe(modelId, timeframe) {
+    // Reload the page with new timeframe parameter
+    const url = new URL(window.location);
+    url.searchParams.set('timeline', timeframe);
+    url.searchParams.set('model', modelId);
+    window.location.href = url.toString();
+  }
+
+  // Handle escape key
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      const timelines = document.querySelectorAll('.verification-timeline');
+      timelines.forEach(timeline => {
+        if (timeline.style.display === 'block') {
+          timeline.style.display = 'none';
+          document.body.style.overflow = 'auto';
+        }
+      });
+    }
+  });
+</script>
+
+<style>
+  .verification-timeline {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .timeline-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+  }
+
+  .timeline-content {
+    position: relative;
+    background: linear-gradient(135deg, rgba(51, 65, 85, 0.95), rgba(30, 41, 59, 0.98));
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 2rem;
+    max-width: 900px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+    margin: 1rem;
+  }
+
+  .timeline-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .timeline-header h2 {
+    margin: 0;
+    color: #f8fafc;
+    font-size: 1.5rem;
+  }
+
+  .close-btn {
+    background: none;
+    border: none;
+    color: #94a3b8;
+    font-size: 2rem;
+    cursor: pointer;
+    padding: 0;
+    width: 2rem;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+  }
+
+  .close-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #f8fafc;
+  }
+
+  .timeline-body {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .model-trend-summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 1.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .model-info h3 {
+    margin: 0 0 0.5rem 0;
+    color: #f8fafc;
+    font-size: 1.25rem;
+  }
+
+  .trend-indicator {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+  }
+
+  .trend-indicator[data-trend="improving"] {
+    color: #10b981;
+  }
+
+  .trend-indicator[data-trend="declining"] {
+    color: #ef4444;
+  }
+
+  .trend-indicator[data-trend="stable"] {
+    color: #6b7280;
+  }
+
+  .timeline-stats {
+    display: flex;
+    gap: 1rem;
+  }
+
+  .stat-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 1rem;
+    text-align: center;
+    min-width: 100px;
+  }
+
+  .stat-number {
+    display: block;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #f8fafc;
+  }
+
+  .stat-label {
+    font-size: 0.875rem;
+    color: #94a3b8;
+  }
+
+  .timeline-events h4,
+  .platform-summary h4 {
+    margin: 0 0 1.5rem 0;
+    color: #f8fafc;
+    font-size: 1.125rem;
+  }
+
+  .timeline-container {
+    position: relative;
+    padding-left: 2rem;
+  }
+
+  .timeline-container::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .timeline-item {
+    position: relative;
+    margin-bottom: 2rem;
+  }
+
+  .timeline-marker {
+    position: absolute;
+    left: -2.5rem;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid rgba(30, 41, 59, 0.98);
+  }
+
+  .marker-icon {
+    font-size: 0.875rem;
+  }
+
+  .timeline-content-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 1rem;
+  }
+
+  .event-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+  }
+
+  .event-type, .event-platform {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-weight: 600;
+    font-size: 0.875rem;
+  }
+
+  .event-time {
+    color: #94a3b8;
+    font-size: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .score-change {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+
+  .change-indicator {
+    margin-left: 0.5rem;
+    font-size: 0.875rem;
+  }
+
+  .change-indicator.positive {
+    color: #10b981;
+  }
+
+  .change-indicator.negative {
+    color: #ef4444;
+  }
+
+  .change-indicator.neutral {
+    color: #6b7280;
+  }
+
+  .detected-issues {
+    margin-bottom: 0.5rem;
+  }
+
+  .issues-label {
+    font-weight: 600;
+    color: #fca5a5;
+    margin-right: 0.5rem;
+  }
+
+  .issues-list {
+    display: inline-flex;
+    gap: 0.25rem;
+    flex-wrap: wrap;
+  }
+
+  .issue-tag {
+    background: rgba(239, 68, 68, 0.2);
+    color: #fca5a5;
+    padding: 0.125rem 0.375rem;
+    border-radius: 4px;
+    font-size: 0.7rem;
+  }
+
+  .issue-more {
+    background: rgba(239, 68, 68, 0.1);
+    color: #f87171;
+    padding: 0.125rem 0.375rem;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-style: italic;
+  }
+
+  .availability-change {
+    margin-bottom: 0.5rem;
+  }
+
+  .availability-status {
+    font-weight: 600;
+    margin-left: 0.5rem;
+  }
+
+  .availability-status.confirmed {
+    color: #10b981;
+  }
+
+  .availability-status.questioned {
+    color: #f59e0b;
+  }
+
+  .availability-status.unknown {
+    color: #6b7280;
+  }
+
+  .availability-status.deprecated {
+    color: #ef4444;
+  }
+
+  .mention-count {
+    color: #94a3b8;
+    font-size: 0.875rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .event-metadata {
+    margin-top: 0.5rem;
+  }
+
+  .event-metadata details {
+    font-size: 0.875rem;
+  }
+
+  .event-metadata summary {
+    color: #60a5fa;
+    cursor: pointer;
+    font-weight: 600;
+  }
+
+  .event-metadata pre {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 0.5rem;
+    border-radius: 4px;
+    margin-top: 0.5rem;
+    font-size: 0.75rem;
+    overflow-x: auto;
+  }
+
+  .no-events {
+    text-align: center;
+    padding: 3rem 1rem;
+  }
+
+  .no-events-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+  }
+
+  .no-events h4 {
+    margin: 0 0 0.5rem 0;
+    color: #f8fafc;
+  }
+
+  .no-events p {
+    color: #94a3b8;
+    margin: 0;
+  }
+
+  .platform-summary {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding: 1.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .platform-activity-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+
+  .platform-activity-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 1rem;
+  }
+
+  .platform-activity-card .platform-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .platform-activity-card .platform-icon {
+    font-size: 1.125rem;
+  }
+
+  .platform-activity-card .platform-name {
+    font-weight: 600;
+    color: #f8fafc;
+  }
+
+  .platform-stats {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .event-count {
+    color: #94a3b8;
+    font-size: 0.875rem;
+  }
+
+  .event-types {
+    display: flex;
+    gap: 0.25rem;
+  }
+
+  .mini-event-type {
+    font-size: 0.875rem;
+  }
+
+  .timeline-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .secondary-btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    background: rgba(255, 255, 255, 0.1);
+    color: #f8fafc;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .secondary-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+
+  .timeframe-select {
+    background: rgba(255, 255, 255, 0.1);
+    color: #f8fafc;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    padding: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  @media (max-width: 768px) {
+    .timeline-content {
+      padding: 1.5rem;
+      margin: 0.5rem;
+    }
+
+    .model-trend-summary {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+
+    .timeline-stats {
+      width: 100%;
+      justify-content: space-between;
+    }
+
+    .timeline-container {
+      padding-left: 1.5rem;
+    }
+
+    .event-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+
+    .platform-activity-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .timeline-footer {
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .timeline-footer > * {
+      width: 100%;
+    }
+  }
+</style>

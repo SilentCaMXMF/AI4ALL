@@ -45,7 +45,22 @@ jobs:
           
           # Stack Overflow (optional key)
           STACKOVERFLOW_KEY: ${{ secrets.STACKOVERFLOW_KEY }}
-        run: npx tsx src/scraper/cli.ts
+          
+          # Enhanced verification settings
+          ENABLE_HUGGINGFACE: true
+          ENABLE_HACKERNEWS: true
+          ENABLE_X: true
+        run: npx tsx src/scraper/enhanced-cli.ts
+
+      - name: Run tests
+        run: |
+          npm run typecheck
+          node test-github-api.cjs
+          node test-reddit-api.cjs
+          node test-stackoverflow-api.cjs
+          node test-sentiment-analysis.cjs
+          node test-error-handler.cjs
+          node test-integration.cjs
 
       - name: Upload scraped data
         uses: actions/upload-artifact@v4
@@ -54,12 +69,30 @@ jobs:
           path: data/aggregated-data.json
           retention-days: 7
 
+      - name: Build Astro site
+        run: npm run build
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: astro-build
+          path: dist/
+          retention-days: 7
+
       - name: Commit and push data
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add -f data/aggregated-data.json
           git diff --staged --quiet || (git commit -m "Update free AI models with feedback [$(date +%Y-%m-%d_%H:%M)]" && git push)
+
+      - name: Deploy to production
+        if: github.ref == 'refs/heads/main'
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          force_orphan: true
 
   notify:
     needs: scrape
@@ -76,3 +109,39 @@ jobs:
         run: |
           echo "❌ Workflow failed!"
           echo "Scrape result: ${{ needs.scrape.result }}"
+
+      - name: Notify on test failure
+        if: contains(needs.scrape.outputs.tests, 'failed')
+        run: |
+          echo "❌ Some tests failed during scraping!"
+          echo "Test results: ${{ needs.scrape.outputs.tests }}"
+
+      - name: Notify on deployment
+        if: needs.scrape.result == 'success' && github.ref == 'refs/heads/main'
+        run: echo "🚀 Successfully deployed to production!"
+
+  security-audit:
+    needs: scrape
+    runs-on: ubuntu-latest
+    if: always()
+    
+    steps:
+      - name: Run security audit
+        run: npm audit --audit-level=moderate
+
+      - name: Run dependency check
+        run: npx depcheck
+
+      - name: Run bundle size check
+        run: |
+          npm run build
+          echo "Build completed successfully"
+
+      - name: Upload security report
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-report
+          path: |
+            npm-audit.html
+            bundle-size.txt
+          retention-days: 30

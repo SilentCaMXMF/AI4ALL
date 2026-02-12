@@ -1,0 +1,567 @@
+---
+import type { ModelItem } from '../data/models.js';
+
+interface Props {
+  model: ModelItem;
+  showFavorite?: boolean;
+  showCompare?: boolean;
+  isSelected?: boolean;
+  verificationData?: any; // Enhanced verification data
+}
+
+const { model, showFavorite = true, showCompare = true, isSelected = false, verificationData = null } = Astro.props;
+const raw = model.raw;
+
+// Extract capabilities
+const capabilities = [];
+if (raw.capabilities?.tool_call) capabilities.push('🔧 Tool Calling');
+if (raw.capabilities?.reasoning) capabilities.push('🧠 Reasoning');
+if (raw.capabilities?.structured_output) capabilities.push('📋 Structured Output');
+if (raw.open_weights) capabilities.push('🔓 Open Weights');
+if (raw.modalities?.input?.includes('image')) capabilities.push('👁️ Vision');
+if (raw.modalities?.input?.includes('audio')) capabilities.push('🎵 Audio');
+
+// Format context limit
+const contextLimit = raw.limit?.context || raw.limit?.input || 0;
+const outputLimit = raw.limit?.output || 0;
+
+// Format numbers
+const formatNumber = (num: number) => {
+  if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`;
+  if (num >= 1000) return `${(num / 1000).toFixed(0)}K`;
+  return num.toString();
+};
+
+// Get provider color
+const getProviderColor = (provider: string) => {
+  const colors: Record<string, string> = {
+    'OpenRouter': '#3b82f6',
+    'Nvidia': '#76b900',
+    'GitHub Models': '#333333',
+    'Poe': '#9333ea',
+    'Ollama Cloud': '#f97316',
+  };
+  return colors[provider] || '#64748b';
+};
+
+// Verification data processing
+const verificationScore = verificationData?.feedbackSummary?.verificationScore || 0;
+const verificationLevel = verificationData?.feedbackSummary?.verificationLevel || 'No verification data';
+const availabilityStatus = verificationData?.feedbackSummary?.availabilityStatus || 'unknown';
+const commonIssues = verificationData?.feedbackSummary?.commonIssues || [];
+const platformBreakdown = verificationData?.platformBreakdown || {};
+
+// Get verification badge color and icon
+const getVerificationBadge = (score: number, status: string) => {
+  if (score >= 80 && status === 'confirmed') {
+    return { color: '#10b981', icon: '✓', label: 'Verified' };
+  } else if (score >= 60 && status === 'confirmed') {
+    return { color: '#f59e0b', icon: '⚡', label: 'Likely' };
+  } else if (score >= 40) {
+    return { color: '#ef4444', icon: '⚠️', label: 'Questioned' };
+  } else {
+    return { color: '#6b7280', icon: '❓', label: 'Unknown' };
+  }
+};
+
+const verificationBadge = getVerificationBadge(verificationScore, availabilityStatus);
+
+// Platform icons
+const platformIcons: Record<string, string> = {
+  github: '🐙',
+  reddit: '🤖',
+  hackernews: '🔥',
+  stackoverflow: '📚',
+  huggingface: '🤗',
+  discord: '💬',
+  x: '🐦'
+};
+---
+
+<div class="model-card enhanced" data-model-id={model.id}>
+  <div class="card-header">
+    <div class="provider-badge" style={`background-color: ${getProviderColor(raw.providerName || raw.providerId || 'Unknown')}`}>
+      {raw.providerName || raw.providerId || 'Unknown'}
+    </div>
+    <div class="header-actions">
+      {showCompare && (
+        <button 
+          class={`compare-btn ${isSelected ? 'selected' : ''}`}
+          data-action="compare"
+          data-model-id={model.id}
+          title="Add to comparison"
+        >
+          <span class="compare-icon">⚖️</span>
+        </button>
+      )}
+      {showFavorite && (
+        <button 
+          class="favorite-btn"
+          data-action="favorite"
+          data-model-id={model.id}
+          title="Add to favorites"
+        >
+          <span class="favorite-icon">🤍</span>
+        </button>
+      )}
+      <!-- Enhanced Verification Badge -->
+      <div class="verification-badge" style={`background-color: ${verificationBadge.color}`}>
+        <span class="verification-icon">{verificationBadge.icon}</span>
+        <span class="verification-label">{verificationBadge.label}</span>
+        <span class="verification-score">{verificationScore}%</span>
+      </div>
+      <div class="free-badge">✓ FREE</div>
+    </div>
+  </div>
+
+  <h3 class="model-name">{raw.name}</h3>
+  
+  {raw.family && (
+    <p class="model-family">Family: {raw.family}</p>
+  )}
+
+  <!-- Platform Verification Breakdown -->
+  {Object.keys(platformBreakdown).length > 0 && (
+    <div class="verification-breakdown">
+      <div class="platform-mentions">
+        {Object.entries(platformBreakdown).map(([platform, data]: [string, any]) => (
+          <div class="platform-mention" title={`${platform}: ${data.mentionCount} mentions, ${data.averageSentiment}% sentiment`}>
+            <span class="platform-icon">{platformIcons[platform] || '🌐'}</span>
+            <span class="platform-count">{data.mentionCount}</span>
+            {data.averageSentiment >= 70 && <span class="sentiment-indicator positive"></span>}
+            {data.averageSentiment < 40 && <span class="sentiment-indicator negative"></span>}
+          </div>
+        ))}
+      </div>
+    </div>
+  )}
+
+  <div class="model-limits">
+    {contextLimit > 0 && (
+      <span class="limit-badge">
+        📄 Context: {formatNumber(contextLimit)} tokens
+      </span>
+    )}
+    {outputLimit > 0 && (
+      <span class="limit-badge">
+        📤 Output: {formatNumber(outputLimit)} tokens
+      </span>
+    )}
+  </div>
+
+  {capabilities.length > 0 && (
+    <div class="capabilities">
+      {capabilities.map(cap => (
+        <span class="capability-tag">{cap}</span>
+      ))}
+    </div>
+  )}
+
+  <!-- Common Issues Display -->
+  {commonIssues.length > 0 && (
+    <div class="issues-section">
+      <div class="issues-header">
+        <span class="issues-icon">⚠️</span>
+        <span class="issues-title">Reported Issues:</span>
+      </div>
+      <div class="issues-list">
+        {commonIssues.slice(0, 3).map(issue => (
+          <span class="issue-tag">{issue}</span>
+        ))}
+        {commonIssues.length > 3 && (
+          <span class="issue-more">+{commonIssues.length - 3} more</span>
+        )}
+      </div>
+    </div>
+  )}
+
+  <div class="card-actions">
+    <button 
+      class="copy-btn"
+      data-action="copy-id"
+      data-model-id={raw.id}
+      title="Copy model ID"
+    >
+      📋 ID
+    </button>
+    <button 
+      class="copy-btn"
+      data-action="copy-provider"
+      data-provider={raw.providerName || raw.providerId}
+      title="Copy provider name"
+    >
+      🏢 Provider
+    </button>
+    <button 
+      class="detail-btn"
+      data-action="view-details"
+      data-model-id={model.id}
+      title="View full details"
+    >
+      ℹ️ Details
+    </button>
+    {verificationData && (
+      <button 
+        class="verification-btn"
+        data-action="view-verification"
+        data-model-id={model.id}
+        title="View verification details"
+      >
+        📊 Verification
+      </button>
+    )}
+  </div>
+
+  <div class="card-footer">
+    <a href={model.url} target="_blank" rel="noopener" class="view-btn">
+      View Model →
+    </a>
+    {raw.release_date && (
+      <span class="release-date">
+        Released: {new Date(raw.release_date).toLocaleDateString()}
+      </span>
+    )}
+  </div>
+</div>
+
+<style>
+  .model-card.enhanced {
+    background: linear-gradient(135deg, rgba(51, 65, 85, 0.8), rgba(30, 41, 59, 0.9));
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    position: relative;
+  }
+
+  .model-card.enhanced:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    border-color: rgba(59, 130, 246, 0.5);
+  }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .provider-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: white;
+  }
+
+  .verification-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: white;
+    min-width: 80px;
+    justify-content: center;
+  }
+
+  .verification-score {
+    font-weight: 700;
+    opacity: 0.9;
+  }
+
+  .verification-icon {
+    font-size: 0.8rem;
+  }
+
+  .free-badge {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+  }
+
+  .favorite-btn, .compare-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    padding: 0.375rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .favorite-btn:hover, .compare-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.1);
+  }
+
+  .favorite-btn.active .favorite-icon {
+    color: #ef4444;
+  }
+
+  .compare-btn.selected {
+    background: rgba(59, 130, 246, 0.3);
+    border-color: #3b82f6;
+  }
+
+  .verification-breakdown {
+    background: rgba(59, 130, 246, 0.1);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    border-radius: 8px;
+    padding: 0.75rem;
+    margin: 0.5rem 0;
+  }
+
+  .platform-mentions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .platform-mention {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    position: relative;
+  }
+
+  .platform-icon {
+    font-size: 0.9rem;
+  }
+
+  .platform-count {
+    font-weight: 600;
+    color: #60a5fa;
+  }
+
+  .sentiment-indicator {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    position: absolute;
+    top: -2px;
+    right: -2px;
+  }
+
+  .sentiment-indicator.positive {
+    background: #10b981;
+  }
+
+  .sentiment-indicator.negative {
+    background: #ef4444;
+  }
+
+  .model-name {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #f8fafc;
+    margin: 0;
+  }
+
+  .model-family {
+    font-size: 0.875rem;
+    color: #94a3b8;
+    font-style: italic;
+  }
+
+  .model-limits {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .limit-badge {
+    background: rgba(59, 130, 246, 0.2);
+    color: #60a5fa;
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+  }
+
+  .capabilities {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .capability-tag {
+    background: rgba(139, 92, 246, 0.2);
+    color: #a78bfa;
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    border: 1px solid rgba(139, 92, 246, 0.3);
+  }
+
+  .issues-section {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    border-radius: 8px;
+    padding: 0.75rem;
+    margin: 0.5rem 0;
+  }
+
+  .issues-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .issues-icon {
+    font-size: 1rem;
+  }
+
+  .issues-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #fca5a5;
+  }
+
+  .issues-list {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .issue-tag {
+    background: rgba(239, 68, 68, 0.2);
+    color: #fca5a5;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 500;
+  }
+
+  .issue-more {
+    background: rgba(239, 68, 68, 0.1);
+    color: #f87171;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-style: italic;
+  }
+
+  .card-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-top: 0.5rem;
+  }
+
+  .copy-btn, .detail-btn, .verification-btn {
+    background: rgba(59, 130, 246, 0.1);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    color: #60a5fa;
+    padding: 0.375rem 0.625rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .verification-btn {
+    background: rgba(16, 185, 129, 0.1);
+    border-color: rgba(16, 185, 129, 0.3);
+    color: #10b981;
+  }
+
+  .copy-btn:hover, .detail-btn:hover {
+    background: rgba(59, 130, 246, 0.2);
+  }
+
+  .verification-btn:hover {
+    background: rgba(16, 185, 129, 0.2);
+  }
+
+  .copy-btn.copied {
+    background: rgba(16, 185, 129, 0.2);
+    border-color: #10b981;
+    color: #10b981;
+  }
+
+  .card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .view-btn {
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    color: white;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+  }
+
+  .view-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+  }
+
+  .release-date {
+    font-size: 0.75rem;
+    color: #64748b;
+  }
+
+  @media (max-width: 640px) {
+    .model-card.enhanced {
+      padding: 1rem;
+    }
+
+    .model-name {
+      font-size: 1.1rem;
+    }
+
+    .verification-badge {
+      min-width: 70px;
+      font-size: 0.65rem;
+    }
+
+    .card-footer {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .platform-mentions {
+      gap: 0.25rem;
+    }
+
+    .platform-mention {
+      font-size: 0.65rem;
+      padding: 0.2rem 0.4rem;
+    }
+  }
+</style>

@@ -46,7 +46,7 @@ export class ValidationError extends PlatformError {
  * Create standardized platform error
  */
 export function createPlatformError(
-  platform: Platform,
+  platform: Platform | string,
   context: string,
   originalError?: unknown
 ): PlatformError {
@@ -76,7 +76,7 @@ export function createPlatformError(
  * Log platform error with consistent formatting
  */
 export function logPlatformError(
-  platform: Platform,
+  platform: Platform | string,
   error: unknown,
   context?: string
 ): void {

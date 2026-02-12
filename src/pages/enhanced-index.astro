@@ -1,0 +1,771 @@
+---
+import Layout from '../layouts/Layout.astro';
+import EnhancedModelCard from '../components/EnhancedModelCard.astro';
+import VerificationModal from '../components/VerificationModal.astro';
+import VerificationTimeline from '../components/VerificationTimeline.astro';
+import { getFreeModels, getModelStats, getUniqueProviders, type ModelItem } from '../data/models.js';
+import type { EnhancedModelData } from '../types/index.js';
+
+// Load models at build time
+const models = await getFreeModels();
+const stats = getModelStats(models);
+const providers = getUniqueProviders(models);
+
+// Load verification data if available
+let verificationModels: EnhancedModelData[] = [];
+try {
+  const verificationData = await import('../data/verification-database.json', { assert: { type: 'json' } });
+  verificationModels = verificationData.default.models || [];
+} catch (error) {
+  console.log('Verification database not found, using basic model data');
+}
+
+// Create a map of verification data by model ID
+const verificationMap = new Map();
+verificationModels.forEach(model => {
+  verificationMap.set(model.id, model);
+});
+
+// Group models by provider for display
+const groupedModels = new Map<string, ModelItem[]>();
+for (const model of models) {
+  const provider = model.raw.providerName || model.raw.providerId || 'Unknown';
+  if (!groupedModels.has(provider)) {
+    groupedModels.set(provider, []);
+  }
+  groupedModels.get(provider)!.push(model);
+}
+
+// Sort providers by model count (descending)
+const sortedProviders = Array.from(groupedModels.entries())
+  .sort((a, b) => b[1].length - a[1].length);
+
+// Get all unique capabilities
+const allCapabilities = new Set<string>();
+models.forEach(model => {
+  if (model.raw.capabilities?.tool_call) allCapabilities.add('Tool Calling');
+  if (model.raw.capabilities?.reasoning) allCapabilities.add('Reasoning');
+  if (model.raw.capabilities?.structured_output) allCapabilities.add('Structured Output');
+  if (model.raw.open_weights) allCapabilities.add('Open Weights');
+  if (model.raw.modalities?.input?.includes('image')) allCapabilities.add('Vision');
+  if (model.raw.modalities?.input?.includes('audio')) allCapabilities.add('Audio');
+});
+
+const capabilitiesList = Array.from(allCapabilities).sort();
+
+// Serialize verification data for client-side use
+const verificationJson = JSON.stringify(Array.from(verificationMap.entries()));
+// Serialize models for client-side use
+const modelsJson = JSON.stringify(models);
+---
+
+<Layout title="Free AI Models Directory | Enhanced with Verification" description="Discover 450+ free AI models with zero input/output costs. Enhanced with cross-platform verification, reliability scores, and community insights.">
+  <!-- Enhanced Verification Scripts -->
+  <script src="/scripts/verification-ui.js"></script>
+  
+  <section class="hero enhanced">
+    <h1>Free AI Models Directory</h1>
+    <p class="hero-description">
+      Curated collection of <strong>{stats.total}</strong> AI models with 
+      <span class="highlight">zero cost</span> for both input and output tokens
+    </p>
+    
+    <!-- Enhanced Stats Grid -->
+    <div class="stats-grid enhanced">
+      <div class="stat-card">
+        <span class="stat-number" id="stat-total">{stats.total}</span>
+        <span class="stat-label">Free Models</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">{stats.providers}</span>
+        <span class="stat-label">Providers</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">{stats.tags}</span>
+        <span class="stat-label">Capabilities</span>
+      </div>
+      <div class="stat-card verification">
+        <span class="stat-number">{verificationModels.length}</span>
+        <span class="stat-label">Verified</span>
+      </div>
+    </div>
+
+    <!-- Verification Overview -->
+    {verificationModels.length > 0 && (
+      <div class="verification-overview">
+        <div class="overview-header">
+          <span class="overview-icon">🔍</span>
+          <span class="overview-title">Enhanced with Cross-Platform Verification</span>
+        </div>
+        <div class="overview-stats">
+          <div class="overview-stat">
+            <span class="stat-value">{verificationModels.filter(m => m.feedbackSummary.verificationScore >= 80).length}</span>
+            <span class="stat-desc">Highly Verified</span>
+          </div>
+          <div class="overview-stat">
+            <span class="stat-value">{verificationModels.filter(m => m.currentAvailability === 'confirmed').length}</span>
+            <span class="stat-desc">Confirmed Working</span>
+          </div>
+          <div class="overview-stat">
+            <span class="stat-value">{new Set(verificationModels.flatMap(m => Object.keys(m.platformBreakdown))).size}</span>
+            <span class="stat-desc">Platform Sources</span>
+          </div>
+        </div>
+      </div>
+    )}
+  </section>
+
+  <!-- Enhanced Search & Filters -->
+  <section class="filters-section enhanced">
+    <div class="search-box">
+      <input 
+        type="text" 
+        id="search-input" 
+        placeholder="Search models by name, provider, or capability..."
+        class="search-input enhanced"
+      />
+      <button id="clear-filters" class="clear-btn" style="display: none;">Clear Filters</button>
+    </div>
+    
+    <div class="filter-controls enhanced">
+      <div class="filter-group">
+        <label>Context Limit (min tokens)</label>
+        <input type="range" id="context-min" min="0" max="500000" step="1000" value="0" class="range-slider" />
+        <span id="context-min-value">0</span>
+      </div>
+      
+      <div class="filter-group">
+        <label>Output Limit (min tokens)</label>
+        <input type="range" id="output-min" min="0" max="200000" step="1000" value="0" class="range-slider" />
+        <span id="output-min-value">0</span>
+      </div>
+
+      <div class="filter-group verification-filter">
+        <label>Min. Verification Score</label>
+        <input type="range" id="verification-min" min="0" max="100" step="5" value="0" class="range-slider" />
+        <span id="verification-min-value">0%</span>
+      </div>
+    </div>
+    
+    <div class="capabilities-filter">
+      <label>Capabilities:</label>
+      <div class="capability-toggles">
+        {capabilitiesList.map(cap => (
+          <label class="capability-toggle">
+            <input type="checkbox" value={cap} class="capability-checkbox" />
+            <span>{cap}</span>
+          </label>
+        ))}
+      </div>
+    </div>
+
+    <div class="provider-filters">
+      <label>Filter by Provider:</label>
+      <div class="provider-chips">
+        {sortedProviders.map(([provider, providerModels]) => (
+          <button 
+            class="provider-chip" 
+            data-provider={provider}
+            title={`${providerModels.length} models`}
+          >
+            {provider} ({providerModels.length})
+          </button>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Results Header -->
+  <section class="results-header">
+    <div class="results-info">
+      <h2>Available Models <span class="results-count" id="results-count">{stats.total}</span></h2>
+      <div class="view-toggles">
+        <button class="view-toggle active" data-view="grid" title="Grid View">
+          <span>⊞</span>
+        </button>
+        <button class="view-toggle" data-view="list" title="List View">
+          <span>☰</span>
+        </button>
+      </div>
+    </div>
+    <div class="sort-options">
+      <label>Sort by:</label>
+      <select id="sort-select" class="sort-select">
+        <option value="name">Name</option>
+        <option value="provider">Provider</option>
+        <option value="context">Context Limit</option>
+        <option value="verification">Verification Score</option>
+        <option value="updated">Recently Updated</option>
+      </select>
+    </div>
+  </section>
+
+  <!-- Models Grid -->
+  <section class="models-section enhanced">
+    <div class="models-container" id="models-container">
+      {sortedProviders.map(([provider, providerModels]) => (
+        <div class="provider-section" data-provider={provider}>
+          <div class="provider-header">
+            <h3>{provider}</h3>
+            <span class="model-count">{providerModels.length} models</span>
+          </div>
+          <div class="models-grid">
+            {providerModels.map(model => {
+              const verificationData = verificationMap.get(model.id);
+              return (
+                <EnhancedModelCard 
+                  model={model} 
+                  verificationData={verificationData}
+                />
+              );
+            })}
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <!-- No Results State -->
+    <div class="no-results" id="no-results" style="display: none;">
+      <div class="no-results-icon">🔍</div>
+      <h3>No models found</h3>
+      <p>Try adjusting your filters or search terms</p>
+      <button class="clear-filters-btn" onclick="clearAllFilters()">Clear All Filters</button>
+    </div>
+  </section>
+
+  <!-- Verification Modals (dynamically loaded as needed) -->
+  {models.map(model => {
+    const verificationData = verificationMap.get(model.id);
+    if (verificationData) {
+      return (
+        <VerificationModal 
+          modelId={model.id}
+          modelTitle={model.raw.name}
+          verificationData={verificationData}
+          platformBreakdown={verificationData.platformBreakdown}
+          verificationHistory={verificationData.verificationHistory || []}
+        />
+      );
+    }
+    return null;
+  })}
+
+  <!-- Data for JavaScript -->
+  <script type="application/json" id="models-data">
+    {modelsJson}
+  </script>
+  <script type="application/json" id="verification-data">
+    {verificationJson}
+  </script>
+
+  <script>
+    // Enhanced UI Interactions
+    let allModels = JSON.parse(document.getElementById('models-data').textContent);
+    let verificationData = new Map(JSON.parse(document.getElementById('verification-data').textContent));
+    let currentView = 'grid';
+    let currentSort = 'name';
+
+    // Initialize enhanced functionality
+    document.addEventListener('DOMContentLoaded', () => {
+      setupFilterListeners();
+      setupViewToggles();
+      setupSorting();
+      setupProviderFilters();
+      updateResultsCount();
+    });
+
+    function setupFilterListeners() {
+      // Search input
+      document.getElementById('search-input').addEventListener('input', applyFilters);
+      
+      // Range sliders
+      ['context-min', 'output-min', 'verification-min'].forEach(id => {
+        const slider = document.getElementById(id);
+        const valueDisplay = document.getElementById(id + '-value');
+        
+        slider.addEventListener('input', (e) => {
+          const value = e.target.value;
+          const suffix = id === 'verification-min' ? '%' : ' tokens';
+          valueDisplay.textContent = value + suffix;
+          applyFilters();
+        });
+      });
+      
+      // Capability checkboxes
+      document.querySelectorAll('.capability-checkbox').forEach(checkbox => {
+        checkbox.addEventListener('change', applyFilters);
+      });
+    }
+
+    function setupViewToggles() {
+      document.querySelectorAll('.view-toggle').forEach(toggle => {
+        toggle.addEventListener('click', (e) => {
+          document.querySelectorAll('.view-toggle').forEach(t => t.classList.remove('active'));
+          e.target.classList.add('active');
+          
+          const view = e.target.getAttribute('data-view');
+          switchView(view);
+        });
+      });
+    }
+
+    function switchView(view) {
+      currentView = view;
+      const container = document.getElementById('models-container');
+      const providerSections = container.querySelectorAll('.provider-section');
+      
+      providerSections.forEach(section => {
+        const grid = section.querySelector('.models-grid');
+        if (view === 'list') {
+          grid.classList.add('list-view');
+          container.classList.add('list-view');
+        } else {
+          grid.classList.remove('list-view');
+          container.classList.remove('list-view');
+        }
+      });
+    }
+
+    function setupSorting() {
+      document.getElementById('sort-select').addEventListener('change', (e) => {
+        currentSort = e.target.value;
+        sortModels();
+      });
+    }
+
+    function setupProviderFilters() {
+      document.querySelectorAll('.provider-chip').forEach(chip => {
+        chip.addEventListener('click', (e) => {
+          e.target.classList.toggle('active');
+          applyFilters();
+        });
+      });
+    }
+
+    function applyFilters() {
+      const searchValue = document.getElementById('search-input').value.toLowerCase();
+      const contextMin = parseInt(document.getElementById('context-min').value);
+      const outputMin = parseInt(document.getElementById('output-min').value);
+      const verificationMin = parseInt(document.getElementById('verification-min').value);
+      const activeCapabilities = Array.from(document.querySelectorAll('.capability-checkbox:checked'))
+        .map(cb => cb.value);
+      const activeProviders = Array.from(document.querySelectorAll('.provider-chip.active'))
+        .map(chip => chip.getAttribute('data-provider'));
+
+      let visibleCount = 0;
+
+      document.querySelectorAll('.model-card').forEach(card => {
+        const modelId = card.getAttribute('data-model-id');
+        const model = allModels.find(m => m.id === modelId);
+        const verification = verificationData.get(modelId);
+        
+        if (!model) return;
+
+        let visible = true;
+
+        // Search filter
+        if (searchValue) {
+          const searchText = (model.raw.name || '').toLowerCase() + 
+                            (model.raw.providerName || '').toLowerCase() +
+                            (model.raw.family || '').toLowerCase();
+          if (!searchText.includes(searchValue)) visible = false;
+        }
+
+        // Context limit filter
+        const contextLimit = model.raw.limit?.context || model.raw.limit?.input || 0;
+        if (contextLimit < contextMin) visible = false;
+
+        // Output limit filter
+        const outputLimit = model.raw.limit?.output || 0;
+        if (outputLimit < outputMin) visible = false;
+
+        // Verification filter
+        if (verification && verification.feedbackSummary?.verificationScore < verificationMin) {
+          visible = false;
+        }
+
+        // Capability filter
+        if (activeCapabilities.length > 0) {
+          const hasCapability = activeCapabilities.some(cap => {
+            if (cap === 'Tool Calling') return model.raw.capabilities?.tool_call;
+            if (cap === 'Reasoning') return model.raw.capabilities?.reasoning;
+            if (cap === 'Vision') return model.raw.modalities?.input?.includes('image');
+            if (cap === 'Audio') return model.raw.modalities?.input?.includes('audio');
+            if (cap === 'Open Weights') return model.raw.open_weights;
+            return false;
+          });
+          if (!hasCapability) visible = false;
+        }
+
+        // Provider filter
+        if (activeProviders.length > 0) {
+          const provider = model.raw.providerName || model.raw.providerId;
+          if (!activeProviders.includes(provider)) visible = false;
+        }
+
+        // Apply visibility
+        card.style.display = visible ? 'flex' : 'none';
+        if (visible) visibleCount++;
+      });
+
+      updateResultsCount(visibleCount);
+      showNoResults(visibleCount === 0);
+    }
+
+    function sortModels() {
+      const container = document.getElementById('models-container');
+      const providerSections = Array.from(container.querySelectorAll('.provider-section'));
+
+      providerSections.forEach(section => {
+        const modelCards = Array.from(section.querySelectorAll('.model-card'));
+        
+        modelCards.sort((a, b) => {
+          const aModel = allModels.find(m => m.id === a.getAttribute('data-model-id'));
+          const bModel = allModels.find(m => m.id === b.getAttribute('data-model-id'));
+          
+          if (!aModel || !bModel) return 0;
+
+          switch (currentSort) {
+            case 'name':
+              return aModel.raw.name.localeCompare(bModel.raw.name);
+            case 'provider':
+              return (aModel.raw.providerName || '').localeCompare(bModel.raw.providerName || '');
+            case 'context':
+              return (bModel.raw.limit?.context || 0) - (aModel.raw.limit?.context || 0);
+            case 'verification':
+              const aVerification = verificationData.get(aModel.id);
+              const bVerification = verificationData.get(bModel.id);
+              const aScore = aVerification?.feedbackSummary?.verificationScore || 0;
+              const bScore = bVerification?.feedbackSummary?.verificationScore || 0;
+              return bScore - aScore;
+            case 'updated':
+              const aDate = new Date(aModel.raw.last_updated || aModel.raw.release_date || 0);
+              const bDate = new Date(bModel.raw.last_updated || bModel.raw.release_date || 0);
+              return bDate.getTime() - aDate.getTime();
+            default:
+              return 0;
+          }
+        });
+
+        const grid = section.querySelector('.models-grid');
+        modelCards.forEach(card => grid.appendChild(card));
+      });
+    }
+
+    function updateResultsCount(count = null) {
+      const countElement = document.getElementById('results-count');
+      if (countElement) {
+        if (count !== null) {
+          countElement.textContent = count.toString();
+        } else {
+          const visibleCards = document.querySelectorAll('.model-card[style="display: flex"], .model-card:not([style])');
+          countElement.textContent = visibleCards.length.toString();
+        }
+      }
+    }
+
+    function showNoResults(show) {
+      const noResults = document.getElementById('no-results');
+      const modelsSection = document.querySelector('.models-container');
+      
+      if (show) {
+        noResults.style.display = 'block';
+        modelsSection.style.display = 'none';
+      } else {
+        noResults.style.display = 'none';
+        modelsSection.style.display = 'block';
+      }
+    }
+
+    function clearAllFilters() {
+      document.getElementById('search-input').value = '';
+      document.getElementById('context-min').value = '0';
+      document.getElementById('output-min').value = '0';
+      document.getElementById('verification-min').value = '0';
+      
+      document.getElementById('context-min-value').textContent = '0 tokens';
+      document.getElementById('output-min-value').textContent = '0 tokens';
+      document.getElementById('verification-min-value').textContent = '0%';
+      
+      document.querySelectorAll('.capability-checkbox').forEach(cb => cb.checked = false);
+      document.querySelectorAll('.provider-chip').forEach(chip => chip.classList.remove('active'));
+      
+      applyFilters();
+    }
+
+    // Store model data in card elements for easy access
+    document.querySelectorAll('.model-card').forEach(card => {
+      const modelId = card.getAttribute('data-model-id');
+      const model = allModels.find(m => m.id === modelId);
+      if (model) {
+        (card as any)._model = model;
+        (card as any)._raw = model.raw;
+      }
+    });
+  </script>
+
+  <style>
+    /* Enhanced hero styles */
+    .hero.enhanced {
+      background: linear-gradient(135deg, #1e293b 0%, #334155 50%, #475569 100%);
+      padding: 3rem 2rem;
+      text-align: center;
+    }
+
+    .stats-grid.enhanced {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    .stat-card.verification {
+      background: linear-gradient(135deg, #10b981, #059669);
+    }
+
+    .verification-overview {
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-top: 2rem;
+      backdrop-filter: blur(10px);
+    }
+
+    .overview-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      font-weight: 600;
+      color: #10b981;
+    }
+
+    .overview-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 1rem;
+    }
+
+    .overview-stat {
+      text-align: center;
+    }
+
+    .stat-value {
+      display: block;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #f8fafc;
+    }
+
+    .stat-desc {
+      font-size: 0.875rem;
+      color: #94a3b8;
+    }
+
+    /* Enhanced filters */
+    .filters-section.enhanced {
+      background: rgba(30, 41, 59, 0.5);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 2rem;
+      margin: 2rem 0;
+    }
+
+    .search-input.enhanced {
+      font-size: 1rem;
+      padding: 1rem;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .filter-controls.enhanced {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin-top: 1.5rem;
+    }
+
+    .verification-filter {
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: 8px;
+      padding: 1rem;
+    }
+
+    .provider-chips {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-top: 0.5rem;
+    }
+
+    .provider-chip {
+      background: rgba(59, 130, 246, 0.1);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      border-radius: 20px;
+      padding: 0.5rem 1rem;
+      color: #60a5fa;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 0.875rem;
+    }
+
+    .provider-chip:hover {
+      background: rgba(59, 130, 246, 0.2);
+    }
+
+    .provider-chip.active {
+      background: rgba(59, 130, 246, 0.3);
+      border-color: #3b82f6;
+      color: #93c5fd;
+    }
+
+    /* Results header */
+    .results-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 2rem 0;
+      padding: 1rem;
+      background: rgba(30, 41, 59, 0.3);
+      border-radius: 8px;
+    }
+
+    .results-info h2 {
+      margin: 0;
+      color: #f8fafc;
+    }
+
+    .results-count {
+      color: #10b981;
+      font-weight: 700;
+    }
+
+    .view-toggles {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .view-toggle {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 4px;
+      padding: 0.5rem;
+      cursor: pointer;
+      color: #94a3b8;
+      transition: all 0.2s ease;
+    }
+
+    .view-toggle.active {
+      background: rgba(59, 130, 246, 0.2);
+      border-color: #3b82f6;
+      color: #60a5fa;
+    }
+
+    .sort-select {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 6px;
+      padding: 0.5rem;
+      color: #f8fafc;
+      margin-left: 1rem;
+    }
+
+    /* Enhanced models section */
+    .models-section.enhanced {
+      margin: 2rem 0;
+    }
+
+    .provider-section {
+      margin-bottom: 3rem;
+    }
+
+    .provider-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .provider-header h3 {
+      margin: 0;
+      color: #f8fafc;
+      font-size: 1.25rem;
+    }
+
+    .model-count {
+      color: #94a3b8;
+      font-size: 0.875rem;
+    }
+
+    /* No results state */
+    .no-results {
+      text-align: center;
+      padding: 4rem 2rem;
+      color: #94a3b8;
+    }
+
+    .no-results-icon {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+      display: block;
+    }
+
+    .no-results h3 {
+      color: #f8fafc;
+      margin: 0 0 0.5rem 0;
+    }
+
+    .clear-filters-btn {
+      background: rgba(59, 130, 246, 0.2);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      border-radius: 8px;
+      padding: 0.75rem 1.5rem;
+      color: #60a5fa;
+      cursor: pointer;
+      margin-top: 1rem;
+      transition: all 0.2s ease;
+    }
+
+    .clear-filters-btn:hover {
+      background: rgba(59, 130, 246, 0.3);
+    }
+
+    /* List view styles */
+    .models-container.list-view .models-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .models-container.list-view .model-card {
+      width: 100%;
+      max-width: none;
+    }
+
+    @media (max-width: 768px) {
+      .hero.enhanced {
+        padding: 2rem 1rem;
+      }
+
+      .stats-grid.enhanced {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .results-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+      }
+
+      .filter-controls.enhanced {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</Layout>
