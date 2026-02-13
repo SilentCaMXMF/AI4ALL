@@ -40,6 +40,18 @@ const modelsJson = JSON.stringify(models);
 ---
 
 <Layout title="Free AI Models Directory | 0-Cost AI Models" description="Discover 450+ free AI models with zero input/output costs. Filter by provider, capabilities, and more.">
+  
+  <!-- Disclaimer Banner -->
+  <div class="disclaimer-banner">
+    <div class="disclaimer-content">
+      <span class="disclaimer-icon">⚠️</span>
+      <div class="disclaimer-text">
+        <strong>Important Disclaimer:</strong> Free AI models come with trade-offs. You may experience limited daily usage, random availability, data sharing for model training, temporary promotional deals, and smaller models that may not handle complex tasks. Use responsibly.
+      </div>
+      <button class="disclaimer-close" onclick="this.parentElement.parentElement.style.display='none'">&times;</button>
+    </div>
+  </div>
+
   <section class="hero">
     <h1>Free AI Models Directory</h1>
     <p class="hero-description">
@@ -678,6 +690,53 @@ const modelsJson = JSON.stringify(models);
 </script>
 
 <style>
+  /* Disclaimer Banner */
+  .disclaimer-banner {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(245, 158, 11, 0.15));
+    border: 1px solid rgba(245, 158, 11, 0.4);
+    border-radius: 12px;
+    padding: 1rem 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .disclaimer-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .disclaimer-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+  }
+
+  .disclaimer-text {
+    flex: 1;
+    color: #fcd34d;
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+
+  .disclaimer-text strong {
+    color: #fbbf24;
+  }
+
+  .disclaimer-close {
+    background: none;
+    border: none;
+    color: #fcd34d;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+  }
+
+  .disclaimer-close:hover {
+    opacity: 1;
+  }
+
   /* Existing styles */
   .hero {
     text-align: center;
