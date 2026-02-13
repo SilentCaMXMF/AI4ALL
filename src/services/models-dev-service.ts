@@ -130,11 +130,16 @@ export class ModelsDevService {
       let filteredModels = allModels;
 
       // Apply filtering based on type
+      // NOTE: Step 4 disabled - include all providers from models.dev
+      /*
       if (filterType === 'simple') {
         filteredModels = this.applySimpleFilter(allModels, searchTerms);
       } else if (filterType === 'advanced') {
         filteredModels = this.applyAdvancedFilter(allModels, searchTerms);
       }
+      */
+      // Include ALL models from ALL providers (no search term filtering)
+      filteredModels = allModels;
 
       // Apply free filter if requested
       if (freeOnly) {
