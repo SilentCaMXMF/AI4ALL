@@ -65,6 +65,22 @@ async function loadConfig(): Promise<ScraperConfig> {
   };
   console.log('[Config] Stack Overflow API enabled for feedback search (AI-focused tags)');
 
+  // Hacker News (no credentials needed)
+  config.hackernews = {
+    enabled: process.env.ENABLE_HACKERNEWS !== 'false'
+  };
+  console.log('[Config] Hacker News API enabled for feedback search');
+
+  // Hugging Face (optional token for higher rate limits)
+  if (process.env.HUGGINGFACE_TOKEN) {
+    config.huggingface = {
+      token: process.env.HUGGINGFACE_TOKEN
+    };
+    console.log('[Config] Hugging Face API enabled for feedback search');
+  } else {
+    console.log('[Config] ⚠️ HUGGINGFACE_TOKEN not set - Hugging Face search limited');
+  }
+
   return config;
 }
 
@@ -77,7 +93,9 @@ async function main() {
   console.log('  2. Search GitHub for issues/discussions about each model');
   console.log('  3. Search Reddit for community feedback');
   console.log('  4. Search Stack Overflow for technical discussions');
-  console.log('  5. Aggregate feedback to confirm free availability');
+  console.log('  5. Search Hacker News for discussions');
+  console.log('  6. Search Hugging Face for model pages');
+  console.log('  7. Aggregate feedback to confirm free availability');
   console.log();
 
   try {

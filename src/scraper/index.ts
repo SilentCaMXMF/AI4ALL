@@ -2,6 +2,8 @@ import { ModelsDevAPI } from '../api/modelsdev.js';
 import { GitHubAPI } from '../api/github.js';
 import { RedditAPI } from '../api/reddit.js';
 import { StackOverflowAPI } from '../api/stackoverflow.js';
+import { HackerNewsAPI } from '../api/hackernews.js';
+import { HuggingFaceAPI } from '../api/huggingface.js';
 import type { AggregatedItem, ModelWithFeedback, ModelFeedback, PlatformConfig, FetchOptions } from '../types/index.js';
 import { DataStore } from '../data/store.js';
 
@@ -43,6 +45,8 @@ export class ScraperService {
   private githubAPI?: GitHubAPI;
   private redditAPI?: RedditAPI;
   private stackoverflowAPI?: StackOverflowAPI;
+  private hackernewsAPI?: HackerNewsAPI;
+  private huggingfaceAPI?: HuggingFaceAPI;
 
   constructor(config: ScraperConfig = {}) {
     this.config = config;
@@ -57,6 +61,16 @@ export class ScraperService {
       this.redditAPI = new RedditAPI(config.reddit);
     }
     this.stackoverflowAPI = new StackOverflowAPI(config.stackoverflow || {});
+    
+    // Hacker News - no credentials needed
+    if (config.hackernews?.enabled !== false) {
+      this.hackernewsAPI = new HackerNewsAPI();
+    }
+    
+    // Hugging Face - optional token
+    if (config.huggingface?.token) {
+      this.huggingfaceAPI = new HuggingFaceAPI({ token: config.huggingface.token });
+    }
   }
 
   async scrapeAll(options: FetchOptions = {}): Promise<ScraperResult[]> {
@@ -248,6 +262,28 @@ export class ScraperService {
       console.warn(`[Scraper]   ⚠ Stack Overflow search failed:`, error);
     }
 
+    // Search Hacker News
+    if (this.hackernewsAPI) {
+      try {
+        console.log(`[Scraper]   → Searching Hacker News...`);
+        const hnFeedback = await this.searchHackerNewsForModel(modelName, provider);
+        feedback.push(...hnFeedback);
+      } catch (error) {
+        console.warn(`[Scraper]   ⚠ Hacker News search failed:`, error);
+      }
+    }
+
+    // Search Hugging Face
+    if (this.huggingfaceAPI) {
+      try {
+        console.log(`[Scraper]   → Searching Hugging Face...`);
+        const hfFeedback = await this.searchHuggingFaceForModel(modelName, provider);
+        feedback.push(...hfFeedback);
+      } catch (error) {
+        console.warn(`[Scraper]   ⚠ Hugging Face search failed:`, error);
+      }
+    }
+
     // Analyze feedback
     const summary = this.analyzeFeedback(feedback);
     
@@ -264,51 +300,48 @@ export class ScraperService {
 
   private async searchGitHubForModel(modelName: string, provider: string): Promise<ModelFeedback[]> {
     const feedback: ModelFeedback[] = [];
-    const queries = [
-      `"${modelName}" free API`,
-      `"${modelName}" pricing`,
-      `"${provider}" "${modelName}"`
-    ];
 
-    for (const query of queries) {
-      try {
-        // Search for issues and discussions
-        const searchResults = await this.searchGitHub(query);
-        
-        for (const item of searchResults.slice(0, 5)) { // Limit to 5 per query
-          const feedbackItem: ModelFeedback = {
-            id: `github-${item.id}`,
-            platform: 'github',
-            type: item.type,
-            title: item.title,
-            content: item.content?.substring(0, 500) || '',
-            author: item.author,
-            timestamp: item.timestamp,
-            url: item.url,
-            metrics: item.metrics,
-            tags: [...item.tags, 'github-feedback'],
-            relevance: this.calculateRelevance(item.title + ' ' + item.content, modelName, provider),
-            sentiment: this.analyzeSentiment(item.title + ' ' + item.content)
-          };
-          
-          if (feedbackItem.relevance > 0.5) {
-            feedback.push(feedbackItem);
-          }
-        }
-        
-        // Rate limiting
-        await new Promise(resolve => setTimeout(resolve, 1000));
-      } catch (error) {
-        console.warn(`[Scraper]   GitHub search error for "${query}":`, error);
+    try {
+      if (!this.githubAPI) {
+        return feedback;
       }
+
+      const results = await this.githubAPI.searchForModel(modelName, provider);
+
+      for (const item of results.slice(0, 5)) {
+        const feedbackItem: ModelFeedback = {
+          id: `github-${item.id}`,
+          platform: 'github',
+          type: item.type,
+          title: item.title,
+          content: item.content?.substring(0, 500) || '',
+          author: item.author,
+          timestamp: item.timestamp,
+          url: item.url,
+          metrics: item.metrics,
+          tags: [...item.tags, 'github-feedback'],
+          relevance: this.calculateRelevance(item.title + ' ' + item.content, modelName, provider),
+          sentiment: this.analyzeSentiment(item.title + ' ' + item.content)
+        };
+
+        if (feedbackItem.relevance > 0.3) {
+          feedback.push(feedbackItem);
+        }
+      }
+
+      console.log(`[Scraper]   ✓ Found ${feedback.length} relevant GitHub posts`);
+    } catch (error) {
+      console.warn(`[Scraper]   ⚠ GitHub search error:`, error);
     }
 
     return feedback;
   }
 
   private async searchGitHub(query: string): Promise<AggregatedItem[]> {
-    // This would use the GitHub API to search
-    // For now, return empty array as we'd need to implement search
+    // Use the GitHub API's searchForModel for general search
+    if (this.githubAPI) {
+      return await this.githubAPI.searchForModel(query, '');
+    }
     return [];
   }
 
@@ -366,6 +399,84 @@ export class ScraperService {
       console.log(`[Scraper]   ✓ Found ${feedback.length} relevant Stack Overflow posts`);
     } catch (error) {
       console.warn(`[Scraper]   ⚠️ Stack Overflow search error:`, error);
+    }
+
+    return feedback;
+  }
+
+  private async searchHackerNewsForModel(modelName: string, provider: string): Promise<ModelFeedback[]> {
+    const feedback: ModelFeedback[] = [];
+
+    try {
+      if (!this.hackernewsAPI) {
+        return feedback;
+      }
+
+      const results = await this.hackernewsAPI.searchForModel(modelName, provider);
+
+      for (const item of results.slice(0, 5)) {
+        const feedbackItem: ModelFeedback = {
+          id: `hn-${item.id}`,
+          platform: 'hackernews',
+          type: item.type,
+          title: item.title,
+          content: item.content || '',
+          author: item.author,
+          timestamp: item.timestamp,
+          url: item.url,
+          metrics: item.metrics,
+          tags: [...item.tags, 'hackernews-feedback'],
+          relevance: this.calculateRelevance(item.title + ' ' + (item.content || ''), modelName, provider),
+          sentiment: this.analyzeSentiment(item.title + ' ' + (item.content || ''))
+        };
+
+        if (feedbackItem.relevance > 0.3) {
+          feedback.push(feedbackItem);
+        }
+      }
+
+      console.log(`[Scraper]   ✓ Found ${feedback.length} relevant Hacker News posts`);
+    } catch (error) {
+      console.warn(`[Scraper]   ⚠️ Hacker News search error:`, error);
+    }
+
+    return feedback;
+  }
+
+  private async searchHuggingFaceForModel(modelName: string, provider: string): Promise<ModelFeedback[]> {
+    const feedback: ModelFeedback[] = [];
+
+    try {
+      if (!this.huggingfaceAPI) {
+        return feedback;
+      }
+
+      const results = await this.huggingfaceAPI.searchForModel(modelName, provider);
+
+      for (const item of results.slice(0, 5)) {
+        const feedbackItem: ModelFeedback = {
+          id: `hf-${item.id}`,
+          platform: 'huggingface',
+          type: item.type,
+          title: item.title,
+          content: item.content || '',
+          author: item.author,
+          timestamp: item.timestamp,
+          url: item.url,
+          metrics: item.metrics,
+          tags: [...item.tags, 'huggingface-feedback'],
+          relevance: this.calculateRelevance(item.title + ' ' + (item.content || ''), modelName, provider),
+          sentiment: this.analyzeSentiment(item.title + ' ' + (item.content || ''))
+        };
+
+        if (feedbackItem.relevance > 0.3) {
+          feedback.push(feedbackItem);
+        }
+      }
+
+      console.log(`[Scraper]   ✓ Found ${feedback.length} relevant Hugging Face models`);
+    } catch (error) {
+      console.warn(`[Scraper]   ⚠️ Hugging Face search error:`, error);
     }
 
     return feedback;

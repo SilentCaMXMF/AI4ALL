@@ -160,6 +160,9 @@ export interface PlatformConfig {
   huggingface?: {
     token: string;
   };
+  hackernews?: {
+    enabled?: boolean;
+  };
 }
 
 // Enhanced verification data with history tracking

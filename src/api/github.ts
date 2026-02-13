@@ -388,6 +388,103 @@ export class GitHubAPI extends BasePlatformAPI {
     }, this.platform, 'fetchRecentOrgRepos');
   }
 
+  /**
+   * Search for a specific model by name and provider
+   * Used for Phase 2 verification
+   */
+  async searchForModel(modelName: string, provider: string): Promise<AggregatedItem[]> {
+    const results: AggregatedItem[] = [];
+    
+    const searchQueries = [
+      `"${modelName}"`,
+      `"${modelName}" free API`,
+      `"${modelName}" pricing`,
+      `"${modelName}" ${provider}`
+    ];
+
+    for (const query of searchQueries.slice(0, 3)) {
+      try {
+        await this.rateLimit();
+        
+        const encodedQuery = encodeURIComponent(query);
+        
+        const response = await fetch(
+          `https://api.github.com/search/code?q=${encodedQuery}&per_page=10`,
+          {
+            headers: {
+              'Authorization': `token ${this.token}`,
+              'Accept': 'application/vnd.github.v3+json',
+              'User-Agent': 'SocialMediaAggregator'
+            }
+          }
+        );
+
+        if (response.ok) {
+          const data = await response.json() as GitHubSearchItem;
+          
+          for (const item of data.items.slice(0, 5)) {
+            if ('full_name' in item) {
+              results.push(this.normalizeRepo(item as GitHubRepo));
+            } else if ('title' in item) {
+              results.push(this.normalizeIssue(item as GitHubIssue));
+            }
+          }
+        }
+        
+        this.state.requestsUsedThisPeriod++;
+        this.state.requestsUsedToday++;
+        
+        // Rate limiting between searches
+        await new Promise(resolve => setTimeout(resolve, 500));
+      } catch (error) {
+        console.warn(`[GitHub] Search error for "${query}":`, error);
+      }
+    }
+
+    // Also search issues
+    for (const query of searchQueries.slice(0, 2)) {
+      try {
+        await this.rateLimit();
+        
+        const encodedQuery = encodeURIComponent(query);
+        
+        const response = await fetch(
+          `https://api.github.com/search/issues?q=${encodedQuery}&per_page=10`,
+          {
+            headers: {
+              'Authorization': `token ${this.token}`,
+              'Accept': 'application/vnd.github.v3+json',
+              'User-Agent': 'SocialMediaAggregator'
+            }
+          }
+        );
+
+        if (response.ok) {
+          const data = await response.json() as GitHubSearchItem;
+          
+          for (const item of data.items.slice(0, 5)) {
+            if ('title' in item && 'body' in item) {
+              results.push(this.normalizeIssue(item as GitHubIssue));
+            }
+          }
+        }
+        
+        this.state.requestsUsedThisPeriod++;
+        this.state.requestsUsedToday++;
+        
+        await new Promise(resolve => setTimeout(resolve, 500));
+      } catch (error) {
+        console.warn(`[GitHub] Issue search error for "${query}":`, error);
+      }
+    }
+
+    // Remove duplicates
+    const uniqueResults = results.filter((item, index, array) => 
+      array.findIndex(i => i.id === item.id) === index
+    );
+
+    return uniqueResults;
+  }
 
 
   private async loadState(): Promise<void> {
