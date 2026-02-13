@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <defs>
+    <linearGradient id="bg-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#06b6d4"/>
+      <stop offset="100%" stop-color="#8b5cf6"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="256" height="256" rx="32" fill="url(#bg-gradient)"/>
+  
+  <!-- Neural Network - 3 nodes in triangle centered in upper portion -->
+  <g>
+    <!-- Connection lines -->
+    <g stroke="#ffffff" stroke-width="4" fill="none">
+      <line x1="80" y1="60" x2="176" y2="60"/>
+      <line x1="80" y1="60" x2="128" y2="130"/>
+      <line x1="176" y1="60" x2="128" y2="130"/>
+    </g>
+    <!-- Nodes -->
+    <g fill="#ffffff">
+      <circle cx="80" cy="60" r="16"/>
+      <circle cx="176" cy="60" r="16"/>
+      <circle cx="128" cy="130" r="16"/>
+    </g>
+  </g>
+  
+  <!-- $0 with strike-through centered at bottom -->
+  <g transform="translate(128, 200)">
+    <!-- Strike-through line (diagonal, crossing through center of text) -->
+    <line x1="-28" y1="5" x2="28" y2="35" 
+          stroke="#ffffff" 
+          stroke-width="5" 
+          stroke-linecap="round"/>
+    <!-- $0 text -->
+    <text x="0" y="30" 
+          font-family="Arial, sans-serif" 
+          font-size="48" 
+          font-weight="bold" 
+          fill="#ffffff" 
+          text-anchor="middle">$0</text>
+  </g>
+</svg>
