@@ -39,6 +39,9 @@ const capabilitiesList = Array.from(allCapabilities).sort();
 const modelsJson = JSON.stringify(models);
 ---
 
+<!-- Store models data in data attribute for JavaScript to read -->
+<div id="models-data" data-models={modelsJson}></div>
+
 <Layout title="Free AI Models Directory | 0-Cost AI Models" description="Discover 450+ free AI models with zero input/output costs. Filter by provider, capabilities, and more.">
   
   <!-- Disclaimer Banner -->
@@ -194,9 +197,10 @@ const modelsJson = JSON.stringify(models);
   </div>
 </Layout>
 
-<script define:vars={{ modelsData: modelsJson }}>
-  // Parse models data
-  const allModels = JSON.parse(modelsData);
+<script>
+  // Parse models data from data attribute
+  const modelsDataElement = document.getElementById('models-data');
+  const allModels = modelsDataElement ? JSON.parse(modelsDataElement.dataset.models || '[]') : [];
   
   // State
   let favorites = [];
@@ -229,6 +233,8 @@ const modelsJson = JSON.stringify(models);
   const compareModal = document.getElementById('compare-modal');
   const modalBody = document.getElementById('modal-body');
   const compareTable = document.getElementById('compare-table');
+
+  console.log('[ProviderFilter] Initialized, found provider chips:', providerChips.length);
 
   // Initialize favorites from localStorage
   function loadFavorites() {
@@ -283,7 +289,7 @@ const modelsJson = JSON.stringify(models);
       <div class="model-card" data-model-id="${model.id}">
         ${generateModelCardHTML(model)}
       </div>
-    `).join(');
+    `).join('');
     
     attachCardListeners();
   }
@@ -483,11 +489,12 @@ const modelsJson = JSON.stringify(models);
 
   // Filter models
   function filterModels() {
+    console.log('[ProviderFilter] Filtering with provider:', currentFilters.provider);
     const searchTerm = currentFilters.search.toLowerCase();
     const providerFilter = currentFilters.provider;
     
     document.querySelectorAll('.provider-section').forEach(section => {
-      const provider = section.dataset.provider;
+      const sectionProvider = section.dataset.provider;
       const cards = section.querySelectorAll('.model-card');
       let visibleCount = 0;
       
@@ -497,12 +504,15 @@ const modelsJson = JSON.stringify(models);
         if (!model) return;
         
         const raw = model.raw;
+        const modelProvider = raw.providerName || raw.providerId;
+        
         const matchesSearch = !searchTerm || 
           raw.name.toLowerCase().includes(searchTerm) ||
-          (raw.providerName || raw.providerId || '').toLowerCase().includes(searchTerm) ||
+          modelProvider.toLowerCase().includes(searchTerm) ||
           (raw.family || '').toLowerCase().includes(searchTerm);
         
-        const matchesProvider = providerFilter === 'all' || (raw.providerName || raw.providerId) === providerFilter;
+        // Check if model matches selected provider
+        const matchesProvider = providerFilter === 'all' || modelProvider === providerFilter;
         
         const contextLimit = raw.limit?.context || raw.limit?.input || 0;
         const outputLimit = raw.limit?.output || 0;
@@ -525,25 +535,33 @@ const modelsJson = JSON.stringify(models);
         if (isVisible) visibleCount++;
       });
       
-      // Show/hide entire provider section
-      const hasVisibleCards = visibleCount > 0;
-      section.style.display = hasVisibleCards ? '' : 'none';
+      // Show/hide entire provider section based on selected provider
+      if (providerFilter !== 'all') {
+        // When a specific provider is selected, show only that provider's section
+        section.style.display = (sectionProvider === providerFilter && visibleCount > 0) ? '' : 'none';
+      } else {
+        // When 'all' is selected, show sections that have visible cards
+        section.style.display = visibleCount > 0 ? '' : 'none';
+      }
     });
     
     // Update filtered count
-    const visibleCards = document.querySelectorAll('.provider-section .model-card[style=""], .provider-section .model-card:not([style])');
+    const visibleCards = document.querySelectorAll('.provider-section .model-card:not([style*="display: none"])');
+    const totalVisible = visibleCards.length;
     const filteredCount = document.getElementById('filtered-count');
-    filteredCount.textContent = visibleCards.length !== allModels.length ? `(${visibleCards.length} shown)` : '';
+    filteredCount.textContent = totalVisible !== allModels.length ? `(${totalVisible} shown)` : '';
     
     // Show/hide no results message
     const noResults = document.getElementById('no-results');
-    const hasResults = visibleCards.length > 0;
+    const hasResults = totalVisible > 0;
     noResults.style.display = hasResults ? 'none' : 'block';
     
     // Show/hide clear filters button
     const hasActiveFilters = searchTerm || providerFilter !== 'all' || currentFilters.contextMin > 0 || 
       currentFilters.outputMin > 0 || currentFilters.capabilities.length > 0;
     clearFiltersBtn.style.display = hasActiveFilters ? 'inline-block' : 'none';
+    
+    console.log('[ProviderFilter] Filter complete. Visible:', totalVisible);
   }
 
   // Clear all filters
@@ -573,46 +591,65 @@ const modelsJson = JSON.stringify(models);
   function attachCardListeners() {
     // Favorite buttons
     document.querySelectorAll('[data-action="favorite"]').forEach(btn => {
-      btn.addEventListener('click', (e) => {
+      btn.onclick = (e) => {
         e.preventDefault();
         e.stopPropagation();
         toggleFavorite(btn.dataset.modelId);
-      });
+      };
     });
     
     // Compare buttons
     document.querySelectorAll('[data-action="compare"]').forEach(btn => {
-      btn.addEventListener('click', (e) => {
+      btn.onclick = (e) => {
         e.preventDefault();
         e.stopPropagation();
         toggleCompare(btn.dataset.modelId);
-      });
+      };
     });
     
     // Copy buttons
     document.querySelectorAll('[data-action="copy-id"]').forEach(btn => {
-      btn.addEventListener('click', (e) => {
+      btn.onclick = (e) => {
         e.preventDefault();
         e.stopPropagation();
         copyToClipboard(btn.dataset.modelId, btn);
-      });
+      };
     });
-    
+
     document.querySelectorAll('[data-action="copy-provider"]').forEach(btn => {
-      btn.addEventListener('click', (e) => {
+      btn.onclick = (e) => {
         e.preventDefault();
         e.stopPropagation();
         copyToClipboard(btn.dataset.provider, btn);
-      });
+      };
     });
     
     // Detail buttons
     document.querySelectorAll('[data-action="view-details"]').forEach(btn => {
-      btn.addEventListener('click', (e) => {
+      btn.onclick = (e) => {
         e.preventDefault();
         e.stopPropagation();
         showModelDetails(btn.dataset.modelId);
-      });
+      };
+    });
+  }
+
+  // Set up provider chip click handlers
+  function setupProviderChips() {
+    console.log('[ProviderFilter] Setting up provider chip handlers');
+    providerChips.forEach(chip => {
+      chip.onclick = (e) => {
+        e.preventDefault();
+        console.log('[ProviderFilter] Chip clicked:', chip.dataset.provider);
+        
+        // Update active state
+        providerChips.forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        
+        // Update filter and apply
+        currentFilters.provider = chip.dataset.provider;
+        filterModels();
+      };
     });
   }
 
@@ -639,15 +676,6 @@ const modelsJson = JSON.stringify(models);
       currentFilters.capabilities = Array.from(capabilityCheckboxes)
         .filter(cb => cb.checked)
         .map(cb => cb.value);
-      filterModels();
-    });
-  });
-
-  providerChips.forEach(chip => {
-    chip.addEventListener('click', () => {
-      providerChips.forEach(c => c.classList.remove('active'));
-      chip.classList.add('active');
-      currentFilters.provider = chip.dataset.provider;
       filterModels();
     });
   });
@@ -685,8 +713,18 @@ const modelsJson = JSON.stringify(models);
   });
 
   // Initialize
+  console.log('[ProviderFilter] Loading favorites and initializing...');
   loadFavorites();
   attachCardListeners();
+  setupProviderChips();
+  
+  // Run initial filter to set correct visibility
+  filterModels();
+</script>
+
+<script is:inline>
+  // Set the global models data before the main script runs
+  window.__MODELS_DATA__ = JSON.stringify(modelsJson);
 </script>
 
 <style>
