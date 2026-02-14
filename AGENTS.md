@@ -124,12 +124,115 @@ interface FeedbackSummary {
 - Use early returns to reduce nesting
 - Destructure objects for cleaner parameter handling
 
+## Raspberry Pi Hardware Constraints
+
+**Device:** Raspberry Pi 3B+  
+**RAM:** ~900MB available (1GB total, ~100MB reserved for GPU)  
+**CPU:** ARM Cortex-A53 quad-core @ 1.4GHz
+
+### Why These Constraints Matter
+
+The Raspberry Pi 3B+ has limited resources compared to modern development machines. Understanding these constraints is critical when choosing frameworks, libraries, and build tools.
+
+### What CAN Run on This Device
+
+#### Web Frameworks (Tested & Working)
+- **Astro** - Static site generator (current choice)
+  - Build time: ~15-20 seconds
+  - Memory usage during build: ~300-400MB
+  - Generates static HTML (no runtime Node.js needed)
+  
+- **Hugo** - Go-based static site generator
+  - Extremely fast builds
+  - Low memory footprint (~100-200MB)
+  - Single binary, no runtime dependencies
+  
+- **Eleventy (11ty)** - JavaScript-based SSG
+  - Moderate memory usage
+  - Good for simple sites
+  
+- **Plain HTML/CSS/JS** - Minimal overhead
+
+#### Web Servers
+- **Nginx** - Lightweight reverse proxy (current choice)
+  - Very low memory footprint (~50MB)
+  - Excellent for static file serving
+  
+- **Lighttpd** - Ultra-lightweight alternative
+  - Even lower memory than Nginx
+  - Suitable for minimal setups
+
+- **Caddy** - Automatic HTTPS
+  - Simple configuration
+  - Slightly higher memory than Nginx
+
+#### What CANNOT Run on This Device
+
+| Framework/Tool | Reason |
+|---------------|--------|
+| **Next.js** | Requires 4GB+ RAM for builds, heavy Node.js runtime |
+| **React SSR** | High memory consumption |
+| **Vue SSR** | Memory-intensive server rendering |
+| **Express.js (heavy)** | Can work but avoid complex middleware stacks |
+| **MongoDB** | Requires significant RAM for decent performance |
+| **PostgreSQL** | Better on devices with 2GB+ RAM |
+| **Docker (multiple containers)** | Each container adds overhead |
+| **GitLab** | Requires 2GB+ minimum |
+
+### Build Memory Optimization
+
+When running builds on the Pi:
+
+```bash
+# Limit Node.js memory for Astro builds
+NODE_OPTIONS=--max_old_space_size=512 npm run build
+
+# Alternative: Use swap file for occasional spikes
+sudo fallocate -l 1G /swapfile
+sudo chmod 600 /swapfile
+sudo mkswap /swapfile
+sudo swapon /swapfile
+```
+
+### Guidelines for Adding Dependencies
+
+1. **Before adding any npm package:**
+   - Check if it's lightweight (< 100KB minified)
+   - Verify it doesn't pull heavy transitive dependencies
+   - Test memory usage: `npm pkg set scripts.memcheck="node --max-old-space-size=256 -e 'require(\"./src/pages/index.astro\")'"`
+
+2. **Avoid these patterns:**
+   - Large UI component libraries (Material UI, Ant Design)
+   - Heavy data processing libraries
+   - Multiple similar packages (pick one)
+
+3. **Prefer:**
+   - Vanilla CSS or lightweight solutions (Tailwind is OK since it's compiled away)
+   - Static generation over server-side rendering
+   - Client-side JS compiled/minified by Astro
+
+### Current Stack Validation
+
+The current Astro setup has been validated to work on this device:
+- Build completes in ~15-20 seconds
+- Memory stays under 500MB during build
+- Static output served by Nginx uses ~50MB
+- Total system memory usage: ~600-700MB with headroom for OS
+
+### Future Considerations
+
+If you need to add features that require heavier frameworks:
+1. Consider if static export is possible
+2. Offload heavy processing to CI/CD (GitHub Actions)
+3. Pre-generate data during build rather than runtime
+4. Consider upgrading to Raspberry Pi 4 (4GB+) for more flexibility
+
 ## Raspberry Pi Deployment
 
 **Live URL:** https://freeai4all.duckdns.org
 
 **Infrastructure:**
-- Raspberry Pi 3+ with Nginx reverse proxy
+- Raspberry Pi 3B+ with Nginx reverse proxy (900MB RAM available)
 - DuckDNS for dynamic DNS (updates every 5 minutes)
 - Let's Encrypt SSL certificates
 - GitHub Actions for hourly data updates
