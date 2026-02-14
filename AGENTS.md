@@ -127,8 +127,22 @@ interface FeedbackSummary {
 ## Raspberry Pi Hardware Constraints
 
 **Device:** Raspberry Pi 3B+  
-**RAM:** ~900MB available (1GB total, ~100MB reserved for GPU)  
-**CPU:** ARM Cortex-A53 quad-core @ 1.4GHz
+**RAM:** ~906MB total (900MB usable, ~100MB reserved for GPU)  
+**CPU:** ARM Cortex-A53 quad-core @ 1.4GHz  
+**Swap:** 512MB configured
+
+### Current System Resources (Verified)
+
+```
+               total        used        free      shared  buff/cache   available
+Mem:           906Mi       676Mi        32Mi       680Ki       252Mi       229Mi
+Swap:          511Mi        95Mi       416Mi
+```
+
+**Active Services Memory Usage:**
+- Nginx (4 workers): ~28 MB
+- Python data server: ~9 MB
+- Total for serving: ~37 MB
 
 ### Why These Constraints Matter
 
@@ -216,8 +230,9 @@ sudo swapon /swapfile
 The current Astro setup has been validated to work on this device:
 - Build completes in ~15-20 seconds
 - Memory stays under 500MB during build
-- Static output served by Nginx uses ~50MB
-- Total system memory usage: ~600-700MB with headroom for OS
+- Static output served by Nginx uses ~28MB
+- Python data server uses ~9MB
+- Total system memory usage: ~700MB with headroom for OS
 
 ### Future Considerations
 
