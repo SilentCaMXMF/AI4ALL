@@ -39,9 +39,6 @@ const capabilitiesList = Array.from(allCapabilities).sort();
 const modelsJson = JSON.stringify(models);
 ---
 
-<!-- Store models data in data attribute for JavaScript to read -->
-<div id="models-data" data-models={modelsJson}></div>
-
 <Layout title="Free AI Models Directory | 0-Cost AI Models" description="Discover 450+ free AI models with zero input/output costs. Filter by provider, capabilities, and more.">
   
   <!-- Disclaimer Banner -->
@@ -51,7 +48,7 @@ const modelsJson = JSON.stringify(models);
       <div class="disclaimer-text">
         <strong>Important Disclaimer:</strong> Free AI models come with trade-offs. You may experience limited daily usage, random availability, data sharing for model training, temporary promotional deals, and smaller models that may not handle complex tasks. Use responsibly.
       </div>
-      <button class="disclaimer-close" onclick="this.parentElement.parentElement.style.display='none'">&times;</button>
+      <button class="disclaimer-close" onclick="this.closest('.disclaimer-banner').style.display='none'">✕</button>
     </div>
   </div>
 
@@ -197,10 +194,9 @@ const modelsJson = JSON.stringify(models);
   </div>
 </Layout>
 
-<script>
-  // Parse models data from data attribute
-  const modelsDataElement = document.getElementById('models-data');
-  const allModels = modelsDataElement ? JSON.parse(modelsDataElement.dataset.models || '[]') : [];
+<script define:vars={{ modelsData: modelsJson }}>
+  // Parse models data - use define:vars to avoid emoji encoding issues
+  const allModels = JSON.parse(modelsData);
   
   // State
   let favorites = [];
