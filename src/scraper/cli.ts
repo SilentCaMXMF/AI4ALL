@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
-import { ScraperService } from './index.js';
-import type { ScraperConfig } from './index.js';
+import { EnhancedScraperService } from './enhanced-scraper.js';
+import type { EnhancedScraperConfig } from './enhanced-scraper.js';
 import { createHeader, createSummary, createTimestampedLog } from '../utils/console-utils.js';
 import { readFileSync } from 'fs';
 import { resolve } from 'path';
@@ -27,8 +27,8 @@ try {
   console.log('[Config] ⚠️ Could not load .env file');
 }
 
-async function loadConfig(): Promise<ScraperConfig> {
-  const config: ScraperConfig = {
+async function loadConfig(): Promise<EnhancedScraperConfig> {
+  const config: EnhancedScraperConfig = {
     enableFeedbackSearch: true
   };
 
@@ -100,35 +100,40 @@ async function main() {
 
   try {
     const config = await loadConfig();
-    const scraper = new ScraperService(config);
+    const scraper = new EnhancedScraperService(config);
 
     console.log('[Main] Starting comprehensive scrape...');
     console.log();
 
+    // Initialize the scraper
+    await scraper.initialize();
+    
     const startTime = Date.now();
-    const results = await scraper.scrapeAll({ limit: 100 }); // Limit to 100 models to avoid rate limits
+    
+    // Run full scrape with verification
+    const result = await scraper.scrapeWithVerification(true);
     const duration = (Date.now() - startTime) / 1000;
 
-    const summaryItems = results.map(result => ({
-      platform: result.platform,
-      count: result.items.length,
-      status: result.success ? 'success' as const : 'error' as const,
-      error: result.error
-    }));
+    console.log();
+    createSummary([{
+      platform: 'total',
+      count: result.totalModelsProcessed,
+      status: 'success' as const,
+      error: undefined
+    }], `Total: ${result.totalModelsProcessed} models processed in ${duration.toFixed(1)}s`);
+
+    console.log('[Main] Scrape metrics:');
+    console.log(`  Models processed: ${result.totalModelsProcessed}`);
+    console.log(`  Verification updates: ${result.verificationUpdates}`);
+    console.log(`  Duration: ${result.duration}ms`);
+    console.log(`  Active platforms: ${result.platformsActive.join(', ')}`);
     
-    createSummary(summaryItems, `Total: models processed in ${duration.toFixed(1)}s`);
+    if (result.errors.length > 0) {
+      console.log();
+      console.log('[Main] Errors encountered:');
+      result.errors.forEach(err => console.log(`  - ${err}`));
+    }
 
-    // Show stats
-    const store = scraper.getStore();
-    const stats = store.getStats();
-    console.log('[Main] Data store stats:');
-    console.log(`  Total items: ${stats.total}`);
-    Object.entries(stats.byPlatform).forEach(([platform, count]) => {
-      console.log(`  ${platform}: ${count}`);
-    });
-
-    // Save data
-    await store.persist();
     console.log();
     console.log('[Main] ✅ Data saved successfully');
     console.log();

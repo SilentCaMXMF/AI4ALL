@@ -3,7 +3,7 @@ import { GitHubAPI } from '../api/github.js';
 import { RedditAPI } from '../api/reddit.js';
 import { StackOverflowAPI } from '../api/stackoverflow.js';
 import { HackerNewsAPI } from '../api/hackernews.js';
-import { HuggingFaceAPI as EnhancedHuggingFaceAPI } from '../api/huggingface-enhanced.js';
+import { HuggingFaceAPI } from '../api/huggingface.js';
 import { 
   VerificationDataManager, 
   IncrementalUpdater, 
@@ -106,7 +106,7 @@ export class EnhancedScraperService {
     this.platformAPIs.set('hackernews', new HackerNewsAPI());
     
     if (platformConfigs.huggingface) {
-      this.platformAPIs.set('huggingface', new EnhancedHuggingFaceAPI(platformConfigs.huggingface));
+      this.platformAPIs.set('huggingface', new HuggingFaceAPI(platformConfigs.huggingface));
     }
     
     console.log(`[EnhancedScraper] ✓ Initialized ${this.platformAPIs.size} platform APIs`);

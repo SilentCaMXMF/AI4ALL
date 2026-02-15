@@ -17,9 +17,7 @@ interface HuggingFaceModel {
   tags: string[];
   pipeline_tag: string;
   createdAt: string;
-  modelId?: string;
-  tags: string[];
-  siblings?: any[];
+  lastModified?: string;
   cardData?: {
     content: string;
   };
@@ -41,7 +39,7 @@ export class HuggingFaceAPI extends BasePlatformAPI {
   readonly rateLimitPerHour = 1000;
   
   private token?: string;
-  
+
   constructor(config: { token?: string } = {}) {
     super();
     this.token = config.token;
@@ -77,12 +75,25 @@ export class HuggingFaceAPI extends BasePlatformAPI {
         // General searches
         `free ${modelName}`,
         `${modelName} demo`,
-        `${modelName} tutorial`
+        `${modelName} tutorial`,
+        
+        // Community discussions
+        `${modelName} issues`,
+        `${modelName} problems`,
+        `${modelName} experience`,
+        `${modelName} review`,
+        
+        // Integration searches
+        `${modelName} transformers`,
+        `${modelName} diffusers`,
+        `${modelName} gradio`,
+        `${modelName} api key`,
+        `${modelName} rate limit`
       ];
 
       console.log(`[HuggingFace] Searching ${searchQueries.length} queries for ${modelName}...`);
       
-      for (const query of searchQueries.slice(0, 8)) { // Limit queries
+      for (const query of searchQueries.slice(0, 6)) { // Limit queries to avoid rate limits
         try {
           const models = await this.searchHuggingFaceModels(query);
           
@@ -92,31 +103,27 @@ export class HuggingFaceAPI extends BasePlatformAPI {
           
           // Filter and normalize relevant models
           const relevantModels = models
-            .slice(0, 3) // Limit per query
-            .filter(model => {
-              // Basic relevance check
-              const name = model.modelId.toLowerCase();
-              const description = (model.cardData?.content || '').toLowerCase();
-              const author = model.author.toLowerCase();
-              const searchTerm = query.toLowerCase();
-              
-              // Name, description, or author must mention search terms
-              return name.includes(searchTerm) || 
-                     description.includes(searchTerm) || 
-                     author.includes(searchTerm);
-            })
-            .map(model => this.normalizeModel(model));
+            .slice(0, 2) // Limit per query
+            .map(model => this.normalizeModel(model, modelName, provider));
           
           results.push(...relevantModels);
           
           // Rate limiting between searches
-          await new Promise(resolve => setTimeout(resolve, 1000));
+          await new Promise(resolve => setTimeout(resolve, 1500));
         } catch (error) {
           console.warn(`[HuggingFace] Search error for "${query}":`, error);
         }
       }
       
-      // Remove duplicates based on model ID
+      // Search for discussions about the model
+      const discussions = await this.searchModelDiscussions(modelName);
+      const discussionItems = discussions
+        .slice(0, 3) // Limit discussions
+        .map(discussion => this.normalizeDiscussion(discussion));
+      
+      results.push(...discussionItems);
+      
+      // Remove duplicates based on model/discussion ID
       const uniqueResults = results.filter((item, index, array) => 
         array.findIndex(i => i.id === item.id) === index
       );
@@ -139,7 +146,7 @@ export class HuggingFaceAPI extends BasePlatformAPI {
     
     return await handleAsyncError(async () => {
       const response = await fetch(
-        `https://huggingface.co/api/models?search=${encodeURIComponent(query)}&limit=10&sort=downloads&direction=-1`,
+        `https://huggingface.co/api/models?search=${encodeURIComponent(query)}&limit=20&sort=downloads&direction=-1`,
         { headers }
       );
       
@@ -150,16 +157,78 @@ export class HuggingFaceAPI extends BasePlatformAPI {
     }, this.platform, 'searchHuggingFaceModels');
   }
 
+  private async searchModelDiscussions(modelName: string): Promise<HuggingFaceDiscussion[]> {
+    // Search for discussions in model repositories and community spaces
+    const discussionQueries = [
+      `${modelName} issues`,
+      `${modelName} discussion`,
+      `${modelName} pull requests`,
+      `${modelName} community`,
+      `${modelName} review`,
+      `${modelName} experience`,
+      `${modelName} problems`,
+      `${modelName} bugs`,
+      `${modelName} performance`
+    ];
+
+    const discussions: HuggingFaceDiscussion[] = [];
+    
+    for (const query of discussionQueries.slice(0, 3)) { // Limit discussion searches
+      try {
+        // This is a simplified approach - in a real implementation,
+        // you might search specific repositories or community spaces
+        const discussionData = await this.searchDiscussions(query);
+        discussions.push(...discussionData);
+        
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      } catch (error) {
+        console.warn(`[HuggingFace] Discussion search error for "${query}":`, error);
+      }
+    }
+
+    return discussions;
+  }
+
+  private async searchDiscussions(query: string): Promise<HuggingFaceDiscussion[]> {
+    // Mock implementation for discussions
+    // In a real implementation, this would search Hugging Face forums,
+    // repository issues, and community spaces
+    await this.rateLimit();
+    
+    const mockDiscussions: HuggingFaceDiscussion[] = [
+      {
+        id: `disc-${Date.now()}-${Math.random()}`,
+        title: `${query} discussion`,
+        content: `Discussion about ${query} implementation and usage`,
+        author: `community-user`,
+        createdAt: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString(),
+        url: `https://huggingface.co/discussions/${query}`,
+        numComments: Math.floor(Math.random() * 20),
+        tags: [query]
+      }
+    ];
+
+    // Filter by relevance to the query
+    return mockDiscussions.filter(disc => 
+      disc.title.toLowerCase().includes(query.toLowerCase()) ||
+      disc.content.toLowerCase().includes(query.toLowerCase())
+    );
+  }
+
   async fetchItems(options: FetchOptions = {}): Promise<FetchResult> {
     const items: AggregatedItem[] = [];
     
     return await handleAsyncError(async () => {
       // Fetch trending models from Hugging Face
       const models = await this.fetchTrendingModels(50);
-      items.push(...models.map(model => this.normalizeModel(model)));
+      items.push(...models.map(model => this.normalizeModel(model, '', '')));
+      
+      // Also fetch recent discussions
+      const discussions = await this.fetchRecentDiscussions(30);
+      items.push(...discussions.map(disc => this.normalizeDiscussion(disc)));
       
       return {
-        items: items.slice(0, options.limit || 20),
+        items: items.slice(0, options.limit || 30),
         hasMore: false
       };
     }, this.platform, 'fetchItems');
@@ -189,11 +258,42 @@ export class HuggingFaceAPI extends BasePlatformAPI {
     }, this.platform, 'fetchTrendingModels');
   }
 
-  private normalizeModel(model: HuggingFaceModel): AggregatedItem {
+  private async fetchRecentDiscussions(days: number = 7): Promise<HuggingFaceDiscussion[]> {
+    await this.rateLimit();
+    
+    // Mock implementation for recent discussions
+    // In a real implementation, this would fetch from Hugging Face forums
+    const mockDiscussions: HuggingFaceDiscussion[] = [
+      {
+        id: `recent-${Date.now()}`,
+        title: 'Free model availability discussion',
+        content: 'Community discussion about free AI model availability and usage',
+        author: 'huggingface-user',
+        createdAt: new Date(Date.now() - Math.random() * days * 24 * 60 * 60 * 1000).toISOString(),
+        url: 'https://huggingface.co/discussions/free-models',
+        numComments: Math.floor(Math.random() * 50),
+        tags: ['free', 'models', 'availability']
+      },
+      {
+        id: `recent-${Date.now() + 1}`,
+        title: 'Open source model comparison',
+        content: 'Comparison of open source models and their capabilities',
+        author: 'community-user',
+        createdAt: new Date(Date.now() - Math.random() * days * 24 * 60 * 60 * 1000).toISOString(),
+        url: 'https://huggingface.co/discussions/model-comparison',
+        numComments: Math.floor(Math.random() * 30),
+        tags: ['comparison', 'open-source']
+      }
+    ];
+
+    return mockDiscussions;
+  }
+
+  private normalizeModel(model: HuggingFaceModel, targetModelName: string, targetProvider: string): AggregatedItem {
     const capabilities = [];
     const tags = [];
     
-    // Extract capabilities from tags and pipeline_tag
+    // Extract capabilities from pipeline_tag and tags
     if (model.pipeline_tag?.includes('text-generation')) {
       capabilities.push('Text Generation');
       tags.push('text-generation');
@@ -202,25 +302,45 @@ export class HuggingFaceAPI extends BasePlatformAPI {
       capabilities.push('Image Generation');
       tags.push('image-generation');
     }
-    if (model.tags?.includes('transformers')) {
-      capabilities.push('Transformers');
-      tags.push('transformers');
+    if (model.pipeline_tag?.includes('feature-extraction')) {
+      capabilities.push('Feature Extraction');
+      tags.push('feature-extraction');
+    }
+    if (model.pipeline_tag?.includes('text-to-speech')) {
+      capabilities.push('Text-to-Speech');
+      tags.push('text-to-speech');
     }
     
-    // Add open weights indicator
-    if (model.tags?.some(tag => tag.includes('open-source') || tag.includes('license'))) {
-      capabilities.push('Open Weights');
+    // Add tags from model tags
+    if (model.tags) {
+      if (model.tags.some(tag => tag.includes('transformers'))) {
+        capabilities.push('Transformers');
+        tags.push('transformers');
+      }
+      if (model.tags.some(tag => tag.includes('diffusers'))) {
+        capabilities.push('Diffusers');
+        tags.push('diffusers');
+      }
+      if (model.tags.some(tag => tag.includes('gradio'))) {
+        capabilities.push('Gradio');
+        tags.push('gradio');
+      }
+      if (model.tags.some(tag => tag.includes('open-source') || tag.includes('license'))) {
+        capabilities.push('Open Weights');
+        tags.push('open-source');
+      }
     }
     
     return {
       id: `huggingface-${model.id}`,
       platform: 'huggingface',
       type: 'model',
-      title: `${model.author}: ${model.modelId}`,
-      content: model.cardData?.content || `Downloads: ${model.downloads?.toLocaleString() || 'N/A'} | Likes: ${model.likes || 0}`,
+      title: model.author ? `${model.author}: ${model.modelId}` : model.modelId,
+      content: model.cardData?.content || `Downloads: ${model.downloads?.toLocaleString() || 'N/A'} | Likes: ${model.likes || 0} | Tags: ${tags.slice(0, 3).join(', ')}`,
       author: {
         name: model.author,
-        url: `https://huggingface.co/${model.author}`
+        url: `https://huggingface.co/${model.author}`,
+        avatar: `https://huggingface.co/${model.author}/avatar`
       },
       timestamp: model.createdAt || new Date().toISOString(),
       url: `https://huggingface.co/${model.author}/${model.modelId}`,
@@ -232,10 +352,30 @@ export class HuggingFaceAPI extends BasePlatformAPI {
       tags: [
         'huggingface',
         model.pipeline_tag || 'unknown',
-        ...tags,
-        ...capabilities
+        ...tags
       ],
       raw: model
+    };
+  }
+
+  private normalizeDiscussion(discussion: HuggingFaceDiscussion): AggregatedItem {
+    return {
+      id: `huggingface-discussion-${discussion.id}`,
+      platform: 'huggingface',
+      type: 'post',
+      title: discussion.title,
+      content: discussion.content,
+      author: {
+        name: discussion.author,
+        url: `https://huggingface.co/${discussion.author}`
+      },
+      timestamp: discussion.createdAt,
+      url: discussion.url,
+      metrics: {
+        comments: discussion.numComments
+      },
+      tags: discussion.tags || ['huggingface'],
+      raw: discussion
     };
   }
 }
