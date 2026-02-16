@@ -172,7 +172,8 @@ export class EnhancedScraperService {
 
     // Phase 1: Fetch models from models.dev
     console.log('[EnhancedScraper] Phase 1: Fetching free models from models.dev...');
-    const models = await this.modelsDevAPI.fetchFreeModels();
+    const modelsResult = await this.modelsDevAPI.fetchItems();
+    const models = modelsResult.items;
     metrics.totalModelsProcessed = models.length;
 
     // Phase 2: Verification from multiple platforms
