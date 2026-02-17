@@ -158,6 +158,7 @@ await browser.close();
 - Astro (static site generation)
 - Nginx (reverse proxy)
 - Python data server
+- Watchdog timer (configure timeout in `/etc/watchdog.conf`, NOT via `/proc/sys/kernel/watchdog_timeout` which doesn't exist on Raspberry Pi kernel)
 
 ### What Doesn't Work
 - Next.js, React SSR, Vue SSR
