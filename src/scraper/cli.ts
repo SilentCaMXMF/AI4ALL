@@ -3,28 +3,17 @@
 import { EnhancedScraperService } from './enhanced-scraper.js';
 import type { EnhancedScraperConfig } from './enhanced-scraper.js';
 import { createHeader, createSummary, createTimestampedLog } from '../utils/console-utils.js';
-import { readFileSync } from 'fs';
+import dotenv from 'dotenv';
 import { resolve } from 'path';
 
-// Load .env file manually
-try {
-  const envPath = resolve(process.cwd(), '.env');
-  const envContent = readFileSync(envPath, 'utf8');
-  const lines = envContent.split('\n');
-  
-  for (const line of lines) {
-    const trimmed = line.trim();
-    if (trimmed && !trimmed.startsWith('#')) {
-      const [key, ...valueParts] = trimmed.split('=');
-      if (key && valueParts.length > 0) {
-        const value = valueParts.join('=').trim();
-        process.env[key] = value;
-      }
-    }
-  }
-  console.log('[Config] ✓ Environment variables loaded from .env');
-} catch (error) {
+// Load .env file using dotenv
+const envPath = resolve(process.cwd(), '.env');
+const result = dotenv.config({ path: envPath });
+
+if (result.error) {
   console.log('[Config] ⚠️ Could not load .env file');
+} else {
+  console.log('[Config] ✓ Environment variables loaded from .env');
 }
 
 async function loadConfig(): Promise<EnhancedScraperConfig> {

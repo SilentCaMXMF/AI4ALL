@@ -14,7 +14,7 @@ export default defineConfig({
   },
   server: {
     port: 4321,
-    host: true,
+    host: process.env.NODE_ENV === 'production' ? false : true,
   },
   vite: {
     build: {

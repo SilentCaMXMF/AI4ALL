@@ -41,7 +41,6 @@ export default [
         Buffer: 'readonly',
         setTimeout: 'readonly',
         URLSearchParams: 'readonly',
-        import: 'readonly',
       },
     },
     rules: {

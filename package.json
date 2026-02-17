@@ -14,8 +14,8 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@astrojs/sitemap": "^3.7.0",
-    "astro": "^4.15.0",
+    "@astrojs/sitemap": "^3.2.1",
+    "astro": "^5.17.2",
     "dotenv": "^17.2.4",
     "node-fetch": "^3.3.2"
   },
