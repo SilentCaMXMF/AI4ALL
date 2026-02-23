@@ -1,15 +1,41 @@
 User-agent: *
 Allow: /
 
-# Sitemap
-Sitemap: https://freeai4all.duckdns.org/sitemap.xml
+# Allow important pages
+Allow: /$
+Allow: /dashboard.html
+Allow: /opencode-zen-dashboard.html
+Allow: /model/
 
-# Disallow admin or private areas (if any)
+# Disallow unnecessary files
 Disallow: /src/
 Disallow: /scripts/
 Disallow: /node_modules/
 Disallow: /.git/
-Disallow: /data/*.json
+Disallow: /data/
+Disallow: /*.json$
+Disallow: /*.js$
+Disallow: /*.css$
 
-# Crawl-delay for rate limiting (optional)
+# Sitemap
+Sitemap: https://freeai4all.duckdns.org/sitemap.xml
+
+# Special rules for crawlers
+User-agent: Googlebot
 Crawl-delay: 1
+
+User-agent: Bingbot
+Crawl-delay: 1
+
+User-agent: Slurp
+Crawl-delay: 1
+
+# Social media crawlers
+User-agent: facebookexternalhit
+Allow: /
+
+User-agent: Twitterbot
+Allow: /
+
+User-agent: LinkedInBot
+Allow: /

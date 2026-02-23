@@ -320,14 +320,314 @@ GitHub Actions (Hourly)
 
 ---
 
+## 🚀 Phase 2: Enhanced Social Verification (Planned)
+
+**Status:** 📝 Planning Phase  
+**Goal:** Replace simplified verification with comprehensive multi-platform keyword analysis  
+**Priority:** High - Will significantly improve model trust scores
+
+### Overview
+
+Phase 2 will implement intelligent keyword-based verification across developer-focused platforms where AI tooling is actually discussed. Unlike general social media (where "AI" mostly means ChatGPT complaints), these sources provide genuine technical feedback about free model availability, rate limits, and usage experiences.
+
+### Verification Sources
+
+#### 1. 🛠️ Developer Platforms
+
+**GitHub** (Primary Source)
+- **Search Targets:**
+  - Trending AI/LLM repositories
+  - Issues mentioning "free tier", "rate limit", "pricing"
+  - Discussions about model comparisons
+  - README files mentioning free models
+- **API:** GitHub REST API (generous rate limits for public data)
+- **Keywords:** Model name + "free", "pricing", "limits", "rate limit"
+
+**Hugging Face** (High Value)
+- **Search Targets:**
+  - Model cards with "free" or "open" tags
+  - Community discussions
+  - Model comparison threads
+- **API:** Hugging Face Hub API
+- **Keywords:** Model family, provider, "inference", "free"
+
+**Replit & Glitch** (Template Discovery)
+- **Search Targets:**
+  - Template descriptions mentioning free AI models
+  - Comments on AI-related projects
+- **Method:** Web scraping (respect robots.txt)
+- **Keywords:** "free API", "no cost", "open source model"
+
+#### 2. 👥 Social/Community Platforms
+
+**Reddit** (High Volume)
+- **Subreddits to Monitor:**
+  - r/LocalLLaMA (local model discussions)
+  - r/MachineLearning (technical discussions)
+  - r/OpenAI (API discussions)
+  - r/StableDiffusion (image models)
+  - r/ArtificialIntelligence (general AI)
+- **API:** Reddit API (requires app registration)
+- **Keywords:** Model name + "free", "working", "down", "rate limit"
+- **Sentiment Analysis:** Positive/negative mentions
+
+**Discord** (Real-time Feedback)
+- **Servers to Join:**
+  - AI/ML community servers with public channels
+  - Provider-specific servers (OpenRouter, etc.)
+  - Developer tool discussions
+- **Method:** Bot with read permissions (respect ToS)
+- **Keywords:** Free model mentions, issue reports
+- **Note:** Requires explicit bot permissions
+
+**Telegram** (Announcement Channels)
+- **Channels:**
+  - AI tool announcement channels
+  - Developer resource groups
+- **Method:** Bot API with channel access
+- **Focus:** New free model announcements
+
+**Hacker News** (Quality Discussions)
+- **Search Targets:**
+  - Comments on AI-related posts
+  - "Ask HN" threads about free tools
+- **API:** Algolia HN Search API
+- **Keywords:** Model names, "free API", "alternatives"
+- **Quality:** High signal-to-noise ratio
+
+#### 3. 📰 Content Aggregators
+
+**Lobsters** (Developer-Focused)
+- **Search:** Tag-based search for AI/ML
+- **API:** Web scraping (respect robots.txt)
+- **Keywords:** "free", "open source", model names
+
+**Lemmy** (Fediverse Communities)
+- **Instances:** ML/AI focused communities
+- **API:** Lemmy API
+- **Keywords:** Model discussions, free tier experiences
+
+**Product Hunt** (Launch Tracking)
+- **Search:** AI tool launches
+- **API:** Product Hunt API (requires key)
+- **Focus:** New free model announcements
+
+**Indie Hackers** (Bootstrapped Tools)
+- **Search:** Free AI tool discussions
+- **Method:** Web scraping
+- **Keywords:** "free tier", "no credit card", "open source"
+
+#### 4. 🔬 Technical Platforms
+
+**Stack Overflow / Stack Exchange**
+- **Search Targets:**
+  - Questions about free AI APIs
+  - Answers mentioning specific models
+  - "What are the limits of [model]?"
+- **API:** Stack Exchange API (requires key)
+- **Keywords:** "free API", "rate limiting", model names
+
+**Google Colab Notebooks**
+- **Search:** Notebook descriptions and comments
+- **Method:** Web scraping
+- **Focus:** Working examples with free models
+
+**Kaggle Discussions**
+- **Search:** Notebook comments, competition discussions
+- **API:** Kaggle API
+- **Keywords:** Free model usage, competition solutions
+
+### Implementation Strategy
+
+#### Phase 2A: Core Platforms (Priority 1)
+1. **GitHub** - Highest value, generous API
+2. **Reddit** - High volume, good API
+3. **Hacker News** - Quality discussions, easy API
+4. **Stack Overflow** - Technical validation
+
+#### Phase 2B: Extended Platforms (Priority 2)
+5. **Hugging Face** - Model-specific discussions
+6. **Discord** - Real-time feedback (if bot approved)
+7. **Lobsters/Lemmy** - Developer communities
+
+#### Phase 2C: Niche Sources (Priority 3)
+8. **Telegram** - Announcement tracking
+9. **Product Hunt** - New tool discovery
+10. **Replit/Glitch** - Template usage
+
+### Verification Algorithm
+
+```typescript
+interface VerificationResult {
+  modelId: string;
+  sources: {
+    github: {
+      mentions: number;
+      positive: number;
+      negative: number;
+      lastMention: Date;
+    };
+    reddit: {
+      mentions: number;
+      positive: number;
+      negative: number;
+      subreddits: string[];
+    };
+    hackernews: {
+      mentions: number;
+      quality: 'high' | 'medium' | 'low';
+    };
+    // ... other sources
+  };
+  overall: {
+    score: number;        // 0-100
+    status: 'verified' | 'likely' | 'questioned' | 'unknown';
+    lastUpdated: Date;
+    commonIssues: string[];
+  };
+}
+
+// Scoring Algorithm
+function calculateTrustScore(results: VerificationResult): number {
+  let score = 0;
+  let weight = 0;
+  
+  // GitHub (weight: 30%) - Most reliable for technical info
+  if (results.sources.github) {
+    const gh = results.sources.github;
+    const sentiment = gh.positive / (gh.positive + gh.negative + 1);
+    score += sentiment * 30;
+    weight += 30;
+  }
+  
+  // Reddit (weight: 25%) - High volume, community feedback
+  if (results.sources.reddit) {
+    const rd = results.sources.reddit;
+    const sentiment = rd.positive / (rd.positive + rd.negative + 1);
+    score += sentiment * 25;
+    weight += 25;
+  }
+  
+  // Hacker News (weight: 20%) - Quality discussions
+  if (results.sources.hackernews) {
+    const hn = results.sources.hackernews;
+    const qualityMultiplier = hn.quality === 'high' ? 1 : hn.quality === 'medium' ? 0.7 : 0.4;
+    score += (hn.mentions > 0 ? 20 : 0) * qualityMultiplier;
+    weight += 20;
+  }
+  
+  // Stack Overflow (weight: 15%) - Technical validation
+  if (results.sources.stackoverflow) {
+    score += 15;
+    weight += 15;
+  }
+  
+  // Hugging Face (weight: 10%) - Model-specific
+  if (results.sources.huggingface) {
+    score += 10;
+    weight += 10;
+  }
+  
+  // Normalize to 0-100
+  return weight > 0 ? (score / weight) * 100 : 0;
+}
+```
+
+### Legal & Ethical Considerations
+
+#### ✅ Allowed Practices
+- **GitHub API:** Public data, generous rate limits
+- **Reddit API:** Official API with proper authentication
+- **Hacker News API:** Public Algolia search API
+- **Stack Exchange API:** Official API with key
+- **Hugging Face:** Public model cards and discussions
+- **robots.txt:** Always check and respect
+
+#### ⚠️ Requires Care
+- **Discord:** Requires bot permissions, must respect server rules
+- **Telegram:** Requires channel invitation/bot approval
+- **Web Scraping:** Check ToS, implement rate limiting, respect robots.txt
+
+#### ❌ Avoid
+- Scraping against robots.txt
+- Violating platform ToS
+- Excessive API calls (rate limiting)
+- Private/discord DMs or private channels
+- Personal data collection
+
+### API Key Requirements
+
+| Platform | API Key | Rate Limit | Cost |
+|----------|---------|------------|------|
+| GitHub | Recommended | 5000/hour (auth) | Free |
+| Reddit | Required | 60/minute | Free |
+| Hacker News | Not required | 1000/day | Free |
+| Stack Exchange | Required | 10000/day | Free |
+| Hugging Face | Optional | 1000/hour | Free |
+| Discord | Required | Varies | Free |
+| Telegram | Required | 30/second | Free |
+
+### Development Tasks
+
+#### Setup & Infrastructure
+- [ ] **P2-001:** Create API clients for each platform
+- [ ] **P2-002:** Implement rate limiting and caching
+- [ ] **P2-003:** Set up API key management (.env)
+- [ ] **P2-004:** Create database schema for verification results
+- [ ] **P2-005:** Implement sentiment analysis (basic keyword matching)
+
+#### Platform Integration
+- [ ] **P2-101:** GitHub API integration
+- [ ] **P2-102:** Reddit API integration
+- [ ] **P2-103:** Hacker News API integration
+- [ ] **P2-104:** Stack Exchange API integration
+- [ ] **P2-105:** Hugging Face API integration
+
+#### Advanced Features
+- [ ] **P2-201:** Implement Discord bot (if approved)
+- [ ] **P2-202:** Add web scraping for Lobsters/Lemmy
+- [ ] **P2-203:** Product Hunt API integration
+- [ ] **P2-204:** Telegram bot integration
+
+#### Testing & Deployment
+- [ ] **P2-301:** Test each platform individually
+- [ ] **P2-302:** Verify rate limiting works
+- [ ] **P2-303:** Update GitHub Actions workflow
+- [ ] **P2-304:** Document API key setup
+
+### Success Metrics
+
+- [ ] **Coverage:** Verify 90% of free models across 3+ platforms
+- [ ] **Accuracy:** Sentiment analysis >80% accurate vs manual review
+- [ ] **Freshness:** Data updated within 24 hours
+- [ ] **Reliability:** <5% API failure rate
+- [ ] **Performance:** Scraping completes within 10 minutes
+
+### Timeline Estimate
+
+| Phase | Duration | Platforms | Status |
+|-------|----------|-----------|--------|
+| Phase 2A | 2-3 weeks | GitHub, Reddit, HN, Stack Overflow | 📝 Planned |
+| Phase 2B | 2-3 weeks | Hugging Face, Discord, Lobsters | 📝 Planned |
+| Phase 2C | 1-2 weeks | Telegram, Product Hunt, Replit | 📝 Planned |
+| **Total** | **5-8 weeks** | **10 platforms** | 🎯 Target |
+
+---
+
 ## 🔮 Future Enhancements (Optional)
 
-- [ ] Add model comparison feature
-- [ ] Implement favorite/bookmark models
-- [ ] Add provider rating system
+### Already Implemented ✅
+- [x] Add model comparison feature
+- [x] Implement favorite/bookmark models
+- [x] Add provider rating system
+- [x] Implement advanced filtering (by context limit, capabilities)
+
+### Remaining Ideas
 - [ ] Create API endpoint for third-party access
 - [ ] Add notification system for new free models
-- [ ] Implement advanced filtering (by context limit, capabilities)
+- [ ] Implement email alerts for model status changes
+- [ ] Add model usage examples/snippets
+- [ ] Create model recommendation engine
 
 ---
 
@@ -388,6 +688,6 @@ openssl s_client -connect freeai4all.duckdns.org:443
 
 ---
 
-**Last Updated:** February 8, 2026  
-**Status:** ✅ **100% COMPLETE - LIVE & OPERATIONAL**  
-**Version:** 2.0.0
+**Last Updated:** February 11, 2026  
+**Status:** ✅ **LIVE & OPERATIONAL** | 🚀 **Phase 2 Planning**  
+**Version:** 2.5.0

@@ -17,7 +17,8 @@ export interface AggregatedItem {
   raw: unknown; // Original platform-specific data
 }
 
-export type Platform = 'github' | 'reddit' | 'stackoverflow' | 'discord' | 'x' | 'modelsdev';
+export type Platform = 'github' | 'reddit' | 'stackoverflow' | 'x' | 'modelsdev' | 'hackernews' | 'huggingface';
+export type GenericPlatform = Platform | 'datastore' | 'scraper' | 'history' | 'updater' | 'apikey';
 
 export type ContentType = 
   | 'repository' 
@@ -43,6 +44,7 @@ export interface PlatformMetrics {
   shares?: number;
   likes?: number;
   replies?: number;
+  downloads?: number;        // For Hugging Face
 }
 
 export interface FetchOptions {
@@ -80,8 +82,12 @@ export abstract class BasePlatformAPI {
   }
 
   protected handleError(error: unknown, context: string): Error {
-    console.error(`[${this.platform}] Error in ${context}:`, error);
-    return new Error(`[${this.platform}] ${context}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    // Create basic error without importing to avoid circular dependencies
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    const platformError = new Error(`[${this.platform}] ${context}: ${errorMessage}`);
+    platformError.name = 'PlatformError';
+    console.error(`✗ [${this.platform}] ${context}: ${errorMessage}`);
+    return platformError;
   }
 }
 
@@ -120,6 +126,8 @@ export interface ModelWithFeedback extends AggregatedItem {
     lastMention: string;
     availabilityStatus: 'confirmed' | 'questioned' | 'unknown';
     commonIssues: string[];
+    verificationLevel: string;
+    verificationScore: number;
   };
 }
 
@@ -141,10 +149,6 @@ export interface PlatformConfig {
     key?: string;
     tags?: string[];
   };
-  discord?: {
-    token: string;
-    channels?: string[];
-  };
   x?: {
     bearerToken: string;
     apiKey?: string;
@@ -153,4 +157,147 @@ export interface PlatformConfig {
     accessTokenSecret?: string;
     searchQueries?: string[];
   };
+  huggingface?: {
+    token: string;
+  };
+  hackernews?: {
+    enabled?: boolean;
+  };
+}
+
+// Enhanced verification data with history tracking
+export interface VerificationDatabase {
+  models: EnhancedModelData[];
+  verificationHistory: VerificationHistoryEntry[];
+  lastUpdated: string;
+  version: string;
+}
+
+export interface EnhancedModelData extends ModelWithFeedback {
+  // Enhanced metadata
+  firstSeen: string;
+  lastVerified: string;
+  verificationCount: number;
+  
+  // Platform-specific verification details
+  platformBreakdown: Partial<Record<'github' | 'reddit' | 'stackoverflow' | 'x' | 'modelsdev' | 'hackernews' | 'huggingface', PlatformVerificationDetails>>;
+  
+  // Trend analysis
+  verificationTrend: {
+    last7Days: number[];
+    last30Days: number[];
+    overall: 'improving' | 'stable' | 'declining' | 'unknown';
+  };
+  
+  // Availability tracking
+  availabilityHistory: AvailabilityEntry[];
+  currentAvailability: 'confirmed' | 'questioned' | 'unknown' | 'deprecated';
+}
+
+export interface PlatformVerificationDetails {
+  mentionCount: number;
+  lastMention: string;
+  averageSentiment: number; // 0-100
+  commonIssues: string[];
+  lastChecked: string;
+}
+
+export interface VerificationHistoryEntry {
+  id: string;
+  modelId: string;
+  timestamp: string;
+  platform: Platform;
+  type: 'verification_run' | 'sentiment_change' | 'issue_detected' | 'availability_change';
+  data: {
+    previousScore?: number;
+    newScore?: number;
+    issues?: string[];
+    availability?: 'confirmed' | 'questioned' | 'unknown' | 'deprecated';
+    sentimentChange?: 'positive' | 'negative' | 'neutral';
+    mentionCount?: number;
+  };
+  metadata?: Record<string, unknown>;
+}
+
+export interface AvailabilityEntry {
+  timestamp: string;
+  status: 'confirmed' | 'questioned' | 'unknown' | 'deprecated';
+  reportedBy: Platform[];
+  issues: string[];
+  sourceUrl?: string;
+}
+
+// Incremental update tracking
+export interface UpdateState {
+  lastFullScrape: string;
+  lastIncrementalUpdate: string;
+  platformStates: Record<Platform, {
+    lastCursor?: string;
+    lastUpdate: string;
+    itemCount: number;
+    errorCount: number;
+  }>;
+  totalModelsProcessed: number;
+  updatesToday: number;
+}
+
+// API key management
+export interface APIKeyConfig {
+  keys: Record<Platform, {
+    key: string;
+    lastUsed: string;
+    usageCount: number;
+    rateLimitRemaining: number;
+    expiresAt?: string;
+    isActive: boolean;
+  }>;
+  rotationSchedule: Record<Platform, {
+    frequency: 'daily' | 'weekly' | 'monthly' | 'never';
+    lastRotation: string;
+    nextRotation?: string;
+  }>;
+}
+
+// Data pipeline configuration
+export interface PipelineConfig {
+  incrementalUpdates: {
+    enabled: boolean;
+    intervalMinutes: number;
+    batchSize: number;
+    maxAgeHours: number;
+  };
+  fullScraping: {
+    enabled: boolean;
+    schedule: string; // cron expression
+    retentionDays: number;
+  };
+  verification: {
+    minimumMentions: number;
+    confidenceThreshold: number;
+    platforms: Platform[];
+    deepAnalysisEnabled: boolean;
+  };
+}
+
+// Trend analysis types
+export interface TrendAnalysis {
+  platform: string;
+  trend: 'improving' | 'stable' | 'declining' | 'insufficient_data';
+  scoreChange: number;
+  timeframe: string;
+  confidence: number;
+}
+
+export interface ModelTrendReport {
+  modelId: string;
+  modelTitle: string;
+  overallTrend: TrendAnalysis;
+  platformTrends: Record<Platform, TrendAnalysis>;
+  summary: {
+    totalMentions: number;
+    sentimentShift: 'positive' | 'negative' | 'neutral';
+    reliabilityScore: number;
+    recommendation: string;
+  };
+  generatedAt: string;
 }

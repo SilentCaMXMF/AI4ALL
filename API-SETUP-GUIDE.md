@@ -194,7 +194,7 @@ PLATFORMS=all
 1. **Never commit `.env` file to git** - it's already in `.gitignore`
 2. **Use different tokens for dev/production**
 3. **Rotate tokens regularly** (every 3-6 months)
-4. **Use GitHub Secrets** for production deployment:
+4. **Use GitHub Secrets** for API credentials in GitHub Actions:
    - Go to Settings → Secrets and variables → Actions
    - Add each credential as a secret
 5. **Limit token permissions** to only what's needed

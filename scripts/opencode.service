@@ -1,0 +1,16 @@
+[Unit]
+Description=OpenCode AI Assistant Server
+After=network.target
+
+[Service]
+Type=simple
+User=pedroocalado
+WorkingDirectory=/home/pedroocalado/ai4all/AI4ALL
+ExecStart=/home/pedroocalado/.opencode/bin/opencode serve --hostname 192.168.1.67
+Restart=always
+RestartSec=10
+StandardOutput=append:/home/pedroocalado/opencode.log
+StandardError=append:/home/pedroocalado/opencode.log
+
+[Install]
+WantedBy=multi-user.target

@@ -1,7 +1,17 @@
-import { BasePlatformAPI } from '../types';
-import type { AggregatedItem, FetchOptions, FetchResult, Platform } from '../types';
-import { readFile, writeFile, access } from 'fs/promises';
+import { BasePlatformAPI } from '../types/index.js';
+import type { AggregatedItem, FetchOptions, FetchResult, Platform } from '../types/index.js';
 import { join } from 'path';
+import { 
+  handleAsyncError, 
+  createPlatformError, 
+  logPlatformError,
+  loadStateFile,
+  saveStateFile,
+  validateApiResponse,
+  incrementRequestCounter
+} from '../utils/error-handler.js';
+import { ModelsDevService } from '../services/models-dev-service.js';
+import { sleep } from '../types/index.js';
 
 interface ProviderConfig {
   id: string;
@@ -61,190 +71,76 @@ interface ModelsDevState {
 export class ModelsDevAPI extends BasePlatformAPI {
   readonly platform: Platform = 'modelsdev';
   readonly rateLimitPerHour = 60; // Conservative - API is generous but let's be nice
-  readonly apiEndpoint = 'https://models.dev/api.json';
   
   private stateFile: string;
   private state: ModelsDevState;
-  private searchTerms: string[];
 
-  constructor(config: { searchTerms?: string[] } = {}) {
+  constructor() {
     super();
     this.stateFile = join(process.cwd(), 'data', 'modelsdev-state.json');
-    this.searchTerms = config.searchTerms || ['opencode', 'zen'];
-    
     this.state = {
       lastFetchTime: new Date(0).toISOString(),
       modelsCache: [],
       priceHistory: [],
       fetchCount: 0
     };
-  }
-
-  async fetchItems(options: FetchOptions = {}): Promise<FetchResult> {
-    await this.loadState();
-    
-    const now = new Date();
-    const lastFetch = new Date(this.state.lastFetchTime);
-    const hoursSinceLastFetch = (now.getTime() - lastFetch.getTime()) / (1000 * 60 * 60);
-    
-    // Check if we should fetch (hourly intervals)
-    if (hoursSinceLastFetch < 1 && this.state.modelsCache.length > 0) {
-      console.log(`[ModelsDev] Skipping fetch - last update ${hoursSinceLastFetch.toFixed(1)}h ago (hourly intervals)`);
-      return {
-        items: this.state.modelsCache.map(model => this.normalizeModel(model)),
-        hasMore: false
-      };
-    }
-    
-    console.log(`[ModelsDev] Fetching fresh data... (last fetch: ${hoursSinceLastFetch.toFixed(1)}h ago)`);
-    
-    try {
-      await this.rateLimit();
-      
-      // Fetch the full API
-      const response = await fetch(this.apiEndpoint, {
-        headers: {
-          'Accept': 'application/json',
-          'User-Agent': 'SocialMediaAggregator/1.0'
-        }
-      });
-
-      if (!response.ok) {
-        throw new Error(`Models.dev API error: ${response.status} ${response.statusText}`);
-      }
-
-      // Parse response as object with provider keys
-      const providersData = await response.json() as Record<string, ProviderConfig>;
-      this.state.fetchCount++;
-      
-      // Flatten all models from all providers
-      let allModels: Array<ModelsDevModel & { providerId: string; providerName: string }> = [];
-      let totalModelsCount = 0;
-      
-      for (const [providerId, provider] of Object.entries(providersData)) {
-        if (provider.models) {
-          const providerModels = Object.entries(provider.models).map(([modelId, model]) => ({
-            ...model,
-            id: model.id || modelId,
-            providerId: providerId,
-            providerName: provider.name || providerId
-          }));
-          allModels = allModels.concat(providerModels);
-          totalModelsCount += Object.keys(provider.models).length;
-        }
-      }
-      
-      console.log(`[ModelsDev] Total providers: ${Object.keys(providersData).length}`);
-      console.log(`[ModelsDev] Total models in database: ${totalModelsCount}`);
-      
-      // Filter for FREE models only (cost.input === 0 && cost.output === 0)
-      const freeModels = this.filterFreeModels(allModels);
-      console.log(`[ModelsDev] Found ${freeModels.length} FREE models`);
-      
-      // Group by provider for summary
-      const providerCounts = this.groupByProvider(freeModels);
-      console.log(`[ModelsDev] Free models by provider:`, providerCounts);
-      
-      // Update cache
-      this.state.modelsCache = freeModels;
-      this.state.lastFetchTime = now.toISOString();
-      await this.saveState();
-      
-      // Convert to AggregatedItems
-      const items: AggregatedItem[] = freeModels.map(model => this.normalizeModel(model));
-      
-      console.log(`[ModelsDev] Returning ${items.length} free models`);
-      
-      return {
-        items: items.slice(0, options.limit || 500),
-        hasMore: false
-      };
-    } catch (error) {
-      throw this.handleError(error, 'fetchItems');
-    }
-  }
-
-  private filterFreeModels(models: ModelsDevModel[]): ModelsDevModel[] {
-    return models.filter(model => {
-      // A model is FREE when cost.input === 0 OR null/undefined AND cost.output === 0 OR null/undefined
-      const inputCost = model.cost?.input ?? model.inputCost;
-      const outputCost = model.cost?.output ?? model.outputCost;
-      
-      const isFree = (inputCost === 0 || inputCost === null || inputCost === undefined) &&
-                     (outputCost === 0 || outputCost === null || outputCost === undefined);
-      
-      return isFree;
+    this.loadState().catch(error => {
+      logPlatformError(error, this.platform, 'constructor');
     });
-  }
-
-  private groupByProvider(models: ModelsDevModel[]): Record<string, number> {
-    const counts: Record<string, number> = {};
-    for (const model of models) {
-      const provider = model.provider || model.providerId || 'Unknown';
-      counts[provider] = (counts[provider] || 0) + 1;
-    }
-    return counts;
   }
 
   private detectPriceChanges(newModels: ModelsDevModel[]): PriceChange[] {
     const changes: PriceChange[] = [];
-    const now = new Date().toISOString();
+    const previousModels = new Map(this.state.modelsCache.map(m => [m.id, m]));
     
     for (const newModel of newModels) {
-      const oldModel = this.state.modelsCache.find(m => 
-        m.id === newModel.id || (m.providerId === newModel.providerId && m.modelId === newModel.modelId)
-      );
-      
-      if (!oldModel) continue; // New model, not a price change
-      
-      // Check input cost
-      if (newModel.inputCost !== oldModel.inputCost) {
-        const changePercent = oldModel.inputCost && newModel.inputCost
-          ? ((newModel.inputCost - oldModel.inputCost) / oldModel.inputCost) * 100
-          : undefined;
+      const previousModel = previousModels.get(newModel.id);
+      if (previousModel) {
+        const inputCost = newModel.cost?.input ?? 0;
+        const outputCost = newModel.cost?.output ?? 0;
+        const prevInputCost = previousModel.cost?.input ?? 0;
+        const prevOutputCost = previousModel.cost?.output ?? 0;
         
-        changes.push({
-          modelId: newModel.modelId,
-          providerId: newModel.providerId,
-          field: 'inputCost',
-          oldValue: oldModel.inputCost,
-          newValue: newModel.inputCost,
-          changePercent,
-          timestamp: now
-        });
-      }
-      
-      // Check output cost
-      if (newModel.outputCost !== oldModel.outputCost) {
-        const changePercent = oldModel.outputCost && newModel.outputCost
-          ? ((newModel.outputCost - oldModel.outputCost) / oldModel.outputCost) * 100
-          : undefined;
-        
-        changes.push({
-          modelId: newModel.modelId,
-          providerId: newModel.providerId,
-          field: 'outputCost',
-          oldValue: oldModel.outputCost,
-          newValue: newModel.outputCost,
-          changePercent,
-          timestamp: now
-        });
+        if (inputCost !== prevInputCost || outputCost !== prevOutputCost) {
+          changes.push({
+            modelId: newModel.id,
+            modelName: newModel.name,
+            oldPrice: { input: prevInputCost, output: prevOutputCost },
+            newPrice: { input: inputCost, output: outputCost },
+            changePercent: inputCost !== prevInputCost ? 
+              ((inputCost - prevInputCost) / Math.max(prevInputCost, 0.0001)) * 100 : 0,
+            timestamp: new Date().toISOString()
+          });
+        }
       }
     }
     
+    this.state.priceHistory.push(...changes);
     return changes;
   }
 
-  private normalizeModel(model: ModelsDevModel & { providerId: string; providerName: string }): AggregatedItem {
+  private normalizeModel(model: any): AggregatedItem {
+    // The service already returns normalized AggregatedItem format, but we need to adjust for API format
+    if (model.platform === 'modelsdev' && model.type === 'model') {
+      // Already in correct format from service, just ensure ID is correct for caching
+      return {
+        ...model,
+        id: `modelsdev-${model.raw?.id || model.id}`,
+        raw: model.raw || model,
+        metrics: model.metrics || {}
+      };
+    }
+    
+    // Fallback to manual normalization for cached models
     const capabilities = [];
-    if (model.tool_call) capabilities.push('Tool Calling');
+    if (model.tool_call || model.toolCall) capabilities.push('Tool Calling');
     if (model.reasoning) capabilities.push('Reasoning');
-    if (model.open_weights) capabilities.push('Open Weights');
+    if (model.open_weights || model.openWeights) capabilities.push('Open Weights');
     if (model.modalities?.input?.includes('image')) capabilities.push('Vision');
     if (model.modalities?.input?.includes('audio')) capabilities.push('Audio');
     
-    const contextLimit = model.limit?.context ?? 0;
-    const outputLimit = model.limit?.output ?? 0;
+    const contextLimit = model.limit?.context ?? model.contextLimit ?? 0;
+    const outputLimit = model.limit?.output ?? model.outputLimit ?? 0;
     
     const contentParts = [
       '💰 FREE MODEL',
@@ -258,14 +154,14 @@ export class ModelsDevAPI extends BasePlatformAPI {
       id: `modelsdev-${model.id}`,
       platform: 'modelsdev',
       type: 'model',
-      title: `${model.providerName}: ${model.name || model.id}`,
+      title: `${model.providerName || model.provider}: ${model.name || model.id}`,
       content: contentParts.join(' | '),
       author: {
-        name: model.providerName,
-        url: `https://models.dev/?search=${encodeURIComponent(model.providerId)}`
+        name: model.providerName || model.provider,
+        url: `https://models.dev/?search=${encodeURIComponent(model.providerId || model.provider)}`
       },
-      timestamp: model.last_updated || model.release_date || new Date().toISOString(),
-      url: `https://models.dev/?search=${encodeURIComponent(model.providerId)}&model=${encodeURIComponent(model.id)}`,
+      timestamp: model.last_updated || model.lastUpdated || model.release_date || new Date().toISOString(),
+      url: `https://models.dev/?search=${encodeURIComponent(model.providerId || model.provider)}&model=${encodeURIComponent(model.id)}`,
       metrics: {
         stars: contextLimit,
         forks: outputLimit,
@@ -273,7 +169,7 @@ export class ModelsDevAPI extends BasePlatformAPI {
       },
       tags: [
         'free',
-        model.providerId,
+        model.providerId || model.provider,
         ...(model.family ? [model.family] : []),
         ...(capabilities)
       ],
@@ -281,29 +177,74 @@ export class ModelsDevAPI extends BasePlatformAPI {
     };
   }
 
+  async fetchItems(options?: FetchOptions): Promise<FetchResult> {
+    try {
+      console.log(`[${this.platform}] Starting fetch for free models...`);
+      
+      // Use the ModelsDevService to fetch models
+      const service = new ModelsDevService();
+      const items = await service.fetchItems({ freeOnly: true });
+      
+      const result: FetchResult = {
+        items,
+        hasMore: false
+      };
+      
+      console.log(`[${this.platform}] ✓ Fetched ${result.items.length} free models`);
+      
+      return result;
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      console.error(`[${this.platform}] Error in fetchItems:`, errorMessage);
+      
+      return {
+        items: [],
+        hasMore: false,
+        rateLimitUntil: null
+      };
+    }
+  }
+
   private normalizePriceChange(change: PriceChange): AggregatedItem {
     const percentStr = change.changePercent 
       ? ` (${change.changePercent > 0 ? '+' : ''}${change.changePercent.toFixed(1)}%)` 
       : '';
     
+    // Find the model from cache to get full details
+    const model = this.state.modelsCache.find(m => m.id === change.modelId);
+    if (!model) return null;
+    
+    const provider = {
+      name: model.providerName || model.provider || 'Unknown',
+      url: `https://models.dev/?search=${encodeURIComponent(model.providerId || model.provider)}`
+    };
+    
+    const inputCost = change.newPrice.input;
+    const outputCost = change.newPrice.output;
+    
     return {
-      id: `modelsdev-pricechange-${change.modelId}-${change.timestamp}`,
-      platform: 'modelsdev',
-      type: 'price_alert',
-      title: `💰 Price Change: ${change.modelId}`,
-      content: `${change.field} changed from $${change.oldValue} to $${change.newValue}${percentStr} per 1M tokens`,
-      author: {
-        name: change.providerId,
-        url: `https://models.dev/?search=${encodeURIComponent(change.providerId)}`
-      },
+      id: `price-change-${change.modelId}-${Date.now()}`,
+      platform: 'modelsdev' as Platform,
+      type: 'model' as ContentType,
+      title: `${provider.name}: ${model.name} - Price Change${percentStr}`,
+      content: `Price change for ${model.name}\nOld: Input: $${change.oldPrice.input}/1M, Output: $${change.oldPrice.output}/1M\nNew: Input: $${inputCost}/1M, Output: $${outputCost}/1M${percentStr}\nFamily: ${model.family || 'N/A'}\nProvider: ${provider.name}`,
+      author: provider,
       timestamp: change.timestamp,
-      url: `https://models.dev/?search=${encodeURIComponent(change.providerId)}&model=${encodeURIComponent(change.modelId)}`,
+      url: `https://models.dev/model/${model.id}`,
       metrics: {
-        stars: change.oldValue,
-        forks: change.newValue
+        stars: 0,
+        forks: 0,
+        watchers: 0,
+        comments: 0,
+        upvotes: 0,
+        downvotes: 0
       },
-      tags: ['price-change', change.providerId, change.field],
-      raw: change
+      tags: [
+        'price-change',
+        provider.name.toLowerCase(),
+        ...(model.family ? [model.family] : [])
+      ],
+      raw: { ...change, model }
     };
   }
 
@@ -342,26 +283,17 @@ export class ModelsDevAPI extends BasePlatformAPI {
   }
 
   private async loadState(): Promise<void> {
-    try {
-      await access(this.stateFile);
-      const content = await readFile(this.stateFile, 'utf-8');
-      this.state = JSON.parse(content);
-    } catch {
-      // File doesn't exist, use default state
-      this.state = {
-        lastFetchTime: new Date(0).toISOString(),
-        modelsCache: [],
-        priceHistory: [],
-        fetchCount: 0
-      };
-    }
+    const defaultState: ModelsDevState = {
+      lastFetchTime: new Date(0).toISOString(),
+      modelsCache: [],
+      priceHistory: [],
+      fetchCount: 0
+    };
+    
+    this.state = await loadStateFile(this.stateFile, defaultState, this.platform);
   }
 
   private async saveState(): Promise<void> {
-    try {
-      await writeFile(this.stateFile, JSON.stringify(this.state, null, 2));
-    } catch (error) {
-      console.warn('[ModelsDev] Could not save state:', error);
-    }
+    await saveStateFile(this.stateFile, this.state, this.platform);
   }
 }

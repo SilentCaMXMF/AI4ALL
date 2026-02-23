@@ -1,5 +1,6 @@
-import { BasePlatformAPI } from '../types';
-import type { AggregatedItem, FetchOptions, FetchResult, Platform } from '../types';
+import { BasePlatformAPI } from '../types/index.js';
+import type { AggregatedItem, FetchOptions, FetchResult, Platform } from '../types/index.js';
+import { handleAsyncError, createPlatformError, logPlatformError } from '../utils/error-handler.js';
 
 interface XTweet {
   id: string;
@@ -47,7 +48,7 @@ export class XAPI extends BasePlatformAPI {
   async fetchItems(options: FetchOptions = {}): Promise<FetchResult> {
     const items: AggregatedItem[] = [];
     
-    try {
+    return await handleAsyncError(async () => {
       // Search for recent tweets
       for (const query of this.searchQueries.slice(0, 2)) {
         const tweets = await this.searchRecentTweets(query);
@@ -64,9 +65,7 @@ export class XAPI extends BasePlatformAPI {
         items: items.slice(0, options.limit || 15),
         hasMore: false
       };
-    } catch (error) {
-      throw this.handleError(error, 'fetchItems');
-    }
+    }, this.platform, 'fetchItems');
   }
 
   private async searchRecentTweets(query: string): Promise<XTweet[]> {
@@ -79,26 +78,24 @@ export class XAPI extends BasePlatformAPI {
       sort_order: 'recency'
     });
 
-    const response = await fetch(
-      `https://api.twitter.com/2/tweets/search/recent?${params.toString()}`,
-      {
-        headers: {
-          'Authorization': `Bearer ${this.bearerToken}`,
-          'User-Agent': 'SocialMediaAggregator/1.0'
+    return await handleAsyncError(async () => {
+      const response = await fetch(
+        `https://api.twitter.com/2/tweets/search/recent?${params.toString()}`,
+        {
+          headers: {
+            'Authorization': `Bearer ${this.bearerToken}`,
+            'User-Agent': 'SocialMediaAggregator/1.0'
+          }
         }
-      }
-    );
+      );
 
-    if (!response.ok) {
-      if (response.status === 403) {
-        console.warn('[X API] Access forbidden. Check your API tier and permissions.');
-        return [];
+      if (!response.ok) {
+        throw createPlatformError(this.platform, 'searchRecentTweets', new Error(`X API error: ${response.status} ${response.statusText}`));
       }
-      throw new Error(`X API error: ${response.status} ${response.statusText}`);
-    }
 
-    const data = await response.json() as { data?: XTweet[] };
-    return data.data || [];
+      const data = await response.json() as { data?: XTweet[] };
+      return data.data || [];
+    }, this.platform, 'searchRecentTweets');
   }
 
   private async fetchUsers(userIds: string[]): Promise<XUser[]> {
@@ -111,22 +108,24 @@ export class XAPI extends BasePlatformAPI {
       'user.fields': 'username,name,profile_image_url'
     });
 
-    const response = await fetch(
-      `https://api.twitter.com/2/users?${params.toString()}`,
-      {
-        headers: {
-          'Authorization': `Bearer ${this.bearerToken}`,
-          'User-Agent': 'SocialMediaAggregator/1.0'
+    return await handleAsyncError(async () => {
+      const response = await fetch(
+        `https://api.twitter.com/2/users?${params.toString()}`,
+        {
+          headers: {
+            'Authorization': `Bearer ${this.bearerToken}`,
+            'User-Agent': 'SocialMediaAggregator/1.0'
+          }
         }
+      );
+
+      if (!response.ok) {
+        throw createPlatformError(this.platform, 'fetchUsers', new Error(`X API error: ${response.status} ${response.statusText}`));
       }
-    );
 
-    if (!response.ok) {
-      throw new Error(`X API error: ${response.status} ${response.statusText}`);
-    }
-
-    const data = await response.json() as { data?: XUser[] };
-    return data.data || [];
+      const data = await response.json() as { data?: XUser[] };
+      return data.data || [];
+    }, this.platform, 'fetchUsers');
   }
 
   private normalizeTweet(tweet: XTweet, userMap: Map<string, XUser>): AggregatedItem {

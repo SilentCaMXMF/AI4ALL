@@ -1,0 +1,11 @@
+[Unit]
+Description=Watchdog Timer Service
+After=multi-user.target
+
+[Service]
+Type=oneshot
+ExecStart=/bin/bash -c 'echo 600 > /proc/sys/kernel/watchdog_timeout'
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

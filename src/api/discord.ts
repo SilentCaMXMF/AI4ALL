@@ -1,5 +1,6 @@
-import { BasePlatformAPI } from '../types';
-import type { AggregatedItem, FetchOptions, FetchResult, Platform } from '../types';
+import { BasePlatformAPI } from '../types/index.js';
+import type { AggregatedItem, FetchOptions, FetchResult, Platform } from '../types/index.js';
+import { handleAsyncError, createPlatformError, logPlatformError } from '../utils/error-handler.js';
 
 interface DiscordMessage {
   id: string;
@@ -50,7 +51,7 @@ export class DiscordAPI extends BasePlatformAPI {
   async fetchItems(options: FetchOptions = {}): Promise<FetchResult> {
     const items: AggregatedItem[] = [];
     
-    try {
+    return await handleAsyncError(async () => {
       // Fetch messages from each channel
       for (const channelId of this.channelIds.slice(0, 5)) {
         const messages = await this.fetchChannelMessages(channelId);
@@ -61,9 +62,7 @@ export class DiscordAPI extends BasePlatformAPI {
         items: items.slice(0, options.limit || 25),
         hasMore: false
       };
-    } catch (error) {
-      throw this.handleError(error, 'fetchItems');
-    }
+    }, this.platform, 'fetchItems');
   }
 
   private async fetchChannelMessages(channelId: string): Promise<DiscordMessage[]> {
@@ -82,10 +81,10 @@ export class DiscordAPI extends BasePlatformAPI {
 
     if (!response.ok) {
       if (response.status === 403) {
-        console.warn(`[Discord] No access to channel ${channelId}`);
+        logPlatformError(this.platform, new Error(`No access to channel ${channelId}`), 'fetchChannelMessages');
         return [];
       }
-      throw new Error(`Discord API error: ${response.status} ${response.statusText}`);
+      throw createPlatformError(this.platform, 'fetchChannelMessages', new Error(`Discord API error: ${response.status} ${response.statusText}`));
     }
 
     return response.json() as Promise<DiscordMessage[]>;
@@ -105,11 +104,24 @@ export class DiscordAPI extends BasePlatformAPI {
       }
     );
 
-    if (!response.ok) {
-      throw new Error(`Discord API error: ${response.status} ${response.statusText}`);
-    }
+    return await handleAsyncError(async () => {
+      const response = await fetch(
+        `https://discord.com/api/v10/guilds/${guildId}/channels`,
+        {
+          headers: {
+            'Authorization': `Bot ${this.token}`,
+            'Content-Type': 'application/json',
+            'User-Agent': 'SocialMediaAggregator/1.0'
+          }
+        }
+      );
 
-    return response.json() as Promise<DiscordChannel[]>;
+      if (!response.ok) {
+        throw createPlatformError(this.platform, 'fetchGuildChannels', new Error(`Discord API error: ${response.status} ${response.statusText}`));
+      }
+
+      return response.json() as Promise<DiscordChannel[]>;
+    }, this.platform, 'fetchGuildChannels');
   }
 
   private normalizeMessage(message: DiscordMessage): AggregatedItem {

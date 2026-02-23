@@ -1,0 +1,309 @@
+---
+interface Props {
+  title: string;
+  description?: string;
+  keywords?: string;
+  ogImage?: string;
+  canonical?: string;
+}
+
+const { 
+  title, 
+  description = "Discover 318+ completely free AI models from 32+ providers. Zero cost for input/output tokens. Filter by capabilities like vision, reasoning, tool calling.",
+  keywords = "free AI models, AI directory, LLM, machine learning, AI tools, developer resources, OpenAI, Claude, Gemini, free LLM, no cost AI API",
+  ogImage = "https://freeai4all.duckdns.org/og-image.png",
+  canonical = "https://freeai4all.duckdns.org/"
+} = Astro.props;
+
+const siteUrl = "https://freeai4all.duckdns.org";
+const currentYear = new Date().getFullYear();
+---
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <!-- Primary Meta Tags -->
+    <meta name="title" content={title} />
+    <meta name="description" content={description} />
+    <meta name="keywords" content={keywords} />
+    <meta name="author" content="FreeAI4All" />
+    <meta name="robots" content="index, follow" />
+    <meta name="language" content="English" />
+    <meta name="revisit-after" content="7 days" />
+    <meta name="theme-color" content="#0f172a" />
+    <meta name="msapplication-TileColor" content="#0f172a" />
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href={canonical} />
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/favicon.svg" />
+    
+    <!-- Preconnect for Performance -->
+    <link rel="preconnect" href="https://models.dev" />
+    <link rel="dns-prefetch" href="https://models.dev" />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:site_name" content="FreeAI4All" />
+    <meta property="og:locale" content="en_US" />
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content={canonical} />
+    <meta property="twitter:title" content={title} />
+    <meta property="twitter:description" content={description} />
+    <meta property="twitter:image" content={ogImage} />
+    <meta property="twitter:creator" content="@FreeAI4All" />
+    <meta property="twitter:site" content="@FreeAI4All" />
+    
+    <!-- Structured Data -->
+    <script type="application/ld+json" set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "FreeAI4All",
+      "description": "Comprehensive directory of free AI models with zero cost input/output",
+      "url": siteUrl,
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": `${siteUrl}/?search={search_term_string}`,
+        "query-input": "required name=search_term_string"
+      }
+    })} />
+    
+    <script type="application/ld+json" set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "FreeAI4All",
+      "alternateName": "Free AI Models Directory",
+      "url": siteUrl,
+      "logo": `${siteUrl}/favicon.svg`,
+      "sameAs": [
+        "https://github.com/SilentCaMXMF/AI4ALL"
+      ]
+    })} />
+    
+    <script type="application/ld+json" set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": siteUrl
+        }
+      ]
+    })} />
+    
+    <script type="application/ld+json" set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What are free AI models?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Free AI models are large language models (LLMs) that can be accessed without paying for API usage. They offer zero cost for both input and output tokens, making them ideal for developers and hobbyists."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Are these models really completely free?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, these models have 0 cost for both input and output tokens. However, free models often come with limitations like daily usage caps, rate limits, and may not always be available."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What capabilities do free AI models offer?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Free models vary in capabilities. Some offer vision (image analysis), reasoning, tool calling, structured output, and audio processing. Each model's capabilities are listed on our directory."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How often is the data updated?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Our directory is updated hourly via automated scraping from models.dev, ensuring you have the latest information on free AI model availability."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What are the trade-offs of free AI models?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Free models typically have limitations including: limited daily usage, random availability, data may be used for model training, promotional deals that expire, and smaller models that may not handle complex tasks as well as paid alternatives."
+          }
+        }
+      ]
+    })} />
+    
+    <title>{title}</title>
+    <style is:global>
+      :root {
+        --bg-primary: #0f172a;
+        --bg-secondary: #1e293b;
+        --bg-card: #334155;
+        --text-primary: #f8fafc;
+        --text-secondary: #94a3b8;
+        --accent-primary: #3b82f6;
+        --accent-secondary: #8b5cf6;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+        --border-radius: 8px;
+        --transition: all 0.3s ease;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+        background: linear-gradient(135deg, var(--bg-primary) 0%, #1a1f3c 100%);
+        color: var(--text-primary);
+        min-height: 100vh;
+        line-height: 1.6;
+      }
+
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 1rem;
+      }
+
+      header {
+        background: rgba(15, 23, 42, 0.95);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 1rem 0;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+
+      .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+      }
+
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 1.5rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .logo-icon {
+        font-size: 2rem;
+      }
+
+      .tagline {
+        color: var(--text-secondary);
+        font-size: 0.875rem;
+      }
+
+      main {
+        padding: 2rem 0;
+        min-height: calc(100vh - 200px);
+      }
+
+      footer {
+        background: var(--bg-secondary);
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 2rem 0;
+        text-align: center;
+        color: var(--text-secondary);
+      }
+
+      .footer-links {
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+        margin-bottom: 1rem;
+        flex-wrap: wrap;
+      }
+
+      .footer-links a {
+        color: var(--accent-primary);
+        text-decoration: none;
+        transition: var(--transition);
+      }
+
+      .footer-links a:hover {
+        color: var(--accent-secondary);
+      }
+
+      @media (max-width: 768px) {
+        .header-content {
+          flex-direction: column;
+          text-align: center;
+        }
+
+        .logo {
+          font-size: 1.25rem;
+        }
+
+        .footer-links {
+          flex-direction: column;
+          gap: 0.5rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="container">
+        <div class="header-content">
+          <div class="logo">
+            <span class="logo-icon" role="img" aria-label="AI Robot">🤖</span>
+            <span>FreeAI4All</span>
+          </div>
+          <p class="tagline">Curated Directory of Free AI Models</p>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <div class="container">
+        <slot />
+      </div>
+    </main>
+
+    <footer>
+      <div class="container">
+        <div class="footer-links">
+          <a href="https://models.dev" target="_blank" rel="noopener">Data from models.dev</a>
+          <a href="https://github.com/SilentCaMXMF/AI4ALL" target="_blank" rel="noopener">GitHub</a>
+        </div>
+        <p>© {currentYear} FreeAI4All. All models verified with 0-cost input/output.</p>
+      </div>
+    </footer>
+  </body>
+</html>

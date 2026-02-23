@@ -1,0 +1,1379 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ModelCard from '../components/ModelCard.astro';
+import { getFreeModels, getModelStats, getUniqueProviders, type ModelItem } from '../data/models.js';
+
+// Load models at build time
+const models = await getFreeModels();
+const stats = getModelStats(models);
+const providers = getUniqueProviders(models);
+
+// Group models by provider for display
+const groupedModels = new Map<string, ModelItem[]>();
+for (const model of models) {
+  const provider = model.raw.providerName || model.raw.providerId || 'Unknown';
+  if (!groupedModels.has(provider)) {
+    groupedModels.set(provider, []);
+  }
+  groupedModels.get(provider)!.push(model);
+}
+
+// Sort providers by model count (descending)
+const sortedProviders = Array.from(groupedModels.entries())
+  .sort((a, b) => b[1].length - a[1].length);
+
+// Get all unique capabilities
+const allCapabilities = new Set<string>();
+models.forEach(model => {
+  if (model.raw.capabilities?.tool_call) allCapabilities.add('Tool Calling');
+  if (model.raw.capabilities?.reasoning) allCapabilities.add('Reasoning');
+  if (model.raw.capabilities?.structured_output) allCapabilities.add('Structured Output');
+  if (model.raw.open_weights) allCapabilities.add('Open Weights');
+  if (model.raw.modalities?.input?.includes('image')) allCapabilities.add('Vision');
+  if (model.raw.modalities?.input?.includes('audio')) allCapabilities.add('Audio');
+});
+
+const capabilitiesList = Array.from(allCapabilities).sort();
+
+// Serialize models for client-side use
+const modelsJson = JSON.stringify(models);
+---
+
+<Layout title="Free AI Models Directory | 0-Cost AI Models" description="Discover 450+ free AI models with zero input/output costs. Filter by provider, capabilities, and more.">
+  
+  <!-- Disclaimer Banner -->
+  <div class="disclaimer-banner">
+    <div class="disclaimer-content">
+      <span class="disclaimer-icon">⚠️</span>
+      <div class="disclaimer-text">
+        <strong>Important Disclaimer:</strong> Free AI models come with trade-offs. You may experience limited daily usage, random availability, data sharing for model training, temporary promotional deals, and smaller models that may not handle complex tasks. Use responsibly.
+      </div>
+      <button class="disclaimer-close" onclick="this.closest('.disclaimer-banner').style.display='none'">✕</button>
+    </div>
+  </div>
+
+  <section class="hero">
+    <h1>Free AI Models Directory</h1>
+    <p class="hero-description">
+      Curated collection of <strong>{stats.total}</strong> AI models with 
+      <span class="highlight">zero cost</span> for both input and output tokens
+    </p>
+    
+    <div class="stats-grid">
+      <div class="stat-card">
+        <span class="stat-number" id="stat-total">{stats.total}</span>
+        <span class="stat-label">Free Models</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">{stats.providers}</span>
+        <span class="stat-label">Providers</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">{stats.tags}</span>
+        <span class="stat-label">Capabilities</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Search & Filters -->
+  <section class="filters-section">
+    <div class="search-box">
+      <input 
+        type="text" 
+        id="search-input" 
+        placeholder="Search models by name, provider, or capability..."
+        class="search-input"
+      />
+      <button id="clear-filters" class="clear-btn" style="display: none;">Clear Filters</button>
+    </div>
+    
+    <div class="filter-controls">
+      <div class="filter-group">
+        <label>Context Limit (min tokens)</label>
+        <input type="range" id="context-min" min="0" max="500000" step="1000" value="0" class="range-slider" />
+        <span id="context-min-value">0</span>
+      </div>
+      
+      <div class="filter-group">
+        <label>Output Limit (min tokens)</label>
+        <input type="range" id="output-min" min="0" max="200000" step="1000" value="0" class="range-slider" />
+        <span id="output-min-value">0</span>
+      </div>
+    </div>
+    
+    <div class="capabilities-filter">
+      <label>Capabilities:</label>
+      <div class="capability-toggles">
+        {capabilitiesList.map(cap => (
+          <label class="capability-toggle">
+            <input type="checkbox" value={cap} class="capability-checkbox" />
+            <span>{cap}</span>
+          </label>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Provider Chips -->
+  <section class="providers-section">
+    <h2>Filter by Provider</h2>
+    <div class="provider-chips" id="provider-chips">
+      <button class="provider-chip active" data-provider="all">
+        <span class="provider-name">All</span>
+        <span class="provider-count">{stats.total}</span>
+      </button>
+      {sortedProviders.map(([provider, providerModels]) => (
+        <button class="provider-chip" data-provider={provider}>
+          <span class="provider-name">{provider}</span>
+          <span class="provider-count">{providerModels.length}</span>
+        </button>
+      ))}
+    </div>
+  </section>
+
+  <!-- Comparison Bar -->
+  <section id="comparison-bar" class="comparison-bar" style="display: none;">
+    <div class="comparison-content">
+      <span class="comparison-title">Compare Models (<span id="compare-count">0</span>/3)</span>
+      <div id="compare-models" class="compare-list"></div>
+      <div class="comparison-actions">
+        <button id="compare-btn" class="compare-action-btn" disabled>Compare Selected</button>
+        <button id="clear-compare" class="compare-clear-btn">Clear</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Favorites Section -->
+  <section id="favorites-section" class="favorites-section" style="display: none;">
+    <h2>⭐ My Favorites</h2>
+    <div id="favorites-grid" class="models-grid"></div>
+  </section>
+
+  <!-- All Models -->
+  <section class="models-section">
+    <h2>All Free Models <span id="filtered-count" class="filtered-count"></span></h2>
+    <div id="models-container">
+      {sortedProviders.map(([provider, providerModels]) => (
+        <div 
+          id={`provider-${provider.toLowerCase().replace(/\s+/g, '-')}`} 
+          class="provider-section" 
+          data-provider={provider}
+        >
+          <h3 class="provider-heading">
+            {provider}
+            <span class="model-count">({providerModels.length} models)</span>
+          </h3>
+          <div class="models-grid">
+            {providerModels.map(model => (
+              <ModelCard model={model} />
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+    <div id="no-results" class="no-results" style="display: none;">
+      <p>No models match your filters. Try adjusting your search criteria.</p>
+    </div>
+  </section>
+
+  <!-- Model Detail Modal -->
+  <div id="model-modal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <button class="modal-close">&times;</button>
+      <div id="modal-body"></div>
+    </div>
+  </div>
+
+  <!-- Comparison Modal -->
+  <div id="compare-modal" class="modal" style="display: none;">
+    <div class="modal-content modal-large">
+      <button class="modal-close">&times;</button>
+      <h2>Model Comparison</h2>
+      <div id="compare-table" class="compare-table"></div>
+    </div>
+  </div>
+</Layout>
+
+<script define:vars={{ modelsData: modelsJson }}>
+  // Parse models data - use define:vars to avoid emoji encoding issues
+  const allModels = JSON.parse(modelsData);
+  
+  // State
+  let favorites = [];
+  let compareList = [];
+  let currentFilters = {
+    search: '',
+    provider: 'all',
+    contextMin: 0,
+    outputMin: 0,
+    capabilities: []
+  };
+
+  // DOM Elements
+  const searchInput = document.getElementById('search-input');
+  const contextMinSlider = document.getElementById('context-min');
+  const contextMinValue = document.getElementById('context-min-value');
+  const outputMinSlider = document.getElementById('output-min');
+  const outputMinValue = document.getElementById('output-min-value');
+  const capabilityCheckboxes = document.querySelectorAll('.capability-checkbox');
+  const providerChips = document.querySelectorAll('.provider-chip');
+  const clearFiltersBtn = document.getElementById('clear-filters');
+  const favoritesSection = document.getElementById('favorites-section');
+  const favoritesGrid = document.getElementById('favorites-grid');
+  const comparisonBar = document.getElementById('comparison-bar');
+  const compareCount = document.getElementById('compare-count');
+  const compareListEl = document.getElementById('compare-models');
+  const compareBtn = document.getElementById('compare-btn');
+  const clearCompareBtn = document.getElementById('clear-compare');
+  const modelModal = document.getElementById('model-modal');
+  const compareModal = document.getElementById('compare-modal');
+  const modalBody = document.getElementById('modal-body');
+  const compareTable = document.getElementById('compare-table');
+
+  console.log('[ProviderFilter] Initialized, found provider chips:', providerChips.length);
+
+  // Initialize favorites from localStorage
+  function loadFavorites() {
+    try {
+      const stored = localStorage.getItem('freeai4all-favorites');
+      favorites = stored ? JSON.parse(stored).ids || [] : [];
+    } catch {
+      favorites = [];
+    }
+    updateFavoriteButtons();
+    updateFavoritesSection();
+  }
+
+  // Save favorites to localStorage
+  function saveFavorites() {
+    localStorage.setItem('freeai4all-favorites', JSON.stringify({ ids: favorites }));
+  }
+
+  // Toggle favorite
+  function toggleFavorite(modelId) {
+    const index = favorites.indexOf(modelId);
+    if (index > -1) {
+      favorites.splice(index, 1);
+    } else {
+      favorites.push(modelId);
+    }
+    saveFavorites();
+    updateFavoriteButtons();
+    updateFavoritesSection();
+  }
+
+  // Update all favorite button states
+  function updateFavoriteButtons() {
+    document.querySelectorAll('[data-action="favorite"]').forEach(btn => {
+      const modelId = btn.dataset.modelId;
+      const isFav = favorites.includes(modelId);
+      btn.classList.toggle('active', isFav);
+      btn.querySelector('.favorite-icon').textContent = isFav ? '❤️' : '🤍';
+    });
+  }
+
+  // Update favorites section
+  function updateFavoritesSection() {
+    if (favorites.length === 0) {
+      favoritesSection.style.display = 'none';
+      return;
+    }
+    
+    favoritesSection.style.display = 'block';
+    const favoriteModels = allModels.filter(m => favorites.includes(m.id));
+    favoritesGrid.innerHTML = favoriteModels.map(model => `
+      <div class="model-card" data-model-id="${model.id}">
+        ${generateModelCardHTML(model)}
+      </div>
+    `).join('');
+    
+    attachCardListeners();
+  }
+
+  // Generate model card HTML
+  function generateModelCardHTML(model) {
+    const raw = model.raw;
+    const capabilities = [];
+    if (raw.capabilities?.tool_call) capabilities.push('🔧 Tool Calling');
+    if (raw.capabilities?.reasoning) capabilities.push('🧠 Reasoning');
+    if (raw.capabilities?.structured_output) capabilities.push('📋 Structured Output');
+    if (raw.open_weights) capabilities.push('🔓 Open Weights');
+    if (raw.modalities?.input?.includes('image')) capabilities.push('👁️ Vision');
+    if (raw.modalities?.input?.includes('audio')) capabilities.push('🎵 Audio');
+    
+    const contextLimit = raw.limit?.context || raw.limit?.input || 0;
+    const outputLimit = raw.limit?.output || 0;
+    
+    const formatNumber = (num) => {
+      if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+      if (num >= 1000) return (num / 1000).toFixed(0) + 'K';
+      return num.toString();
+    };
+    
+    return `
+      <div class="card-header">
+        <div class="provider-badge">${raw.providerName || raw.providerId || 'Unknown'}</div>
+        <div class="header-actions">
+          <button class="compare-btn ${compareList.includes(model.id) ? 'selected' : ''}" data-action="compare" data-model-id="${model.id}" title="Add to comparison">⚖️</button>
+          <button class="favorite-btn ${favorites.includes(model.id) ? 'active' : ''}" data-action="favorite" data-model-id="${model.id}" title="Add to favorites">
+            <span class="favorite-icon">${favorites.includes(model.id) ? '❤️' : '🤍'}</span>
+          </button>
+          <div class="free-badge">✓ FREE</div>
+        </div>
+      </div>
+      <h3 class="model-name">${raw.name}</h3>
+      ${raw.family ? `<p class="model-family">Family: ${raw.family}</p>` : ''}
+      <div class="model-limits">
+        ${contextLimit > 0 ? `<span class="limit-badge">📄 Context: ${formatNumber(contextLimit)} tokens</span>` : ''}
+        ${outputLimit > 0 ? `<span class="limit-badge">📤 Output: ${formatNumber(outputLimit)} tokens</span>` : ''}
+      </div>
+      ${capabilities.length > 0 ? `<div class="capabilities">${capabilities.map(cap => `<span class="capability-tag">${cap}</span>`).join('')}</div>` : ''}
+      <div class="card-actions">
+        <button class="copy-btn" data-action="copy-id" data-model-id="${raw.id}">📋 ID</button>
+        <button class="copy-btn" data-action="copy-provider" data-provider="${raw.providerName || raw.providerId}">🏢 Provider</button>
+        <button class="detail-btn" data-action="view-details" data-model-id="${model.id}">ℹ️ Details</button>
+      </div>
+      <div class="card-footer">
+        <a href="${model.url}" target="_blank" rel="noopener" class="view-btn">View Model →</a>
+        ${raw.release_date ? `<span class="release-date">Released: ${new Date(raw.release_date).toLocaleDateString()}</span>` : ''}
+      </div>
+    `;
+  }
+
+  // Toggle compare
+  function toggleCompare(modelId) {
+    const index = compareList.indexOf(modelId);
+    if (index > -1) {
+      compareList.splice(index, 1);
+    } else if (compareList.length < 3) {
+      compareList.push(modelId);
+    }
+    updateComparisonBar();
+    updateCompareButtons();
+  }
+
+  // Update comparison bar
+  function updateComparisonBar() {
+    if (compareList.length === 0) {
+      comparisonBar.style.display = 'none';
+      return;
+    }
+    
+    comparisonBar.style.display = 'block';
+    compareCount.textContent = compareList.length;
+    
+    const compareModels = allModels.filter(m => compareList.includes(m.id));
+    compareListEl.innerHTML = compareModels.map(m => `
+      <span class="compare-item">${m.raw.name} <button data-remove="${m.id}">&times;</button></span>
+    `).join('');
+    
+    compareBtn.disabled = compareList.length < 2;
+  }
+
+  // Update compare button states
+  function updateCompareButtons() {
+    document.querySelectorAll('[data-action="compare"]').forEach(btn => {
+      const modelId = btn.dataset.modelId;
+      btn.classList.toggle('selected', compareList.includes(modelId));
+    });
+  }
+
+  // Show comparison modal
+  function showComparison() {
+    const models = allModels.filter(m => compareList.includes(m.id));
+    const capabilities = ['Tool Calling', 'Reasoning', 'Structured Output', 'Open Weights', 'Vision', 'Audio'];
+    
+    compareTable.innerHTML = `
+      <table class="comparison-table">
+        <thead>
+          <tr>
+            <th>Feature</th>
+            ${models.map(m => `<th>${m.raw.name}</th>`).join('')}
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Provider</strong></td>${models.map(m => `<td>${m.raw.providerName || m.raw.providerId}</td>`).join('')}</tr>
+          <tr><td><strong>Family</strong></td>${models.map(m => `<td>${m.raw.family || '-'}</td>`).join('')}</tr>
+          <tr><td><strong>Context</strong></td>${models.map(m => `<td>${(m.raw.limit?.context || m.raw.limit?.input || 0).toLocaleString()} tokens</td>`).join('')}</tr>
+          <tr><td><strong>Output</strong></td>${models.map(m => `<td>${(m.raw.limit?.output || 0).toLocaleString()} tokens</td>`).join('')}</tr>
+          ${capabilities.map(cap => {
+            const hasCap = (m) => {
+              if (cap === 'Tool Calling') return m.raw.capabilities?.tool_call;
+              if (cap === 'Reasoning') return m.raw.capabilities?.reasoning;
+              if (cap === 'Structured Output') return m.raw.capabilities?.structured_output;
+              if (cap === 'Open Weights') return m.raw.open_weights;
+              if (cap === 'Vision') return m.raw.modalities?.input?.includes('image');
+              if (cap === 'Audio') return m.raw.modalities?.input?.includes('audio');
+              return false;
+            };
+            return `<tr><td><strong>${cap}</strong></td>${models.map(m => `<td>${hasCap(m) ? '✅' : '❌'}</td>`).join('')}</tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    `;
+    
+    compareModal.style.display = 'flex';
+  }
+
+  // Show model details
+  function showModelDetails(modelId) {
+    const model = allModels.find(m => m.id === modelId);
+    if (!model) return;
+    
+    const raw = model.raw;
+    const capabilities = [];
+    if (raw.capabilities?.tool_call) capabilities.push('Tool Calling');
+    if (raw.capabilities?.reasoning) capabilities.push('Reasoning');
+    if (raw.capabilities?.structured_output) capabilities.push('Structured Output');
+    if (raw.open_weights) capabilities.push('Open Weights');
+    if (raw.modalities?.input?.includes('image')) capabilities.push('Vision');
+    if (raw.modalities?.input?.includes('audio')) capabilities.push('Audio');
+    
+    modalBody.innerHTML = `
+      <div class="modal-header">
+        <h2>${raw.name}</h2>
+        <span class="provider-badge-large">${raw.providerName || raw.providerId}</span>
+      </div>
+      <div class="modal-body">
+        <div class="detail-section">
+          <h3>Model Information</h3>
+          <p><strong>ID:</strong> <code>${raw.id}</code> <button class="copy-inline" data-copy="${raw.id}">📋</button></p>
+          <p><strong>Family:</strong> ${raw.family || 'N/A'}</p>
+          <p><strong>Release Date:</strong> ${raw.release_date ? new Date(raw.release_date).toLocaleDateString() : 'N/A'}</p>
+          <p><strong>Knowledge Cutoff:</strong> ${raw.knowledge || 'N/A'}</p>
+        </div>
+        <div class="detail-section">
+          <h3>Capabilities</h3>
+          <div class="capabilities-list">
+            ${capabilities.map(cap => `<span class="capability-tag">${cap}</span>`).join('') || 'None specified'}
+          </div>
+        </div>
+        <div class="detail-section">
+          <h3>Limits</h3>
+          <p><strong>Context:</strong> ${(raw.limit?.context || raw.limit?.input || 0).toLocaleString()} tokens</p>
+          <p><strong>Output:</strong> ${(raw.limit?.output || 0).toLocaleString()} tokens</p>
+        </div>
+        <div class="detail-section">
+          <h3>Modalities</h3>
+          <p><strong>Input:</strong> ${raw.modalities?.input?.join(', ') || 'text'}</p>
+          <p><strong>Output:</strong> ${raw.modalities?.output?.join(', ') || 'text'}</p>
+        </div>
+        <div class="modal-actions">
+          <a href="${model.url}" target="_blank" rel="noopener" class="view-btn">View on models.dev →</a>
+        </div>
+      </div>
+    `;
+    
+    modelModal.style.display = 'flex';
+  }
+
+  // Copy to clipboard
+  async function copyToClipboard(text, btn) {
+    try {
+      await navigator.clipboard.writeText(text);
+      const original = btn.textContent;
+      btn.textContent = '✓ Copied!';
+      btn.classList.add('copied');
+      setTimeout(() => {
+        btn.textContent = original;
+        btn.classList.remove('copied');
+      }, 2000);
+    } catch (err) {
+      console.error('Failed to copy:', err);
+    }
+  }
+
+  // Filter models
+  function filterModels() {
+    console.log('[ProviderFilter] Filtering with provider:', currentFilters.provider);
+    const searchTerm = currentFilters.search.toLowerCase();
+    const providerFilter = currentFilters.provider;
+    
+    document.querySelectorAll('.provider-section').forEach(section => {
+      const sectionProvider = section.dataset.provider;
+      const cards = section.querySelectorAll('.model-card');
+      let visibleCount = 0;
+      
+      cards.forEach(card => {
+        const modelId = card.dataset.modelId;
+        const model = allModels.find(m => m.id === modelId);
+        if (!model) return;
+        
+        const raw = model.raw;
+        const modelProvider = raw.providerName || raw.providerId;
+        
+        const matchesSearch = !searchTerm || 
+          raw.name.toLowerCase().includes(searchTerm) ||
+          modelProvider.toLowerCase().includes(searchTerm) ||
+          (raw.family || '').toLowerCase().includes(searchTerm);
+        
+        // Check if model matches selected provider
+        const matchesProvider = providerFilter === 'all' || modelProvider === providerFilter;
+        
+        const contextLimit = raw.limit?.context || raw.limit?.input || 0;
+        const outputLimit = raw.limit?.output || 0;
+        const matchesContext = contextLimit >= currentFilters.contextMin;
+        const matchesOutput = outputLimit >= currentFilters.outputMin;
+        
+        const capabilities = [];
+        if (raw.capabilities?.tool_call) capabilities.push('Tool Calling');
+        if (raw.capabilities?.reasoning) capabilities.push('Reasoning');
+        if (raw.capabilities?.structured_output) capabilities.push('Structured Output');
+        if (raw.open_weights) capabilities.push('Open Weights');
+        if (raw.modalities?.input?.includes('image')) capabilities.push('Vision');
+        if (raw.modalities?.input?.includes('audio')) capabilities.push('Audio');
+        
+        const matchesCapabilities = currentFilters.capabilities.length === 0 || 
+          currentFilters.capabilities.every(cap => capabilities.includes(cap));
+        
+        const isVisible = matchesSearch && matchesProvider && matchesContext && matchesOutput && matchesCapabilities;
+        card.style.display = isVisible ? '' : 'none';
+        if (isVisible) visibleCount++;
+      });
+      
+      // Show/hide entire provider section based on selected provider
+      if (providerFilter !== 'all') {
+        // When a specific provider is selected, show only that provider's section
+        section.style.display = (sectionProvider === providerFilter && visibleCount > 0) ? '' : 'none';
+      } else {
+        // When 'all' is selected, show sections that have visible cards
+        section.style.display = visibleCount > 0 ? '' : 'none';
+      }
+    });
+    
+    // Update filtered count
+    const visibleCards = document.querySelectorAll('.provider-section .model-card:not([style*="display: none"])');
+    const totalVisible = visibleCards.length;
+    const filteredCount = document.getElementById('filtered-count');
+    filteredCount.textContent = totalVisible !== allModels.length ? `(${totalVisible} shown)` : '';
+    
+    // Show/hide no results message
+    const noResults = document.getElementById('no-results');
+    const hasResults = totalVisible > 0;
+    noResults.style.display = hasResults ? 'none' : 'block';
+    
+    // Show/hide clear filters button
+    const hasActiveFilters = searchTerm || providerFilter !== 'all' || currentFilters.contextMin > 0 || 
+      currentFilters.outputMin > 0 || currentFilters.capabilities.length > 0;
+    clearFiltersBtn.style.display = hasActiveFilters ? 'inline-block' : 'none';
+    
+    console.log('[ProviderFilter] Filter complete. Visible:', totalVisible);
+  }
+
+  // Clear all filters
+  function clearFilters() {
+    searchInput.value = '';
+    contextMinSlider.value = 0;
+    contextMinValue.textContent = '0';
+    outputMinSlider.value = 0;
+    outputMinValue.textContent = '0';
+    capabilityCheckboxes.forEach(cb => cb.checked = false);
+    providerChips.forEach(chip => {
+      chip.classList.toggle('active', chip.dataset.provider === 'all');
+    });
+    
+    currentFilters = {
+      search: '',
+      provider: 'all',
+      contextMin: 0,
+      outputMin: 0,
+      capabilities: []
+    };
+    
+    filterModels();
+  }
+
+  // Attach event listeners to cards
+  function attachCardListeners() {
+    // Favorite buttons
+    document.querySelectorAll('[data-action="favorite"]').forEach(btn => {
+      btn.onclick = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        toggleFavorite(btn.dataset.modelId);
+      };
+    });
+    
+    // Compare buttons
+    document.querySelectorAll('[data-action="compare"]').forEach(btn => {
+      btn.onclick = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        toggleCompare(btn.dataset.modelId);
+      };
+    });
+    
+    // Copy buttons
+    document.querySelectorAll('[data-action="copy-id"]').forEach(btn => {
+      btn.onclick = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        copyToClipboard(btn.dataset.modelId, btn);
+      };
+    });
+
+    document.querySelectorAll('[data-action="copy-provider"]').forEach(btn => {
+      btn.onclick = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        copyToClipboard(btn.dataset.provider, btn);
+      };
+    });
+    
+    // Detail buttons
+    document.querySelectorAll('[data-action="view-details"]').forEach(btn => {
+      btn.onclick = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        showModelDetails(btn.dataset.modelId);
+      };
+    });
+  }
+
+  // Set up provider chip click handlers
+  function setupProviderChips() {
+    console.log('[ProviderFilter] Setting up provider chip handlers');
+    providerChips.forEach(chip => {
+      chip.onclick = (e) => {
+        e.preventDefault();
+        console.log('[ProviderFilter] Chip clicked:', chip.dataset.provider);
+        
+        // Update active state
+        providerChips.forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        
+        // Update filter and apply
+        currentFilters.provider = chip.dataset.provider;
+        filterModels();
+      };
+    });
+  }
+
+  // Event Listeners
+  searchInput.addEventListener('input', (e) => {
+    currentFilters.search = e.target.value;
+    filterModels();
+  });
+
+  contextMinSlider.addEventListener('input', (e) => {
+    currentFilters.contextMin = parseInt(e.target.value);
+    contextMinValue.textContent = e.target.value;
+    filterModels();
+  });
+
+  outputMinSlider.addEventListener('input', (e) => {
+    currentFilters.outputMin = parseInt(e.target.value);
+    outputMinValue.textContent = e.target.value;
+    filterModels();
+  });
+
+  capabilityCheckboxes.forEach(cb => {
+    cb.addEventListener('change', () => {
+      currentFilters.capabilities = Array.from(capabilityCheckboxes)
+        .filter(cb => cb.checked)
+        .map(cb => cb.value);
+      filterModels();
+    });
+  });
+
+  clearFiltersBtn.addEventListener('click', clearFilters);
+
+  compareBtn.addEventListener('click', showComparison);
+  
+  clearCompareBtn.addEventListener('click', () => {
+    compareList = [];
+    updateComparisonBar();
+    updateCompareButtons();
+  });
+
+  // Remove from compare
+  compareListEl.addEventListener('click', (e) => {
+    if (e.target.dataset.remove) {
+      toggleCompare(e.target.dataset.remove);
+    }
+  });
+
+  // Modal close
+  document.querySelectorAll('.modal-close').forEach(btn => {
+    btn.addEventListener('click', () => {
+      modelModal.style.display = 'none';
+      compareModal.style.display = 'none';
+    });
+  });
+
+  // Close modal on outside click
+  window.addEventListener('click', (e) => {
+    if (e.target.classList.contains('modal')) {
+      e.target.style.display = 'none';
+    }
+  });
+
+  // Initialize
+  console.log('[ProviderFilter] Loading favorites and initializing...');
+  loadFavorites();
+  attachCardListeners();
+  setupProviderChips();
+  
+  // Run initial filter to set correct visibility
+  filterModels();
+</script>
+
+<script is:inline>
+  // Set the global models data before the main script runs
+  window.__MODELS_DATA__ = JSON.stringify(modelsJson);
+</script>
+
+<style>
+  /* Disclaimer Banner */
+  .disclaimer-banner {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(245, 158, 11, 0.15));
+    border: 1px solid rgba(245, 158, 11, 0.4);
+    border-radius: 12px;
+    padding: 1rem 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .disclaimer-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .disclaimer-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+  }
+
+  .disclaimer-text {
+    flex: 1;
+    color: #fcd34d;
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+
+  .disclaimer-text strong {
+    color: #fbbf24;
+  }
+
+  .disclaimer-close {
+    background: none;
+    border: none;
+    color: #fcd34d;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+  }
+
+  .disclaimer-close:hover {
+    opacity: 1;
+  }
+
+  /* Existing styles */
+  .hero {
+    text-align: center;
+    padding: 3rem 0;
+    margin-bottom: 2rem;
+  }
+
+  h1 {
+    font-size: 3rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6, #ec4899);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 1rem;
+  }
+
+  .hero-description {
+    font-size: 1.25rem;
+    color: #94a3b8;
+    max-width: 600px;
+    margin: 0 auto 2rem;
+  }
+
+  .highlight {
+    color: #10b981;
+    font-weight: 700;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .stat-card {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.2));
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: center;
+  }
+
+  .stat-number {
+    display: block;
+    font-size: 2.5rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .stat-label {
+    font-size: 0.875rem;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  /* Filters Section */
+  .filters-section {
+    background: rgba(30, 41, 59, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .search-box {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .search-input {
+    flex: 1;
+    min-width: 300px;
+    padding: 0.875rem 1.25rem;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    border-radius: 10px;
+    background: rgba(15, 23, 42, 0.5);
+    color: #f8fafc;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+  }
+
+  .search-input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  }
+
+  .search-input::placeholder {
+    color: #64748b;
+  }
+
+  .clear-btn {
+    padding: 0.875rem 1.5rem;
+    background: rgba(239, 68, 68, 0.2);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: #ef4444;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+  }
+
+  .clear-btn:hover {
+    background: rgba(239, 68, 68, 0.3);
+  }
+
+  .filter-controls {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .filter-group label {
+    color: #94a3b8;
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+
+  .range-slider {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 8px;
+    border-radius: 4px;
+    background: rgba(59, 130, 246, 0.2);
+    outline: none;
+  }
+
+  .range-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #3b82f6;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .range-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+    box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+  }
+
+  .capabilities-filter {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .capabilities-filter label {
+    color: #94a3b8;
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+
+  .capability-toggles {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .capability-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: rgba(59, 130, 246, 0.1);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    border-radius: 9999px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: #94a3b8;
+  }
+
+  .capability-toggle:hover {
+    background: rgba(59, 130, 246, 0.2);
+  }
+
+  .capability-toggle input {
+    display: none;
+  }
+
+  .capability-toggle:has(input:checked) {
+    background: rgba(59, 130, 246, 0.3);
+    border-color: #3b82f6;
+    color: #f8fafc;
+  }
+
+  /* Provider Chips */
+  .providers-section {
+    margin-bottom: 2rem;
+  }
+
+  h2 {
+    font-size: 1.75rem;
+    margin-bottom: 1rem;
+    color: #f8fafc;
+  }
+
+  .provider-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .provider-chip {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(59, 130, 246, 0.2);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    border-radius: 9999px;
+    padding: 0.5rem 1rem;
+    text-decoration: none;
+    color: #60a5fa;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: inherit;
+  }
+
+  .provider-chip:hover, .provider-chip.active {
+    background: rgba(59, 130, 246, 0.3);
+    transform: translateY(-2px);
+  }
+
+  .provider-chip.active {
+    background: rgba(59, 130, 246, 0.4);
+    border-color: #3b82f6;
+    color: #f8fafc;
+  }
+
+  .provider-name {
+    font-weight: 600;
+  }
+
+  .provider-count {
+    background: rgba(59, 130, 246, 0.4);
+    padding: 0.125rem 0.5rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+  }
+
+  /* Comparison Bar */
+  .comparison-bar {
+    position: sticky;
+    top: 80px;
+    background: rgba(15, 23, 42, 0.95);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    border-radius: 12px;
+    padding: 1rem 1.5rem;
+    margin-bottom: 2rem;
+    z-index: 90;
+  }
+
+  .comparison-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .comparison-title {
+    font-weight: 600;
+    color: #f8fafc;
+  }
+
+  .compare-list {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    flex: 1;
+  }
+
+  .compare-item {
+    background: rgba(59, 130, 246, 0.2);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    border-radius: 6px;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.875rem;
+    color: #60a5fa;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .compare-item button {
+    background: none;
+    border: none;
+    color: #ef4444;
+    cursor: pointer;
+    font-size: 1rem;
+    line-height: 1;
+    padding: 0;
+  }
+
+  .comparison-actions {
+    display: flex;
+    gap: 0.75rem;
+  }
+
+  .compare-action-btn {
+    padding: 0.5rem 1rem;
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .compare-action-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .compare-clear-btn {
+    padding: 0.5rem 1rem;
+    background: rgba(239, 68, 68, 0.2);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    border-radius: 8px;
+    color: #ef4444;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  /* Favorites Section */
+  .favorites-section {
+    margin-bottom: 3rem;
+    padding: 2rem;
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(139, 92, 246, 0.1));
+    border: 1px solid rgba(245, 158, 11, 0.2);
+    border-radius: 12px;
+  }
+
+  .favorites-section h2 {
+    color: #f59e0b;
+    margin-bottom: 1.5rem;
+  }
+
+  /* Models Section */
+  .models-section {
+    margin-bottom: 3rem;
+  }
+
+  .filtered-count {
+    font-size: 1rem;
+    color: #64748b;
+    font-weight: 400;
+  }
+
+  .provider-section {
+    margin-bottom: 3rem;
+  }
+
+  .provider-heading {
+    font-size: 1.5rem;
+    color: #f8fafc;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid rgba(59, 130, 246, 0.3);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .model-count {
+    font-size: 1rem;
+    color: #64748b;
+    font-weight: 400;
+  }
+
+  .models-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .no-results {
+    text-align: center;
+    padding: 3rem;
+    color: #64748b;
+  }
+
+  /* Modal */
+  .modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    padding: 2rem;
+  }
+
+  .modal-content {
+    background: linear-gradient(135deg, #1e293b, #0f172a);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    border-radius: 16px;
+    max-width: 600px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    padding: 2rem;
+  }
+
+  .modal-content.modal-large {
+    max-width: 900px;
+  }
+
+  .modal-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    color: #94a3b8;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    line-height: 1;
+  }
+
+  .modal-close:hover {
+    color: #f8fafc;
+  }
+
+  .modal-header {
+    margin-bottom: 1.5rem;
+  }
+
+  .modal-header h2 {
+    margin-bottom: 0.5rem;
+  }
+
+  .provider-badge-large {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background: rgba(59, 130, 246, 0.2);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    border-radius: 9999px;
+    color: #60a5fa;
+    font-weight: 600;
+    font-size: 0.875rem;
+  }
+
+  .detail-section {
+    margin-bottom: 1.5rem;
+  }
+
+  .detail-section h3 {
+    color: #f8fafc;
+    margin-bottom: 0.75rem;
+    font-size: 1.1rem;
+  }
+
+  .detail-section p {
+    color: #94a3b8;
+    margin-bottom: 0.5rem;
+  }
+
+  .detail-section code {
+    background: rgba(59, 130, 246, 0.1);
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 0.875rem;
+  }
+
+  .capabilities-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .copy-inline {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 0.25rem;
+  }
+
+  .modal-actions {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  /* Comparison Table */
+  .comparison-table {
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  .comparison-table table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .comparison-table th,
+  .comparison-table td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .comparison-table th {
+    background: rgba(59, 130, 246, 0.1);
+    color: #f8fafc;
+    font-weight: 600;
+  }
+
+  .comparison-table td {
+    color: #94a3b8;
+  }
+
+  @media (max-width: 768px) {
+    h1 {
+      font-size: 2rem;
+    }
+
+    .hero-description {
+      font-size: 1rem;
+    }
+
+    .stats-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .stat-number {
+      font-size: 1.75rem;
+    }
+
+    .models-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .provider-chips {
+      justify-content: center;
+    }
+
+    .filter-controls {
+      grid-template-columns: 1fr;
+    }
+
+    .search-box {
+      flex-direction: column;
+    }
+
+    .search-input {
+      min-width: auto;
+    }
+
+    .comparison-content {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .modal-content {
+      padding: 1.5rem;
+      margin: 1rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .stats-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .stat-card {
+      padding: 1rem;
+    }
+
+    .comparison-table th,
+    .comparison-table td {
+      padding: 0.5rem;
+      font-size: 0.875rem;
+    }
+  }
+</style>

@@ -1,5 +1,13 @@
-import { BasePlatformAPI } from '../types';
-import type { AggregatedItem, FetchOptions, FetchResult, Platform } from '../types';
+import { BasePlatformAPI } from '../types/index.js';
+import type { AggregatedItem, FetchOptions, FetchResult, Platform } from '../types/index.js';
+import { 
+  handleAsyncError, 
+  createPlatformError, 
+  logPlatformError,
+  validateApiResponse,
+  ensureValidToken,
+  incrementRequestCounter
+} from '../utils/error-handler.js';
 
 interface RedditPost {
   data: {
@@ -53,7 +61,7 @@ export class RedditAPI extends BasePlatformAPI {
   async fetchItems(options: FetchOptions = {}): Promise<FetchResult> {
     const items: AggregatedItem[] = [];
     
-    try {
+    return await handleAsyncError(async () => {
       // Ensure we have a valid token
       await this.ensureAuthenticated();
 
@@ -67,16 +75,19 @@ export class RedditAPI extends BasePlatformAPI {
         items: items.slice(0, options.limit || 20),
         hasMore: false
       };
-    } catch (error) {
-      throw this.handleError(error, 'fetchItems');
-    }
+    }, this.platform, 'fetchItems');
   }
 
   private async ensureAuthenticated(): Promise<void> {
-    if (this.accessToken && this.tokenExpiry && Date.now() < this.tokenExpiry) {
-      return;
-    }
+    await ensureValidToken(
+      () => !!(this.accessToken && this.tokenExpiry && Date.now() < this.tokenExpiry),
+      async () => await this.refreshToken(),
+      this.platform,
+      'ensureAuthenticated'
+    );
+  }
 
+  private async refreshToken(): Promise<void> {
     await this.rateLimit();
 
     const credentials = Buffer.from(`${this.clientId}:${this.clientSecret}`).toString('base64');
@@ -95,11 +106,9 @@ export class RedditAPI extends BasePlatformAPI {
       })
     });
 
-    if (!response.ok) {
-      throw new Error(`Reddit auth error: ${response.status} ${response.statusText}`);
-    }
-
-    const data = await response.json() as RedditTokenResponse;
+    const data = await validateApiResponse<RedditTokenResponse>(response, this.platform, 'refreshToken');
+    incrementRequestCounter(this.platform, 'refreshToken');
+    
     this.accessToken = data.access_token;
     this.tokenExpiry = Date.now() + (data.expires_in * 1000) - 60000; // Refresh 1 min before expiry
   }
@@ -108,25 +117,25 @@ export class RedditAPI extends BasePlatformAPI {
     await this.rateLimit();
 
     if (!this.accessToken) {
-      throw new Error('Not authenticated');
+      throw createPlatformError(this.platform, 'fetchSubredditPosts', new Error('Not authenticated'));
     }
 
-    const response = await fetch(
-      `https://oauth.reddit.com/r/${subreddit}/hot?limit=5`,
-      {
-        headers: {
-          'Authorization': `Bearer ${this.accessToken}`,
-          'User-Agent': 'SocialMediaAggregator/1.0'
+    return await handleAsyncError(async () => {
+      const response = await fetch(
+        `https://oauth.reddit.com/r/${subreddit}/hot?limit=5`,
+        {
+          headers: {
+            'Authorization': `Bearer ${this.accessToken}`,
+            'User-Agent': 'SocialMediaAggregator/1.0'
+          }
         }
-      }
-    );
+      );
 
-    if (!response.ok) {
-      throw new Error(`Reddit API error: ${response.status} ${response.statusText}`);
-    }
-
-    const data = await response.json() as { data?: { children?: RedditPost[] } };
-    return data.data?.children || [];
+      const data = await validateApiResponse<{ data?: { children?: RedditPost[] } }>(response, this.platform, 'fetchSubredditPosts');
+      incrementRequestCounter(this.platform, 'fetchSubredditPosts');
+      
+      return data.data?.children || [];
+    }, this.platform, 'fetchSubredditPosts');
   }
 
   private normalizePost(post: RedditPost): AggregatedItem {

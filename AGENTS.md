@@ -106,87 +106,102 @@ export type ContentType = 'repository' | 'issue' | 'post' | 'comment' | 'questio
 - Destructure objects for cleaner parameter handling
 - Use `console.warn` for non-critical issues, `console.error` for failures
 
-## Planning and Task Management
+## Testing Guidelines
 
-This project uses the **opencode-planning-toolkit** plugin for structured task management. Add to `opencode.json`:
-```json
-{"plugins": ["@howaboua/opencode-planning-toolkit@latest"]}
+### Test Structure
+- Use vitest for testing
+- Test files should be named `*.test.ts`
+- Focus on testing API integrations and data transformations
+- Mock external API calls in tests
+
+### Running Tests
+```bash
+# Run all tests
+npm run test
+
+# Run single test file
+npm run test -- src/api/github.test.ts
+
+# Run tests once (no watch mode)
+npm run test -- --run
 ```
 
-### Available Tools
-- **`create_spec`** - Create a reusable specification (repo-level or feature-specific)
-- **`create_plan`** - Create an actionable work plan with implementation steps (min 5)
-- **`append_spec`** - Link an existing spec to a plan
-- **`read_plan`** - Read a plan with all linked spec content expanded inline
-- **`mark_plan_done`** - Mark a plan as complete (status: active → done)
+## Platform-Specific Guidelines
 
-### File Organization
-```
-docs/
-├── specs/     # Reusable specifications (*.md)
-└── plans/     # Work plans (*.md)
-```
+### GitHub API
+- Use GitHub REST API v3
+- Respect rate limits (5000 req/hour)
+- Handle rate limiting with exponential backoff
+- Cache search results to avoid duplicate requests
 
-### Workflow
-1. Create Specs for reusable standards/patterns (`create_spec`)
-2. Create Plans with step-by-step implementation (`create_plan`)
-3. Link Specs to Plans (`append_spec`)
-4. Read full context before work (`read_plan`)
-5. Mark complete when done (`mark_plan_done`)
+### Reddit API
+- Use OAuth2 for authentication
+- Respect rate limits (60 req/minute)
+- Handle rate limiting with exponential backoff
+- Cache search results to avoid duplicate requests
 
----
+### Stack Overflow API
+- Use Stack Exchange API v2.3
+- Respect rate limits (300 req/day without key)
+- Handle rate limiting with exponential backoff
+- Cache search results to avoid duplicate requests
 
-## Roadmap: GitHub Actions Workflow Fixes
+### Discord API
+- Use Discord Bot token authentication
+- Respect rate limits (1000 req/minute)
+- Handle rate limiting with exponential backoff
+- Cache search results to avoid duplicate requests
 
-### Status: Both workflows are 100% non-functional (30+ failed runs)
+### X (Twitter) API
+- Use Bearer token authentication
+- Respect rate limits (varies by endpoint)
+- Handle rate limiting with exponential backoff
+- Cache search results to avoid duplicate requests
 
----
+### Models.dev API
+- Use API key authentication
+- Respect rate limits (60 req/hour)
+- Handle rate limiting with exponential backoff
+- Cache search results to avoid duplicate requests
 
-### CRITICAL - Phase 1: ESLint Configuration
+## Security Guidelines
 
-- [ ] **ESLint-001**: Create ESLint configuration file (`.eslintrc.js` or `eslint.config.js`)
-  - Required before test workflow can pass
-  - Command: `npm init @eslint/config`
-  - Affects: `.github/workflows/test.yml` lint step
+### API Keys and Secrets
+- Never commit API keys to repository
+- Use GitHub Secrets for production environment variables
+- Use `.env.local` for development environment variables
+- Rotate API keys regularly
 
----
+### Data Handling
+- Never log sensitive data
+- Use HTTPS for all API calls
+- Validate and sanitize all external data
+- Use rate limiting to prevent abuse
 
-### CRITICAL - Phase 2: TypeScript Import Extensions
+## Performance Guidelines
 
-- [ ] **TS-IMP-001**: Fix import extensions in `src/api/github.ts` - add `.js` to imports
-- [ ] **TS-IMP-002**: Fix import extensions in `src/api/discord.ts` - add `.js` to imports
-- [ ] **TS-IMP-003**: Fix import extensions in `src/api/reddit.ts` - add `.js` to imports
-- [ ] **TS-IMP-004**: Fix import extensions in `src/api/stackoverflow.ts` - add `.js` to imports
-- [ ] **TS-IMP-005**: Fix import extensions in `src/api/x.ts` - add `.js` to imports
-- [ ] **TS-IMP-006**: Fix import extensions in `src/api/modelsdev.ts` - add `.js` to imports
-- [ ] **TS-IMP-007**: Fix import extensions in `src/index.ts` - add `.js` to imports
-- [ ] **TS-IMP-008**: Fix import extensions in `src/scraper/cli.ts` - add `.js` to imports
-- [ ] **TS-IMP-009**: Fix import extensions in `src/scraper/index.ts` - add `.js` to imports
+### Scraping Performance
+- Implement rate limiting for all API calls
+- Use caching to avoid duplicate requests
+- Batch API requests when possible
+- Use pagination for large result sets
 
-**Alternative**: Change `moduleResolution` from `'node16'` to `'bundler'` in `tsconfig.json` or `tsconfig.scraper.json`
+### Memory Management
+- Use streaming for large data sets
+- Clean up temporary files
+- Monitor memory usage during scraping
+- Implement proper error recovery
 
----
+## Documentation Guidelines
 
-### CRITICAL - Phase 3: TypeScript Type Definitions
+### Code Documentation
+- Document complex business logic
+- Document API integrations and rate limits
+- Document data transformation processes
+- Use JSDoc for public APIs
 
-- [ ] **TS-TYPE-001**: Add `rateLimit()` method to `GitHubAPI` type interface
-- [ ] **TS-TYPE-002**: Add `rateLimit()` method to `DiscordAPI` type interface
-- [ ] **TS-TYPE-003**: Add `rateLimit()` method to `RedditAPI` type interface
-- [ ] **TS-TYPE-004**: Add `rateLimit()` method to `StackOverflowAPI` type interface
-- [ ] **TS-TYPE-005**: Add `rateLimit()` method to `XAPI` type interface
-- [ ] **TS-TYPE-006**: Add `rateLimit()` method to `ModelsDevAPI` type interface
-- [ ] **TS-TYPE-007**: Add `handleError()` method to `GitHubAPI` type interface
-- [ ] **TS-TYPE-008**: Add `handleError()` method to `DiscordAPI` type interface
-- [ ] **TS-TYPE-009**: Add `handleError()` method to `RedditAPI` type interface
-- [ ] **TS-TYPE-010**: Add `handleError()` method to `StackOverflowAPI` type interface
-- [ ] **TS-TYPE-011**: Add `handleError()` method to `XAPI` type interface
-- [ ] **TS-TYPE-012**: Add `handleError()` method to `ModelsDevAPI` type interface
-- [ ] **TS-TYPE-013**: Add platform properties to `ScraperConfig` interface (`github`, `reddit`, `stackoverflow`, `discord`, `x`)
-
----
-
-### HIGH PRIORITY - Phase 4: Workflow Verification
-
-- [ ] **WF-001**: Run test workflow and verify linting passes
-- [ ] **WF-002**: Run scrape-and-deploy workflow and verify compilation passes
-- [ ] **WF-003**: Verify both workflows complete successfully with no errors
+### Project Documentation
+- Keep README.md updated with current setup
+- Document API integration requirements
+- Document deployment and maintenance procedures
+- Include troubleshooting guides
