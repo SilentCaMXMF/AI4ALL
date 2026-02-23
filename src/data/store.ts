@@ -11,6 +11,8 @@ export class DataStore {
   private dataDir: string;
   private dataFile: string;
   private items: Map<string, AggregatedItem>;
+  private initialized: boolean = false;
+  private sortedCache: AggregatedItem[] | null = null;
 
   constructor(dataDir: string = 'data') {
     this.dataDir = join(process.cwd(), dataDir);
@@ -19,6 +21,8 @@ export class DataStore {
   }
 
   async initialize(): Promise<void> {
+    if (this.initialized) return;
+    
     try {
       await access(this.dataDir);
     } catch {
@@ -32,6 +36,13 @@ export class DataStore {
     } catch {
       this.items = new Map();
     }
+    
+    this.initialized = true;
+    this.invalidateCache();
+  }
+
+  private invalidateCache(): void {
+    this.sortedCache = null;
   }
 
   async save(item: AggregatedItem): Promise<void> {
@@ -42,6 +53,7 @@ export class DataStore {
     }
     
     this.items.set(item.id, item);
+    this.invalidateCache();
     await this.persist();
   }
 
@@ -53,6 +65,7 @@ export class DataStore {
         this.items.set(item.id, item);
       }
     }
+    this.invalidateCache();
     await this.persist();
   }
 
@@ -61,9 +74,15 @@ export class DataStore {
   }
 
   getAll(): AggregatedItem[] {
-    return Array.from(this.items.values()).sort(
+    if (this.sortedCache) {
+      return this.sortedCache;
+    }
+    
+    const sorted = Array.from(this.items.values()).sort(
       (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
     );
+    this.sortedCache = sorted;
+    return sorted;
   }
 
   getByPlatform(platform: string): AggregatedItem[] {

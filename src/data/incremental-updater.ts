@@ -3,7 +3,8 @@ import type {
   Platform, 
   EnhancedModelData,
   UpdateState,
-  VerificationHistoryEntry
+  VerificationHistoryEntry,
+  ModelFeedback
 } from '../types/index.js';
 import { VerificationDataManager } from './verification-store.js';
 import { 
@@ -181,7 +182,7 @@ export class IncrementalUpdater {
                   model.feedback.map(f => `${f.platform}-${f.id}`)
                 );
                 
-                const newFeedback = feedback.filter(f => 
+                const newFeedback = feedback.filter((f: ModelFeedback) => 
                   !existingFeedbackIds.has(`${f.platform}-${f.id}`)
                 );
 

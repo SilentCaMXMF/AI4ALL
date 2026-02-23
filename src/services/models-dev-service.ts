@@ -308,12 +308,17 @@ export class ModelsDevService {
       timestamp: model.lastUpdated || model.last_updated || model.release_date || new Date().toISOString(),
       url: `https://models.dev/?search=${encodeURIComponent(model.providerId)}&model=${encodeURIComponent(model.modelId || '')}`,
       metrics: {
-        inputCost,
-        outputCost,
-        contextLimit,
-        outputLimit,
-        isFree,
-        capabilities: capabilities.length
+        stars: 0,
+        forks: 0,
+        watchers: 0,
+        comments: 0,
+        upvotes: 0,
+        downvotes: 0,
+        views: 0,
+        shares: 0,
+        likes: 0,
+        replies: 0,
+        downloads: 0
       },
       tags: [
         model.providerId,
@@ -322,7 +327,7 @@ export class ModelsDevService {
         ...(isFree ? ['free'] : [])
       ],
       raw: model
-    };
+    } as const;
   }
 
 /**

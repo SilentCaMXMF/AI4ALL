@@ -1,5 +1,5 @@
 import { BasePlatformAPI } from '../types/index.js';
-import type { AggregatedItem, FetchOptions, FetchResult, Platform } from '../types/index.js';
+import type { AggregatedItem, FetchOptions, FetchResult, Platform, ContentType } from '../types/index.js';
 import { join } from 'path';
 import { 
   handleAsyncError, 
@@ -27,6 +27,9 @@ interface ModelsDevModel {
   id: string;
   name: string;
   family?: string;
+  provider?: string;
+  providerName?: string;
+  providerId?: string;
   attachment?: boolean;
   reasoning?: boolean;
   tool_call?: boolean;
@@ -53,10 +56,14 @@ interface ModelsDevModel {
 
 interface PriceChange {
   modelId: string;
-  providerId: string;
-  field: string;
-  oldValue: number | undefined;
-  newValue: number | undefined;
+  modelName?: string;
+  providerId?: string;
+  provider?: string;
+  field?: string;
+  oldPrice?: { input: number; output: number };
+  newPrice?: { input: number; output: number };
+  oldValue?: number | undefined;
+  newValue?: number | undefined;
   changePercent?: number;
   timestamp: string;
 }
@@ -199,13 +206,12 @@ export class ModelsDevAPI extends BasePlatformAPI {
       
       return {
         items: [],
-        hasMore: false,
-        rateLimitUntil: null
+        hasMore: false
       };
     }
   }
 
-  private normalizePriceChange(change: PriceChange): AggregatedItem {
+  private normalizePriceChange(change: PriceChange): AggregatedItem | null {
     const percentStr = change.changePercent 
       ? ` (${change.changePercent > 0 ? '+' : ''}${change.changePercent.toFixed(1)}%)` 
       : '';
@@ -214,20 +220,25 @@ export class ModelsDevAPI extends BasePlatformAPI {
     const model = this.state.modelsCache.find(m => m.id === change.modelId);
     if (!model) return null;
     
+    const providerName = model.providerName || model.provider || 'Unknown';
+    const providerId = model.providerId || model.provider || '';
+    
     const provider = {
-      name: model.providerName || model.provider || 'Unknown',
-      url: `https://models.dev/?search=${encodeURIComponent(model.providerId || model.provider)}`
+      name: providerName,
+      url: `https://models.dev/?search=${encodeURIComponent(providerId)}`
     };
     
-    const inputCost = change.newPrice.input;
-    const outputCost = change.newPrice.output;
+    const inputCost = change.newPrice?.input ?? 0;
+    const outputCost = change.newPrice?.output ?? 0;
+    const oldInput = change.oldPrice?.input ?? 0;
+    const oldOutput = change.oldPrice?.output ?? 0;
     
     return {
       id: `price-change-${change.modelId}-${Date.now()}`,
       platform: 'modelsdev' as Platform,
       type: 'model' as ContentType,
-      title: `${provider.name}: ${model.name} - Price Change${percentStr}`,
-      content: `Price change for ${model.name}\nOld: Input: $${change.oldPrice.input}/1M, Output: $${change.oldPrice.output}/1M\nNew: Input: $${inputCost}/1M, Output: $${outputCost}/1M${percentStr}\nFamily: ${model.family || 'N/A'}\nProvider: ${provider.name}`,
+      title: `${providerName}: ${model.name} - Price Change${percentStr}`,
+      content: `Price change for ${model.name}\nOld: Input: $${oldInput}/1M, Output: $${oldOutput}/1M\nNew: Input: $${inputCost}/1M, Output: $${outputCost}/1M${percentStr}\nFamily: ${model.family || 'N/A'}\nProvider: ${providerName}`,
       author: provider,
       timestamp: change.timestamp,
       url: `https://models.dev/model/${model.id}`,
@@ -241,7 +252,7 @@ export class ModelsDevAPI extends BasePlatformAPI {
       },
       tags: [
         'price-change',
-        provider.name.toLowerCase(),
+        providerName.toLowerCase(),
         ...(model.family ? [model.family] : [])
       ],
       raw: { ...change, model }

@@ -97,7 +97,7 @@ export class HackerNewsAPI extends BasePlatformAPI {
       
       console.log(`[HackerNews] ✓ Found ${uniqueResults.length} unique results for ${modelName}`);
       return uniqueResults;
-    }, this.platform, 'searchForModel', []);
+    }, this.platform, 'searchForModel');
   }
 
   private async searchHackerNews(query: string): Promise<HackerNewsStory[]> {

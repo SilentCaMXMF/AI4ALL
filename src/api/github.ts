@@ -111,16 +111,23 @@ export class GitHubAPI extends BasePlatformAPI {
     searchQueries?: string[];
   }) {
     super();
+    
+    if (!config.token || config.token.trim() === '') {
+      throw new Error('[GitHub] Token is required');
+    }
+    
     this.token = config.token;
     this.username = config.username;
     this.orgs = config.orgs || [];
-    this.searchQueries = config.searchQueries || [
-      'free AI models',
-      'open source LLM',
-      'free API providers',
-      'opencode',
-      'zen AI'
-    ];
+    this.searchQueries = config.searchQueries && config.searchQueries.length > 0 
+      ? config.searchQueries 
+      : [
+          'free AI models',
+          'open source LLM',
+          'free API providers',
+          'opencode',
+          'zen AI'
+        ];
     this.stateFile = join(process.cwd(), 'data', 'github-scrape-state.json');
     
     // Calculate requests per 30-minute period
@@ -135,6 +142,27 @@ export class GitHubAPI extends BasePlatformAPI {
       requestsUsedToday: 0,
       searchesPerformed: []
     };
+  }
+
+  private getHeaders(): HeadersInit {
+    return {
+      'Authorization': `token ${this.token}`,
+      'Accept': 'application/vnd.github.v3+json',
+      'User-Agent': 'SocialMediaAggregator'
+    };
+  }
+
+  private async makeApiRequest<T>(url: string, context: string): Promise<T> {
+    await this.rateLimit();
+    
+    return await handleAsyncError(async () => {
+      const response = await fetch(url, { headers: this.getHeaders() });
+      const data = await validateApiResponse<T>(response, this.platform, context);
+      incrementRequestCounter(this.platform, context);
+      this.state.requestsUsedThisPeriod++;
+      this.state.requestsUsedToday++;
+      return data;
+    }, this.platform, context);
   }
 
   async fetchItems(options: FetchOptions = {}): Promise<FetchResult> {
@@ -228,74 +256,41 @@ export class GitHubAPI extends BasePlatformAPI {
   }
 
   private async searchFreshRepos(query: string, timeWindow: { start: Date; end: Date }): Promise<GitHubRepo[]> {
-    await this.rateLimit();
-    
-    // Use GitHub search with date qualifiers
     const dateQuery = `pushed:>${timeWindow.start.toISOString().split('T')[0]} ${query}`;
     const encodedQuery = encodeURIComponent(dateQuery);
     
     console.log(`[GitHub] Searching repos: "${dateQuery}"`);
     
-    return await handleAsyncError(async () => {
-      const response = await fetch(
-        `https://api.github.com/search/repositories?q=${encodedQuery}&sort=updated&order=desc&per_page=20`,
-        {
-          headers: {
-            'Authorization': `token ${this.token}`,
-            'Accept': 'application/vnd.github.v3+json',
-            'User-Agent': 'SocialMediaAggregator'
-          }
-        }
-      );
-
-      const data = await validateApiResponse<GitHubSearchItem>(response, this.platform, 'searchFreshRepos');
-      incrementRequestCounter(this.platform, 'searchFreshRepos');
-      this.state.requestsUsedThisPeriod++;
-      this.state.requestsUsedToday++;
-      
-      console.log(`[GitHub] Found ${data.total_count} repos (showing ${data.items.length})`);
-      
-      // Filter to only include repos actually updated in our time window
-      return data.items.filter(repo => {
-        const updatedAt = new Date((repo as GitHubRepo).updated_at);
-        return updatedAt >= timeWindow.start && updatedAt <= timeWindow.end;
-      }) as GitHubRepo[];
-    }, this.platform, 'searchFreshRepos');
+    const data = await this.makeApiRequest<GitHubSearchItem>(
+      `https://api.github.com/search/repositories?q=${encodedQuery}&sort=updated&order=desc&per_page=20`,
+      'searchFreshRepos'
+    );
+    
+    console.log(`[GitHub] Found ${data.total_count} repos (showing ${data.items.length})`);
+    
+    return data.items.filter(repo => {
+      const updatedAt = new Date(repo.updated_at);
+      return updatedAt >= timeWindow.start && updatedAt <= timeWindow.end;
+    }) as GitHubRepo[];
   }
 
   private async searchFreshIssues(query: string, timeWindow: { start: Date; end: Date }): Promise<GitHubIssue[]> {
-    await this.rateLimit();
-    
     const dateQuery = `created:>${timeWindow.start.toISOString()} ${query}`;
     const encodedQuery = encodeURIComponent(dateQuery);
     
     console.log(`[GitHub] Searching issues: "${dateQuery.substring(0, 60)}..."`);
     
-    return await handleAsyncError(async () => {
-      const response = await fetch(
-        `https://api.github.com/search/issues?q=${encodedQuery}&sort=created&order=desc&per_page=20`,
-        {
-          headers: {
-            'Authorization': `token ${this.token}`,
-            'Accept': 'application/vnd.github.v3+json',
-            'User-Agent': 'SocialMediaAggregator'
-          }
-        }
-      );
-
-      const data = await validateApiResponse<GitHubSearchItem>(response, this.platform, 'searchFreshIssues');
-      incrementRequestCounter(this.platform, 'searchFreshIssues');
-      this.state.requestsUsedThisPeriod++;
-      this.state.requestsUsedToday++;
-      
-      console.log(`[GitHub] Found ${data.total_count} issues (showing ${data.items.length})`);
-      
-      // Filter issues only (not PRs) created in time window
-      return data.items.filter((item): item is GitHubIssue => {
-        const createdAt = new Date(item.created_at);
-        return !item.pull_request && createdAt >= timeWindow.start && createdAt <= timeWindow.end;
-      });
-    }, this.platform, 'searchFreshIssues');
+    const data = await this.makeApiRequest<GitHubSearchItem>(
+      `https://api.github.com/search/issues?q=${encodedQuery}&sort=created&order=desc&per_page=20`,
+      'searchFreshIssues'
+    );
+    
+    console.log(`[GitHub] Found ${data.total_count} issues (showing ${data.items.length})`);
+    
+    return data.items.filter((item): item is GitHubIssue => {
+      const createdAt = new Date(item.created_at);
+      return !item.pull_request && createdAt >= timeWindow.start && createdAt <= timeWindow.end;
+    });
   }
 
   private async searchFreshDiscussions(query: string, timeWindow: { start: Date; end: Date }): Promise<GitHubDiscussion[]> {

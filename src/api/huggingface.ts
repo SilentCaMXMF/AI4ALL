@@ -130,7 +130,7 @@ export class HuggingFaceAPI extends BasePlatformAPI {
       
       console.log(`[HuggingFace] ✓ Found ${uniqueResults.length} unique results for ${modelName}`);
       return uniqueResults;
-    }, this.platform, 'searchForModel', []);
+    }, this.platform, 'searchForModel');
   }
 
   private async searchHuggingFaceModels(query: string): Promise<HuggingFaceModel[]> {

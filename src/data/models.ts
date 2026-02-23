@@ -49,9 +49,19 @@ export interface RawModelData {
   structured_output?: boolean;
 }
 
-export interface ModelItem extends AggregatedItem {
+export interface ModelItem {
+  id: string;
   platform: 'modelsdev';
   type: 'model';
+  title: string;
+  content: string;
+  author: {
+    name: string;
+    url?: string;
+    avatar?: string;
+  };
+  timestamp: string;
+  url: string;
   metrics: {
     inputCost: number;
     outputCost: number;
@@ -76,9 +86,9 @@ export async function loadAllModels(): Promise<ModelItem[]> {
     const content = await readFile(DATA_FILE_PATH, 'utf-8');
     const data: AggregatedData = JSON.parse(content);
     
-    return data.items.filter((item): item is ModelItem => 
-      item.platform === 'modelsdev' && item.type === 'model'
-    );
+    return data.items
+      .filter(item => item.platform === 'modelsdev' && item.type === 'model')
+      .map(item => item as ModelItem);
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     console.error(`[Data] Error loading models: ${errorMessage}`);

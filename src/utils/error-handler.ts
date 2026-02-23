@@ -50,26 +50,28 @@ export function createPlatformError(
   context: string,
   originalError?: unknown
 ): PlatformError {
+  const platformStr = platform as GenericPlatform;
+  
   if (originalError instanceof Error) {
     // Handle specific error types based on message patterns
     if (originalError.message.includes('rate limit') || originalError.message.includes('429')) {
       const retryMatch = originalError.message.match(/retry-after:\s*(\d+)/i);
       const retryAfter = retryMatch ? parseInt(retryMatch[1]) : undefined;
-      return new RateLimitError(platform, context, retryAfter);
+      return new RateLimitError(platformStr, context, retryAfter);
     }
     
     if (originalError.message.includes('fetch') || originalError.message.includes('network')) {
       const statusCodeMatch = originalError.message.match(/(\d{3})/);
       const statusCode = statusCodeMatch ? parseInt(statusCodeMatch[1]) : undefined;
-      return new NetworkError(platform, context, statusCode, originalError);
+      return new NetworkError(platformStr, context, statusCode, originalError);
     }
     
     if (originalError.message.includes('validation') || originalError.message.includes('invalid')) {
-      return new ValidationError(platform, context, undefined, originalError);
+      return new ValidationError(platformStr, context, undefined, originalError);
     }
   }
   
-  return new PlatformError(platform, context, originalError);
+  return new PlatformError(platformStr, context, originalError);
 }
 
 /**
@@ -103,7 +105,7 @@ export async function handleAsyncError<T>(
   asyncFn: () => Promise<T>,
   platform: GenericPlatform,
   context: string
-): Promise<T | undefined> {
+): Promise<T> {
   try {
     return await asyncFn();
   } catch (error) {
@@ -284,6 +286,30 @@ export async function ensureValidToken(
 }
 
 // Request counter utility
+interface RequestCounters {
+  [context: string]: number;
+}
+
+const requestCounters: Record<string, RequestCounters> = {};
+
 export function incrementRequestCounter(platform: GenericPlatform, context: string): void {
-  console.debug(`[${platform}] Request counter incremented in ${context}`);
+  if (!requestCounters[platform]) {
+    requestCounters[platform] = {};
+  }
+  requestCounters[platform][context] = (requestCounters[platform][context] || 0) + 1;
+}
+
+export function getRequestCount(platform: GenericPlatform, context?: string): number {
+  if (context) {
+    return requestCounters[platform]?.[context] || 0;
+  }
+  return Object.values(requestCounters[platform] || {}).reduce((a, b) => a + b, 0);
+}
+
+export function resetRequestCounters(platform?: GenericPlatform): void {
+  if (platform) {
+    delete requestCounters[platform];
+  } else {
+    Object.keys(requestCounters).forEach(key => delete requestCounters[key]);
+  }
 }

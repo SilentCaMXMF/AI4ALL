@@ -4,6 +4,7 @@ import { RedditAPI } from '../api/reddit.js';
 import { StackOverflowAPI } from '../api/stackoverflow.js';
 import { HackerNewsAPI } from '../api/hackernews.js';
 import { HuggingFaceAPI } from '../api/huggingface.js';
+import { BasePlatformAPI } from '../types/index.js';
 import { 
   VerificationDataManager, 
   IncrementalUpdater, 
@@ -15,7 +16,9 @@ import type {
   ModelWithFeedback, 
   ModelFeedback, 
   PlatformConfig,
-  PipelineConfig 
+  PipelineConfig,
+  Platform,
+  FetchResult
 } from '../types/index.js';
 import { 
   handleAsyncError, 
@@ -29,12 +32,66 @@ export interface EnhancedScraperConfig extends PlatformConfig {
   enableHistoryTracking?: boolean;
 }
 
+export interface VerificationResult {
+  modelId: string;
+  modelName: string;
+  provider: string;
+  feedback: ModelFeedback[];
+  summary: {
+    total: number;
+    positive: number;
+    negative: number;
+    neutral: number;
+    lastMention: string;
+    availabilityStatus: 'confirmed' | 'questioned' | 'unknown';
+    commonIssues: string[];
+    verificationLevel: string;
+    verificationScore: number;
+  };
+}
+
+export type ScraperService = EnhancedScraperService;
+export type ScraperConfig = EnhancedScraperConfig;
 export interface ScraperResult {
   platform: string;
   items: AggregatedItem[];
   success: boolean;
   error?: string;
   timestamp: string;
+}
+
+export interface AnalyticsData {
+  modelStatistics: {
+    totalModels: number;
+    verifiedModels: number;
+    highlyVerifiedModels: number;
+    availabilityBreakdown: Record<string, number>;
+    platformCoverage: Record<string, number>;
+  };
+  trendingModels: Array<{
+    modelId: string;
+    modelTitle: string;
+    summary: {
+      reliabilityScore: number;
+      recommendation: string;
+    };
+    overallTrend: {
+      scoreChange: number;
+    };
+  }>;
+  platformReport: Array<{
+    platform: string;
+    activeModels: number;
+    totalModels: number;
+    averageVerificationScore: number;
+    trend: {
+      trend: string;
+      scoreChange: number;
+    };
+    commonIssues: string[];
+  }>;
+  apiUsage: Record<string, unknown>;
+  lastUpdated: string;
 }
 
 export interface EnhancedScraperMetrics {
@@ -53,7 +110,7 @@ export class EnhancedScraperService {
   private apiKeyManager: APIKeyManager;
   private historyTracker: VerificationHistoryTracker;
   private modelsDevAPI: ModelsDevAPI;
-  private platformAPIs: Map<string, any>;
+  private platformAPIs: Map<string, BasePlatformAPI>;
 
   constructor(config: EnhancedScraperConfig = {}) {
     this.config = {
@@ -224,7 +281,7 @@ export class EnhancedScraperService {
     return metrics;
   }
 
-  private async verifyModel(model: AggregatedItem): Promise<any> {
+  private async verifyModel(model: AggregatedItem): Promise<VerificationResult> {
     const feedback: ModelFeedback[] = [];
     const modelName = this.extractModelName(model.title);
     const provider = this.extractProvider(model.title);
@@ -407,7 +464,7 @@ export class EnhancedScraperService {
   }
 
   // Get analytics and insights
-  async getAnalytics(): Promise<any> {
+  async getAnalytics(): Promise<AnalyticsData> {
     return await handleAsyncError(async () => {
       const db = await this.dataManager.loadDatabase();
       const stats = await this.dataManager.getModelStatistics();
