@@ -12,7 +12,15 @@ Your Free AI Models dashboard is publicly accessible with HTTPS encryption and o
 
 ---
 
-## 🎯 What's New - v2.5.0 (Feb 11, 2026)
+## 🎯 What's New - v2.6.0 (Feb 23, 2026)
+
+### 🔧 Code Quality Improvements
+- **TypeScript Strict Mode** - Full type safety across codebase
+- **Refactored APIs** - Better error handling with custom error classes
+- **Code Deduplication** - Extracted common helpers (getHeaders, makeApiRequest)
+- **Performance Optimized** - DataStore caching, reduced redundant calls
+- **Input Validation** - Token validation, safer constructors
+- **Removed Dead Code** - Cleaned up unused Discord/X integrations
 
 ### ✨ Interactive Features
 - **⭐ Favorites System** - Save models with one click (persisted in localStorage)
@@ -786,8 +794,8 @@ For issues and questions:
 
 ---
 
-**Last Updated:** February 11, 2026  
-**Version:** 2.5.0  
-**Status:** 🎉 Production Ready - Interactive Features Live
+**Last Updated:** February 23, 2026  
+**Version:** 2.6.0  
+**Status:** 🎉 Production Ready - TypeScript Refactoring Complete
 
 **Share the link**: https://freeai4all.duckdns.org
