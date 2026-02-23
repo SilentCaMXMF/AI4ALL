@@ -4,9 +4,9 @@
 
 ```bash
 # Development
-npm run dev                    # Start Next.js development server
+npm run dev                    # Start Astro development server
 npm run build                  # Build for production
-npm run start                  # Start production server
+npm run preview                # Preview production build
 
 # Scraper Commands
 npm run scrape                 # Run full scraper
@@ -20,9 +20,6 @@ npm run schedule               # Run GitHub distribution scheduler
 # Code Quality
 npm run lint                   # Run ESLint on .ts/.tsx files
 npm run typecheck              # Type-check without emitting
-npm run test                   # Run all tests
-npm run test -- src/file.test.ts  # Run single test file (vitest)
-npm run test -- --run          # Run tests once (no watch mode)
 
 # TypeScript
 npx tsc --noEmit               # Type-check only
@@ -33,7 +30,7 @@ npx tsc --noEmit               # Type-check only
 ### TypeScript Configuration
 - Target: ES2022 with strict mode enabled
 - Module: ESNext with bundler resolution
-- JSX: preserve (Next.js App Router)
+- JSX: preserve (Astro)
 - Always use explicit types for function parameters and return values
 
 ### Imports and Exports
@@ -91,7 +88,7 @@ export type ContentType = 'repository' | 'issue' | 'post' | 'comment' | 'questio
 - `src/scraper/` - Scraper orchestration
 - `src/types/` - TypeScript interfaces and types
 - `src/data/` - Data storage and persistence
-- `src/app/` - Next.js App Router pages
+- `src/pages/` - Astro pages
 - `public/` - Static assets
 
 ### Console Logging
@@ -108,22 +105,12 @@ export type ContentType = 'repository' | 'issue' | 'post' | 'comment' | 'questio
 
 ## Testing Guidelines
 
-### Test Structure
-- Use vitest for testing
-- Test files should be named `*.test.ts`
-- Focus on testing API integrations and data transformations
-- Mock external API calls in tests
+Test files are located in the `test/` directory. Run test scripts directly with Node.js:
 
-### Running Tests
 ```bash
-# Run all tests
-npm run test
-
-# Run single test file
-npm run test -- src/api/github.test.ts
-
-# Run tests once (no watch mode)
-npm run test -- --run
+# Run test scripts
+node test/test-github-api.js
+node test/test-all-platforms.js
 ```
 
 ## Platform-Specific Guidelines
