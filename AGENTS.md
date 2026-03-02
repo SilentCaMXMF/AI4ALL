@@ -179,6 +179,42 @@ node test/test-all-platforms.js
 - Monitor memory usage during scraping
 - Implement proper error recovery
 
+---
+
+## Security Guidelines
+
+### Never Commit Secrets
+- Never commit `.env`, API keys, or credentials to git
+- Use GitHub Secrets for CI/CD workflows
+- API keys should only exist in environment variables
+
+### Astro Security Configuration
+```typescript
+// astro.config.mjs - production server config
+server: {
+  port: 4321,
+  host: process.env.NODE_ENV === 'production' ? false : true,
+}
+```
+- Development: binds to all interfaces (`host: true`)
+- Production: binds to localhost only (`host: false`)
+
+### Security Headers
+Add `public/_headers` for Netlify/static hosting:
+```
+/*
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  Content-Security-Policy: default-src 'self'
+```
+
+### GitHub Actions Security
+- Use minimal permissions: `contents: read` not `write`
+- Add manual approval for production deployments
+- Use `persist-credentials: false` in checkout steps
+
+---
+
 ## Documentation Guidelines
 
 ### Code Documentation

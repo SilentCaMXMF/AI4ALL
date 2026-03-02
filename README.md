@@ -12,7 +12,7 @@ Your Free AI Models dashboard is publicly accessible with HTTPS encryption and o
 
 ---
 
-## 🎯 What's New - v2.6.0 (Feb 23, 2026)
+## 🎯 What's New - v2.6.0 (Feb 26, 2026)
 
 ### 🔧 Code Quality Improvements
 - **TypeScript Strict Mode** - Full type safety across codebase
@@ -21,6 +21,13 @@ Your Free AI Models dashboard is publicly accessible with HTTPS encryption and o
 - **Performance Optimized** - DataStore caching, reduced redundant calls
 - **Input Validation** - Token validation, safer constructors
 - **Removed Dead Code** - Cleaned up unused Discord/X integrations
+
+### 🔒 Security Updates
+- **NPM Dependencies** - Upgraded Astro 4.15 → 5.17.2 (patches 7 vulnerabilities)
+- **GitHub Actions** - Restricted permissions, added manual deploy approval
+- **Security Headers** - Added CSP, X-Frame-Options, X-Content-Type-Options
+- **Server Config** - Production host binding secured
+- **Dotenv** - Fixed environment variable loading
 
 ### ✨ Interactive Features
 - **⭐ Favorites System** - Save models with one click (persisted in localStorage)

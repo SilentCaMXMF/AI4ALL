@@ -190,6 +190,13 @@ For additional security, consider:
 ## 📊 Management Commands
 
 ```bash
+# Build the site
+cd ~/ai4all/AI4ALL
+npm run build
+
+# Reload nginx to serve new build
+sudo systemctl reload nginx
+
 # Check service status
 sudo systemctl status nginx
 sudo systemctl status ai4all-data-server
