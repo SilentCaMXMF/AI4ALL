@@ -26,6 +26,8 @@ permissions:
 jobs:
   scrape:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write  # Needed for git commit and GitHub Pages deploy
     
     steps:
       - name: Checkout repository
