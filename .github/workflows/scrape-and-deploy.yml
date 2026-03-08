@@ -2,8 +2,8 @@ name: Scrape Free AI Models with Feedback
 
 on:
   schedule:
-    # Run every hour to check for new free models
-    - cron: '0 * * * *'
+    # Run every 6 hours to check for new free models
+    - cron: '0 */6 * * *'
   
   # Allow manual trigger
   workflow_dispatch:

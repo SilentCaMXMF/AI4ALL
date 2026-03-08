@@ -72,7 +72,7 @@ Your Free AI Models dashboard is publicly accessible with HTTPS encryption and o
 - **Verification History**: Trend analysis and model insights
 - **Enhanced UI**: Verification score badges, common issues display, timeline components
 - **Complete Test Suite**: Unit tests, integration tests, and CI/CD pipeline
-- **Production Ready**: Automated hourly updates with comprehensive testing
+- **Production Ready**: Automated updates every 6 hours with comprehensive testing
 - Domain: freeai4all.duckdns.org
 - SSL certificate from Let's Encrypt
 - Auto-renewal enabled
@@ -431,7 +431,7 @@ AI4ALL/
 │   └── sitemap.xml            # SEO sitemap
 │
 ├── 📁 .github/workflows/      # CI/CD automation
-│   └── scrape-and-deploy.yml  # Hourly scraper
+│   └── scrape-and-deploy.yml  # 6-hour scraper
 │
 ├── 📁 archive/                # Old/outdated files (reference)
 │   ├── dashboard.html         # Legacy dashboard
@@ -521,7 +521,7 @@ REDDIT_CLIENT_ID=xxx REDDIT_CLIENT_SECRET=xxx npm run scrape
 
 ### Automated Updates
 
-The GitHub Actions workflow runs hourly:
+The GitHub Actions workflow runs every 6 hours:
 1. **Phase 1**: Fetches models from models.dev, filters 0-cost models
 2. **Phase 2**: Verifies each model against social media
 3. **Commit**: Updates aggregated-data.json with verification scores
@@ -653,7 +653,7 @@ npm run preview
 | Hosting (Raspberry Pi) | $0 | Uses existing hardware |
 | Domain (DuckDNS) | $0 | Free dynamic DNS |
 | SSL Certificate | $0 | Let's Encrypt free tier |
-| GitHub Actions | $0 | Free tier (hourly runs) |
+| GitHub Actions | $0 | Free tier (4 runs/day) |
 | Power (Pi 24/7) | ~$5 | Estimated |
 | **Total** | **~$5** | ✅ Very cost-effective |
 

@@ -224,7 +224,7 @@ curl ifconfig.me
 3. **Add SSL** with Let's Encrypt (Step 3)
 4. **Share your URL** with the world!
 
-Your Free AI Models site will be publicly accessible and automatically updated hourly with fresh data from models.dev!
+Your Free AI Models site will be publicly accessible and automatically updated every 6 hours with fresh data from models.dev!
 
 ---
 
