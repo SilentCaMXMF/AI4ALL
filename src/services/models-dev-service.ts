@@ -84,6 +84,27 @@ export interface FetchResult {
   hasMore: boolean;
 }
 
+export interface PriceChange {
+  modelId: string;
+  modelName?: string;
+  providerId?: string;
+  provider?: string;
+  field?: string;
+  oldPrice?: { input: number; output: number };
+  newPrice?: { input: number; output: number };
+  oldValue?: number | undefined;
+  newValue?: number | undefined;
+  changePercent?: number;
+  timestamp: string;
+}
+
+export interface ModelsDevState {
+  lastFetchTime: string;
+  modelsCache: ModelsDevModel[];
+  priceHistory: PriceChange[];
+  fetchCount: number;
+}
+
 /**
  * Unified Models.dev Service
  * Consolidates all Models.dev API operations with single source of truth
