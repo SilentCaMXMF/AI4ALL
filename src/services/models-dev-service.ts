@@ -242,15 +242,35 @@ export class ModelsDevService {
   }
 
   /**
-   * Filter for free models only (input cost = 0 AND output cost = 0)
+   * Filter for free models only (input cost = 0 AND output cost = 0, OR cost is null)
+   * Treats null costs as free/unknown pricing - these models should be included
    */
   private filterFreeModels(models: Array<ModelsDevModel & { providerId: string; providerName: string }>): typeof models {
     return models.filter(model => {
-      const inputCost = model.cost?.input !== undefined ? model.cost.input : model.inputCost;
-      const outputCost = model.cost?.output !== undefined ? model.cost.output : model.outputCost;
+      // If cost object is null entirely, treat as free (no pricing info = include it)
+      if (model.cost === null) {
+        return true;
+      }
 
-      // Strict filter: both input and output must be exactly 0
-      return inputCost === 0 && outputCost === 0;
+      const inputCost = model.cost?.input;
+      const outputCost = model.cost?.output;
+
+      // If cost object exists but values are null, treat as free
+      if (inputCost === null && outputCost === null) {
+        return true;
+      }
+
+      // If cost values are 0, it's free
+      if (inputCost === 0 && outputCost === 0) {
+        return true;
+      }
+
+      // Include models where pricing is unknown (null) or explicitly free (0)
+      // Exclude only models with known paid pricing
+      const hasKnownPricing = inputCost !== undefined && inputCost !== null;
+      const hasPaidPricing = hasKnownPricing && inputCost > 0;
+
+      return !hasPaidPricing;
     });
   }
 
@@ -292,8 +312,9 @@ export class ModelsDevService {
       model.family ? `Family: ${model.family}` : null
     ].filter(Boolean);
 
-    // Strict free model definition: both input and output cost must be exactly 0
-    const isFree = inputCost === 0 && outputCost === 0;
+    // Free model definition: cost is 0, null, or undefined
+    const isFree = (inputCost === 0 || inputCost === null || inputCost === undefined) && 
+                   (outputCost === 0 || outputCost === null || outputCost === undefined);
 
     return {
       id: `modelsdev-${model.id || `${model.providerId}-${model.modelId}`}`,
