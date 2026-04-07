@@ -70,6 +70,36 @@ async function loadConfig(): Promise<EnhancedScraperConfig> {
     console.log('[Config] ⚠️ HUGGINGFACE_TOKEN not set - Hugging Face search limited');
   }
 
+  // OpenRouter (optional API key for model aggregation)
+  if (process.env.OPENROUTER_API_KEY) {
+    config.openrouter = {
+      apiKey: process.env.OPENROUTER_API_KEY
+    };
+    console.log('[Config] OpenRouter API enabled for model aggregation');
+  } else {
+    console.log('[Config] ⚠️ OPENROUTER_API_KEY not set - OpenRouter aggregation disabled');
+  }
+
+  // Groq (optional API key for model aggregation)
+  if (process.env.GROQ_API_KEY) {
+    config.groq = {
+      apiKey: process.env.GROQ_API_KEY
+    };
+    console.log('[Config] Groq API enabled for model aggregation');
+  } else {
+    console.log('[Config] ⚠️ GROQ_API_KEY not set - Groq aggregation disabled');
+  }
+
+  // Cohere (optional API key for model aggregation)
+  if (process.env.COHERE_API_KEY) {
+    config.cohere = {
+      apiKey: process.env.COHERE_API_KEY
+    };
+    console.log('[Config] Cohere API enabled for model aggregation');
+  } else {
+    console.log('[Config] ⚠️ COHERE_API_KEY not set - Cohere aggregation disabled');
+  }
+
   return config;
 }
 

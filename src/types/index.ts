@@ -173,6 +173,15 @@ export interface PlatformConfig {
   hackernews?: {
     enabled?: boolean;
   };
+  openrouter?: {
+    apiKey: string;
+  };
+  groq?: {
+    apiKey: string;
+  };
+  cohere?: {
+    apiKey: string;
+  };
 }
 
 // Enhanced verification data with history tracking
