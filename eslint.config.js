@@ -1,11 +1,7 @@
 import js from '@eslint/js';
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
+import tseslint from 'typescript-eslint';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-export default [
+export default tseslint.config(
   {
     ignores: [
       'node_modules/',
@@ -19,16 +15,13 @@ export default [
       'tsconfig*.json',
       '*.tsbuildinfo',
       '.opencode/',
-      '*.js',
-      'scripts.js',
       'scrape-data.js',
       'scrape-opencode-zen.js',
-      'test-*.ts',
-      '*test*.ts',
       '*.md',
     ],
   },
   js.configs.recommended,
+  ...tseslint.configs.recommended,
   {
     files: ['src/**/*.ts', 'src/**/*.tsx'],
     languageOptions: {
@@ -44,9 +37,10 @@ export default [
       },
     },
     rules: {
-      ...js.configs.recommended.rules,
-      'no-unused-vars': 'off', // Turn off for TypeScript, will be handled by TS
-      'no-undef': 'off', // Turn off for TypeScript, will be handled by TS
+      '@typescript-eslint/no-unused-vars': [
+        'warn',
+        { argsIgnorePattern: '^_' },
+      ],
     },
   },
-];
+);
