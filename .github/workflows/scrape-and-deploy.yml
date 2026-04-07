@@ -33,12 +33,22 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write  # Needed for git commit and GitHub Pages deploy
+      pages: write
+      id-token: write
     
     steps:
+      - name: Generate GitHub App installation token
+        id: generate-token
+        uses: tibdex/github-app-token@v2
+        with:
+          app_id: ${{ secrets.APP_ID }}
+          private_key: ${{ secrets.APP_PRIVATE_KEY }}
+
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           persist-credentials: false
+          token: ${{ steps.generate-token.outputs.token }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -55,7 +65,7 @@ jobs:
       - name: Run scraper (fetch free AI models with cross-platform feedback)
         env:
           # GitHub API for searching issues/discussions
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
           GITHUB_USERNAME: ${{ secrets.GITHUB_USERNAME }}
           
           # Reddit API for community feedback
@@ -111,7 +121,7 @@ jobs:
         if: github.ref == 'refs/heads/main' && (github.event.inputs.deploy == 'true' || github.event_name == 'schedule')
         uses: peaceiris/actions-gh-pages@v4
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ steps.generate-token.outputs.token }}
           publish_dir: ./dist
           force_orphan: true
 
