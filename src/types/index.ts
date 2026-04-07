@@ -18,7 +18,7 @@ export interface AggregatedItem {
   raw: unknown; // Original platform-specific data
 }
 
-export type Platform = 'github' | 'reddit' | 'stackoverflow' | 'x' | 'modelsdev' | 'hackernews' | 'huggingface' | 'openrouter';
+export type Platform = 'github' | 'reddit' | 'stackoverflow' | 'x' | 'modelsdev' | 'hackernews' | 'huggingface' | 'openrouter' | 'togetherai' | 'replicate';
 export type GenericPlatform = Platform | 'datastore' | 'scraper' | 'history' | 'updater' | 'apikey';
 
 // Usage example for models
@@ -193,7 +193,7 @@ export interface EnhancedModelData extends ModelWithFeedback {
   verificationCount: number;
   
   // Platform-specific verification details
-  platformBreakdown: Partial<Record<'github' | 'reddit' | 'stackoverflow' | 'x' | 'modelsdev' | 'hackernews' | 'huggingface' | 'openrouter', PlatformVerificationDetails>>;
+  platformBreakdown: Partial<Record<'github' | 'reddit' | 'stackoverflow' | 'x' | 'modelsdev' | 'hackernews' | 'huggingface' | 'openrouter' | 'togetherai' | 'replicate', PlatformVerificationDetails>>;
   
   // Trend analysis
   verificationTrend: {

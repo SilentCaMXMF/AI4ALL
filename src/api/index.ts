@@ -5,5 +5,8 @@ export { RedditAPI } from './reddit.js';
 export { StackOverflowAPI } from './stackoverflow.js';
 export { HackerNewsAPI } from './hackernews.js';
 export { HuggingFaceAPI } from './huggingface.js';
+export { HuggingFaceInferenceAPI } from './huggingface-api.js';
 export { ModelsDevAPI } from './modelsdev.js';
 export { OpenRouterAPI } from './openrouter.js';
+export { TogetherAIAPI } from './togetherai.js';
+export { ReplicateAPI } from './replicate.js';

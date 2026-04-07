@@ -344,7 +344,7 @@ export class VerificationHistoryTracker {
         }, {} as Record<string, number>);
         
         const commonIssues = Object.entries(issueCounts)
-          .sort(([, a], [, b]: [string, number]) => b - a)
+          .sort(([, a], [, b]) => b - a)
           .slice(0, 5)
           .map(([issue]) => issue);
 
