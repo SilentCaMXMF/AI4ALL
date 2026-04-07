@@ -18,7 +18,7 @@ export interface AggregatedItem {
   raw: unknown; // Original platform-specific data
 }
 
-export type Platform = 'github' | 'reddit' | 'stackoverflow' | 'x' | 'modelsdev' | 'hackernews' | 'huggingface' | 'openrouter' | 'groq' | 'cohere';
+export type Platform = 'github' | 'reddit' | 'stackoverflow' | 'x' | 'modelsdev' | 'hackernews' | 'huggingface' | 'openrouter';
 export type GenericPlatform = Platform | 'datastore' | 'scraper' | 'history' | 'updater' | 'apikey';
 
 // Usage example for models
@@ -176,12 +176,6 @@ export interface PlatformConfig {
   openrouter?: {
     apiKey: string;
   };
-  groq?: {
-    apiKey: string;
-  };
-  cohere?: {
-    apiKey: string;
-  };
 }
 
 // Enhanced verification data with history tracking
@@ -199,7 +193,7 @@ export interface EnhancedModelData extends ModelWithFeedback {
   verificationCount: number;
   
   // Platform-specific verification details
-  platformBreakdown: Partial<Record<'github' | 'reddit' | 'stackoverflow' | 'x' | 'modelsdev' | 'hackernews' | 'huggingface' | 'openrouter' | 'groq' | 'cohere', PlatformVerificationDetails>>;
+  platformBreakdown: Partial<Record<'github' | 'reddit' | 'stackoverflow' | 'x' | 'modelsdev' | 'hackernews' | 'huggingface' | 'openrouter', PlatformVerificationDetails>>;
   
   // Trend analysis
   verificationTrend: {

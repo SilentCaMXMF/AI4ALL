@@ -5,8 +5,6 @@ import { StackOverflowAPI } from '../api/stackoverflow.js';
 import { HackerNewsAPI } from '../api/hackernews.js';
 import { HuggingFaceAPI } from '../api/huggingface.js';
 import { OpenRouterAPI } from '../api/openrouter.js';
-import { GroqAPI } from '../api/groq.js';
-import { CohereAPI } from '../api/cohere.js';
 import { BasePlatformAPI } from '../types/index.js';
 import pLimit from 'p-limit';
 import { 
@@ -174,14 +172,6 @@ export class EnhancedScraperService {
       this.platformAPIs.set('openrouter', new OpenRouterAPI(platformConfigs.openrouter.apiKey));
     }
     
-    if (platformConfigs.groq) {
-      this.platformAPIs.set('groq', new GroqAPI(platformConfigs.groq.apiKey));
-    }
-    
-    if (platformConfigs.cohere) {
-      this.platformAPIs.set('cohere', new CohereAPI(platformConfigs.cohere.apiKey));
-    }
-    
     console.log(`[EnhancedScraper] ✓ Initialized ${this.platformAPIs.size} platform APIs`);
   }
 
@@ -192,9 +182,7 @@ export class EnhancedScraperService {
       stackoverflow: this.apiKeyManager.getPlatformConfig('stackoverflow'),
       hackernews: this.apiKeyManager.getPlatformConfig('hackernews'),
       huggingface: this.apiKeyManager.getPlatformConfig('huggingface'),
-      openrouter: this.apiKeyManager.getPlatformConfig('openrouter'),
-      groq: this.apiKeyManager.getPlatformConfig('groq'),
-      cohere: this.apiKeyManager.getPlatformConfig('cohere')
+      openrouter: this.apiKeyManager.getPlatformConfig('openrouter')
     };
   }
 
