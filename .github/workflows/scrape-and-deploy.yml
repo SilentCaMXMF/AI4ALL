@@ -86,12 +86,7 @@ jobs:
       - name: Run tests
         run: |
           npm run typecheck
-          node test/test-github-api.cjs
-          node test/test-reddit-api.cjs
-          node test/test-stackoverflow-api.cjs
-          node test/test-sentiment-analysis.cjs
-          node test/test-error-handler.cjs
-          node test/test-integration.cjs
+          npm test
 
       - name: Upload scraped data
         uses: actions/upload-artifact@v4
