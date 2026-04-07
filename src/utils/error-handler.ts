@@ -1,4 +1,5 @@
-import { readFile, writeFile } from 'node:fs/promises';
+import { readFile, writeFile, access, mkdir, constants } from 'node:fs/promises';
+import { dirname } from 'node:path';
 import type { GenericPlatform } from '../types/index.js';
 
 /**
@@ -215,10 +216,18 @@ export async function loadStateFile<T>(
   platform: GenericPlatform
 ): Promise<T> {
   try {
+    await access(filePath, constants.F_OK);
     const content = await readFile(filePath, 'utf-8');
     return JSON.parse(content);
   } catch (error) {
+    // File doesn't exist - create it with default state
     logPlatformError(platform, error, 'loadState');
+    try {
+      await mkdir(dirname(filePath), { recursive: true });
+      await writeFile(filePath, JSON.stringify(defaultState, null, 2));
+    } catch (mkdirError) {
+      // If we can't create, return default
+    }
     return defaultState;
   }
 }
@@ -229,6 +238,7 @@ export async function saveStateFile<T>(
   platform: GenericPlatform
 ): Promise<void> {
   try {
+    await mkdir(dirname(filePath), { recursive: true });
     await writeFile(filePath, JSON.stringify(state, null, 2));
   } catch (error) {
     logPlatformError(platform, error, 'saveState');
