@@ -7,3 +7,4 @@ export { HackerNewsAPI } from './hackernews.js';
 export { HuggingFaceAPI } from './huggingface.js';
 export { ModelsDevAPI } from './modelsdev.js';
 export { OpenRouterAPI } from './openrouter.js';
+export { GroqAPI } from './groq.js';
