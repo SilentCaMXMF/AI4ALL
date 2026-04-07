@@ -5,6 +5,11 @@ on:
     # Run every 6 hours to check for new free models
     - cron: '0 */6 * * *'
   
+  # Run on push to main
+  push:
+    branches:
+      - main
+  
   # Allow manual trigger
   workflow_dispatch:
     inputs:
