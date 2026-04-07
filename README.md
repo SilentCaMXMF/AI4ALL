@@ -12,54 +12,20 @@ Your Free AI Models dashboard is publicly accessible with HTTPS encryption and o
 
 ---
 
-## 🎯 What's New - v2.7.0 (Apr 7, 2026)
+## 🎯 What's New - v2.8.0 (Apr 7, 2026)
 
-### 🔧 Scraper Fix
-- **Fixed free model detection** - Models with `cost: null` now included in free models filter
-- **Expanded coverage** - 431 → 643 free models (added 212 models with unknown pricing)
-- **Improved filtering** - Treats `cost: null` as free/unknown pricing
+### 📦 Free Model Sources
+Added comprehensive coverage of free model APIs:
 
-### 🔒 GitHub Actions Security
-- **GitHub App authentication** - Switched from OAuth to GitHub App for Actions
-- **Workflow triggers** - Now runs on schedule (every 6 hours), push to main, and manual dispatch
-- **Security audit** - NPM dependencies audited and patched (7 vulnerabilities fixed)
+| Source | Models | Free Tier |
+|--------|--------|-----------|
+| **models.dev** | 4154+ | Yes - API access |
+| **OpenRouter** | ~77 | Free tier available |
+| **Together AI** | ~50 | Free $5 credit |
+| **HuggingFace** | ~100+ | Free tier (limited) |
+| **Replicate** | ~30 | Free tier available |
 
-### 🔧 Code Quality Improvements
-- **TypeScript Strict Mode** - Full type safety across codebase
-- **Refactored APIs** - Better error handling with custom error classes
-- **Code Deduplication** - Extracted common helpers (getHeaders, makeApiRequest)
-- **Performance Optimized** - DataStore caching, reduced redundant calls
-- **Input Validation** - Token validation, safer constructors
-- **Removed Dead Code** - Cleaned up unused Discord/X integrations
-
-### 🔒 Security Updates
-- **NPM Dependencies** - Upgraded Astro 4.15 → 5.17.2 (patches 7 vulnerabilities)
-- **GitHub Actions** - Restricted permissions, added manual deploy approval
-- **Security Headers** - Added CSP, X-Frame-Options, X-Content-Type-Options
-- **Server Config** - Production host binding secured
-- **Dotenv** - Fixed environment variable loading
-
-### ✨ Interactive Features
-- **⭐ Favorites System** - Save models with one click (persisted in localStorage)
-- **🔍 Advanced Filtering** - Real-time search + capability filters + token limit sliders
-- **⚖️ Model Comparison** - Compare up to 3 models side-by-side with detailed specs
-- **📄 Model Detail Modal** - Full specifications with copy-to-clipboard buttons
-- **📋 Quick Copy** - Copy model ID or provider name instantly
-
-### 🎨 UI/UX Improvements
-- **Responsive Provider Filters** - Interactive chips with live counts
-- **Sticky Comparison Bar** - Access comparison controls while scrolling
-- **Favorites Section** - Quick access to saved models
-- **No Results State** - Clear feedback when filters match nothing
-- **Smooth Animations** - Hover effects and transitions throughout
-
-### 🚀 SEO & Performance
-- **100/100 SEO Score** - Complete meta tags, structured data, OG images
-- **Social Media Ready** - 1200x630px OG image for rich previews
-- **Open Graph** - Full Facebook/LinkedIn/Discord preview support
-- **Twitter Cards** - Large image cards for Twitter/X
-- **JSON-LD Schema** - WebSite and Organization structured data
-- **Preconnect Hints** - Faster external resource loading
+The dashboard now aggregates free models from multiple sources beyond models.dev.
 
 ---
 
@@ -391,9 +357,21 @@ When you share https://freeai4all.duckdns.org on social media:
 
 ## Data Source
 
+### Free Model Sources
+
+The dashboard aggregates free AI models from multiple sources:
+
+| Source | Description | Free Tier |
+|--------|-------------|-----------|
+| **models.dev** | Comprehensive AI model database with 4154+ models | Free API access |
+| **OpenRouter** | Aggregator with free tier models (~77 free) | Free tier available |
+| **Together AI** | AI inference platform with free $5 credit | Free $5 credit |
+| **HuggingFace** | Open model hub with free inference API | Free tier (limited) |
+| **Replicate** | ML model deployment with free tier | Free tier available |
+
 ### models.dev API
 
-The dashboard aggregates data from [models.dev](https://models.dev/api.json), a comprehensive database of AI models.
+The primary data source is [models.dev](https://models.dev/api.json), a comprehensive database of AI models.
 
 **Currently Verified Free Models:**
 | Provider | Free Models | Status |
@@ -816,7 +794,7 @@ For issues and questions:
 ---
 
 **Last Updated:** April 7, 2026  
-**Version:** 2.7.0  
-**Status:** 🎉 Production Ready - Scraper Fix & GitHub App Auth
+**Version:** 2.8.0  
+**Status:** 🎉 Production Ready - Free Model Sources
 
 **Share the link**: https://freeai4all.duckdns.org
