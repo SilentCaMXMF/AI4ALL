@@ -14,11 +14,19 @@ export interface AggregatedItem {
   url: string;
   metrics: PlatformMetrics;
   tags: string[];
+  examples?: ModelExample[];
   raw: unknown; // Original platform-specific data
 }
 
 export type Platform = 'github' | 'reddit' | 'stackoverflow' | 'x' | 'modelsdev' | 'hackernews' | 'huggingface' | 'openrouter' | 'groq' | 'cohere';
 export type GenericPlatform = Platform | 'datastore' | 'scraper' | 'history' | 'updater' | 'apikey';
+
+// Usage example for models
+export interface ModelExample {
+  language: 'javascript' | 'python' | 'curl';
+  code: string;
+  description: string;
+}
 
 export type ContentType = 
   | 'repository' 

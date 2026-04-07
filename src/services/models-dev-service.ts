@@ -1,6 +1,7 @@
 import { readFile, writeFile, mkdir, access } from 'fs/promises';
 import { join } from 'path';
 import { FileCache } from '../utils/cache.js';
+import { generateExamples } from '../utils/examples.js';
 import type { AggregatedItem } from '../types/index.js';
 
 // Re-export interfaces for backward compatibility
@@ -389,6 +390,12 @@ export class ModelsDevService {
         ...capabilities,
         ...(isFree ? ['free'] : [])
       ],
+      examples: generateExamples({
+        id: model.id || model.modelId || '',
+        providerId: model.providerId,
+        npm: model.npm,
+        api: model.api
+      }),
       raw: model
     } as const;
   }
