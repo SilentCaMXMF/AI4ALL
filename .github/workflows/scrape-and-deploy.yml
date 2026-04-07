@@ -92,7 +92,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: free-models-data
-          path: data/aggregated-data.json
+          path: data/
           retention-days: 7
 
       - name: Build Astro site
@@ -109,7 +109,15 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
+          # Add all data files to commit
           git add -f data/aggregated-data.json
+          git add -f data/verification-database.json
+          git add -f data/verification-history.json
+          git add -f data/update-state.json
+          git add -f data/modelsdev-state.json
+          git add -f data/github-scrape-state.json
+          git add -f data/api-keys.json
+          git add -f data/pipeline-config.json
           git diff --staged --quiet || (git commit -m "Update free AI models with feedback [$(date +%Y-%m-%d_%H:%M)]" && git push)
 
       - name: Deploy to production
