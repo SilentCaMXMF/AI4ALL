@@ -415,6 +415,55 @@ const modelsJson = JSON.stringify(models);
     compareModal.style.display = 'flex';
   }
 
+  // Generate usage examples for a model
+  function generateModelExamples(modelId, providerId) {
+    return [
+      {
+        language: 'curl',
+        description: 'Basic API call with cURL',
+        code: `curl https://api.models.dev/v1/chat \\
+  -H "Authorization: Bearer YOUR_API_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{"model": "${modelId}", "messages": [{"role": "user", "content": "Hello!"}]}'`
+      },
+      {
+        language: 'javascript',
+        description: 'JavaScript/TypeScript with fetch',
+        code: `const response = await fetch('https://api.models.dev/v1/chat', {
+  method: 'POST',
+  headers: { 
+    'Authorization': 'Bearer YOUR_API_KEY', 
+    'Content-Type': 'application/json' 
+  },
+  body: JSON.stringify({ 
+    model: '${modelId}', 
+    messages: [{ role: 'user', content: 'Hello!' }] 
+  })
+});
+const data = await response.json();`
+      },
+      {
+        language: 'python',
+        description: 'Python with requests',
+        code: `import requests
+
+response = requests.post(
+    'https://api.models.dev/v1/chat',
+    headers={
+        'Authorization': 'Bearer YOUR_API_KEY',
+        'Content-Type': 'application/json'
+    },
+    json={
+        'model': '${modelId}',
+        'messages': [{'role': 'user', 'content': 'Hello!'}]
+    }
+)
+
+print(response.json()['choices'][0]['message']['content'])`
+      }
+    ];
+  }
+
   // Show model details
   function showModelDetails(modelId) {
     const model = allModels.find(m => m.id === modelId);
@@ -428,6 +477,11 @@ const modelsJson = JSON.stringify(models);
     if (raw.open_weights) capabilities.push('Open Weights');
     if (raw.modalities?.input?.includes('image')) capabilities.push('Vision');
     if (raw.modalities?.input?.includes('audio')) capabilities.push('Audio');
+    
+    // Generate examples for the model
+    const examples = generateModelExamples(raw.id, raw.providerId);
+    const languages = ['curl', 'javascript', 'python'];
+    const defaultLang = 'curl';
     
     modalBody.innerHTML = `
       <div class="modal-header">
@@ -458,13 +512,79 @@ const modelsJson = JSON.stringify(models);
           <p><strong>Input:</strong> ${raw.modalities?.input?.join(', ') || 'text'}</p>
           <p><strong>Output:</strong> ${raw.modalities?.output?.join(', ') || 'text'}</p>
         </div>
+        <div class="model-examples">
+          <h3>Usage Examples</h3>
+          <div class="example-tabs">
+            ${languages.map(lang => `
+              <button class="example-tab ${lang === defaultLang ? 'active' : ''}" data-lang="${lang}">${lang === 'javascript' ? 'JavaScript' : lang.charAt(0).toUpperCase() + lang.slice(1)}</button>
+            `).join('')}
+          </div>
+          <div class="example-content">
+            ${examples.map(example => `
+              <pre class="example-code" data-lang="${example.language}" style="display: ${example.language === defaultLang ? 'block' : 'none'};"><code>${escapeHtml(example.code)}</code></pre>
+            `).join('')}
+          </div>
+          <button class="copy-example-btn">Copy Code</button>
+        </div>
         <div class="modal-actions">
           <a href="${model.url}" target="_blank" rel="noopener" class="view-btn">View on models.dev →</a>
         </div>
       </div>
     `;
     
+    // Attach tab switching and copy functionality
+    attachExampleListeners(modelId);
+    
     modelModal.style.display = 'flex';
+  }
+
+  function escapeHtml(text) {
+    return text
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
+  function attachExampleListeners(modelId) {
+    // Tab switching
+    document.querySelectorAll('.example-tab').forEach(tab => {
+      tab.addEventListener('click', (e) => {
+        const lang = e.target.dataset.lang;
+        
+        // Update active tab
+        document.querySelectorAll('.example-tab').forEach(t => t.classList.remove('active'));
+        e.target.classList.add('active');
+        
+        // Show corresponding code
+        document.querySelectorAll('.example-code').forEach(code => {
+          code.style.display = code.dataset.lang === lang ? 'block' : 'none';
+        });
+      });
+    });
+    
+    // Copy functionality
+    const copyBtn = document.querySelector('.copy-example-btn');
+    if (copyBtn) {
+      copyBtn.addEventListener('click', async () => {
+        const activeCode = document.querySelector('.example-code[style*="block"], .example-code:not([style*="none"])');
+        if (activeCode) {
+          const codeText = activeCode.querySelector('code')?.textContent || '';
+          try {
+            await navigator.clipboard.writeText(codeText);
+            copyBtn.textContent = '✓ Copied!';
+            copyBtn.classList.add('copied');
+            setTimeout(() => {
+              copyBtn.textContent = 'Copy Code';
+              copyBtn.classList.remove('copied');
+            }, 2000);
+          } catch (err) {
+            console.error('Failed to copy:', err);
+          }
+        }
+      });
+    }
   }
 
   // Copy to clipboard
@@ -1311,6 +1431,86 @@ const modelsJson = JSON.stringify(models);
 
   .comparison-table td {
     color: #94a3b8;
+  }
+
+  /* Model Examples */
+  .model-examples {
+    background: #1e293b;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-top: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .model-examples h3 {
+    color: #f8fafc;
+    margin-bottom: 0.75rem;
+    font-size: 1.1rem;
+  }
+
+  .example-tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .example-tab {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    background: #334155;
+    color: #94a3b8;
+    font-weight: 500;
+    transition: all 0.2s ease;
+  }
+
+  .example-tab:hover {
+    background: #475569;
+    color: #f8fafc;
+  }
+
+  .example-tab.active {
+    background: #6366f1;
+    color: white;
+  }
+
+  .example-code {
+    background: #0f172a;
+    border-radius: 6px;
+    padding: 1rem;
+    margin: 0;
+    overflow-x: auto;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 0.8rem;
+    line-height: 1.5;
+    color: #e2e8f0;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .example-code code {
+    white-space: pre;
+  }
+
+  .copy-example-btn {
+    margin-top: 0.75rem;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    background: rgba(59, 130, 246, 0.2);
+    color: #60a5fa;
+    font-weight: 500;
+    transition: all 0.2s ease;
+  }
+
+  .copy-example-btn:hover {
+    background: rgba(59, 130, 246, 0.3);
+  }
+
+  .copy-example-btn.copied {
+    background: rgba(16, 185, 129, 0.2);
+    color: #10b981;
   }
 
   @media (max-width: 768px) {
