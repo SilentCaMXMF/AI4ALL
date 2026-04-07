@@ -12,7 +12,17 @@ Your Free AI Models dashboard is publicly accessible with HTTPS encryption and o
 
 ---
 
-## 🎯 What's New - v2.6.0 (Feb 26, 2026)
+## 🎯 What's New - v2.7.0 (Apr 7, 2026)
+
+### 🔧 Scraper Fix
+- **Fixed free model detection** - Models with `cost: null` now included in free models filter
+- **Expanded coverage** - 431 → 643 free models (added 212 models with unknown pricing)
+- **Improved filtering** - Treats `cost: null` as free/unknown pricing
+
+### 🔒 GitHub Actions Security
+- **GitHub App authentication** - Switched from OAuth to GitHub App for Actions
+- **Workflow triggers** - Now runs on schedule (every 6 hours), push to main, and manual dispatch
+- **Security audit** - NPM dependencies audited and patched (7 vulnerabilities fixed)
 
 ### 🔧 Code Quality Improvements
 - **TypeScript Strict Mode** - Full type safety across codebase
@@ -134,7 +144,7 @@ This project implements a **2-phase scraping system** to discover and verify fre
 
 **Phase 1 - Discovery**
 1. Fetch all models from models.dev API
-2. Filter for only 0-cost models (input = 0 AND output = 0)
+2. Filter for free models (input = 0 AND output = 0, OR cost = null)
 3. Extract model metadata (provider, capabilities, context limits)
 4. Store in aggregated database
 
@@ -275,18 +285,21 @@ All features work on mobile:
 The scraper fetches all models from models.dev and filters for truly free ones:
 
 ```typescript
-// Filter for 0-cost models only
+// Filter for free models (0 cost OR null/unknown cost)
 const freeModels = allModels.filter(model => {
-  const inputCost = model.cost?.input ?? model.inputCost ?? 0;
-  const outputCost = model.cost?.output ?? model.outputCost ?? 0;
-  return inputCost === 0 && outputCost === 0;
+  if (model.cost === null) return true;
+  const inputCost = model.cost?.input;
+  const outputCost = model.cost?.output;
+  if (inputCost === 0 && outputCost === 0) return true;
+  return false;
 });
 ```
 
 **What qualifies as "free":**
 - `cost.input === 0` AND `cost.output === 0`
+- OR `cost === null` (unknown pricing - included as free)
 - No API key required for access
-- Currently finding **12 verified free models**
+- Currently finding **643 free models**
 
 ### Phase 2: Social Media Verification
 
@@ -385,10 +398,11 @@ The dashboard aggregates data from [models.dev](https://models.dev/api.json), a 
 **Currently Verified Free Models:**
 | Provider | Free Models | Status |
 |----------|-------------|---------|
-| OpenRouter | 77 | Verified |
-| ZenMCU | 12 | Verified |
-| Nvidia | 70 | Pending |
-| GitHub Models | 55 | Pending |
+| All Providers | 643 | Verified |
+| OpenRouter | ~77 | Verified |
+| ZenMCU | ~12 | Verified |
+| NVIDIA | ~70 | Verified |
+| Ollama Cloud | 212 | Verified (cost: null) |
 
 **Update Frequency:**
 - **Hourly**: Automated via GitHub Actions with 2-phase verification
@@ -801,8 +815,8 @@ For issues and questions:
 
 ---
 
-**Last Updated:** February 23, 2026  
-**Version:** 2.6.0  
-**Status:** 🎉 Production Ready - TypeScript Refactoring Complete
+**Last Updated:** April 7, 2026  
+**Version:** 2.7.0  
+**Status:** 🎉 Production Ready - Scraper Fix & GitHub App Auth
 
 **Share the link**: https://freeai4all.duckdns.org

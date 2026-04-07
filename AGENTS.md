@@ -10,9 +10,7 @@ npm run preview                # Preview production build
 
 # Scraper Commands
 npm run scrape                 # Run full scraper
-npm run scrape:github          # Scrape GitHub only
-npm run scrape:reddit          # Scrape Reddit only
-npm run scrape:stackoverflow   # Scrape Stack Overflow only
+npm run scrape:modelsdev       # Scrape models.dev only
 
 # Scheduling
 npm run schedule               # Run GitHub distribution scheduler
@@ -209,9 +207,12 @@ Add `public/_headers` for Netlify/static hosting:
 ```
 
 ### GitHub Actions Security
-- Use minimal permissions: `contents: read` not `write`
-- Add manual approval for production deployments
+- Use GitHub App authentication (not OAuth) for workflow token generation
+- Use `tibdex/github-app-token` action to generate installation tokens
+- Store `APP_ID` and `APP_PRIVATE_KEY` as repository secrets
+- Use minimal permissions: `contents: write`, `pages: write`, `id-token: write`
 - Use `persist-credentials: false` in checkout steps
+- Workflow triggers: schedule, push to main, and manual dispatch
 
 ---
 
