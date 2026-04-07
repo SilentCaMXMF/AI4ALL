@@ -176,6 +176,12 @@ export interface PlatformConfig {
   openrouter?: {
     apiKey: string;
   };
+  togetherai?: {
+    apiKey: string;
+  };
+  replicate?: {
+    apiKey: string;
+  };
 }
 
 // Enhanced verification data with history tracking

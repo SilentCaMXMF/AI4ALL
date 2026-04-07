@@ -5,6 +5,9 @@ import { StackOverflowAPI } from '../api/stackoverflow.js';
 import { HackerNewsAPI } from '../api/hackernews.js';
 import { HuggingFaceAPI } from '../api/huggingface.js';
 import { OpenRouterAPI } from '../api/openrouter.js';
+import { TogetherAIAPI } from '../api/togetherai.js';
+import { HuggingFaceInferenceAPI } from '../api/huggingface-api.js';
+import { ReplicateAPI } from '../api/replicate.js';
 import { BasePlatformAPI } from '../types/index.js';
 import pLimit from 'p-limit';
 import { 
@@ -171,6 +174,18 @@ export class EnhancedScraperService {
     if (platformConfigs.openrouter) {
       this.platformAPIs.set('openrouter', new OpenRouterAPI(platformConfigs.openrouter.apiKey));
     }
+
+    if (platformConfigs.togetherai) {
+      this.platformAPIs.set('togetherai', new TogetherAIAPI(platformConfigs.togetherai.apiKey));
+    }
+
+    if (platformConfigs.huggingface) {
+      this.platformAPIs.set('huggingface-inference', new HuggingFaceInferenceAPI(platformConfigs.huggingface));
+    }
+
+    if (platformConfigs.replicate) {
+      this.platformAPIs.set('replicate', new ReplicateAPI(platformConfigs.replicate.apiKey));
+    }
     
     console.log(`[EnhancedScraper] ✓ Initialized ${this.platformAPIs.size} platform APIs`);
   }
@@ -182,7 +197,9 @@ export class EnhancedScraperService {
       stackoverflow: this.apiKeyManager.getPlatformConfig('stackoverflow'),
       hackernews: this.apiKeyManager.getPlatformConfig('hackernews'),
       huggingface: this.apiKeyManager.getPlatformConfig('huggingface'),
-      openrouter: this.apiKeyManager.getPlatformConfig('openrouter')
+      openrouter: this.apiKeyManager.getPlatformConfig('openrouter'),
+      togetherai: this.apiKeyManager.getPlatformConfig('togetherai'),
+      replicate: this.apiKeyManager.getPlatformConfig('replicate')
     };
   }
 

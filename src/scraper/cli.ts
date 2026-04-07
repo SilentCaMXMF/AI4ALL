@@ -80,6 +80,26 @@ async function loadConfig(): Promise<EnhancedScraperConfig> {
     console.log('[Config] ⚠️ OPENROUTER_API_KEY not set - OpenRouter aggregation disabled');
   }
 
+  // TogetherAI (optional API key for free models)
+  if (process.env.TOGETHER_API_KEY) {
+    config.togetherai = {
+      apiKey: process.env.TOGETHER_API_KEY
+    };
+    console.log('[Config] TogetherAI API enabled for model aggregation');
+  } else {
+    console.log('[Config] ⚠️ TOGETHER_API_KEY not set - TogetherAI aggregation disabled');
+  }
+
+  // Replicate (optional API key for model aggregation)
+  if (process.env.REPLICATE_API_TOKEN) {
+    config.replicate = {
+      apiKey: process.env.REPLICATE_API_TOKEN
+    };
+    console.log('[Config] Replicate API enabled for model aggregation');
+  } else {
+    console.log('[Config] ⚠️ REPLICATE_API_TOKEN not set - Replicate aggregation disabled');
+  }
+
   return config;
 }
 

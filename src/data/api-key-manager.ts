@@ -235,6 +235,12 @@ export class APIKeyManager {
       case 'x':
         return key ? { bearerToken: key } : null;
         
+      case 'togetherai':
+        return key ? { apiKey: key } : null;
+        
+      case 'replicate':
+        return key ? { apiKey: key } : null;
+        
       default:
         return null;
     }
