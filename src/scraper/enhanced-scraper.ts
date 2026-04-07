@@ -5,6 +5,7 @@ import { StackOverflowAPI } from '../api/stackoverflow.js';
 import { HackerNewsAPI } from '../api/hackernews.js';
 import { HuggingFaceAPI } from '../api/huggingface.js';
 import { BasePlatformAPI } from '../types/index.js';
+import pLimit from 'p-limit';
 import { 
   VerificationDataManager, 
   IncrementalUpdater, 
@@ -237,41 +238,45 @@ export class EnhancedScraperService {
     if (this.config.enableFeedbackSearch) {
       console.log('[EnhancedScraper] Phase 2: Verifying models across platforms...');
       
-      for (let i = 0; i < models.length; i++) {
-        const model = models[i];
-        
-        try {
-          const feedbackResult = await this.verifyModel(model);
-          
-          if (feedbackResult.feedback.length > 0) {
-            metrics.verificationUpdates++;
-          }
+      const limit = pLimit(3);
+      
+      const verificationPromises = models.map((model, index) => 
+        limit(async () => {
+          try {
+            const feedbackResult = await this.verifyModel(model);
+            
+            if (feedbackResult.feedback.length > 0) {
+              metrics.verificationUpdates++;
+            }
 
-          // Record verification event
-          if (this.config.enableHistoryTracking) {
-            await this.historyTracker.recordVerificationEvent(
-              model.id,
-              'modelsdev',
-              'verification_run',
-              {
-                newScore: feedbackResult.summary.verificationScore,
-                mentionCount: feedbackResult.feedback.length
-              },
-              { fullScrape: true }
-            );
-          }
+            // Record verification event
+            if (this.config.enableHistoryTracking) {
+              await this.historyTracker.recordVerificationEvent(
+                model.id,
+                'modelsdev',
+                'verification_run',
+                {
+                  newScore: feedbackResult.summary.verificationScore,
+                  mentionCount: feedbackResult.feedback.length
+                },
+                { fullScrape: true }
+              );
+            }
 
-          // Progress indicator
-          if ((i + 1) % 10 === 0 || i === models.length - 1) {
-            console.log(`[EnhancedScraper] Verified ${i + 1}/${models.length} models...`);
-          }
+            // Progress indicator
+            if ((index + 1) % 10 === 0 || index === models.length - 1) {
+              console.log(`[EnhancedScraper] Verified ${index + 1}/${models.length} models...`);
+            }
 
-        } catch (error) {
-          const errorMsg = `Failed to verify model ${model.id}: ${error instanceof Error ? error.message : 'Unknown'}`;
-          metrics.errors.push(errorMsg);
-          logPlatformError('scraper', error, `verifyModel-${model.id}`);
-        }
-      }
+          } catch (error) {
+            const errorMsg = `Failed to verify model ${model.id}: ${error instanceof Error ? error.message : 'Unknown'}`;
+            metrics.errors.push(errorMsg);
+            logPlatformError('scraper', error, `verifyModel-${model.id}`);
+          }
+        })
+      );
+
+      await Promise.all(verificationPromises);
     }
 
     // Save updated database
