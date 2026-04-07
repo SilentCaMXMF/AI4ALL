@@ -1,5 +1,6 @@
 import { readFile, writeFile, mkdir, access } from 'fs/promises';
 import { join } from 'path';
+import { FileCache } from '../utils/cache.js';
 import type { AggregatedItem } from '../types/index.js';
 
 // Re-export interfaces for backward compatibility
@@ -120,7 +121,11 @@ export class ModelsDevService {
 
   constructor(private options: { dataDir?: string } = {}) {
     this.options.dataDir = options.dataDir || join(process.cwd(), 'data');
+    this.cache = new FileCache(join(process.cwd(), 'data', 'cache'));
   }
+
+  private cache: FileCache;
+  private readonly cacheTTL = 3600000; // 1 hour
 
 /**
     * Main fetch method supporting multiple filtering patterns
@@ -134,6 +139,16 @@ export class ModelsDevService {
     } = options;
 
     console.log('[ModelsDevService] Fetching models...');
+    
+    // Create cache key from options
+    const cacheKey = `modelsdev-fetch-${filterType}-${searchTerms.join(',')}-${freeOnly}-${limit}`;
+    
+    // Check cache first
+    const cached = await this.cache.get<AggregatedItem[]>(cacheKey);
+    if (cached) {
+      console.log('[ModelsDevService] Returning cached results');
+      return cached;
+    }
     
     try {
       const providersData = await this.fetchRawData();
@@ -173,7 +188,13 @@ export class ModelsDevService {
       
       console.log(`[ModelsDevService] Returning ${items.length} models`);
       
-      return items.slice(0, limit);
+      const result = items.slice(0, limit);
+      
+      // Cache the results
+      await this.cache.set(cacheKey, result, this.cacheTTL);
+      console.log('[ModelsDevService] Cached results');
+      
+      return result;
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       console.error(`[ModelsDevService] Error fetching models: ${errorMessage}`);
