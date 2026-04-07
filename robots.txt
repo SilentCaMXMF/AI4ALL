@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://freeai4all.duckdns.org/sitemap.xml
