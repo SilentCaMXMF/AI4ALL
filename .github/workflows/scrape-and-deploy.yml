@@ -109,15 +109,15 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          # Add all data files to commit
+          # Add core data files (always exist)
           git add -f data/aggregated-data.json
           git add -f data/verification-database.json
-          git add -f data/verification-history.json
-          git add -f data/update-state.json
-          git add -f data/modelsdev-state.json
-          git add -f data/github-scrape-state.json
           git add -f data/api-keys.json
-          git add -f data/pipeline-config.json
+          # Add optional state files (may not exist on first run)
+          git add -f data/update-state.json || true
+          git add -f data/modelsdev-state.json || true
+          git add -f data/pipeline-config.json || true
+          git add -f data/github-scrape-state.json || true
           git diff --staged --quiet || (git commit -m "Update free AI models with feedback [$(date +%Y-%m-%d_%H:%M)]" && git push)
 
       - name: Deploy to production
